@@ -1,0 +1,11 @@
+<mat-list-option (click)="toggleCarrousel()">
+    Ouvrir le carrousel de dessins
+    <mat-divider></mat-divider>
+</mat-list-option>
+<mat-card class="card" *ngIf="visible">
+    Le carrousel n'est pas encore disponible !
+
+    <mat-card-actions>
+        <button (click)="toggleCarrousel()">Fermer</button>
+    </mat-card-actions>
+</mat-card>

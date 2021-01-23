@@ -1,0 +1,19 @@
+.card {
+    width: 500px;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    background-color: lightgreen;
+}
+
+.title {
+    border-bottom: solid black;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    margin: 0;
+    justify-content: center;
+}
