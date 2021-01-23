@@ -23,6 +23,7 @@ export class PencilService extends Tool {
     private pathData: Vec2[];
     public penColor: string;
     public penWidth : number;
+    
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -64,6 +65,8 @@ export class PencilService extends Tool {
         ctx.beginPath();
         ctx.strokeStyle = this.penColor;
         ctx.lineWidth = this.penWidth;
+        ctx.lineCap = 'round'; 
+        
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
@@ -80,7 +83,11 @@ export class PencilService extends Tool {
         this.penWidth = parseInt(newWidth);
     }
 
+    
+
     private clearPath(): void {
         this.pathData = [];
     }
+
+
 }
