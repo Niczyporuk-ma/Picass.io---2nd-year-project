@@ -26,11 +26,12 @@ export class DrawingComponent implements AfterViewInit {
     tools: Tool[];
     currentTool: Tool;
     toolManager: ToolManagerService;
+    clickCount: number = 0;
     constructor(private drawingService: DrawingService, toolManager: ToolManagerService) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
         this.toolManager.currentToolChange.subscribe((value) => (this.currentTool = value));
-        this.currentTool = this.toolManager.rectangle;
+        this.currentTool = this.toolManager.currentTool;
     }
 
     ngAfterViewInit(): void {
@@ -44,6 +45,23 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         this.currentTool.onMouseMove(event);
+    }
+
+    @HostListener('click', ['$event'])
+    onMouseClick(event: MouseEvent): void {
+        this.clickCount++;
+        if (this.clickCount == 1) {
+            setTimeout(() => {
+                if (this.clickCount == 1) {
+                    this.currentTool.onMouseClick(event);
+                    console.log('single');
+                } else {
+                    this.currentTool.onDoubleClick(event);
+                    console.log('dbl');
+                }
+                this.clickCount = 0;
+            }, 170);
+        }
     }
 
     @HostListener('mousedown', ['$event'])

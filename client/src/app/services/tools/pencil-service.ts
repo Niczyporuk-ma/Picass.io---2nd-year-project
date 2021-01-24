@@ -41,6 +41,7 @@ export class PencilService extends Tool {
 
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
+            this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
     }
 
@@ -86,7 +87,7 @@ export class PencilService extends Tool {
         ctx.strokeStyle = this.penColor;
         ctx.lineWidth = this.penWidth;
         ctx.lineCap = 'round';
-
+        ctx.globalCompositeOperation = 'source-over';
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }

@@ -49,6 +49,7 @@ export class RectangleService extends Tool {
 
     private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         ctx.beginPath();
+        ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
         //ctx.lineCap = 'round';
 

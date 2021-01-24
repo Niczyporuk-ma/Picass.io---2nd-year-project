@@ -6,18 +6,16 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent implements OnInit  {
-    constructor(private toolManger : ToolManagerService) { }
+export class SidebarComponent implements OnInit {
+    constructor(private toolManger: ToolManagerService) {}
 
-    ngOnInit(){}
+    ngOnInit() {}
 
-
-    changeColor(color:any){
+    changeColor(color: any) {
         this.toolManger.getPencilService().changeColor(color.target.value);
     }
 
-    changeWidth (width : any) 
-    {
+    changeWidth(width: any) {
         this.toolManger.getPencilService().changeWidth(width.target.value);
     }
 }
