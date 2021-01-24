@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
 <div class="container">
     <p>Barre latérale pour vos outils!</p>
     <p>
@@ -6,8 +8,7 @@
         Vous êtes encouragés de modifier et compléter le code.<br />
         N'oubliez pas de regarder les tests dans les fichiers spec.ts aussi!
     </p>
-    <input type = "text" (keyup)= changeColor($event) placeholder="choose color"> <br>
-    <input type = "text" (keyup)= changeWidth($event) placeholder="choose thickness" >
-    
-    
+    <input type="text" (keyup)="changeColor($event)" placeholder="choose color" /> <br />
+    <input type="text" (keyup)="changeWidth($event)" placeholder="choose thickness" />
+    <app-toolbar></app-toolbar>
 </div>
