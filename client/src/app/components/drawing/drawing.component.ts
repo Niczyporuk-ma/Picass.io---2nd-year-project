@@ -30,7 +30,7 @@ export class DrawingComponent implements AfterViewInit {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
         this.toolManager.currentToolChange.subscribe((value) => (this.currentTool = value));
-        this.currentTool = this.toolManager.pencil;
+        this.currentTool = this.toolManager.rectangle;
     }
 
     ngAfterViewInit(): void {

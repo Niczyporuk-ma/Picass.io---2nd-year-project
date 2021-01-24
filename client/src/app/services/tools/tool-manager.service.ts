@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { LineServiceService } from '@app/services/tools/line-service.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { Subject } from 'rxjs';
+import { RectangleService } from './rectangle.service';
 
 @Injectable({
     providedIn: 'root',
@@ -10,12 +11,14 @@ import { Subject } from 'rxjs';
 export class ToolManagerService {
     line: LineServiceService;
     pencil: PencilService;
+    rectangle: RectangleService;
     currentToolChange: Subject<Tool> = new Subject<Tool>();
-    currentTool: Tool = this.pencilService;
+    currentTool: Tool = this.rectangleService;
 
-    tools: Tool[] = [this.pencilService, this.lineService];
+    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService];
 
-    constructor(private pencilService: PencilService, private lineService: LineServiceService) {
+    constructor(private pencilService: PencilService, private lineService: LineServiceService, private rectangleService: RectangleService) {
+        this.rectangle = rectangleService;
         this.line = lineService;
         this.pencil = pencilService;
         this.currentTool = pencilService;
@@ -37,6 +40,11 @@ export class ToolManagerService {
 
     setLineService(): void {
         this.currentTool = this.line;
+        this.currentToolChange.next(this.currentTool);
+    }
+
+    setRectangleService(): void {
+        this.currentTool = this.rectangle;
         this.currentToolChange.next(this.currentTool);
     }
 }
