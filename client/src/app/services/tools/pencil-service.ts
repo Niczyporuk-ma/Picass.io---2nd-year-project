@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -23,9 +24,13 @@ export class PencilService extends Tool {
     private pathData: Vec2[];
     public penColor: string;
     public penWidth: number;
+    public ID: number = 0;
+    public icon = faPencilAlt;
+    //public toolManager: ToolManagerService;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        //this.toolManager = toolManager;
         this.clearPath();
     }
 
@@ -71,6 +76,10 @@ export class PencilService extends Tool {
     public changeWidth(newWidth: string) {
         this.penWidth = parseInt(newWidth);
     }
+
+    // public setCurrent(): void {
+    //     this.toolManager.setPencilService();
+    // }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();

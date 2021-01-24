@@ -6,6 +6,7 @@ import { Vec2 } from './vec2';
 export abstract class Tool {
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
+    public icon: any;
 
     constructor(protected drawingService: DrawingService) {}
 

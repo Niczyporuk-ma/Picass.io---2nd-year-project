@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { faSlash } from '@fortawesome/free-solid-svg-icons';
 import { MouseButton } from './pencil-service';
 
 @Injectable({
@@ -10,13 +11,20 @@ import { MouseButton } from './pencil-service';
 export class LineServiceService extends Tool {
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    public lineColor: string;
     public lineWidth: number;
+    public ID: number = 1;
+    public icon = faSlash;
+    //public toolManager: ToolManagerService;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        //this.toolManager = toolManager;
         //this.clearPath();
     }
+
+    // setCurrent(): void {
+    //     this.toolManager.setLineService();
+    // }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
@@ -51,7 +59,6 @@ export class LineServiceService extends Tool {
 
     private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         ctx.beginPath();
-        ctx.strokeStyle = this.lineColor;
         ctx.lineWidth = this.lineWidth;
         //ctx.lineCap = 'round';
 
