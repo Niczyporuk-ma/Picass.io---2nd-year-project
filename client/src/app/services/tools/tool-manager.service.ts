@@ -10,14 +10,11 @@ import { RectangleService } from './rectangle.service';
     providedIn: 'root',
 })
 export class ToolManagerService {
-    eraser: EraserService;
-    line: LineServiceService;
-    pencil: PencilService;
-    rectangle: RectangleService;
+    test : Subject<Function> = new Subject<Function>();
     currentToolChange: Subject<Tool> = new Subject<Tool>();
-    currentTool: Tool;
-    a: Function;
-    toolShortcuts: Map<string, Function> = new Map([
+    private currentTool: Tool;
+    toolBoxShortcuts = new Map([
+        // probleme avec les getShorcutValue()
         ['l', this.setLineService],
         ['r', this.setRectangleService],
         ['e', this.setEraserService],
@@ -32,31 +29,24 @@ export class ToolManagerService {
         private rectangleService: RectangleService,
         private eraserService: EraserService,
     ) {
-        this.eraser = eraserService;
-        this.rectangle = rectangleService;
-        this.line = lineService;
-        this.pencil = pencilService;
-        this.currentTool = this.pencil;
+        
+        this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
+        //Faire un for pour initialiser la map
+       
         // for (let tool of this.tools) {
         //     this.toolShortcuts.set(tool.shortcut.toString(), tool);
         // }
     }
 
-    onKeyPress(key: string): void {
-        if (this.currentTool.getLocalShorcuts().has(key)) {
-            this.a = <Function>this.currentTool.getLocalShorcuts().get(key);
-            this.a();
-        } else {
-            if (this.toolShortcuts.has(key)) {
-                this.a = <Function>this.toolShortcuts.get(key);
-                this.a();
-                console.log(this.currentTool);
-            }
-            // else {
-            //     alert("Commande n'existe pas pour cet outil");
-            // }
-        }
+
+    getCurrentTool (): Tool 
+    {
+        return this.currentTool;
+    }
+
+    getToolBoxShortcuts () :  Map<string, Function> {
+        return this.toolBoxShortcuts;
     }
 
     getPencilService(): PencilService {

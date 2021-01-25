@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { KeyboardShortcutManagerService } from '@app/services/tools/keyboard-shortcut-manager.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 // TODO : Avoir un fichier séparé pour les constantes ?
@@ -25,13 +26,15 @@ export class DrawingComponent implements AfterViewInit {
     // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
     tools: Tool[];
     currentTool: Tool;
+    keyboardShorcutsManager : KeyboardShortcutManagerService
     toolManager: ToolManagerService;
     clickCount: number = 0;
-    constructor(private drawingService: DrawingService, toolManager: ToolManagerService) {
+    constructor(private drawingService: DrawingService, toolManager: ToolManagerService, keyboardManager : KeyboardShortcutManagerService) {
         this.toolManager = toolManager;
+        this.keyboardShorcutsManager = keyboardManager;
         this.tools = toolManager.tools;
         this.toolManager.currentToolChange.subscribe((value) => (this.currentTool = value));
-        this.currentTool = this.toolManager.currentTool;
+        this.currentTool = this.toolManager.getCurrentTool();
     }
 
     ngAfterViewInit(): void {
@@ -41,7 +44,7 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         window.addEventListener('keydown', (event: KeyboardEvent) => {
-            this.toolManager.onKeyPress(event.key);
+            this.keyboardShorcutsManager.onKeyPress(event.key);
         });
     }
 
