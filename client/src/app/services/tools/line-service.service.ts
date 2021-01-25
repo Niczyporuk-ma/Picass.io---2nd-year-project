@@ -11,37 +11,18 @@ export class LineServiceService extends Tool {
     private isStarted: boolean;
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    public lineWidth: number;
-    public ID: number = 1;
+    private lineWidth: number;
     public icon = faSlash;
     
-
-    //shortcut: string = 'l';
-
-    //public toolManager: ToolManagerService;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.isStarted = false;
-        //this.toolManager = toolManager;
-        //this.clearPath();
         this.shortcut = 'l';
         this.localShortcut = new Map();
 
     }
 
-    // setCurrent(): void {
-    //     this.toolManager.setLineService();
-    // }
-
-    // onMouseDown(event: MouseEvent): void {
-    //     this.mouseDown = event.button === MouseButton.Left;
-    //     if (this.mouseDown) {
-
-    //         this.mouseDownCoord = this.getPositionFromMouse(event);
-    //         this.startingPoint = this.mouseDownCoord;
-    //     }
-    // }
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
@@ -50,7 +31,6 @@ export class LineServiceService extends Tool {
             this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
         }
         this.mouseDown = false;
-        //this.clearPath();
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -98,7 +78,6 @@ export class LineServiceService extends Tool {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
-        //ctx.lineCap = 'round';
 
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
@@ -113,7 +92,5 @@ export class LineServiceService extends Tool {
         return this.localShortcut;
     }
 
-    // private clearPath(): void {
-    //     this.pathData = [];
-    // }
+
 }

@@ -18,13 +18,13 @@ export class RectangleService extends Tool {
 
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    public lineWidth: number;
+    private lineWidth: number;
     
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-            //this.clearPath();
+           
 
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.startingPoint = this.mouseDownCoord;
@@ -38,7 +38,7 @@ export class RectangleService extends Tool {
             this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
         }
         this.mouseDown = false;
-        //this.clearPath();
+        
     }
 
     onMouseMove(event: MouseEvent): void {

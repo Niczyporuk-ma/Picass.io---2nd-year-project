@@ -22,9 +22,8 @@ export enum MouseButton {
 })
 export class PencilService extends Tool {
     private pathData: Vec2[];
-    public penColor: string;
-    public penWidth: number;
-    public ID: number = 0;
+    private penColor: string;
+    private penWidth: number;
     public icon = faPencilAlt;
     
     //public toolManager: ToolManagerService;
@@ -84,9 +83,6 @@ export class PencilService extends Tool {
         this.penWidth = parseInt(newWidth);
     }
 
-    // public setCurrent(): void {
-    //     this.toolManager.setPencilService();
-    // }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
