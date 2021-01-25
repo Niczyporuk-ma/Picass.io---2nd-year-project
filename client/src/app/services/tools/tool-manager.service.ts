@@ -10,43 +10,52 @@ import { RectangleService } from './rectangle.service';
     providedIn: 'root',
 })
 export class ToolManagerService {
-    test : Subject<Function> = new Subject<Function>();
+    nextTool: Tool;
+    public test: Subject<Function> = new Subject<Function>();
     currentToolChange: Subject<Tool> = new Subject<Tool>();
     private currentTool: Tool;
-    toolBoxShortcuts = new Map([
+
+    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
+    toolBoxShortcuts: Map<string, Tool> = new Map([
         // probleme avec les getShorcutValue()
-        ['l', this.setLineService],
-        ['r', this.setRectangleService],
-        ['e', this.setEraserService],
-        ['p', this.setPencilService],
+        ['l', this.tools[1]],
+        ['r', this.tools[2]],
+        ['e', this.tools[3]],
+        ['p', this.tools[0]],
     ]);
-
-    tools: Tool[] = [this.pencilService,this.lineService,this.rectangleService,this.eraserService]
-
     constructor(
         private pencilService: PencilService,
         private lineService: LineServiceService,
         private rectangleService: RectangleService,
         private eraserService: EraserService,
     ) {
-        
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
         //Faire un for pour initialiser la map
-       
+
         // for (let tool of this.tools) {
         //     this.toolShortcuts.set(tool.shortcut.toString(), tool);
         // }
     }
 
+    setTool(tool: Tool) {
+        this.currentToolChange.next(tool);
+    }
 
-    getCurrentTool (): Tool 
-    {
+    getCurrentTool(): Tool {
         return this.currentTool;
     }
 
-    getToolBoxShortcuts () :  Map<string, Function> {
+    getToolBoxShortcuts(): Map<string, Tool> {
         return this.toolBoxShortcuts;
+    }
+
+    getRectangleService(): Tool {
+        return this.rectangleService;
+    }
+
+    getEraserService(): Tool {
+        return this.eraserService;
     }
 
     getPencilService(): PencilService {
