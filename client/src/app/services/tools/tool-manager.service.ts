@@ -15,7 +15,14 @@ export class ToolManagerService {
     pencil: PencilService;
     rectangle: RectangleService;
     currentToolChange: Subject<Tool> = new Subject<Tool>();
-    currentTool: Tool = this.rectangleService;
+    currentTool: Tool;
+    a: Function;
+    toolShortcuts: Map<string, Function> = new Map([
+        ['l', this.setLineService],
+        ['r', this.setRectangleService],
+        ['e', this.setEraserService],
+        ['p', this.setPencilService],
+    ]);
 
     tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
 
@@ -29,8 +36,27 @@ export class ToolManagerService {
         this.rectangle = rectangleService;
         this.line = lineService;
         this.pencil = pencilService;
-        this.currentTool = pencilService;
-        this.currentToolChange.subscribe((value) => (this.currentTool = this.pencil));
+        this.currentTool = this.pencilService;
+        this.currentToolChange.subscribe((value) => (this.currentTool = value));
+        // for (let tool of this.tools) {
+        //     this.toolShortcuts.set(tool.shortcut.toString(), tool);
+        // }
+    }
+
+    onKeyPress(key: string): void {
+        if (this.currentTool.localShortcut.has(key)) {
+            this.a = <Function>this.currentTool.localShortcut.get(key);
+            this.a();
+        } else {
+            if (this.toolShortcuts.has(key)) {
+                this.a = <Function>this.toolShortcuts.get(key);
+                this.a();
+                console.log(this.currentTool);
+            }
+            // else {
+            //     alert("Commande n'existe pas pour cet outil");
+            // }
+        }
     }
 
     getPencilService(): PencilService {
@@ -42,22 +68,21 @@ export class ToolManagerService {
     }
 
     setPencilService(): void {
-        this.currentTool = this.pencil;
-        this.currentToolChange.next(this.currentTool);
+        this.currentToolChange.next(this.pencilService);
     }
 
     setLineService(): void {
-        this.currentTool = this.line;
-        this.currentToolChange.next(this.currentTool);
+        //this.currentTool = this.lineService;
+        this.currentToolChange.next(this.lineService);
     }
 
     setRectangleService(): void {
-        this.currentTool = this.rectangle;
-        this.currentToolChange.next(this.currentTool);
+        //this.currentTool = this.rectangleService;
+        this.currentToolChange.next(this.rectangleService);
     }
 
     setEraserService(): void {
-        this.currentTool = this.eraser;
-        this.currentToolChange.next(this.currentTool);
+        //this.currentTool = this.eraserService;
+        this.currentToolChange.next(this.eraserService);
     }
 }

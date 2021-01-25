@@ -15,6 +15,9 @@ export class RectangleService extends Tool {
     private startingPoint: Vec2;
     private endPoint: Vec2;
     public lineWidth: number;
+    localShortcut: Map<string, Function> = new Map();
+
+    shortcut: string = 'r';
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;

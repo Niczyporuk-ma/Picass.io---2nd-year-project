@@ -14,6 +14,10 @@ export class LineServiceService extends Tool {
     public lineWidth: number;
     public ID: number = 1;
     public icon = faSlash;
+    shortcut: string = 'l';
+    localShortcut: Map<string, Function> = new Map();
+
+    //shortcut: string = 'l';
 
     //public toolManager: ToolManagerService;
 

@@ -13,6 +13,8 @@ export class EraserService extends Tool {
     currentPoint: Vec2;
     public icon = faEraser;
     baseWidth = 10;
+    shortcut: string = 'e';
+    localShortcut: Map<string, Function> = new Map();
 
     constructor(drawingService: DrawingService) {
         super(drawingService);

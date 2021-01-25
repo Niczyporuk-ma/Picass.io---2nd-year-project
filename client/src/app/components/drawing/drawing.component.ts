@@ -41,15 +41,7 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (event.key === 'c' || event.key === 'C') {
-                this.toolManager.setPencilService();
-            } else if (event.key === 'l' || event.key === 'L') {
-                this.toolManager.setLineService();
-            } else if (event.key === 'r' || event.key === 'R') {
-                this.toolManager.setRectangleService();
-            } else if (event.key === 'e' || event.key === 'E') {
-                this.toolManager.setEraserService();
-            }
+            this.toolManager.onKeyPress(event.key);
         });
     }
 
@@ -65,10 +57,8 @@ export class DrawingComponent implements AfterViewInit {
             setTimeout(() => {
                 if (this.clickCount == 1) {
                     this.currentTool.onMouseClick(event);
-                    console.log('single');
                 } else {
                     this.currentTool.onDoubleClick(event);
-                    console.log('dbl');
                 }
                 this.clickCount = 0;
             }, 170);

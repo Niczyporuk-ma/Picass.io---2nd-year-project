@@ -26,6 +26,8 @@ export class PencilService extends Tool {
     public penWidth: number;
     public ID: number = 0;
     public icon = faPencilAlt;
+    shortcut: string = 'p';
+    public localShortcut: Map<string, Function> = new Map([['Shift', this.test]]);
     //public toolManager: ToolManagerService;
 
     constructor(drawingService: DrawingService) {
@@ -38,7 +40,6 @@ export class PencilService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
@@ -53,6 +54,10 @@ export class PencilService extends Tool {
         }
         this.mouseDown = false;
         this.clearPath();
+    }
+
+    test(): void {
+        console.log('gg sa fonctionne, sah quel plaisir');
     }
 
     onMouseMove(event: MouseEvent): void {

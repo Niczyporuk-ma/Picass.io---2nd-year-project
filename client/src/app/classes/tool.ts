@@ -7,6 +7,8 @@ export abstract class Tool {
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
     public icon: any;
+    public shortcut: string;
+    public localShortcut: Map<string, Object>;
 
     constructor(protected drawingService: DrawingService) {}
 
