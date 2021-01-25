@@ -26,14 +26,15 @@ export class PencilService extends Tool {
     public penWidth: number;
     public ID: number = 0;
     public icon = faPencilAlt;
-    shortcut: string = 'p';
-    public localShortcut: Map<string, Function> = new Map([['Shift', this.test]]);
+    
     //public toolManager: ToolManagerService;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         //this.toolManager = toolManager;
         this.clearPath();
+        this.shortcut = 'p';
+        this.localShortcut = new Map([['Shift', this.test]]);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -57,7 +58,7 @@ export class PencilService extends Tool {
     }
 
     test(): void {
-        console.log('gg sa fonctionne, sah quel plaisir');
+        alert('gg sa fonctionne, sah quel plaisir');
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -101,5 +102,13 @@ export class PencilService extends Tool {
 
     private clearPath(): void {
         this.pathData = [];
+    }
+
+    getShorcutValue() : string {
+        return this.shortcut;
+    }
+
+    getLocalShorcuts() : Map<string, Function> {
+        return this.localShortcut;
     }
 }

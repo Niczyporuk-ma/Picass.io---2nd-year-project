@@ -14,8 +14,7 @@ export class LineServiceService extends Tool {
     public lineWidth: number;
     public ID: number = 1;
     public icon = faSlash;
-    shortcut: string = 'l';
-    localShortcut: Map<string, Function> = new Map();
+    
 
     //shortcut: string = 'l';
 
@@ -26,6 +25,9 @@ export class LineServiceService extends Tool {
         this.isStarted = false;
         //this.toolManager = toolManager;
         //this.clearPath();
+        this.shortcut = 'l';
+        this.localShortcut = new Map();
+
     }
 
     // setCurrent(): void {
@@ -101,6 +103,14 @@ export class LineServiceService extends Tool {
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
+    }
+
+    getShorcutValue() : string {
+        return this.shortcut;
+    }
+
+    getLocalShorcuts() : Map<string, Function> {
+        return this.localShortcut;
     }
 
     // private clearPath(): void {

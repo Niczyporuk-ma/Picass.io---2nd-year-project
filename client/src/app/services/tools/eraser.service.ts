@@ -9,15 +9,16 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class EraserService extends Tool {
-    startingPoint: Vec2;
-    currentPoint: Vec2;
+    private startingPoint: Vec2;
+    private currentPoint: Vec2;
     public icon = faEraser;
-    baseWidth = 10;
-    shortcut: string = 'e';
-    localShortcut: Map<string, Function> = new Map();
+    
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+
+        this.shortcut = 'e';
+        this.localShortcut = new Map();
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -50,4 +51,12 @@ export class EraserService extends Tool {
         ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
         ctx.stroke();
     }
+
+     getShorcutValue() : string {
+         return this.shortcut;
+     }
+
+     getLocalShorcuts() : Map<string, Function> {
+         return this.localShortcut;
+     }
 }

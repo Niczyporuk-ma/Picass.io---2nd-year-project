@@ -24,7 +24,7 @@ export class ToolManagerService {
         ['p', this.setPencilService],
     ]);
 
-    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
+    tools: Tool[] = [this.pencilService,this.lineService,this.rectangleService,this.eraserService]
 
     constructor(
         private pencilService: PencilService,
@@ -36,7 +36,7 @@ export class ToolManagerService {
         this.rectangle = rectangleService;
         this.line = lineService;
         this.pencil = pencilService;
-        this.currentTool = this.pencilService;
+        this.currentTool = this.pencil;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
         // for (let tool of this.tools) {
         //     this.toolShortcuts.set(tool.shortcut.toString(), tool);
@@ -44,8 +44,8 @@ export class ToolManagerService {
     }
 
     onKeyPress(key: string): void {
-        if (this.currentTool.localShortcut.has(key)) {
-            this.a = <Function>this.currentTool.localShortcut.get(key);
+        if (this.currentTool.getLocalShorcuts().has(key)) {
+            this.a = <Function>this.currentTool.getLocalShorcuts().get(key);
             this.a();
         } else {
             if (this.toolShortcuts.has(key)) {

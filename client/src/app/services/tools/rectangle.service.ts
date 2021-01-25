@@ -10,14 +10,16 @@ import { MouseButton } from './pencil-service';
 export class RectangleService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.shortcut = 'r';
+        this.localShortcut =  new Map();
+
+
     }
 
     private startingPoint: Vec2;
     private endPoint: Vec2;
     public lineWidth: number;
-    localShortcut: Map<string, Function> = new Map();
-
-    shortcut: string = 'r';
+    
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
@@ -65,5 +67,13 @@ export class RectangleService extends Tool {
         ctx.moveTo(end.x, start.y);
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
+    }
+
+    getShorcutValue() : string {
+        return this.shortcut;
+    }
+
+    getLocalShorcuts() : Map<string, Function> {
+        return this.localShortcut;
     }
 }
