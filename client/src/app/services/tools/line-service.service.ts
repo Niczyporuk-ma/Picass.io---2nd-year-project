@@ -8,7 +8,11 @@ import { faSlash } from '@fortawesome/free-solid-svg-icons';
     providedIn: 'root',
 })
 export class LineServiceService extends Tool {
+    eventTest: boolean = false;
+    shiftIsPressed: boolean;
     test: Function;
+    lastSegment: Vec2[];
+    public paths: Vec2[][] = [];
     private isStarted: boolean;
     private startingPoint: Vec2;
     private endPoint: Vec2;
@@ -17,8 +21,8 @@ export class LineServiceService extends Tool {
     public icon = faSlash;
     localShortcut: Map<string, Function> = new Map([
         ['Shift', this.onShift],
-        ['p', this.onP],
-        ['n', this.onN],
+        ['Backspace', this.onBackspace],
+        ['Escape', this.onEscape],
     ]);
 
     //shortcut: string = 'l';
@@ -51,16 +55,54 @@ export class LineServiceService extends Tool {
         this.test();
     }
 
-    onP(): void {
-        console.log('pressed p');
+    onEscape(): void {
+        this.isStarted = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
-    onN(): void {
-        console.log('pressed n');
+    onBackspace(): void {
+        this.paths.pop();
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        for (let path of this.paths) {
+            this.drawLine(this.drawingService.baseCtx, path[0], path[1]);
+        }
     }
+
+    setShiftIfPressed = (e: KeyboardEvent) => {
+        if (e.key === 'Shift') {
+            this.shiftIsPressed = true;
+            //console.log('true');
+        }
+    };
+
+    setShiftNonPressed = (e: KeyboardEvent) => {
+        if (e.key === 'Shift') {
+            this.shiftIsPressed = false;
+            //console.log('false');
+            window.removeEventListener('keypress', this.setShiftIfPressed);
+            window.removeEventListener('keyup', this.setShiftNonPressed);
+            this.eventTest = false;
+        }
+    };
 
     onShift(): void {
-        console.log('test');
+        if (!this.eventTest) {
+            window.addEventListener('keydown', this.setShiftIfPressed);
+            window.addEventListener('keyup', this.setShiftNonPressed);
+            this.eventTest = true;
+        }
+    }
+
+    shiftAngleCalculator(start: Vec2, end: Vec2): boolean {
+        let a: number = Math.abs(start.x - end.x);
+        let b: number = Math.abs(start.y - end.y);
+        let angle: number = Math.atan2(b, a) * (180 / Math.PI);
+
+        if (angle % 45 === 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -82,6 +124,8 @@ export class LineServiceService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            this.lastSegment = [this.startingPoint, this.endPoint];
+            this.paths.push(this.lastSegment);
             this.startingPoint = this.endPoint;
         }
     }
@@ -89,8 +133,10 @@ export class LineServiceService extends Tool {
     onDoubleClick(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.distanceUtil(this.startingPoint, mousePosition)) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.isStarted = false;
         } else {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
             this.isStarted = false;
         }
@@ -109,8 +155,15 @@ export class LineServiceService extends Tool {
             this.endPoint = mousePosition;
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            if (this.shiftIsPressed) {
+                if (this.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                    this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+                }
+            } else {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            }
         }
     }
 

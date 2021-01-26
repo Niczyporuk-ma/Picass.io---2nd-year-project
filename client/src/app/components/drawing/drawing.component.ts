@@ -26,10 +26,10 @@ export class DrawingComponent implements AfterViewInit {
     // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
     tools: Tool[];
     currentTool: Tool;
-    keyboardShorcutsManager : KeyboardShortcutManagerService
+    keyboardShorcutsManager: KeyboardShortcutManagerService;
     toolManager: ToolManagerService;
     clickCount: number = 0;
-    constructor(private drawingService: DrawingService, toolManager: ToolManagerService, keyboardManager : KeyboardShortcutManagerService) {
+    constructor(private drawingService: DrawingService, toolManager: ToolManagerService, keyboardManager: KeyboardShortcutManagerService) {
         this.toolManager = toolManager;
         this.keyboardShorcutsManager = keyboardManager;
         this.tools = toolManager.tools;
