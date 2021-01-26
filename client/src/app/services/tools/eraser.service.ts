@@ -12,11 +12,9 @@ export class EraserService extends Tool {
     private startingPoint: Vec2;
     private currentPoint: Vec2;
     public icon = faEraser;
-    
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-
         this.shortcut = 'e';
         this.localShortcut = new Map();
     }
@@ -38,11 +36,11 @@ export class EraserService extends Tool {
             this.currentPoint = this.getPositionFromMouse(event);
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, this.currentPoint);
+            this.drawLine(this.drawingService.baseCtx, [this.currentPoint]);
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.lineWidth = 20;
         ctx.lineCap = 'round';
@@ -52,11 +50,21 @@ export class EraserService extends Tool {
         ctx.stroke();
     }
 
-     getShorcutValue() : string {
-         return this.shortcut;
-     }
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
+        ctx.lineWidth = 20;
+        ctx.lineCap = 'round';
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
+        ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
+        ctx.stroke();
+    }
 
-     getLocalShorcuts() : Map<string, Function> {
-         return this.localShortcut;
-     }
+    getShorcutValue(): string {
+        return this.shortcut;
+    }
+
+    getLocalShorcuts(): Map<string, Function> {
+        return this.localShortcut;
+    }
 }

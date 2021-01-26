@@ -17,7 +17,7 @@ export class ToolbarComponent implements OnInit {
 
     constructor(toolManager: ToolManagerService) {
         this.toolManager = toolManager;
-        this.tools = toolManager.tools;
+        this.tools = toolManager.getToolBox();
         for (let tool of this.tools) {
             this.icons.push(tool.icon);
         }

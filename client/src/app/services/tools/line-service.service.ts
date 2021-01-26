@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { faSlash } from '@fortawesome/free-solid-svg-icons';
+import { PencilService } from './pencil-service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,25 +17,20 @@ export class LineServiceService extends Tool {
     private isStarted: boolean;
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    public lineWidth: number;
-    public ID: number = 1;
+    private lineWidth: number;
     public icon = faSlash;
-    localShortcut: Map<string, Function> = new Map([
+    private pencilService: PencilService;
+    localShortcut = new Map([
         ['Shift', this.onShift],
         ['Backspace', this.onBackspace],
         ['Escape', this.onEscape],
     ]);
 
-    //shortcut: string = 'l';
-
-    //public toolManager: ToolManagerService;
-
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, pencilService: PencilService) {
         super(drawingService);
         this.isStarted = false;
-        //this.toolManager = toolManager;
-        //this.clearPath();
         this.shortcut = 'l';
+        this.pencilService = pencilService;
     }
 
     // setCurrent(): void {
@@ -61,10 +57,18 @@ export class LineServiceService extends Tool {
     }
 
     onBackspace(): void {
-        this.paths.pop();
-        this.drawingService.clearCanvas(this.drawingService.baseCtx);
-        for (let path of this.paths) {
-            this.drawLine(this.drawingService.baseCtx, path[0], path[1]);
+        if (this.drawingService.drawings.size > 0) {
+            let last = Array.from(this.drawingService.drawings)[this.drawingService.drawings.size - 1][0];
+            this.drawingService.drawings.delete(last);
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            for (let entry of this.drawingService.drawings.entries()) {
+                entry[1].redrawLine(this.drawingService.baseCtx, entry[0]);
+                //console.log('entry');
+            }
+            this.drawingService.pencilDrawings.forEach((item) => {
+                this.pencilService.redrawLine(this.drawingService.baseCtx, item);
+                //console.log('pencil');
+            });
         }
     }
 
@@ -109,10 +113,10 @@ export class LineServiceService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            let line: Vec2[] = [this.startingPoint, this.endPoint];
+            this.drawLine(this.drawingService.baseCtx, line);
         }
         this.mouseDown = false;
-        //this.clearPath();
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -123,9 +127,10 @@ export class LineServiceService extends Tool {
         } else {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            let line: Vec2[] = [this.startingPoint, this.endPoint];
+            this.drawLine(this.drawingService.baseCtx, line);
             this.lastSegment = [this.startingPoint, this.endPoint];
-            this.paths.push(this.lastSegment);
+            this.drawingService.drawings.set(this.lastSegment, this);
             this.startingPoint = this.endPoint;
         }
     }
@@ -134,10 +139,14 @@ export class LineServiceService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.distanceUtil(this.startingPoint, mousePosition)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.startingPoint]);
             this.isStarted = false;
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            let line: Vec2[] = [this.startingPoint, this.endPoint];
+            this.drawLine(this.drawingService.baseCtx, line);
+            this.lastSegment = [this.startingPoint, this.endPoint];
+            this.drawingService.drawings.set(this.lastSegment, this);
             this.isStarted = false;
         }
     }
@@ -158,23 +167,34 @@ export class LineServiceService extends Tool {
             if (this.shiftIsPressed) {
                 if (this.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
                     this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+                    let line: Vec2[] = [this.startingPoint, this.endPoint];
+                    this.drawLine(this.drawingService.previewCtx, line);
                 }
             } else {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+                let line: Vec2[] = [this.startingPoint, this.endPoint];
+                this.drawLine(this.drawingService.previewCtx, line);
             }
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
-        //ctx.lineCap = 'round';
 
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, end.y);
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[1].x, path[1].y);
+        ctx.stroke();
+    }
+
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.lineWidth = this.lineWidth;
+
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
     }
 
@@ -185,8 +205,4 @@ export class LineServiceService extends Tool {
     getLocalShorcuts(): Map<string, Function> {
         return this.localShortcut;
     }
-
-    // private clearPath(): void {
-    //     this.pathData = [];
-    // }
 }

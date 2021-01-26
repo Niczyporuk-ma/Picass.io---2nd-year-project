@@ -9,6 +9,7 @@ export abstract class Tool {
     public icon: any;
     protected shortcut: string;
     protected localShortcut: Map<string, Function>;
+    protected currentCommand: Function;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -34,5 +35,12 @@ export abstract class Tool {
         return this.localShortcut;
     }
 
-    localShortCutHandler(key: String): void {}
+    localShortCutHandler(key: string) {
+        this.currentCommand = <Function>this.localShortcut.get(key);
+        this.currentCommand();
+    }
+
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {}
+
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {}
 }

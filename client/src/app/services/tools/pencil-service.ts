@@ -13,25 +13,19 @@ export enum MouseButton {
     Forward = 4,
 }
 
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
 export class PencilService extends Tool {
+    laspoint: Vec2;
+    nexpoint: Vec2;
     private pathData: Vec2[];
-    public penColor: string;
-    public penWidth: number;
-    public ID: number = 0;
+    private penColor: string;
+    private penWidth: number;
     public icon = faPencilAlt;
-    
-    //public toolManager: ToolManagerService;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        //this.toolManager = toolManager;
         this.clearPath();
         this.shortcut = 'p';
         this.localShortcut = new Map([['Shift', this.test]]);
@@ -84,11 +78,24 @@ export class PencilService extends Tool {
         this.penWidth = parseInt(newWidth);
     }
 
-    // public setCurrent(): void {
-    //     this.toolManager.setPencilService();
-    // }
-
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
+        ctx.strokeStyle = this.penColor;
+        ctx.lineWidth = this.penWidth;
+        ctx.lineCap = 'round';
+        ctx.globalCompositeOperation = 'source-over';
+        for (const [index, point] of path.entries()) {
+            ctx.lineTo(point.x, point.y);
+            if (index != 0) {
+                let start: Vec2 = path[index - 1];
+                let end: Vec2 = path[index];
+                let line: Vec2[] = [start, end];
+                this.drawingService.pencilDrawings.push(line);
+            }
+        }
+        ctx.stroke();
+    }
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.strokeStyle = this.penColor;
         ctx.lineWidth = this.penWidth;
@@ -104,11 +111,11 @@ export class PencilService extends Tool {
         this.pathData = [];
     }
 
-    getShorcutValue() : string {
+    getShorcutValue(): string {
         return this.shortcut;
     }
 
-    getLocalShorcuts() : Map<string, Function> {
+    getLocalShorcuts(): Map<string, Function> {
         return this.localShortcut;
     }
 }

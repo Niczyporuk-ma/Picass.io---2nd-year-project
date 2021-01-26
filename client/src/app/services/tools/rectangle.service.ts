@@ -11,21 +11,16 @@ export class RectangleService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'r';
-        this.localShortcut =  new Map();
-
-
+        this.localShortcut = new Map();
     }
 
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    public lineWidth: number;
-    
+    private lineWidth: number;
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-            //this.clearPath();
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.startingPoint = this.mouseDownCoord;
         }
@@ -35,10 +30,10 @@ export class RectangleService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            let line: Vec2[] = [this.startingPoint, this.endPoint];
+            this.drawLine(this.drawingService.baseCtx, line);
         }
         this.mouseDown = false;
-        //this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -48,32 +43,68 @@ export class RectangleService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            let line: Vec2[] = [this.startingPoint, this.endPoint];
+            this.drawLine(this.drawingService.previewCtx, line);
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
         //ctx.lineCap = 'round';
 
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, start.y);
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(start.x, end.y);
-        ctx.moveTo(start.x, end.y);
-        ctx.lineTo(end.x, end.y);
-        ctx.moveTo(end.x, start.y);
-        ctx.lineTo(end.x, end.y);
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[1].x, path[0].y);
+        let line: Vec2[] = [path[0], { x: path[1].x, y: path[0].y }];
+        this.drawingService.drawings.set(line, this);
+
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[0].x, path[1].y);
+        line = [path[0], { x: path[0].x, y: path[1].y }];
+        this.drawingService.drawings.set(line, this);
+
+        ctx.moveTo(path[0].x, path[1].y);
+        ctx.lineTo(path[1].x, path[1].y);
+        line = [
+            { x: path[0].x, y: path[1].y },
+            { x: path[1].x, y: path[1].y },
+        ];
+        this.drawingService.drawings.set(line, this);
+
+        ctx.moveTo(path[1].x, path[0].y);
+        ctx.lineTo(path[1].x, path[1].y);
+        line = [{ x: path[1].x, y: path[0].y }, path[1]];
+        this.drawingService.drawings.set(line, this);
         ctx.stroke();
     }
 
-    getShorcutValue() : string {
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.lineWidth = this.lineWidth;
+        //ctx.lineCap = 'round';
+
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[1].x, path[0].y);
+
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[0].x, path[1].y);
+
+        ctx.moveTo(path[0].x, path[1].y);
+        ctx.lineTo(path[1].x, path[1].y);
+
+        ctx.moveTo(path[1].x, path[0].y);
+        ctx.lineTo(path[1].x, path[1].y);
+
+        ctx.stroke();
+    }
+
+    getShorcutValue(): string {
         return this.shortcut;
     }
 
-    getLocalShorcuts() : Map<string, Function> {
+    getLocalShorcuts(): Map<string, Function> {
         return this.localShortcut;
     }
 }

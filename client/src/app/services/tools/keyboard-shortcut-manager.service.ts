@@ -18,8 +18,8 @@ export class KeyboardShortcutManagerService {
         if (this.toolManagerService.getCurrentTool().getLocalShorcuts().has(key)) {
             this.toolManager.getCurrentTool().localShortCutHandler(key);
         } else {
-            if (this.toolManagerService.toolBoxShortcuts.has(key)) {
-                this.toolManager.setTool(<Tool>this.toolManager.toolBoxShortcuts.get(key));
+            if (this.toolManagerService.getToolBoxShortcuts().has(key)) {
+                this.toolManager.setTool(<Tool>this.toolManager.getToolBoxShortcuts().get(key));
             }
         }
     }
