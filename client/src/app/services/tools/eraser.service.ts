@@ -16,7 +16,6 @@ export class EraserService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-
         this.shortcut = 'e';
         this.localShortcut = new Map();
     }

@@ -10,19 +10,11 @@ import { RectangleService } from './rectangle.service';
     providedIn: 'root',
 })
 export class ToolManagerService {
-    nextTool: Tool;
-    public test: Subject<Function> = new Subject<Function>();
     currentToolChange: Subject<Tool> = new Subject<Tool>();
     private currentTool: Tool;
-
-    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
-    toolBoxShortcuts: Map<string, Tool> = new Map([
-        // probleme avec les getShorcutValue()
-        ['l', this.tools[1]],
-        ['r', this.tools[2]],
-        ['e', this.tools[3]],
-        ['p', this.tools[0]],
-    ]);
+    //changer ca pour un autre conteneur
+    private tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
+    private toolBoxShortcuts: Map<string, Tool> ;
 
     constructor(
         private pencilService: PencilService,
@@ -32,58 +24,37 @@ export class ToolManagerService {
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
+        this.toolBoxShortcuts = new Map([
+            [this.lineService.getShorcutValue(), this.tools[1]],
+            [this.rectangleService.getShorcutValue(), this.tools[2]],
+            [this.eraserService.getShorcutValue(), this.tools[3]],
+            [this.pencilService.getShorcutValue(), this.tools[0]],
+        ]);
     }
+
+    //getters
+    getToolBox(): Tool [] {return this.tools;}
     
+    getCurrentTool(): Tool { return this.currentTool;}
 
-        //Faire un for pour initialiser la map
+    getToolBoxShortcuts(): Map<string, Tool> {  return this.toolBoxShortcuts;}
 
-        // for (let tool of this.tools) {
-        //     this.toolShortcuts.set(tool.shortcut.toString(), tool);
-        // }
-  
+    getRectangleService(): Tool {return this.rectangleService;}
 
-    setTool(tool: Tool) {
-        this.currentToolChange.next(tool);
-    }
+    getEraserService(): Tool {return this.eraserService;}
 
+    getPencilService(): PencilService {return this.pencilService; }
 
-    getCurrentTool(): Tool {
-        return this.currentTool;
-    }
+    getLineService(): LineServiceService { return this.lineService;}
 
-    getToolBoxShortcuts(): Map<string, Tool> {
-        return this.toolBoxShortcuts;
-    }
+    //setters
+    setTool(tool: Tool) { this.currentToolChange.next(tool);}
 
-    getRectangleService(): Tool {
-        return this.rectangleService;
-    }
+    setPencilService(): void {this.currentToolChange.next(this.pencilService); }
 
-    getEraserService(): Tool {
-        return this.eraserService;
-    }
+    setLineService(): void {this.currentToolChange.next(this.lineService);}
 
-    getPencilService(): PencilService {
-        return this.pencilService;
-    }
+    setRectangleService(): void {this.currentToolChange.next(this.rectangleService);}
 
-    getLineService(): LineServiceService {
-        return this.lineService;
-    }
-
-    setPencilService(): void {
-        this.currentToolChange.next(this.pencilService);
-    }
-
-    setLineService(): void {
-        this.currentToolChange.next(this.lineService);
-    }
-
-    setRectangleService(): void {
-        this.currentToolChange.next(this.rectangleService);
-    }
-
-    setEraserService(): void {
-        this.currentToolChange.next(this.eraserService);
-    }
+    setEraserService(): void {this.currentToolChange.next(this.eraserService);}
 }

@@ -8,13 +8,12 @@ import { faSlash } from '@fortawesome/free-solid-svg-icons';
     providedIn: 'root',
 })
 export class LineServiceService extends Tool {
-    test: Function;
     private isStarted: boolean;
     private startingPoint: Vec2;
     private endPoint: Vec2;
     private lineWidth: number;
     public icon = faSlash;
-    localShortcut: Map<string, Function> = new Map([
+    localShortcut = new Map([
         ['Shift', this.onShift],
         ['p', this.onP],
         ['n', this.onN],
@@ -24,12 +23,6 @@ export class LineServiceService extends Tool {
         super(drawingService);
         this.isStarted = false;
         this.shortcut = 'l';
-    }
-
-
-    localShortCutHandler(key: string) {
-        this.test = <Function>this.localShortcut.get(key);
-        this.test();
     }
 
     onP(): void {

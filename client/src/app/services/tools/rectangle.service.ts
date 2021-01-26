@@ -12,8 +12,6 @@ export class RectangleService extends Tool {
         super(drawingService);
         this.shortcut = 'r';
         this.localShortcut =  new Map();
-
-
     }
 
     private startingPoint: Vec2;
