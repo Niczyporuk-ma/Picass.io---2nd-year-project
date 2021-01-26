@@ -64,6 +64,7 @@ export class DrawingComponent implements AfterViewInit {
                     this.currentTool.onDoubleClick(event);
                 }
                 this.clickCount = 0;
+                
             }, 170);
         }
     }
