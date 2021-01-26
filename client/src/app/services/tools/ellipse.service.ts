@@ -44,16 +44,17 @@ export class EllipseService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+    private drawRectangle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
         //ctx.lineCap = 'round';
-
+        ctx.setLineDash([5, 5]);
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, start.y);
         ctx.moveTo(start.x, start.y);
@@ -63,7 +64,9 @@ export class EllipseService extends Tool {
         ctx.moveTo(end.x, start.y);
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
+    }
 
+    private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         var width = end.y - start.y;
         var height = end.x - start.x;
         const radiusX = width / 2;
@@ -71,6 +74,7 @@ export class EllipseService extends Tool {
 
         //ellipse
         ctx.beginPath();
+        ctx.setLineDash([]);
         ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
         ctx.stroke();
     }

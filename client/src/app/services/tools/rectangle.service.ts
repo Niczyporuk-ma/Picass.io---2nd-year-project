@@ -11,19 +11,16 @@ export class RectangleService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'r';
-        this.localShortcut =  new Map();
+        this.localShortcut = new Map();
     }
 
     private startingPoint: Vec2;
     private endPoint: Vec2;
     private lineWidth: number;
-    
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-           
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.startingPoint = this.mouseDownCoord;
         }
@@ -36,7 +33,6 @@ export class RectangleService extends Tool {
             this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
         }
         this.mouseDown = false;
-        
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -67,11 +63,11 @@ export class RectangleService extends Tool {
         ctx.stroke();
     }
 
-    getShorcutValue() : string {
+    getShorcutValue(): string {
         return this.shortcut;
     }
 
-    getLocalShorcuts() : Map<string, Function> {
+    getLocalShorcuts(): Map<string, Function> {
         return this.localShortcut;
     }
 }
