@@ -6,10 +6,10 @@ import { Vec2 } from './vec2';
 export abstract class Tool {
     protected mouseDownCoord: Vec2;
     protected mouseDown: boolean = false;
-    public icon: any;
-    public shortcut: string;
-    public localShortcuts: Map<string, Function>;
-    public currentCommand : Function;
+    icon: any;
+    shortcut: string;
+    localShortcuts: Map<string, () => void>;
+    currentCommand: () => void;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -27,8 +27,8 @@ export abstract class Tool {
         return { x: event.offsetX, y: event.offsetY };
     }
 
-    localShortCutHandler(key: string) {
-        this.currentCommand = <Function>this.localShortcuts.get(key);
+    localShortCutHandler(key: string): void {
+        this.currentCommand = this.localShortcuts.get(key) as () => void;
         this.currentCommand();
     }
 }

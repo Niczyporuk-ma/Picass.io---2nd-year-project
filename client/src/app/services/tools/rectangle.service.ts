@@ -11,19 +11,16 @@ export class RectangleService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'r';
-        this.localShortcuts =  new Map();
+        this.localShortcuts = new Map();
     }
 
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    public lineWidth: number;
-    
+    lineWidth: number;
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-           
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.startingPoint = this.mouseDownCoord;
         }
@@ -36,7 +33,6 @@ export class RectangleService extends Tool {
             this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
         }
         this.mouseDown = false;
-        
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -54,7 +50,7 @@ export class RectangleService extends Tool {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
-        //ctx.lineCap = 'round';
+        // ctx.lineCap = 'round';
 
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, start.y);
@@ -66,5 +62,4 @@ export class RectangleService extends Tool {
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
     }
-
 }

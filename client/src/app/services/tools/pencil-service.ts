@@ -20,7 +20,7 @@ export class PencilService extends Tool {
     private pathData: Vec2[];
     private penColor: string;
     private penWidth: number;
-    public icon = faPencilAlt;
+    icon = faPencilAlt;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -68,14 +68,13 @@ export class PencilService extends Tool {
         this.drawingService.baseCtx.strokeStyle = 'blue';
     }
 
-    public changeColor(newPenColor: string) {
+    changeColor(newPenColor: string) {
         this.penColor = newPenColor;
     }
 
-    public changeWidth(newWidth: string) {
+    changeWidth(newWidth: string) {
         this.penWidth = parseInt(newWidth);
     }
-
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
@@ -92,5 +91,4 @@ export class PencilService extends Tool {
     private clearPath(): void {
         this.pathData = [];
     }
-
 }

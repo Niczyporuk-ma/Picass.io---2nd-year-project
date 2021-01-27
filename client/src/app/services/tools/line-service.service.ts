@@ -11,20 +11,18 @@ export class LineServiceService extends Tool {
     private isStarted: boolean;
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    public lineWidth: number;
-    public icon = faSlash;
-    
-    
+    lineWidth: number;
+    icon = faSlash;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.isStarted = false;
         this.shortcut = 'l';
         this.localShortcuts = new Map([
-        ['Shift', this.onShift],
-        ['k', this.onP],
-        ['n', this.onN],
-    ]);
+            ['Shift', this.onShift],
+            ['k', this.onP],
+            ['n', this.onN],
+        ]);
     }
 
     onP(): void {
@@ -72,8 +70,8 @@ export class LineServiceService extends Tool {
     }
 
     distanceUtil(start: Vec2, end: Vec2): boolean {
-        var a = start.x - end.x;
-        var b = start.y - end.y;
+        const a = start.x - end.x;
+        const b = start.y - end.y;
 
         return a <= 20 && b <= 20;
     }
@@ -98,6 +96,4 @@ export class LineServiceService extends Tool {
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
     }
-
-
 }

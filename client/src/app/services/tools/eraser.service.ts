@@ -11,8 +11,7 @@ import { MouseButton } from './pencil-service';
 export class EraserService extends Tool {
     private startingPoint: Vec2;
     private currentPoint: Vec2;
-    public icon = faEraser;
-    
+    icon = faEraser;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -50,5 +49,4 @@ export class EraserService extends Tool {
         ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
         ctx.stroke();
     }
-
 }
