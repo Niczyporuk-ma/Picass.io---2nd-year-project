@@ -23,6 +23,7 @@ export enum MouseButton {
 export class PencilService extends Tool {
     private pathData: Vec2[];
     public penColor: string;
+    public lastPenWidth: number;
     public penWidth: number;
     public ID: number = 0;
     public icon = faPencilAlt;
@@ -79,8 +80,10 @@ export class PencilService extends Tool {
         this.penColor = newPenColor;
     }
 
-    public changeWidth(newWidth: string) {
-        this.penWidth = parseInt(newWidth);
+    public changeWidth(newWidth: number) {
+        this.lastPenWidth = this.penWidth;
+        //this.penWidth = parseInt(newWidth);
+        this.penWidth = newWidth;
     }
 
     // public setCurrent(): void {

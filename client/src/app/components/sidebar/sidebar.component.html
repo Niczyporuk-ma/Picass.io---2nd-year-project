@@ -9,6 +9,22 @@
         N'oubliez pas de regarder les tests dans les fichiers spec.ts aussi!
     </p>
     <input type="text" (keyup)="changeColor($event)" placeholder="choose color" /> <br />
-    <input type="text" (keyup)="changeWidth($event)" placeholder="choose thickness" />
+
+    <mat-card>
+        <mat-slider
+            min="1"
+            max="100"
+            step="0.5"
+            value="1"
+            class="slider"
+            (change)="changeWidth($event.value)"
+            (input)="widthValue = $event.value"
+            [value]="widthValue"
+        ></mat-slider>
+        {{ widthValue }}
+        <p></p>
+        <label>Width: <input [(ngModel)]="widthValue" (change)="changeWidth(widthValue)" /></label>
+    </mat-card>
+
     <app-toolbar></app-toolbar>
 </div>
