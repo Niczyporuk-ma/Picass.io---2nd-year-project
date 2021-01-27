@@ -26,7 +26,7 @@ export class PencilService extends Tool {
         super(drawingService);
         this.clearPath();
         this.shortcut = 'p';
-        this.localShortcut = new Map([['Shift', this.test]]);
+        this.localShortcuts = new Map([['Shift', this.test]]);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -93,11 +93,4 @@ export class PencilService extends Tool {
         this.pathData = [];
     }
 
-    getShorcutValue() : string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts() : Map<string, Function> {
-        return this.localShortcut;
-    }
 }

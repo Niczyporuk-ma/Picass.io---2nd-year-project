@@ -11,18 +11,20 @@ export class LineServiceService extends Tool {
     private isStarted: boolean;
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    private lineWidth: number;
+    public lineWidth: number;
     public icon = faSlash;
-    localShortcut = new Map([
-        ['Shift', this.onShift],
-        ['p', this.onP],
-        ['n', this.onN],
-    ]);
+    
+    
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.isStarted = false;
         this.shortcut = 'l';
+        this.localShortcuts = new Map([
+        ['Shift', this.onShift],
+        ['k', this.onP],
+        ['n', this.onN],
+    ]);
     }
 
     onP(): void {
@@ -95,14 +97,6 @@ export class LineServiceService extends Tool {
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
-    }
-
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
     }
 
 

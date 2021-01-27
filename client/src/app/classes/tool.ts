@@ -7,9 +7,9 @@ export abstract class Tool {
     protected mouseDownCoord: Vec2;
     protected mouseDown: boolean = false;
     public icon: any;
-    protected shortcut: string;
-    protected localShortcut: Map<string, Function>;
-    protected currentCommand : Function;
+    public shortcut: string;
+    public localShortcuts: Map<string, Function>;
+    public currentCommand : Function;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -27,16 +27,8 @@ export abstract class Tool {
         return { x: event.offsetX, y: event.offsetY };
     }
 
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
-    }
-
     localShortCutHandler(key: string) {
-        this.currentCommand = <Function>this.localShortcut.get(key);
+        this.currentCommand = <Function>this.localShortcuts.get(key);
         this.currentCommand();
     }
 }

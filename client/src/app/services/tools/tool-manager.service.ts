@@ -11,10 +11,10 @@ import { RectangleService } from './rectangle.service';
 })
 export class ToolManagerService {
     currentToolChange: Subject<Tool> = new Subject<Tool>();
-    private currentTool: Tool;
+    currentTool: Tool;
     //changer ca pour un autre conteneur
-    private tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
-    private toolBoxShortcuts: Map<string, Tool> ;
+    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
+    toolBoxShortcuts: Map<string, Tool> ;
 
     constructor(
         private pencilService: PencilService,
@@ -25,27 +25,15 @@ export class ToolManagerService {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
         this.toolBoxShortcuts = new Map([
-            [this.lineService.getShorcutValue(), this.tools[1]],
-            [this.rectangleService.getShorcutValue(), this.tools[2]],
-            [this.eraserService.getShorcutValue(), this.tools[3]],
-            [this.pencilService.getShorcutValue(), this.tools[0]],
+            [this.lineService.shortcut, this.tools[1]],
+            [this.rectangleService.shortcut, this.tools[2]],
+            [this.eraserService.shortcut, this.tools[3]],
+            [this.pencilService.shortcut, this.tools[0]],
         ]);
     }
 
     //getters
-    getToolBox(): Tool [] {return this.tools;}
-    
-    getCurrentTool(): Tool { return this.currentTool;}
-
-    getToolBoxShortcuts(): Map<string, Tool> {  return this.toolBoxShortcuts;}
-
-    getRectangleService(): Tool {return this.rectangleService;}
-
-    getEraserService(): Tool {return this.eraserService;}
-
-    getPencilService(): PencilService {return this.pencilService; }
-
-    getLineService(): LineServiceService { return this.lineService;}
+   
 
     //setters
     setTool(tool: Tool) { this.currentToolChange.next(tool);}

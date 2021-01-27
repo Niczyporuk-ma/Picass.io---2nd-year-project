@@ -15,11 +15,11 @@ export class KeyboardShortcutManagerService {
     }
 
     onKeyPress(key: string): void {
-        if (this.toolManagerService.getCurrentTool().getLocalShorcuts().has(key)) {
-            this.toolManager.getCurrentTool().localShortCutHandler(key);
+        if (this.toolManagerService.currentTool.localShortcuts.has(key)) {
+            this.toolManager.currentTool.localShortCutHandler(key);
         } else {
-            if (this.toolManagerService.getToolBoxShortcuts().has(key)) {
-                this.toolManager.setTool(<Tool>this.toolManager.getToolBoxShortcuts().get(key));
+            if (this.toolManagerService.toolBoxShortcuts.has(key)) {
+                this.toolManager.setTool(<Tool>this.toolManager.toolBoxShortcuts.get(key));
             }
         }
     }

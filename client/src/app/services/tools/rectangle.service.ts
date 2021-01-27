@@ -11,12 +11,12 @@ export class RectangleService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'r';
-        this.localShortcut =  new Map();
+        this.localShortcuts =  new Map();
     }
 
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    private lineWidth: number;
+    public lineWidth: number;
     
 
     onMouseDown(event: MouseEvent): void {
@@ -67,11 +67,4 @@ export class RectangleService extends Tool {
         ctx.stroke();
     }
 
-    getShorcutValue() : string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts() : Map<string, Function> {
-        return this.localShortcut;
-    }
 }

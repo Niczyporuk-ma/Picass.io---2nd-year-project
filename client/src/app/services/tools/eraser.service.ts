@@ -17,7 +17,7 @@ export class EraserService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'e';
-        this.localShortcut = new Map();
+        this.localShortcuts = new Map();
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -51,11 +51,4 @@ export class EraserService extends Tool {
         ctx.stroke();
     }
 
-     getShorcutValue() : string {
-         return this.shortcut;
-     }
-
-     getLocalShorcuts() : Map<string, Function> {
-         return this.localShortcut;
-     }
 }

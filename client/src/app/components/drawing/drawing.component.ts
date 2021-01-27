@@ -31,10 +31,10 @@ export class DrawingComponent implements AfterViewInit {
     clickCount: number = 0;
     constructor(private drawingService: DrawingService, toolManager: ToolManagerService, keyboardManager : KeyboardShortcutManagerService) {
         this.toolManager = toolManager;
-        this.tools = toolManager.getToolBox();
+        this.tools = toolManager.tools;
         this.shortcutKeyboardManager = keyboardManager;
         this.toolManager.currentToolChange.subscribe((value) => (this.currentTool = value));
-        this.currentTool = this.toolManager.getCurrentTool();
+        this.currentTool = this.toolManager.currentTool;
     }
 
     ngAfterViewInit(): void {
