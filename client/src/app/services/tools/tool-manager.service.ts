@@ -12,23 +12,23 @@ import { RectangleService } from './rectangle.service';
 export class ToolManagerService {
     currentToolChange: Subject<Tool> = new Subject<Tool>();
     currentTool: Tool;
-    //changer ca pour un autre conteneur
+    // changer ca pour un autre conteneur
     tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
-    toolBoxShortcuts: Map<string, Tool> ;
+    toolBoxShortcuts: Map<string, Tool>;
 
     constructor(
-        private pencilService: PencilService,
-        private lineService: LineServiceService,
-        private rectangleService: RectangleService,
-        private eraserService: EraserService,
+        public pencilService: PencilService,
+        public lineService: LineServiceService,
+        public rectangleService: RectangleService,
+        public eraserService: EraserService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
         this.toolBoxShortcuts = new Map([
             [this.lineService.shortcut, this.tools[1]],
-            [this.rectangleService.shortcut, this.tools[2]],
-            [this.eraserService.shortcut, this.tools[3]],
-            [this.pencilService.shortcut, this.tools[0]],
+            [this.rectangleService.shortcut, this.tools[this.rectangleService.index]],
+            [this.eraserService.shortcut, this.tools[this.eraserService.index]],
+            [this.pencilService.shortcut, this.tools[this.pencilService.index]],
         ]);
     }
 
@@ -37,14 +37,24 @@ export class ToolManagerService {
        return this.pencilService;
    }
 
-    //setters
-    setTool(tool: Tool) { this.currentToolChange.next(tool);}
+    // setters
+    setTool(tool: Tool): void {
+        this.currentToolChange.next(tool);
+    }
 
-    setPencilService(): void {this.currentToolChange.next(this.pencilService); }
+    setPencilService(): void {
+        this.currentToolChange.next(this.pencilService);
+    }
 
-    setLineService(): void {this.currentToolChange.next(this.lineService);}
+    setLineService(): void {
+        this.currentToolChange.next(this.lineService);
+    }
 
-    setRectangleService(): void {this.currentToolChange.next(this.rectangleService);}
+    setRectangleService(): void {
+        this.currentToolChange.next(this.rectangleService);
+    }
 
-    setEraserService(): void {this.currentToolChange.next(this.eraserService);}
+    setEraserService(): void {
+        this.currentToolChange.next(this.eraserService);
+    }
 }

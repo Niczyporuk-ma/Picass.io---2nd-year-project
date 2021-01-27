@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Injectable({
     providedIn: 'root',
@@ -11,20 +10,19 @@ export class LineServiceService extends Tool {
     private isStarted: boolean;
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    public lineWidth: number;
-    public icon = faSlash;
-    
-    
+    lineWidth: number;
+    pixelDistance: number = 20;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.isStarted = false;
         this.shortcut = 'l';
         this.localShortcuts = new Map([
-        ['Shift', this.onShift],
-        ['k', this.onP],
-        ['n', this.onN],
-    ]);
+            ['Shift', this.onShift],
+            ['k', this.onP],
+            ['n', this.onN],
+        ]);
+        this.index = 1;
     }
 
     onP(): void {
@@ -72,10 +70,10 @@ export class LineServiceService extends Tool {
     }
 
     distanceUtil(start: Vec2, end: Vec2): boolean {
-        var a = start.x - end.x;
-        var b = start.y - end.y;
+        const a = start.x - end.x;
+        const b = start.y - end.y;
 
-        return a <= 20 && b <= 20;
+        return a <= this.pixelDistance && b <= this.pixelDistance;
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -98,6 +96,4 @@ export class LineServiceService extends Tool {
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
     }
-
-
 }
