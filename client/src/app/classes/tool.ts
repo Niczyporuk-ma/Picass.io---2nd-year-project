@@ -31,4 +31,5 @@ export abstract class Tool {
         this.currentCommand = this.localShortcuts.get(key) as () => void;
         this.currentCommand();
     }
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {}
 }
