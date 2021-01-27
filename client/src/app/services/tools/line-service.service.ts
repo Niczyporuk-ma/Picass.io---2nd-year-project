@@ -89,18 +89,23 @@ export class LineServiceService extends Tool {
         }
     }
 
-    setShiftIfPressed = (e: KeyboardEvent) => {
-        if (e.key === 'Shift') {
-            this.shiftIsPressed = true;
-            //console.log('true');
+    setShiftIfPressed = () => {
+        // if (e.key === 'Shift') {
+        this.shiftIsPressed = true;
+        if (!this.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            let line: Vec2[] = [this.startingPoint, this.closestAngledPoint(this.startingPoint, this.endPoint)];
+            this.drawLine(this.drawingService.previewCtx, line);
         }
+        window.removeEventListener('keydown', this.setShiftIfPressed);
+        //}
     };
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
             this.shiftIsPressed = false;
             //console.log('false');
-            window.removeEventListener('keypress', this.setShiftIfPressed);
+            //window.removeEventListener('keydown', this.setShiftIfPressed);
             window.removeEventListener('keyup', this.setShiftNonPressed);
             this.eventTest = false;
             this.line = [this.startingPoint, this.endPoint];
@@ -111,9 +116,63 @@ export class LineServiceService extends Tool {
 
     onShift(): void {
         if (!this.eventTest) {
-            window.addEventListener('keydown', this.setShiftIfPressed);
+            //window.addEventListener('keydown', this.setShiftIfPressed);
+            this.setShiftIfPressed();
             window.addEventListener('keyup', this.setShiftNonPressed);
             this.eventTest = true;
+        }
+    }
+
+    closestValidAngle(start: Vec2, end: Vec2): number {
+        let possibleAngles: number[] = [0, 45, 90, 135, 180, 225, 270, 315, 360];
+        let closestValid: number = 999;
+
+        let a: number = Math.abs(start.x - end.x);
+        let b: number = Math.abs(start.y - end.y);
+        let angle: number = Math.atan2(b, a) * (180 / Math.PI);
+        angle = this.angleQuadrantConverter(start, end, angle);
+
+        for (let angles of possibleAngles) {
+            if (Math.abs(angle - angles) < Math.abs(angle - closestValid)) {
+                closestValid = angles;
+            }
+        }
+
+        return closestValid;
+    }
+
+    closestAngledPoint(start: Vec2, end: Vec2): Vec2 {
+        let closestAngle: number = this.closestValidAngle(start, end);
+        let currentVectorMagnitude: number = this.distanceUtil(start, end);
+        let toRadian = Math.PI / 180;
+        let x_: number = start.x + currentVectorMagnitude * Math.cos(closestAngle * toRadian);
+        let y_: number = start.y - currentVectorMagnitude * Math.sin(closestAngle * toRadian);
+
+        let newLine: Vec2 = { x: x_, y: y_ };
+
+        return newLine;
+    }
+
+    distanceUtil(start: Vec2, end: Vec2): number {
+        var a = Math.abs(start.x - end.x);
+        var b = Math.abs(start.y - end.y);
+
+        return Math.sqrt(a * a + b * b);
+    }
+
+    angleQuadrantConverter(start: Vec2, end: Vec2, angle: number): number {
+        if (start.x <= end.x && start.y >= end.y) {
+            angle = angle;
+            return angle;
+        } else if (start.x <= end.x && start.y <= end.y) {
+            angle = 360 - angle;
+            return angle;
+        } else if (start.x >= end.x && start.y >= end.y) {
+            angle = 180 - angle;
+            return angle;
+        } else {
+            angle = angle + 180;
+            return angle;
         }
     }
 
@@ -121,6 +180,8 @@ export class LineServiceService extends Tool {
         let a: number = Math.abs(start.x - end.x);
         let b: number = Math.abs(start.y - end.y);
         let angle: number = Math.atan2(b, a) * (180 / Math.PI);
+
+        angle = this.angleQuadrantConverter(start, end, angle);
 
         if (angle % 45 === 0) {
             return true;
@@ -157,7 +218,7 @@ export class LineServiceService extends Tool {
 
     onDoubleClick(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
-        if (this.distanceUtil(this.startingPoint, mousePosition)) {
+        if (this.pixelDistanceUtil(this.startingPoint, mousePosition)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.startingPoint]);
             this.isStarted = false;
@@ -171,9 +232,9 @@ export class LineServiceService extends Tool {
         }
     }
 
-    distanceUtil(start: Vec2, end: Vec2): boolean {
-        var a = start.x - end.x;
-        var b = start.y - end.y;
+    pixelDistanceUtil(start: Vec2, end: Vec2): boolean {
+        var a = Math.abs(start.x - end.x);
+        var b = Math.abs(start.y - end.y);
 
         return a <= 20 && b <= 20;
     }

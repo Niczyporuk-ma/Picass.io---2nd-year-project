@@ -8,10 +8,13 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
+    shiftIsPressed: boolean;
+    currentLine: Vec2[] = [];
+    eventTest: boolean;
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.shortcut = 'r';
-        this.localShortcut = new Map();
+        this.shortcut = '1';
+        this.localShortcut = new Map([['Shift', this.onShift]]);
     }
 
     private startingPoint: Vec2;
@@ -26,25 +29,104 @@ export class RectangleService extends Tool {
         }
     }
 
+    setShiftIfPressed = (e: KeyboardEvent) => {
+        if (e.key === 'Shift') {
+            this.shiftIsPressed = true;
+            if (!this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.currentLine = [this.startingPoint, this.closestSquare([this.startingPoint, this.endPoint])];
+                this.drawLine(this.drawingService.previewCtx, this.currentLine);
+            }
+        }
+    };
+
+    setShiftNonPressed = (e: KeyboardEvent) => {
+        if (e.key === 'Shift') {
+            if (this.mouseDown) {
+                this.shiftIsPressed = false;
+                window.removeEventListener('keypress', this.setShiftIfPressed);
+                window.removeEventListener('keyup', this.setShiftNonPressed);
+                this.eventTest = false;
+                this.currentLine = [this.startingPoint, this.endPoint];
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawLine(this.drawingService.previewCtx, this.currentLine);
+            } else {
+                this.shiftIsPressed = false;
+            }
+        }
+    };
+
+    onShift(): void {
+        if (!this.eventTest) {
+            window.addEventListener('keydown', this.setShiftIfPressed);
+            window.addEventListener('keyup', this.setShiftNonPressed);
+            this.eventTest = true;
+        }
+    }
+
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.endPoint = mousePosition;
-            let line: Vec2[] = [this.startingPoint, this.endPoint];
-            this.drawLine(this.drawingService.baseCtx, line);
+            if (!this.shiftIsPressed) {
+                const mousePosition = this.getPositionFromMouse(event);
+                this.endPoint = mousePosition;
+                this.currentLine = [this.startingPoint, this.endPoint];
+                this.drawLine(this.drawingService.baseCtx, this.currentLine);
+            } else {
+                this.drawLine(this.drawingService.baseCtx, this.currentLine);
+            }
         }
         this.mouseDown = false;
+    }
+
+    checkIfIsSquare(pos: Vec2[]): boolean {
+        let horizontalDistance: number = pos[0].x - pos[1].x;
+        let verticalDistance: number = pos[0].y - pos[1].y;
+
+        if (horizontalDistance == verticalDistance) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    closestSquare(pos: Vec2[]): Vec2 {
+        let horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
+        let verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
+        let isLeft: boolean = pos[0].x > pos[1].x;
+        let isDownward: boolean = pos[0].y > pos[1].y;
+
+        let smallest = Math.min(horizontalDistance, verticalDistance);
+
+        if (smallest == horizontalDistance) {
+            let newPos: Vec2 = { x: pos[1].x, y: isDownward ? pos[0].y - horizontalDistance : pos[0].y + horizontalDistance };
+            return newPos;
+        } else {
+            let newPos: Vec2 = { x: isLeft ? pos[0].x - verticalDistance : pos[0].x + verticalDistance, y: pos[1].y };
+            return newPos;
+        }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            let line: Vec2[] = [this.startingPoint, this.endPoint];
-            this.drawLine(this.drawingService.previewCtx, line);
+            console.log(this.shiftIsPressed);
+            if (this.shiftIsPressed) {
+                if (this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                    this.currentLine = [this.startingPoint, this.endPoint];
+                    this.drawLine(this.drawingService.previewCtx, this.currentLine);
+                } else {
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                    this.currentLine = [this.startingPoint, this.closestSquare([this.startingPoint, this.endPoint])];
+                    this.drawLine(this.drawingService.previewCtx, this.currentLine);
+                }
+            } else {
+                // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.currentLine = [this.startingPoint, this.endPoint];
+                this.drawLine(this.drawingService.previewCtx, this.currentLine);
+            }
         }
     }
 
@@ -61,26 +143,26 @@ export class RectangleService extends Tool {
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[0].y);
-        // let line: Vec2[] = [path[0], { x: path[1].x, y: path[0].y }];
-        // this.drawingService.drawings.set(line, this);
+        // let currentLine: Vec2[] = [path[0], { x: path[1].x, y: path[0].y }];
+        // this.drawingService.drawings.set(currentLine, this);
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[0].x, path[1].y);
-        // line = [path[0], { x: path[0].x, y: path[1].y }];
-        // this.drawingService.drawings.set(line, this);
+        // currentLine = [path[0], { x: path[0].x, y: path[1].y }];
+        // this.drawingService.drawings.set(currentLine, this);
 
         ctx.moveTo(path[0].x, path[1].y);
         ctx.lineTo(path[1].x, path[1].y);
-        // line = [
+        // currentLine = [
         //     { x: path[0].x, y: path[1].y },
         //     { x: path[1].x, y: path[1].y },
         // ];
-        // this.drawingService.drawings.set(line, this);
+        // this.drawingService.drawings.set(currentLine, this);
 
         ctx.moveTo(path[1].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
-        // line = [{ x: path[1].x, y: path[0].y }, path[1]];
-        // this.drawingService.drawings.set(line, this);
+        // currentLine = [{ x: path[1].x, y: path[0].y }, path[1]];
+        // this.drawingService.drawings.set(currentLine, this);
         ctx.stroke();
     }
 
