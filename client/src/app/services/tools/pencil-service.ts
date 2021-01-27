@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -13,28 +12,20 @@ export enum MouseButton {
     Forward = 4,
 }
 
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
 export class PencilService extends Tool {
+    laspoint: Vec2;
+    nexpoint: Vec2;
     private pathData: Vec2[];
-    public penColor: string;
-    public lastPenWidth: number;
-    public penWidth: number;
-    public ID: number = 0;
-    public icon = faPencilAlt;
-    shortcut: string = 'p';
-    public localShortcut: Map<string, Function> = new Map([['Shift', this.test]]);
-    //public toolManager: ToolManagerService;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        //this.toolManager = toolManager;
         this.clearPath();
+        this.shortcut = 'p';
+        this.localShortcuts = new Map([['Shift', this.test]]);
+        this.index = 0;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -58,7 +49,7 @@ export class PencilService extends Tool {
     }
 
     test(): void {
-        console.log('gg sa fonctionne, sah quel plaisir');
+        alert('gg sa fonctionne, sah quel plaisir');
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -76,24 +67,33 @@ export class PencilService extends Tool {
         this.drawingService.baseCtx.strokeStyle = 'blue';
     }
 
-    public changeColor(newPenColor: string) {
-        this.penColor = newPenColor;
+    changeWidth(newWidth: number): void {
+        this.lastWidth = this.currentWidth;
+        // this.penWidth = parseInt(newWidth);
+        this.currentWidth = newWidth;
     }
 
-    public changeWidth(newWidth: number) {
-        this.lastPenWidth = this.penWidth;
-        //this.penWidth = parseInt(newWidth);
-        this.penWidth = newWidth;
-    }
-
-    // public setCurrent(): void {
-    //     this.toolManager.setPencilService();
-    // }
-
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        if (ctx === this.drawingService.baseCtx) {
+            this.drawingService.drawingStarted = true;
+        }
         ctx.beginPath();
-        ctx.strokeStyle = this.penColor;
-        ctx.lineWidth = this.penWidth;
+        ctx.lineWidth = this.currentWidth;
+        ctx.lineCap = 'round';
+        ctx.globalCompositeOperation = 'source-over';
+        for (const point of path) {
+            ctx.lineTo(point.x, point.y);
+            /* if (index !== 0) {
+                const start: Vec2 = path[index - 1];
+                const end: Vec2 = path[index];
+                const line: Vec2[] = [start, end];
+               // this.drawingService.pencilDrawings.push(line);
+            }*/
+        }
+        ctx.stroke();
+    }
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'source-over';
         for (const point of path) {

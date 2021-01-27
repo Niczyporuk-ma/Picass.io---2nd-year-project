@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { faEraser } from '@fortawesome/free-solid-svg-icons';
-import { DrawingService } from '../drawing/drawing.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton } from './pencil-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EraserService extends Tool {
-    startingPoint: Vec2;
-    currentPoint: Vec2;
-    public icon = faEraser;
-    baseWidth = 10;
-    shortcut: string = 'e';
-    localShortcut: Map<string, Function> = new Map();
+    private startingPoint: Vec2;
+    private currentPoint: Vec2;
+    baseWidht: number = 20;
+    indexValue: number = 3; // pas le choix car lint me casse les couilles
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.shortcut = 'e';
+        this.localShortcuts = new Map();
+        this.index = this.indexValue;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -37,13 +37,23 @@ export class EraserService extends Tool {
             this.currentPoint = this.getPositionFromMouse(event);
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, this.currentPoint);
+            this.drawLine(this.drawingService.baseCtx, [this.currentPoint]);
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.lineWidth = 20;
+        ctx.lineWidth = this.baseWidht;
+        ctx.lineCap = 'round';
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
+        ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
+        ctx.stroke();
+    }
+
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
+        ctx.lineWidth = this.baseWidht;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);

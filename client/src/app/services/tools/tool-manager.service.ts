@@ -10,61 +10,36 @@ import { RectangleService } from './rectangle.service';
     providedIn: 'root',
 })
 export class ToolManagerService {
-    eraser: EraserService;
-    line: LineServiceService;
-    pencil: PencilService;
-    rectangle: RectangleService;
     currentToolChange: Subject<Tool> = new Subject<Tool>();
     currentTool: Tool;
-    a: Function;
-    toolShortcuts: Map<string, Function> = new Map([
-        ['l', this.setLineService],
-        ['r', this.setRectangleService],
-        ['e', this.setEraserService],
-        ['p', this.setPencilService],
-    ]);
-
+    // changer ca pour un autre conteneur
     tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
+    toolBoxShortcuts: Map<string, Tool>;
 
     constructor(
-        private pencilService: PencilService,
-        private lineService: LineServiceService,
-        private rectangleService: RectangleService,
-        private eraserService: EraserService,
+        public pencilService: PencilService,
+        public lineService: LineServiceService,
+        public rectangleService: RectangleService,
+        public eraserService: EraserService,
     ) {
-        this.eraser = eraserService;
-        this.rectangle = rectangleService;
-        this.line = lineService;
-        this.pencil = pencilService;
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
-        // for (let tool of this.tools) {
-        //     this.toolShortcuts.set(tool.shortcut.toString(), tool);
-        // }
+        this.toolBoxShortcuts = new Map([
+            [this.lineService.shortcut, this.tools[1]],
+            [this.rectangleService.shortcut, this.tools[this.rectangleService.index]],
+            [this.eraserService.shortcut, this.tools[this.eraserService.index]],
+            [this.pencilService.shortcut, this.tools[this.pencilService.index]],
+        ]);
     }
 
-    onKeyPress(key: string): void {
-        if (this.currentTool.localShortcut.has(key)) {
-            this.a = <Function>this.currentTool.localShortcut.get(key);
-            this.a();
-        } else {
-            if (this.toolShortcuts.has(key)) {
-                this.a = <Function>this.toolShortcuts.get(key);
-                this.a();
-                console.log(this.currentTool);
-            }
-            // else {
-            //     alert("Commande n'existe pas pour cet outil");
-            // }
-        }
-    }
-
+    // getters
     getPencilService(): PencilService {
         return this.pencilService;
     }
 
-    getLineService(): LineServiceService {
-        return this.lineService;
+    // setters
+    setTool(tool: Tool): void {
+        this.currentToolChange.next(tool);
     }
 
     setPencilService(): void {
@@ -72,17 +47,14 @@ export class ToolManagerService {
     }
 
     setLineService(): void {
-        //this.currentTool = this.lineService;
         this.currentToolChange.next(this.lineService);
     }
 
     setRectangleService(): void {
-        //this.currentTool = this.rectangleService;
         this.currentToolChange.next(this.rectangleService);
     }
 
     setEraserService(): void {
-        //this.currentTool = this.eraserService;
         this.currentToolChange.next(this.eraserService);
     }
 }

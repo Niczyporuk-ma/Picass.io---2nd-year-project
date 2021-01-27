@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { KeyboardShortcutManagerService } from '@app/services/tools/keyboard-shortcut-manager.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 // TODO : Avoir un fichier séparé pour les constantes ?
@@ -21,15 +22,18 @@ export class DrawingComponent implements AfterViewInit {
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+    timeOutDuration: number = 170;
 
     // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
     tools: Tool[];
     currentTool: Tool;
+    shortcutKeyboardManager: KeyboardShortcutManagerService;
     toolManager: ToolManagerService;
     clickCount: number = 0;
-    constructor(private drawingService: DrawingService, toolManager: ToolManagerService) {
+    constructor(private drawingService: DrawingService, toolManager: ToolManagerService, keyboardManager: KeyboardShortcutManagerService) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
+        this.shortcutKeyboardManager = keyboardManager;
         this.toolManager.currentToolChange.subscribe((value) => (this.currentTool = value));
         this.currentTool = this.toolManager.currentTool;
     }
@@ -41,7 +45,7 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         window.addEventListener('keydown', (event: KeyboardEvent) => {
-            this.toolManager.onKeyPress(event.key);
+            this.shortcutKeyboardManager.onKeyPress(event.key);
         });
     }
 
@@ -53,15 +57,15 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
         this.clickCount++;
-        if (this.clickCount == 1) {
+        if (this.clickCount === 1) {
             setTimeout(() => {
-                if (this.clickCount == 1) {
+                if (this.clickCount === 1) {
                     this.currentTool.onMouseClick(event);
                 } else {
                     this.currentTool.onDoubleClick(event);
                 }
                 this.clickCount = 0;
-            }, 170);
+            }, this.timeOutDuration);
         }
     }
 
