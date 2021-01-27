@@ -27,10 +27,6 @@ export abstract class Tool {
         return { x: event.offsetX, y: event.offsetY };
     }
 
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
     getLocalShorcuts(): Map<string, Function> {
         return this.localShortcut;
     }

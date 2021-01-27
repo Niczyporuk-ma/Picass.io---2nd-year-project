@@ -34,7 +34,7 @@ export class DrawingComponent implements AfterViewInit {
         this.tools = toolManager.getToolBox();
         this.shortcutKeyboardManager = keyboardManager;
         this.toolManager.currentToolChange.subscribe((value) => (this.currentTool = value));
-        this.currentTool = this.toolManager.getCurrentTool();
+        this.currentTool = this.toolManager.currentTool;
     }
 
     ngAfterViewInit(): void {

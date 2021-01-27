@@ -11,10 +11,10 @@ import { RectangleService } from './rectangle.service';
 })
 export class ToolManagerService {
     currentToolChange: Subject<Tool> = new Subject<Tool>();
-    private currentTool: Tool;
+    currentTool: Tool;
     //changer ca pour un autre conteneur
-    private tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
-    private toolBoxShortcuts: Map<string, Tool>;
+    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
+    toolBoxShortcuts: Map<string, Tool>;
 
     constructor(
         private pencilService: PencilService,
@@ -37,29 +37,7 @@ export class ToolManagerService {
         return this.tools;
     }
 
-    getCurrentTool(): Tool {
-        return this.currentTool;
-    }
-
-    getToolBoxShortcuts(): Map<string, Tool> {
-        return this.toolBoxShortcuts;
-    }
-
-    getRectangleService(): Tool {
-        return this.rectangleService;
-    }
-
-    getEraserService(): Tool {
-        return this.eraserService;
-    }
-
-    getPencilService(): PencilService {
-        return this.pencilService;
-    }
-
-    getLineService(): LineServiceService {
-        return this.lineService;
-    }
+    //getters
 
     //setters
     setTool(tool: Tool) {
