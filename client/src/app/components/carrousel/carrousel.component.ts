@@ -8,8 +8,6 @@ import { Component, OnInit } from '@angular/core';
 export class CarrouselComponent implements OnInit {
     visible: boolean;
 
-    constructor() {}
-
     ngOnInit(): void {
         this.visible = false;
     }

@@ -11,7 +11,8 @@ export class RectangleService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'r';
-        this.localShortcut = new Map();
+        this.localShortcuts = new Map();
+        this.index = 2;
     }
 
     private startingPoint: Vec2;
@@ -30,7 +31,7 @@ export class RectangleService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-            let line: Vec2[] = [this.startingPoint, this.endPoint];
+            const line: Vec2[] = [this.startingPoint, this.endPoint];
             this.drawLine(this.drawingService.baseCtx, line);
         }
         this.mouseDown = false;
@@ -43,7 +44,7 @@ export class RectangleService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            let line: Vec2[] = [this.startingPoint, this.endPoint];
+            const line: Vec2[] = [this.startingPoint, this.endPoint];
             this.drawLine(this.drawingService.previewCtx, line);
         }
     }
@@ -52,7 +53,7 @@ export class RectangleService extends Tool {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
-        //ctx.lineCap = 'round';
+        // ctx.lineCap = 'round';
 
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawings.set(path, this);
@@ -88,7 +89,7 @@ export class RectangleService extends Tool {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
-        //ctx.lineCap = 'round';
+        // ctx.lineCap = 'round';
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[0].y);
@@ -103,13 +104,5 @@ export class RectangleService extends Tool {
         ctx.lineTo(path[1].x, path[1].y);
 
         ctx.stroke();
-    }
-
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
     }
 }

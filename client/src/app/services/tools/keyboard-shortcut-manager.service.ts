@@ -6,20 +6,17 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
     providedIn: 'root',
 })
 export class KeyboardShortcutManagerService {
-    currentCommand: Function = () => {};
-    toolManager: ToolManagerService;
-    nextTool: Tool;
-
     constructor(private toolManagerService: ToolManagerService) {
         this.toolManager = toolManagerService;
     }
+    toolManager: ToolManagerService;
 
     onKeyPress(key: string): void {
-        if (this.toolManagerService.currentTool.getLocalShorcuts().has(key)) {
+        if (this.toolManagerService.currentTool.localShortcuts.has(key)) {
             this.toolManager.currentTool.localShortCutHandler(key);
         } else {
             if (this.toolManagerService.toolBoxShortcuts.has(key)) {
-                this.toolManager.setTool(<Tool>this.toolManager.toolBoxShortcuts.get(key));
+                this.toolManager.setTool(this.toolManager.toolBoxShortcuts.get(key) as Tool);
             }
         }
     }

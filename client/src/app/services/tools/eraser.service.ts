@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { faEraser } from '@fortawesome/free-solid-svg-icons';
-import { DrawingService } from '../drawing/drawing.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton } from './pencil-service';
 
 @Injectable({
@@ -11,12 +10,14 @@ import { MouseButton } from './pencil-service';
 export class EraserService extends Tool {
     private startingPoint: Vec2;
     private currentPoint: Vec2;
-    public icon = faEraser;
+    baseWidht: number = 20;
+    indexValue: number = 3; // pas le choix car lint me casse les couilles
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'e';
-        this.localShortcut = new Map();
+        this.localShortcuts = new Map();
+        this.index = this.indexValue;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -42,7 +43,7 @@ export class EraserService extends Tool {
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.lineWidth = 20;
+        ctx.lineWidth = this.baseWidht;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
@@ -52,19 +53,11 @@ export class EraserService extends Tool {
 
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.lineWidth = 20;
+        ctx.lineWidth = this.baseWidht;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
         ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
         ctx.stroke();
-    }
-
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
     }
 }

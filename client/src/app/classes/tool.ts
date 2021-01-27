@@ -4,12 +4,12 @@ import { Vec2 } from './vec2';
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
 // tslint:disable:no-empty
 export abstract class Tool {
-    protected mouseDownCoord: Vec2;
-    protected mouseDown: boolean = false;
-    public icon: any;
-    protected shortcut: string;
-    protected localShortcut: Map<string, () => void>;
-    protected currentCommand: () => void;
+    mouseDownCoord: Vec2;
+    mouseDown: boolean = false;
+    shortcut: string;
+    index: number;
+    localShortcuts: Map<string, () => void>;
+    currentCommand: () => void;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -27,16 +27,8 @@ export abstract class Tool {
         return { x: event.offsetX, y: event.offsetY };
     }
 
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
-    }
-
-    localShortCutHandler(key: string) {
-        this.currentCommand = this.localShortcut.get(key) as () => void;
+    localShortCutHandler(key: string): void {
+        this.currentCommand = this.localShortcuts.get(key) as () => void;
         this.currentCommand();
     }
-
-    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {}
-
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {}
 }

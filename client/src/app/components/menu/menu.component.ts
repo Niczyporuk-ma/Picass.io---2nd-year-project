@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     templateUrl: './menu.component.html',
     styleUrls: ['./menu.component.scss'],
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent {
     drawingService: DrawingService;
 
     constructor(drawingService: DrawingService) {
@@ -16,8 +16,4 @@ export class MenuComponent implements OnInit {
     isStarted(): boolean {
         return this.drawingService.drawingStarted;
     }
-
-    //@Input() vertical: true;
-
-    ngOnInit(): void {}
 }

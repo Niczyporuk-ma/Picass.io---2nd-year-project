@@ -12,7 +12,7 @@ import { RectangleService } from './rectangle.service';
 export class ToolManagerService {
     currentToolChange: Subject<Tool> = new Subject<Tool>();
     currentTool: Tool;
-    //changer ca pour un autre conteneur
+    // changer ca pour un autre conteneur
     tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
     toolBoxShortcuts: Map<string, Tool>;
 
@@ -25,22 +25,17 @@ export class ToolManagerService {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
         this.toolBoxShortcuts = new Map([
-            [this.lineService.getShorcutValue(), this.tools[1]],
-            [this.rectangleService.getShorcutValue(), this.tools[2]],
-            [this.eraserService.getShorcutValue(), this.tools[3]],
-            [this.pencilService.getShorcutValue(), this.tools[0]],
+            [this.lineService.shortcut, this.tools[1]],
+            [this.rectangleService.shortcut, this.tools[this.rectangleService.index]],
+            [this.eraserService.shortcut, this.tools[this.eraserService.index]],
+            [this.pencilService.shortcut, this.tools[this.pencilService.index]],
         ]);
     }
 
-    //getters
-    public getToolBox(): Tool[] {
-        return this.tools;
-    }
+    // getters
 
-    //getters
-
-    //setters
-    setTool(tool: Tool) {
+    // setters
+    setTool(tool: Tool): void {
         this.currentToolChange.next(tool);
     }
 
