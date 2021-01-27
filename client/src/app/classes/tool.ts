@@ -8,8 +8,8 @@ export abstract class Tool {
     protected mouseDown: boolean = false;
     public icon: any;
     protected shortcut: string;
-    protected localShortcut: Map<string, Function>;
-    protected currentCommand: Function;
+    protected localShortcut: Map<string, () => void>;
+    protected currentCommand: () => void;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -36,7 +36,7 @@ export abstract class Tool {
     }
 
     localShortCutHandler(key: string) {
-        this.currentCommand = <Function>this.localShortcut.get(key);
+        this.currentCommand = this.localShortcut.get(key) as () => void;
         this.currentCommand();
     }
 

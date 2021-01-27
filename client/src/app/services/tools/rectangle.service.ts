@@ -54,28 +54,32 @@ export class RectangleService extends Tool {
         ctx.lineWidth = this.lineWidth;
         //ctx.lineCap = 'round';
 
+        if (ctx === this.drawingService.baseCtx) {
+            this.drawingService.drawings.set(path, this);
+        }
+
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[0].y);
-        let line: Vec2[] = [path[0], { x: path[1].x, y: path[0].y }];
-        this.drawingService.drawings.set(line, this);
+        // let line: Vec2[] = [path[0], { x: path[1].x, y: path[0].y }];
+        // this.drawingService.drawings.set(line, this);
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[0].x, path[1].y);
-        line = [path[0], { x: path[0].x, y: path[1].y }];
-        this.drawingService.drawings.set(line, this);
+        // line = [path[0], { x: path[0].x, y: path[1].y }];
+        // this.drawingService.drawings.set(line, this);
 
         ctx.moveTo(path[0].x, path[1].y);
         ctx.lineTo(path[1].x, path[1].y);
-        line = [
-            { x: path[0].x, y: path[1].y },
-            { x: path[1].x, y: path[1].y },
-        ];
-        this.drawingService.drawings.set(line, this);
+        // line = [
+        //     { x: path[0].x, y: path[1].y },
+        //     { x: path[1].x, y: path[1].y },
+        // ];
+        // this.drawingService.drawings.set(line, this);
 
         ctx.moveTo(path[1].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
-        line = [{ x: path[1].x, y: path[0].y }, path[1]];
-        this.drawingService.drawings.set(line, this);
+        // line = [{ x: path[1].x, y: path[0].y }, path[1]];
+        // this.drawingService.drawings.set(line, this);
         ctx.stroke();
     }
 

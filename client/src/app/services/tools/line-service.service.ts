@@ -12,7 +12,10 @@ export class LineServiceService extends Tool {
     eventTest: boolean = false;
     shiftIsPressed: boolean;
     test: Function;
+    line: Vec2[];
+    currentPos: Vec2;
     lastSegment: Vec2[];
+    lineIndexes: number[] = [];
     public paths: Vec2[][] = [];
     private isStarted: boolean;
     private startingPoint: Vec2;
@@ -58,8 +61,22 @@ export class LineServiceService extends Tool {
 
     onBackspace(): void {
         if (this.drawingService.drawings.size > 0) {
-            let last = Array.from(this.drawingService.drawings)[this.drawingService.drawings.size - 1][0];
-            this.drawingService.drawings.delete(last);
+            // let last = Array.from(this.drawingService.drawings)[this.drawingService.drawings.size - 1][0];
+            // this.drawingService.drawings.delete(last);
+            let index: number = Array.from(this.drawingService.drawings).length - 1;
+            let last = Array.from(this.drawingService.drawings)[index][1];
+            console.log('test1');
+            while (last !== this) {
+                if (index > 0) {
+                    console.log('test2');
+                    last = Array.from(this.drawingService.drawings)[--index][1];
+                } else {
+                    console.log('test3');
+                    return;
+                }
+            }
+            let lastLine = Array.from(this.drawingService.drawings)[index][0];
+            this.drawingService.drawings.delete(lastLine);
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             for (let entry of this.drawingService.drawings.entries()) {
                 entry[1].redrawLine(this.drawingService.baseCtx, entry[0]);
@@ -86,6 +103,9 @@ export class LineServiceService extends Tool {
             window.removeEventListener('keypress', this.setShiftIfPressed);
             window.removeEventListener('keyup', this.setShiftNonPressed);
             this.eventTest = false;
+            this.line = [this.startingPoint, this.endPoint];
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawLine(this.drawingService.previewCtx, this.line);
         }
     };
 
