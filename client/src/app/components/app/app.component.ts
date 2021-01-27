@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+//import { ColorService } from '../../services/tools/color.service';
 
 @Component({
     selector: 'app-root',

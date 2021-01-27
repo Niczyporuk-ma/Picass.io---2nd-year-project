@@ -20,6 +20,17 @@ export class EllipseService extends Tool {
     private lineWidth: number;
     public icon = faCircle;
 
+    private drawFilledEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+        var width = end.y - start.y;
+        var height = end.x - start.x;
+        const radiusX = width / 2;
+        const radiusY = height / 2;
+        ctx.beginPath();
+        ctx.setLineDash([]);
+        ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
@@ -33,7 +44,9 @@ export class EllipseService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            //TODO refactor trace( fill, contour, both)
+            //this.drawEmptyEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            this.drawFilledEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
         }
         this.mouseDown = false;
     }
@@ -46,10 +59,11 @@ export class EllipseService extends Tool {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
-            this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            // TODO refactor trace( fill, contour, both)
+            // this.drawEmptyEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            this.drawFilledEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
         }
     }
-
     private drawRectangle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
@@ -79,18 +93,18 @@ export class EllipseService extends Tool {
         ctx.stroke();
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
-        var width = end.y - start.y;
-        var height = end.x - start.x;
-        const radiusX = width / 2;
-        const radiusY = height / 2;
+    // private drawEmptyEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+    //     var width = end.y - start.y;
+    //     var height = end.x - start.x;
+    //     const radiusX = width / 2;
+    //     const radiusY = height / 2;
 
-        //ellipse
-        ctx.beginPath();
-        //ctx.setLineDash([]);
-        ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
-        ctx.stroke();
-    }
+    //     //ellipse
+    //     ctx.beginPath();
+    //     //ctx.setLineDash([]);
+    //     ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
+    //     ctx.stroke();
+    // }
 
     getShorcutValue(): string {
         return this.shortcut;

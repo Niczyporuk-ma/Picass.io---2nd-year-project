@@ -7,6 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppRoutingModule } from './app-routing.module';
+import { ColorPickerModule } from './color-picker.module';
 import { AppComponent } from './components/app/app.component';
 import { CarrouselComponent } from './components/carrousel/carrousel.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
@@ -16,6 +17,7 @@ import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { ColorSliderComponent } from './components/color-picker/color-slider/color-slider.component';
 
 @NgModule({
     declarations: [
@@ -28,6 +30,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         MenuCardComponent,
         CarrouselComponent,
         ToolbarComponent,
+        ColorSliderComponent,
     ],
     imports: [
         BrowserModule,
@@ -38,6 +41,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         MatCardModule,
         MatDividerModule,
         FontAwesomeModule,
+        ColorPickerModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
