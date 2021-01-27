@@ -3,7 +3,7 @@
         Créer un nouveau dessin
         <mat-divider></mat-divider>
     </mat-list-option>
-    <mat-list-option>
+    <mat-list-option *ngIf="isStarted()" routerLink="/editor">
         Continuer un dessin
         <mat-divider></mat-divider>
     </mat-list-option>

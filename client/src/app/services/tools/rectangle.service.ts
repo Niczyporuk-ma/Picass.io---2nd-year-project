@@ -56,6 +56,7 @@ export class RectangleService extends Tool {
 
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawings.set(path, this);
+            this.drawingService.drawingStarted = true;
         }
 
         ctx.moveTo(path[0].x, path[0].y);

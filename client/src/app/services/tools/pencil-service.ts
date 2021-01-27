@@ -79,6 +79,9 @@ export class PencilService extends Tool {
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        if (ctx == this.drawingService.baseCtx) {
+            this.drawingService.drawingStarted = true;
+        }
         ctx.beginPath();
         ctx.strokeStyle = this.penColor;
         ctx.lineWidth = this.penWidth;

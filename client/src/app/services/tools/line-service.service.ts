@@ -199,6 +199,9 @@ export class LineServiceService extends Tool {
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        if (ctx == this.drawingService.baseCtx) {
+            this.drawingService.drawingStarted = true;
+        }
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
