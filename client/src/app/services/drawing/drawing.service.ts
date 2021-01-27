@@ -10,7 +10,7 @@ export class DrawingService {
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     drawings: Map<Vec2[], Tool> = new Map();
-    pencilDrawings: Vec2[][] = [];
+    // pencilDrawings: Vec2[][] = [];
     drawingStarted: boolean = false;
 
     clearCanvas(context: CanvasRenderingContext2D): void {

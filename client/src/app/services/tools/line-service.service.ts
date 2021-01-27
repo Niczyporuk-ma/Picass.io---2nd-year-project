@@ -2,61 +2,38 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faSlash } from '@fortawesome/free-solid-svg-icons';
-import { PencilService } from './pencil-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class LineServiceService extends Tool {
-    eventTest: boolean = false;
-    shiftIsPressed: boolean;
-    test: Function;
-    line: Vec2[];
-    currentPos: Vec2;
-    lastSegment: Vec2[];
-    lineIndexes: number[] = [];
-    public paths: Vec2[][] = [];
+    shiftIsPressed: boolean = false;
     private isStarted: boolean;
     private startingPoint: Vec2;
     private endPoint: Vec2;
-    private lineWidth: number;
-    public icon = faSlash;
-    private pencilService: PencilService;
-    localShortcut = new Map([
-        ['Shift', this.onShift],
-        ['Backspace', this.onBackspace],
-        ['Escape', this.onEscape],
-    ]);
+    lineWidth: number;
+    pixelDistance: number = 20;
+    eventTest: boolean;
+    line: Vec2[];
 
-    constructor(drawingService: DrawingService, pencilService: PencilService) {
+    constructor(drawingService: DrawingService) {
         super(drawingService);
         this.isStarted = false;
         this.shortcut = 'l';
-        this.pencilService = pencilService;
+        this.localShortcuts = new Map([
+            ['Shift', this.onShift],
+            ['k', this.onP],
+            ['n', this.onN],
+        ]);
+        this.index = 1;
     }
 
-    // setCurrent(): void {
-    //     this.toolManager.setLineService();
-    // }
-
-    // onMouseDown(event: MouseEvent): void {
-    //     this.mouseDown = event.button === MouseButton.Left;
-    //     if (this.mouseDown) {
-
-    //         this.mouseDownCoord = this.getPositionFromMouse(event);
-    //         this.startingPoint = this.mouseDownCoord;
-    //     }
-    // }
-
-    localShortCutHandler(key: string) {
-        this.test = <Function>this.localShortcut.get(key);
-        this.test();
+    onP(): void {
+        console.log('pressed p');
     }
 
-    onEscape(): void {
-        this.isStarted = false;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    onN(): void {
+        console.log('pressed n');
     }
 
     onBackspace(): void {
@@ -82,10 +59,10 @@ export class LineServiceService extends Tool {
                 entry[1].redrawLine(this.drawingService.baseCtx, entry[0]);
                 //console.log('entry');
             }
-            this.drawingService.pencilDrawings.forEach((item) => {
-                this.pencilService.redrawLine(this.drawingService.baseCtx, item);
-                //console.log('pencil');
-            });
+            // this.drawingService.pencilDrawings.forEach((item) => {
+            //     this.pencilService.redrawLine(this.drawingService.baseCtx, item);
+            //     //console.log('pencil');
+            // });
         }
     }
 
@@ -95,7 +72,7 @@ export class LineServiceService extends Tool {
         if (!this.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             let line: Vec2[] = [this.startingPoint, this.closestAngledPoint(this.startingPoint, this.endPoint)];
-            this.drawLine(this.drawingService.previewCtx, line);
+            this.drawLine(this.drawingService.previewCtx, line[0], line[1]);
         }
         window.removeEventListener('keydown', this.setShiftIfPressed);
         //}
@@ -110,7 +87,7 @@ export class LineServiceService extends Tool {
             this.eventTest = false;
             this.line = [this.startingPoint, this.endPoint];
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.line);
+            this.drawLine(this.drawingService.previewCtx, this.line[0], this.line[1]);
         }
     };
 
@@ -194,8 +171,7 @@ export class LineServiceService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-            let line: Vec2[] = [this.startingPoint, this.endPoint];
-            this.drawLine(this.drawingService.baseCtx, line);
+            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
         }
         this.mouseDown = false;
     }
@@ -208,10 +184,7 @@ export class LineServiceService extends Tool {
         } else {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-            let line: Vec2[] = [this.startingPoint, this.endPoint];
-            this.drawLine(this.drawingService.baseCtx, line);
-            this.lastSegment = [this.startingPoint, this.endPoint];
-            this.drawingService.drawings.set(this.lastSegment, this);
+            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
             this.startingPoint = this.endPoint;
         }
     }
@@ -220,14 +193,10 @@ export class LineServiceService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.pixelDistanceUtil(this.startingPoint, mousePosition)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.startingPoint]);
+            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.startingPoint);
             this.isStarted = false;
         } else {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            let line: Vec2[] = [this.startingPoint, this.endPoint];
-            this.drawLine(this.drawingService.baseCtx, line);
-            this.lastSegment = [this.startingPoint, this.endPoint];
-            this.drawingService.drawings.set(this.lastSegment, this);
+            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
             this.isStarted = false;
         }
     }
@@ -236,7 +205,7 @@ export class LineServiceService extends Tool {
         var a = Math.abs(start.x - end.x);
         var b = Math.abs(start.y - end.y);
 
-        return a <= 20 && b <= 20;
+        return a <= this.pixelDistance && b <= this.pixelDistance;
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -245,48 +214,18 @@ export class LineServiceService extends Tool {
             this.endPoint = mousePosition;
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            if (this.shiftIsPressed) {
-                if (this.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    let line: Vec2[] = [this.startingPoint, this.endPoint];
-                    this.drawLine(this.drawingService.previewCtx, line);
-                }
-            } else {
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                let line: Vec2[] = [this.startingPoint, this.endPoint];
-                this.drawLine(this.drawingService.previewCtx, line);
-            }
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
         }
     }
 
-    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        if (ctx == this.drawingService.baseCtx) {
-            this.drawingService.drawingStarted = true;
-        }
+    private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
 
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[1].x, path[1].y);
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
         ctx.stroke();
-    }
-
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.lineWidth;
-
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[1].x, path[1].y);
-        ctx.stroke();
-    }
-
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
     }
 }

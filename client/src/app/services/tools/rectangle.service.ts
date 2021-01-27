@@ -14,7 +14,7 @@ export class RectangleService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = '1';
-        this.localShortcut = new Map([['Shift', this.onShift]]);
+        this.localShortcuts = new Map([['Shift', this.onShift]]);
     }
 
     private startingPoint: Vec2;
@@ -134,7 +134,7 @@ export class RectangleService extends Tool {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
-        //ctx.lineCap = 'round';
+        // ctx.lineCap = 'round';
 
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawings.set(path, this);
@@ -170,7 +170,7 @@ export class RectangleService extends Tool {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
-        //ctx.lineCap = 'round';
+        // ctx.lineCap = 'round';
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[0].y);
@@ -185,13 +185,5 @@ export class RectangleService extends Tool {
         ctx.lineTo(path[1].x, path[1].y);
 
         ctx.stroke();
-    }
-
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
     }
 }

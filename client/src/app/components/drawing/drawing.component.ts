@@ -22,6 +22,7 @@ export class DrawingComponent implements AfterViewInit {
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+    timeOutDuration: number = 170;
 
     // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
     tools: Tool[];
@@ -31,7 +32,7 @@ export class DrawingComponent implements AfterViewInit {
     clickCount: number = 0;
     constructor(private drawingService: DrawingService, toolManager: ToolManagerService, keyboardManager: KeyboardShortcutManagerService) {
         this.toolManager = toolManager;
-        this.tools = toolManager.getToolBox();
+        this.tools = toolManager.tools;
         this.shortcutKeyboardManager = keyboardManager;
         this.toolManager.currentToolChange.subscribe((value) => (this.currentTool = value));
         this.currentTool = this.toolManager.currentTool;
@@ -56,15 +57,15 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
         this.clickCount++;
-        if (this.clickCount == 1) {
+        if (this.clickCount === 1) {
             setTimeout(() => {
-                if (this.clickCount == 1) {
+                if (this.clickCount === 1) {
                     this.currentTool.onMouseClick(event);
                 } else {
                     this.currentTool.onDoubleClick(event);
                 }
                 this.clickCount = 0;
-            }, 170);
+            }, this.timeOutDuration);
         }
     }
 

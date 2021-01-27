@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -20,15 +19,13 @@ export class PencilService extends Tool {
     laspoint: Vec2;
     nexpoint: Vec2;
     private pathData: Vec2[];
-    private penColor: string;
-    private penWidth: number;
-    public icon = faPencilAlt;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
         this.shortcut = 'p';
-        this.localShortcut = new Map([['Shift', this.test]]);
+        this.localShortcuts = new Map([['Shift', this.test]]);
+        this.index = 0;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -70,38 +67,26 @@ export class PencilService extends Tool {
         this.drawingService.baseCtx.strokeStyle = 'blue';
     }
 
-    public changeColor(newPenColor: string) {
-        this.penColor = newPenColor;
-    }
-
-    public changeWidth(newWidth: string) {
-        this.penWidth = parseInt(newWidth);
-    }
-
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        if (ctx == this.drawingService.baseCtx) {
+        if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
         ctx.beginPath();
-        ctx.strokeStyle = this.penColor;
-        ctx.lineWidth = this.penWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'source-over';
-        for (const [index, point] of path.entries()) {
+        for (const point of path) {
             ctx.lineTo(point.x, point.y);
-            if (index != 0) {
-                let start: Vec2 = path[index - 1];
-                let end: Vec2 = path[index];
-                let line: Vec2[] = [start, end];
-                this.drawingService.pencilDrawings.push(line);
-            }
+            /* if (index !== 0) {
+                const start: Vec2 = path[index - 1];
+                const end: Vec2 = path[index];
+                const line: Vec2[] = [start, end];
+               // this.drawingService.pencilDrawings.push(line);
+            }*/
         }
         ctx.stroke();
     }
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.strokeStyle = this.penColor;
-        ctx.lineWidth = this.penWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'source-over';
         for (const point of path) {
@@ -112,13 +97,5 @@ export class PencilService extends Tool {
 
     private clearPath(): void {
         this.pathData = [];
-    }
-
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
     }
 }
