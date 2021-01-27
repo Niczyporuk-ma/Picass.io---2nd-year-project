@@ -10,6 +10,7 @@ export abstract class Tool {
     index: number;
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;
+    history: Vec2[][];
 
     constructor(protected drawingService: DrawingService) {}
 

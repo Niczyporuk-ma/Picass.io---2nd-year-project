@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { Vec2 } from '@app/classes/vec2';
 import { LineServiceService } from '@app/services/tools/line-service.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { Subject } from 'rxjs';
@@ -15,6 +16,9 @@ export class ToolManagerService {
     // changer ca pour un autre conteneur
     tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
     toolBoxShortcuts: Map<string, Tool>;
+    lineHistory: Vec2[][] = [];
+    pencilHistory: Vec2[][] = [];
+    rectangleHistory: Vec2[][] = [];
 
     constructor(
         public pencilService: PencilService,

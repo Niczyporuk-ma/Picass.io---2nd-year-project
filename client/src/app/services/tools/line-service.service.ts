@@ -2,11 +2,17 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PencilService } from './pencil-service';
+
+const POSSIBLE_ANGLES: number[] = [0, 45, 90, 135, 180, 225, 270, 315, 360];
+const ANGLE_ADJUSTER_180 = 180;
+const ANGLE_ADJUSTER_360 = 360;
 
 @Injectable({
     providedIn: 'root',
 })
 export class LineServiceService extends Tool {
+    shortcutToBeUsed: () => void;
     shiftIsPressed: boolean = false;
     private isStarted: boolean;
     private startingPoint: Vec2;
@@ -15,54 +21,56 @@ export class LineServiceService extends Tool {
     pixelDistance: number = 20;
     eventTest: boolean;
     line: Vec2[];
+    pencilService: PencilService;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, pencilService: PencilService) {
         super(drawingService);
         this.isStarted = false;
         this.shortcut = 'l';
         this.localShortcuts = new Map([
             ['Shift', this.onShift],
-            ['k', this.onP],
-            ['n', this.onN],
+            ['Backspace', this.onBackspace],
+            ['Escape', this.onEscape],
         ]);
         this.index = 1;
+        this.pencilService = pencilService;
     }
 
-    onP(): void {
-        console.log('pressed p');
+    localShortCutHandler(key: string): void {
+        this.shortcutToBeUsed = this.localShortcuts.get(key) as () => void;
+        this.shortcutToBeUsed();
     }
 
-    onN(): void {
-        console.log('pressed n');
+    onEscape(): void {
+        this.isStarted = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onBackspace(): void {
-        if (this.drawingService.drawings.size > 0) {
+        if (this.drawingService.drawingHistory.size > 0) {
             // let last = Array.from(this.drawingService.drawings)[this.drawingService.drawings.size - 1][0];
             // this.drawingService.drawings.delete(last);
-            let index: number = Array.from(this.drawingService.drawings).length - 1;
-            let last = Array.from(this.drawingService.drawings)[index][1];
-            console.log('test1');
+            let index: number = Array.from(this.drawingService.drawingHistory).length - 1;
+            let last = Array.from(this.drawingService.drawingHistory)[index][1];
             while (last !== this) {
                 if (index > 0) {
                     console.log('test2');
-                    last = Array.from(this.drawingService.drawings)[--index][1];
+                    last = Array.from(this.drawingService.drawingHistory)[--index][1];
                 } else {
-                    console.log('test3');
                     return;
                 }
             }
-            let lastLine = Array.from(this.drawingService.drawings)[index][0];
-            this.drawingService.drawings.delete(lastLine);
+            const lastLine = Array.from(this.drawingService.drawingHistory)[index][0];
+            this.drawingService.drawingHistory.delete(lastLine);
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            for (let entry of this.drawingService.drawings.entries()) {
+            for (const entry of this.drawingService.drawingHistory.entries()) {
                 entry[1].redrawLine(this.drawingService.baseCtx, entry[0]);
-                //console.log('entry');
+                // console.log('entry');
             }
-            // this.drawingService.pencilDrawings.forEach((item) => {
-            //     this.pencilService.redrawLine(this.drawingService.baseCtx, item);
-            //     //console.log('pencil');
-            // });
+            this.drawingService.pencilDrawings.forEach((item) => {
+                this.pencilService.redrawLine(this.drawingService.baseCtx, item);
+                // console.log('pencil');
+            });
         }
     }
 
@@ -71,29 +79,29 @@ export class LineServiceService extends Tool {
         this.shiftIsPressed = true;
         if (!this.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            let line: Vec2[] = [this.startingPoint, this.closestAngledPoint(this.startingPoint, this.endPoint)];
-            this.drawLine(this.drawingService.previewCtx, line[0], line[1]);
+            const line: Vec2[] = [this.startingPoint, this.closestAngledPoint(this.startingPoint, this.endPoint)];
+            this.drawLine(this.drawingService.previewCtx, line);
         }
         window.removeEventListener('keydown', this.setShiftIfPressed);
-        //}
+        // }
     };
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
             this.shiftIsPressed = false;
-            //console.log('false');
-            //window.removeEventListener('keydown', this.setShiftIfPressed);
+            // console.log('false');
+            // window.removeEventListener('keydown', this.setShiftIfPressed);
             window.removeEventListener('keyup', this.setShiftNonPressed);
             this.eventTest = false;
             this.line = [this.startingPoint, this.endPoint];
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.line[0], this.line[1]);
+            this.drawLine(this.drawingService.previewCtx, this.line);
         }
     };
 
     onShift(): void {
         if (!this.eventTest) {
-            //window.addEventListener('keydown', this.setShiftIfPressed);
+            // window.addEventListener('keydown', this.setShiftIfPressed);
             this.setShiftIfPressed();
             window.addEventListener('keyup', this.setShiftNonPressed);
             this.eventTest = true;
@@ -101,15 +109,14 @@ export class LineServiceService extends Tool {
     }
 
     closestValidAngle(start: Vec2, end: Vec2): number {
-        let possibleAngles: number[] = [0, 45, 90, 135, 180, 225, 270, 315, 360];
-        let closestValid: number = 999;
+        let closestValid = 999;
 
-        let a: number = Math.abs(start.x - end.x);
-        let b: number = Math.abs(start.y - end.y);
+        const a: number = Math.abs(start.x - end.x);
+        const b: number = Math.abs(start.y - end.y);
         let angle: number = Math.atan2(b, a) * (180 / Math.PI);
         angle = this.angleQuadrantConverter(start, end, angle);
 
-        for (let angles of possibleAngles) {
+        for (const angles of POSSIBLE_ANGLES) {
             if (Math.abs(angle - angles) < Math.abs(angle - closestValid)) {
                 closestValid = angles;
             }
@@ -119,20 +126,20 @@ export class LineServiceService extends Tool {
     }
 
     closestAngledPoint(start: Vec2, end: Vec2): Vec2 {
-        let closestAngle: number = this.closestValidAngle(start, end);
-        let currentVectorMagnitude: number = this.distanceUtil(start, end);
-        let toRadian = Math.PI / 180;
-        let x_: number = start.x + currentVectorMagnitude * Math.cos(closestAngle * toRadian);
-        let y_: number = start.y - currentVectorMagnitude * Math.sin(closestAngle * toRadian);
+        const closestAngle: number = this.closestValidAngle(start, end);
+        const currentVectorMagnitude: number = this.distanceUtil(start, end);
+        const toRadian = Math.PI / 180;
+        const xCoord: number = start.x + currentVectorMagnitude * Math.cos(closestAngle * toRadian);
+        const yCoord: number = start.y - currentVectorMagnitude * Math.sin(closestAngle * toRadian);
 
-        let newLine: Vec2 = { x: x_, y: y_ };
+        const newLine: Vec2 = { x: xCoord, y: yCoord };
 
         return newLine;
     }
 
     distanceUtil(start: Vec2, end: Vec2): number {
-        var a = Math.abs(start.x - end.x);
-        var b = Math.abs(start.y - end.y);
+        const a = Math.abs(start.x - end.x);
+        const b = Math.abs(start.y - end.y);
 
         return Math.sqrt(a * a + b * b);
     }
@@ -142,20 +149,20 @@ export class LineServiceService extends Tool {
             angle = angle;
             return angle;
         } else if (start.x <= end.x && start.y <= end.y) {
-            angle = 360 - angle;
+            angle = ANGLE_ADJUSTER_360 - angle;
             return angle;
         } else if (start.x >= end.x && start.y >= end.y) {
-            angle = 180 - angle;
+            angle = ANGLE_ADJUSTER_180 - angle;
             return angle;
         } else {
-            angle = angle + 180;
+            angle = angle + ANGLE_ADJUSTER_180;
             return angle;
         }
     }
 
     shiftAngleCalculator(start: Vec2, end: Vec2): boolean {
-        let a: number = Math.abs(start.x - end.x);
-        let b: number = Math.abs(start.y - end.y);
+        const a: number = Math.abs(start.x - end.x);
+        const b: number = Math.abs(start.y - end.y);
         let angle: number = Math.atan2(b, a) * (180 / Math.PI);
 
         angle = this.angleQuadrantConverter(start, end, angle);
@@ -171,7 +178,7 @@ export class LineServiceService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.endPoint]);
         }
         this.mouseDown = false;
     }
@@ -184,7 +191,7 @@ export class LineServiceService extends Tool {
         } else {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.endPoint]);
             this.startingPoint = this.endPoint;
         }
     }
@@ -193,17 +200,19 @@ export class LineServiceService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.pixelDistanceUtil(this.startingPoint, mousePosition)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.startingPoint);
-            this.isStarted = false;
+            // this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.startingPoint]);
+            // this.isStarted = false;
+            this.onEscape();
         } else {
-            this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.endPoint]);
             this.isStarted = false;
         }
     }
 
     pixelDistanceUtil(start: Vec2, end: Vec2): boolean {
-        var a = Math.abs(start.x - end.x);
-        var b = Math.abs(start.y - end.y);
+        const a = Math.abs(start.x - end.x);
+        const b = Math.abs(start.y - end.y);
 
         return a <= this.pixelDistance && b <= this.pixelDistance;
     }
@@ -214,18 +223,41 @@ export class LineServiceService extends Tool {
             this.endPoint = mousePosition;
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            if (this.shiftIsPressed) {
+                if (this.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                    const line: Vec2[] = [this.startingPoint, this.endPoint];
+                    this.drawLine(this.drawingService.previewCtx, line);
+                }
+            } else {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                const line: Vec2[] = [this.startingPoint, this.endPoint];
+                this.drawLine(this.drawingService.previewCtx, line);
+            }
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        if (ctx === this.drawingService.baseCtx) {
+            this.drawingService.drawingStarted = true;
+            this.drawingService.drawingHistory.set(path, this);
+        }
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
 
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, end.y);
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[1].x, path[1].y);
+        ctx.stroke();
+    }
+
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.lineWidth = this.lineWidth;
+
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
     }
 }

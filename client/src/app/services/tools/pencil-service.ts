@@ -26,6 +26,7 @@ export class PencilService extends Tool {
         this.shortcut = 'p';
         this.localShortcuts = new Map([['Shift', this.test]]);
         this.index = 0;
+        this.drawingService.pencilDrawings = [];
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -74,14 +75,14 @@ export class PencilService extends Tool {
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'source-over';
-        for (const point of path) {
+        for (const [index, point] of path.entries()) {
             ctx.lineTo(point.x, point.y);
-            /* if (index !== 0) {
+            if (index !== 0) {
                 const start: Vec2 = path[index - 1];
                 const end: Vec2 = path[index];
                 const line: Vec2[] = [start, end];
-               // this.drawingService.pencilDrawings.push(line);
-            }*/
+                this.drawingService.pencilDrawings.push(line);
+            }
         }
         ctx.stroke();
     }

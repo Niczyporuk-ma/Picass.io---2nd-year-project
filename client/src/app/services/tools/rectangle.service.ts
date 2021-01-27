@@ -79,10 +79,10 @@ export class RectangleService extends Tool {
     }
 
     checkIfIsSquare(pos: Vec2[]): boolean {
-        let horizontalDistance: number = pos[0].x - pos[1].x;
-        let verticalDistance: number = pos[0].y - pos[1].y;
+        const horizontalDistance: number = pos[0].x - pos[1].x;
+        const verticalDistance: number = pos[0].y - pos[1].y;
 
-        if (horizontalDistance == verticalDistance) {
+        if (horizontalDistance === verticalDistance) {
             return true;
         } else {
             return false;
@@ -90,18 +90,18 @@ export class RectangleService extends Tool {
     }
 
     closestSquare(pos: Vec2[]): Vec2 {
-        let horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
-        let verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
-        let isLeft: boolean = pos[0].x > pos[1].x;
-        let isDownward: boolean = pos[0].y > pos[1].y;
+        const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
+        const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
+        const isLeft: boolean = pos[0].x > pos[1].x;
+        const isDownward: boolean = pos[0].y > pos[1].y;
 
-        let smallest = Math.min(horizontalDistance, verticalDistance);
+        const smallest = Math.min(horizontalDistance, verticalDistance);
 
-        if (smallest == horizontalDistance) {
-            let newPos: Vec2 = { x: pos[1].x, y: isDownward ? pos[0].y - horizontalDistance : pos[0].y + horizontalDistance };
+        if (smallest === horizontalDistance) {
+            const newPos: Vec2 = { x: pos[1].x, y: isDownward ? pos[0].y - horizontalDistance : pos[0].y + horizontalDistance };
             return newPos;
         } else {
-            let newPos: Vec2 = { x: isLeft ? pos[0].x - verticalDistance : pos[0].x + verticalDistance, y: pos[1].y };
+            const newPos: Vec2 = { x: isLeft ? pos[0].x - verticalDistance : pos[0].x + verticalDistance, y: pos[1].y };
             return newPos;
         }
     }
@@ -137,7 +137,7 @@ export class RectangleService extends Tool {
         // ctx.lineCap = 'round';
 
         if (ctx === this.drawingService.baseCtx) {
-            this.drawingService.drawings.set(path, this);
+            this.drawingService.drawingHistory.set(path, this);
             this.drawingService.drawingStarted = true;
         }
 
