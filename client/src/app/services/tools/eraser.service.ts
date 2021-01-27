@@ -11,7 +11,6 @@ export class EraserService extends Tool {
     private startingPoint: Vec2;
     private currentPoint: Vec2;
     baseWidht: number = 20;
-    // pas le choix a cause de lint
     indexValue: number = 3;
 
     constructor(drawingService: DrawingService) {
