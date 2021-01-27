@@ -17,10 +17,10 @@ export class ToolManagerService {
     toolBoxShortcuts: Map<string, Tool>;
 
     constructor(
-        private pencilService: PencilService,
-        private lineService: LineServiceService,
-        private rectangleService: RectangleService,
-        private eraserService: EraserService,
+        public pencilService: PencilService,
+        public lineService: LineServiceService,
+        public rectangleService: RectangleService,
+        public eraserService: EraserService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));

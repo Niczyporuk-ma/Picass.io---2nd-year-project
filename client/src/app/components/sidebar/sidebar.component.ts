@@ -12,10 +12,10 @@ export class SidebarComponent implements OnInit {
     ngOnInit() {}
 
     changeColor(color: any) {
-        this.toolManger.getPencilService().changeColor(color.target.value);
+        this.toolManger.pencilService.changeColor(color.target.value);
     }
 
     changeWidth(width: any) {
-        this.toolManger.getPencilService().changeWidth(width.target.value);
+        this.toolManger.pencilService.changeWidth(width.target.value);
     }
 }
