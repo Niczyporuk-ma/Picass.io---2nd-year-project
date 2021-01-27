@@ -12,7 +12,7 @@ export class EllipseService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = '2';
-        this.localShortcut = new Map();
+        this.localShortcut = new Map([['Shift', this.drawCircle]]);
     }
 
     private startingPoint: Vec2;
@@ -32,6 +32,7 @@ export class EllipseService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
         }
         this.mouseDown = false;
@@ -66,6 +67,18 @@ export class EllipseService extends Tool {
         ctx.stroke();
     }
 
+    private drawCircle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+        var width = end.y - start.y;
+        //var height = end.x - start.x;
+        const radiusX = width / 2;
+        //const radiusY = height / 2;
+
+        ctx.beginPath();
+        //ctx.setLineDash([]);
+        ctx.ellipse(start.x + radiusX, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusX), Math.PI / 2, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+
     private drawLine(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         var width = end.y - start.y;
         var height = end.x - start.x;
@@ -74,7 +87,7 @@ export class EllipseService extends Tool {
 
         //ellipse
         ctx.beginPath();
-        ctx.setLineDash([]);
+        //ctx.setLineDash([]);
         ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
         ctx.stroke();
     }
