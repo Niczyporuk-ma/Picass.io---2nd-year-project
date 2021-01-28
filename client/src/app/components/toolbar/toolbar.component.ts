@@ -14,6 +14,7 @@ export class ToolbarComponent implements OnInit {
     faSlash = faSlash;
     icons: any[] = [];
     toolManager: ToolManagerService;
+    public showPalette = false;
 
     constructor(toolManager: ToolManagerService) {
         this.toolManager = toolManager;
@@ -23,5 +24,8 @@ export class ToolbarComponent implements OnInit {
         }
     }
 
+    onPress() {
+        this.showPalette = !this.showPalette;
+    }
     ngOnInit(): void {}
 }
