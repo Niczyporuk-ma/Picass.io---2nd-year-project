@@ -110,7 +110,6 @@ export class RectangleService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-            console.log(this.shiftIsPressed);
             if (this.shiftIsPressed) {
                 if (this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                     this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -164,6 +163,7 @@ export class RectangleService extends Tool {
         // currentLine = [{ x: path[1].x, y: path[0].y }, path[1]];
         // this.drawingService.drawings.set(currentLine, this);
         ctx.stroke();
+        //ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
     }
 
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {

@@ -77,12 +77,13 @@ export class LineServiceService extends Tool {
     setShiftIfPressed = () => {
         // if (e.key === 'Shift') {
         this.shiftIsPressed = true;
-        if (!this.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
+        if (!this.shiftAngleCalculator(this.startingPoint, this.endPoint) && this.isStarted) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             const line: Vec2[] = [this.startingPoint, this.closestAngledPoint(this.startingPoint, this.endPoint)];
             this.drawLine(this.drawingService.previewCtx, line);
         }
         window.removeEventListener('keydown', this.setShiftIfPressed);
+        this.eventTest = false;
         // }
     };
 
@@ -199,10 +200,17 @@ export class LineServiceService extends Tool {
     onDoubleClick(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.pixelDistanceUtil(this.startingPoint, mousePosition)) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            // this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.startingPoint]);
-            // this.isStarted = false;
-            this.onEscape();
+            if (!this.shiftIsPressed) {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                // this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.startingPoint]);
+                // this.isStarted = false;
+                this.onEscape();
+            } else {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                const line: Vec2[] = [this.startingPoint, this.endPoint];
+                this.drawLine(this.drawingService.baseCtx, line);
+                return;
+            }
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.endPoint]);
