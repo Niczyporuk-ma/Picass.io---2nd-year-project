@@ -11,6 +11,8 @@ export class RectangleService extends Tool {
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     eventTest: boolean;
+    fill: boolean = false;
+    contour: boolean = false;
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = '1';
@@ -140,6 +142,13 @@ export class RectangleService extends Tool {
             this.drawingService.drawingStarted = true;
         }
 
+        if (this.contour) {
+            ctx.strokeStyle = 'blue';
+            ctx.lineWidth = 20;
+        } else {
+            ctx.strokeStyle = 'white';
+        }
+
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[0].y);
         // let currentLine: Vec2[] = [path[0], { x: path[1].x, y: path[0].y }];
@@ -163,7 +172,12 @@ export class RectangleService extends Tool {
         // currentLine = [{ x: path[1].x, y: path[0].y }, path[1]];
         // this.drawingService.drawings.set(currentLine, this);
         ctx.stroke();
-        //ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
+        if (this.fill) {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
+        } else {
+            ctx.fillStyle = 'white';
+        }
     }
 
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
