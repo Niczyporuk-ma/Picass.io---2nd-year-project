@@ -15,4 +15,17 @@ export class ToolbarComponent {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
     }
+    setRectangleStyle(n: number): void {
+        this.toolManager.rectangleService.fill = false;
+        this.toolManager.rectangleService.contour = false;
+
+        if (n == 0) {
+            this.toolManager.rectangleService.fill = true;
+        } else if (n == 1) {
+            this.toolManager.rectangleService.contour = true;
+        } else {
+            this.toolManager.rectangleService.fill = true;
+            this.toolManager.rectangleService.contour = true;
+        }
+    }
 }

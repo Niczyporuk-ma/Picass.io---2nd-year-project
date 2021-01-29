@@ -12,6 +12,7 @@ export abstract class Tool {
     index: number;
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;
+    history: Vec2[][];
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -33,4 +34,5 @@ export abstract class Tool {
         this.currentCommand = this.localShortcuts.get(key) as () => void;
         this.currentCommand();
     }
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {}
 }
