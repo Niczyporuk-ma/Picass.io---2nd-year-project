@@ -12,7 +12,6 @@ export class EllipseService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = '2';
-        //this.localShortcut = new Map([['Shift', this.drawCircle]]);
         this.localShortcut = new Map([['Shift', this.onShift]]);
     }
 
@@ -22,11 +21,9 @@ export class EllipseService extends Tool {
     public icon = faCircle;
     public fill = false;
     public border = false;
-    shiftIsPressed: boolean
+    shiftIsPressed: boolean;
     eventTest: boolean;
     currentLine: Vec2[] = [];
-    
-
 
     onShift(): void {
         if (!this.eventTest) {
@@ -41,7 +38,6 @@ export class EllipseService extends Tool {
             if (!this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.closestSquare([this.startingPoint, this.endPoint])];
-                this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
             }
         }
     };
@@ -55,7 +51,6 @@ export class EllipseService extends Tool {
                 this.eventTest = false;
                 this.currentLine = [this.startingPoint, this.endPoint];
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
             } else {
                 this.shiftIsPressed = false;
             }
@@ -89,9 +84,6 @@ export class EllipseService extends Tool {
         }
     }
 
-
-
-
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
@@ -105,9 +97,7 @@ export class EllipseService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            //TODO refactor trace( fill, contour, both)
             this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
-            //this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
         }
         this.mouseDown = false;
     }
@@ -116,18 +106,14 @@ export class EllipseService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
-            // TODO refactor trace( fill, contour, both)
             this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
-            //this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
         }
     }
     private drawRectangle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         ctx.beginPath();
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = 'black';
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
         //ctx.lineCap = 'round';
@@ -143,18 +129,6 @@ export class EllipseService extends Tool {
         ctx.stroke();
     }
 
-    private drawCircle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
-        var width = end.y - start.y;
-        var height = end.x - start.x;
-        const radiusX = width / 2;
-        const radiusY = height / 2;
-
-        ctx.beginPath();
-        //ctx.setLineDash([]);
-        ctx.ellipse(start.x + Math.min(radiusX, radiusY), start.y + Math.min(radiusX, radiusY), Math.abs(Math.min(radiusX, radiusY)), Math.abs(Math.min(radiusX, radiusY)), Math.PI / 2, 0, 2 * Math.PI);
-        ctx.stroke();
-    }
-
     private drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         var width = end.y - start.y;
         var height = end.x - start.x;
@@ -163,29 +137,36 @@ export class EllipseService extends Tool {
 
         ctx.beginPath();
         ctx.setLineDash([]);
-    
 
-        //ellipse
-        if(this.border){
-            ctx.strokeStyle = "red"; //secondary color
-        }else{
+        if (this.shiftIsPressed) {
+            //this.drawCircle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            ctx.ellipse(
+                start.x + Math.min(radiusX, radiusY),
+                start.y + Math.min(radiusX, radiusY),
+                Math.abs(Math.min(radiusX, radiusY)),
+                Math.abs(Math.min(radiusX, radiusY)),
+                Math.PI / 2,
+                0,
+                2 * Math.PI,
+            );
+        } else {
+            ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
+        }
+
+        if (this.border) {
+            ctx.strokeStyle = 'red'; //secondary color
+        } else {
             ctx.strokeStyle = 'blue'; //primary color
         }
-        if(this.eventTest){
-            this.drawCircle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
-            
-        }else{
-            ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
-            ctx.stroke(); 
-        }
-        
-        if(this.fill){
+
+        if (this.fill) {
             ctx.setLineDash([]);
-            ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
-            ctx.fillStyle = "blue" //primary color
+            //ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
+            ctx.fillStyle = 'blue'; //primary color
             ctx.fill();
         }
-        
+
+        ctx.stroke();
     }
 
     getShorcutValue(): string {
