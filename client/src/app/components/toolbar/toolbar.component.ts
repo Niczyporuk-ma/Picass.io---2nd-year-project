@@ -28,4 +28,19 @@ export class ToolbarComponent implements OnInit {
         this.showPalette = !this.showPalette;
     }
     ngOnInit(): void {}
+
+    setEllipseStyle(n: number): void {
+        this.toolManager.ellipseService.fill = false;
+        this.toolManager.ellipseService.border = false;
+
+        if (n == 0) {
+            this.toolManager.ellipseService.fill = true;
+        } else if (n == 1) {
+            this.toolManager.ellipseService.border = true;
+        } else {
+            this.toolManager.ellipseService.fill = true;
+            this.toolManager.ellipseService.border = true;  
+        }
+    }
+
 }

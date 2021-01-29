@@ -1,8 +1,10 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import { MatRadioModule } from '@angular/material/radio';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -44,6 +46,8 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         MatCardModule,
         MatDividerModule,
         FontAwesomeModule,
+        MatButtonToggleModule,
+        MatRadioModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

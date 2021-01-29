@@ -12,17 +12,17 @@ import { RectangleService } from './rectangle.service';
 })
 export class ToolManagerService {
     currentToolChange: Subject<Tool> = new Subject<Tool>();
-    private currentTool: Tool;
+    currentTool: Tool;
     //changer ca pour un autre conteneur
-    private tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService, this.ellipseService];
-    private toolBoxShortcuts: Map<string, Tool>;
+    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService, this.ellipseService];
+    toolBoxShortcuts: Map<string, Tool>;
 
     constructor(
-        private pencilService: PencilService,
-        private lineService: LineServiceService,
-        private rectangleService: RectangleService,
-        private eraserService: EraserService,
-        private ellipseService: EllipseService,
+        public pencilService: PencilService,
+        public lineService: LineServiceService,
+        public rectangleService: RectangleService,
+        public eraserService: EraserService,
+        public ellipseService: EllipseService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
