@@ -49,6 +49,9 @@ export class EraserService extends Tool {
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
         ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
         ctx.stroke();
+
+        this.startingPoint.x = this.currentPoint.x;
+        this.startingPoint.y = this.currentPoint.y;
     }
 
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
