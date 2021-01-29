@@ -12,6 +12,7 @@ export class LineServiceService extends Tool {
     private endPoint: Vec2;
     lineWidth: number;
     pixelDistance: number = 20;
+    isEraser: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);

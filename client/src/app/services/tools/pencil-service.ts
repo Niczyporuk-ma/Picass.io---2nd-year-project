@@ -19,6 +19,7 @@ export class PencilService extends Tool {
     laspoint: Vec2;
     nexpoint: Vec2;
     private pathData: Vec2[];
+    isEraser: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);

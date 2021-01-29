@@ -8,6 +8,7 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
+    isEraser: boolean = false;
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'r';
