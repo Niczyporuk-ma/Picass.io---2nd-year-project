@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Injectable({
     providedIn: 'root',
@@ -12,7 +11,7 @@ export class LineServiceService extends Tool {
     private startingPoint: Vec2;
     private endPoint: Vec2;
     lineWidth: number;
-    icon = faSlash;
+    pixelDistance: number = 20;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -23,6 +22,7 @@ export class LineServiceService extends Tool {
             ['k', this.onP],
             ['n', this.onN],
         ]);
+        this.index = 1;
     }
 
     onP(): void {
@@ -73,7 +73,7 @@ export class LineServiceService extends Tool {
         const a = start.x - end.x;
         const b = start.y - end.y;
 
-        return a <= 20 && b <= 20;
+        return a <= this.pixelDistance && b <= this.pixelDistance;
     }
 
     onMouseMove(event: MouseEvent): void {

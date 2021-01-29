@@ -4,10 +4,11 @@ import { Vec2 } from './vec2';
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
 // tslint:disable:no-empty
 export abstract class Tool {
-    protected mouseDownCoord: Vec2;
-    protected mouseDown: boolean = false;
-    icon: any;
+    mouseDownCoord: Vec2;
+    mouseDown: boolean = false;
     shortcut: string;
+    index: number;
+
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;
 

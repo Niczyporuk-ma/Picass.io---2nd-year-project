@@ -22,7 +22,8 @@ export class DrawingComponent implements AfterViewInit {
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    timeOutValue: number = 170;
+
+    timeOutDuration: number = 170;
 
     // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
     tools: Tool[];
@@ -65,7 +66,7 @@ export class DrawingComponent implements AfterViewInit {
                     this.currentTool.onDoubleClick(event);
                 }
                 this.clickCount = 0;
-            }, this.timeOutValue);
+            }, this.timeOutDuration);
         }
     }
 
