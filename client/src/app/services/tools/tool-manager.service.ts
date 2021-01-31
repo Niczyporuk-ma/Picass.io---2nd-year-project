@@ -41,6 +41,7 @@ export class ToolManagerService {
     // setters
     setTool(tool: Tool): void {
         this.currentToolChange.next(tool);
+        console.log(tool);
     }
 
     setPencilService(): void {

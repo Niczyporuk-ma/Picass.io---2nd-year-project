@@ -51,13 +51,13 @@ export class EraserService extends Tool {
         ctx.stroke();
     }
 
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-        ctx.lineWidth = this.baseWidht;
-        ctx.lineCap = 'round';
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
-        ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
-        ctx.stroke();
-    }
+    // redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    //     ctx.beginPath();
+    //     ctx.lineWidth = this.baseWidht;
+    //     ctx.lineCap = 'round';
+    //     ctx.globalCompositeOperation = 'destination-out';
+    //     ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
+    //     ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
+    //     ctx.stroke();
+    // }
 }
