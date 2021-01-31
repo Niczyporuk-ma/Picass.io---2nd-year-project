@@ -3,16 +3,18 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { ColorService } from './color.service';
 import { MouseButton } from './pencil-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, colorService: ColorService) {
         super(drawingService);
         this.shortcut = '2';
         this.localShortcut = new Map([['Shift', this.onShift]]);
+        this.colorService = colorService;
     }
 
     private startingPoint: Vec2;
@@ -21,6 +23,8 @@ export class EllipseService extends Tool {
     public icon = faCircle;
     public fill = false;
     public border = false;
+    private colorService: ColorService;
+    private primaryColor: string;
     shiftIsPressed: boolean;
     eventTest: boolean;
     currentLine: Vec2[] = [];
@@ -159,14 +163,17 @@ export class EllipseService extends Tool {
 
         if (this.border) {
             ctx.strokeStyle = 'red'; //secondary color
+            this.primaryColor = this.colorService.color;
+            //TODO this.secondaryColor = this.colorService.secondaryColor;
         } else {
-            ctx.strokeStyle = 'blue'; //primary color
+            this.primaryColor = this.colorService.color;
+            ctx.strokeStyle = this.primaryColor; //primary color
         }
 
         if (this.fill) {
             ctx.setLineDash([]);
             //ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
-            ctx.fillStyle = 'blue'; //primary color
+            ctx.fillStyle = this.primaryColor; //primary color
             ctx.fill();
         }
 

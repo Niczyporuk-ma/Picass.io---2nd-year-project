@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-
+import { ColorService } from '@app/services/tools/color.service';
 @Component({
     selector: 'app-color-palette',
     templateUrl: './color-palette.component.html',
@@ -18,8 +18,13 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     private ctx: CanvasRenderingContext2D;
 
     private mousedown: boolean = false;
+    colorService: ColorService;
 
     public selectedPosition: { x: number; y: number };
+
+    constructor(colorService: ColorService) {
+        this.colorService = colorService;
+    }
 
     ngAfterViewInit() {
         this.draw();
@@ -79,6 +84,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
         this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+        this.colorService.setPrimaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
     }
 
     onMouseMove(evt: MouseEvent) {
