@@ -10,8 +10,10 @@ import { MouseButton } from './pencil-service';
 export class EraserService extends Tool {
     private startingPoint: Vec2;
     private currentPoint: Vec2;
+    topLeftCorner: Vec2;
     baseWidht: number = 20;
     indexValue: number = 3;
+    isMoving: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -32,17 +34,33 @@ export class EraserService extends Tool {
         this.mouseDown = false;
     }
 
+    findTopLeftCorner(): Vec2 {
+        const coord: Vec2 = { x: this.currentPoint.x - 10, y: this.currentPoint.y - 10 };
+        return coord;
+    }
+
     onMouseMove(event: MouseEvent): void {
+        this.currentPoint = this.getPositionFromMouse(event);
+        // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.topLeftCorner = this.findTopLeftCorner();
+        this.cursorEffect(this.drawingService.previewCtx, this.topLeftCorner);
+
         if (this.mouseDown) {
-            this.currentPoint = this.getPositionFromMouse(event);
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, [this.currentPoint]);
+
+            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.topLeftCorner = this.findTopLeftCorner();
+            this.cursorEffect(this.drawingService.previewCtx, this.topLeftCorner);
         }
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
+
         ctx.lineWidth = this.baseWidht;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
@@ -62,5 +80,10 @@ export class EraserService extends Tool {
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
         ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
         ctx.stroke();
+    }
+
+    cursorEffect(ctx: CanvasRenderingContext2D, location: Vec2): void {
+        this.drawingService.previewCtx.lineWidth = 1;
+        this.drawingService.previewCtx.strokeRect(location.x, location.y, 20, 20);
     }
 }
