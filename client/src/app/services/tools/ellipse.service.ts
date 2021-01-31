@@ -25,7 +25,7 @@ export class EllipseService extends Tool {
     public border = false;
     private colorService: ColorService;
     private primaryColor: string;
-    // private secondaryColor: string;
+    private secondaryColor: string;
 
     shiftIsPressed: boolean;
     eventTest: boolean;
@@ -145,6 +145,9 @@ export class EllipseService extends Tool {
         const radiusX = width / 2;
         const radiusY = height / 2;
 
+        this.primaryColor = this.colorService.primaryColor;
+        this.secondaryColor = this.colorService.secondaryColor;
+
         ctx.beginPath();
         ctx.setLineDash([]);
 
@@ -164,18 +167,14 @@ export class EllipseService extends Tool {
         }
 
         if (this.border) {
-            ctx.strokeStyle = 'red'; //secondary color
-            this.primaryColor = this.colorService.primaryColor;
-            //TODO this.secondaryColor = this.colorService.secondaryColor;
+            ctx.strokeStyle = this.secondaryColor;
         } else {
-            this.primaryColor = this.colorService.primaryColor;
-            ctx.strokeStyle = this.primaryColor; //primary color
+            ctx.strokeStyle = this.primaryColor;
         }
 
         if (this.fill) {
             ctx.setLineDash([]);
-            //ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
-            ctx.fillStyle = this.primaryColor; //primary color
+            ctx.fillStyle = this.primaryColor;
             ctx.fill();
         }
 

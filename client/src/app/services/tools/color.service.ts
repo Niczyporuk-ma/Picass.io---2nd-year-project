@@ -12,6 +12,11 @@ export class ColorService {
     public opacitySecondary: number;
     //public color: number;
 
+    constructor() {
+        this.primaryColor = 'black';
+        this.secondaryColor = 'black';
+    }
+
     setPrimaryColor(colorRB: string) {
         this.primaryColor = colorRB;
         //TODO primaryColor =
@@ -39,6 +44,4 @@ export class ColorService {
     //     this.primaryColor = this.secondaryColor;
     //     this.secondaryColor = temp;
     // }
-
-    constructor() {}
 }

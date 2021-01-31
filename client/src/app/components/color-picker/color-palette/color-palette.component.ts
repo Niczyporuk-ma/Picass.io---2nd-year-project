@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ColorService } from '@app/services/tools/color.service';
+import { MouseButton } from '@app/services/tools/pencil-service';
 @Component({
     selector: 'app-color-palette',
     templateUrl: './color-palette.component.html',
@@ -18,6 +19,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     private ctx: CanvasRenderingContext2D;
 
     private mousedown: boolean = false;
+    private contextmenu: boolean = false;
     colorService: ColorService;
 
     public selectedPosition: { x: number; y: number };
@@ -80,25 +82,24 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     onMouseDown(evt: MouseEvent) {
-        this.mousedown = true;
-        this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
-        this.draw();
-        this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-        this.colorService.setPrimaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+        this.mousedown = evt.button === MouseButton.Left;
+        this.contextmenu = false;
+        if (this.contextmenu == false && this.mousedown == true) {
+            this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
+            this.draw();
+            this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            this.colorService.setPrimaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+        }
     }
 
     onRightClickDown(evt: MouseEvent) {
-        if (oncontextmenu) {
-            evt.preventDefault();
-
-            console.log('SAH quel plaisir');
-        }
-
-        //this.mousedown = true;
+        this.mousedown = false;
+        this.contextmenu = true;
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
         this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
         this.colorService.setSecondaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+        return false;
     }
 
     onMouseMove(evt: MouseEvent) {
