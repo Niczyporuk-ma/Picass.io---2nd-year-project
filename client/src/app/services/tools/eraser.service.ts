@@ -36,6 +36,7 @@ export class EraserService extends Tool {
         this.mouseDown = false;
     }
 
+    //Permet de trouver la bonne prosition pour l'effet du curseur
     findTopLeftCorner(): Vec2 {
         const coord: Vec2 = { x: this.currentPoint.x - this.styles.lineWidth / 2, y: this.currentPoint.y - this.styles.lineWidth / 2 };
         return coord;
@@ -84,6 +85,7 @@ export class EraserService extends Tool {
         ctx.stroke();
     }
 
+    //Permet la previsualisation de notre efface
     cursorEffect(ctx: CanvasRenderingContext2D, location: Vec2): void {
         this.drawingService.previewCtx.lineWidth = 1;
         this.drawingService.previewCtx.strokeRect(location.x, location.y, this.styles.lineWidth, this.styles.lineWidth);
