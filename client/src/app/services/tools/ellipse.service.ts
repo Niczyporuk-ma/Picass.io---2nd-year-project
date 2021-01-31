@@ -145,8 +145,8 @@ export class EllipseService extends Tool {
         if (this.shiftIsPressed) {
             //this.drawCircle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             ctx.ellipse(
-                start.x + Math.min(radiusX, radiusY),
-                start.y + Math.min(Math.abs(radiusX), Math.abs(radiusY)),
+                start.x + Math.min(Math.abs(radiusX), radiusY),
+                start.y + Math.min(radiusX, Math.abs(radiusY)),
                 Math.abs(Math.min(Math.abs(radiusX), Math.abs(radiusY))),
                 Math.abs(Math.min(Math.abs(radiusX), Math.abs(radiusY))),
                 Math.PI / 2,
