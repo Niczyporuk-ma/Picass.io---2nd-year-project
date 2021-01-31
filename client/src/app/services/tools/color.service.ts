@@ -33,12 +33,12 @@ export class ColorService {
         //this.secondaryColor = concat(color, opacity);
     }
 
-    swapPrimaryAndSecondary(): void {
-        let temp: number;
-        temp = this.primaryColor;
-        this.primaryColor = this.secondaryColor;
-        this.secondaryColor = temp;
-    }
+    // swapPrimaryAndSecondary(): void {
+    //     let temp: number;
+    //     temp = this.primaryColor;
+    //     this.primaryColor = this.secondaryColor;
+    //     this.secondaryColor = temp;
+    // }
 
     constructor() {}
 }
