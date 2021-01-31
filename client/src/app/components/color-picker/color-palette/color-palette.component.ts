@@ -87,6 +87,20 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.colorService.setPrimaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
     }
 
+    onRightClickDown(evt: MouseEvent) {
+        if (oncontextmenu) {
+            evt.preventDefault();
+
+            console.log('SAH quel plaisir');
+        }
+
+        //this.mousedown = true;
+        this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
+        this.draw();
+        this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+        this.colorService.setSecondaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+    }
+
     onMouseMove(evt: MouseEvent) {
         if (this.mousedown) {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };

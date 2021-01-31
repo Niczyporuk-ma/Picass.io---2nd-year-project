@@ -4,16 +4,23 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class ColorService {
-    public color: string;
-    public primaryColor: number;
-    public secondaryColor: number;
+    public primaryColor: string;
+    public secondaryColor: string;
+    // public primaryColor: number;
+    // public secondaryColor: number;
     public opacityPrimary: number;
     public opacitySecondary: number;
     //public color: number;
 
     setPrimaryColor(colorRB: string) {
-        this.color = colorRB;
-        console.log('La couleur recue: ' + this.color);
+        this.primaryColor = colorRB;
+        //TODO primaryColor =
+        console.log('La couleur recue: ' + this.primaryColor);
+    }
+
+    setSecondaryColor(colorRB: string) {
+        this.secondaryColor = colorRB;
+        console.log('La couleur secondaire recue: ' + this.secondaryColor);
     }
 
     //TODO concatenate color and opacity

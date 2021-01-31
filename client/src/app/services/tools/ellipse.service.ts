@@ -25,6 +25,8 @@ export class EllipseService extends Tool {
     public border = false;
     private colorService: ColorService;
     private primaryColor: string;
+    // private secondaryColor: string;
+
     shiftIsPressed: boolean;
     eventTest: boolean;
     currentLine: Vec2[] = [];
@@ -163,10 +165,10 @@ export class EllipseService extends Tool {
 
         if (this.border) {
             ctx.strokeStyle = 'red'; //secondary color
-            this.primaryColor = this.colorService.color;
+            this.primaryColor = this.colorService.primaryColor;
             //TODO this.secondaryColor = this.colorService.secondaryColor;
         } else {
-            this.primaryColor = this.colorService.color;
+            this.primaryColor = this.colorService.primaryColor;
             ctx.strokeStyle = this.primaryColor; //primary color
         }
 
