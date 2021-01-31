@@ -11,15 +11,17 @@ export class EraserService extends Tool {
     private startingPoint: Vec2;
     private currentPoint: Vec2;
     topLeftCorner: Vec2;
-    baseWidht: number = 20;
     indexValue: number = 3;
-    isMoving: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'e';
         this.localShortcuts = new Map();
         this.index = this.indexValue;
+        this.styles = {
+            lineColor: 'black',
+            lineWidth: 20,
+        };
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -35,7 +37,7 @@ export class EraserService extends Tool {
     }
 
     findTopLeftCorner(): Vec2 {
-        const coord: Vec2 = { x: this.currentPoint.x - 10, y: this.currentPoint.y - 10 };
+        const coord: Vec2 = { x: this.currentPoint.x - this.styles.lineWidth / 2, y: this.currentPoint.y - this.styles.lineWidth / 2 };
         return coord;
     }
 
@@ -61,7 +63,7 @@ export class EraserService extends Tool {
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
 
-        ctx.lineWidth = this.baseWidht;
+        ctx.lineWidth = this.styles.lineWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
@@ -74,7 +76,7 @@ export class EraserService extends Tool {
 
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.lineWidth = this.baseWidht;
+        ctx.lineWidth = this.styles.lineWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
@@ -84,6 +86,6 @@ export class EraserService extends Tool {
 
     cursorEffect(ctx: CanvasRenderingContext2D, location: Vec2): void {
         this.drawingService.previewCtx.lineWidth = 1;
-        this.drawingService.previewCtx.strokeRect(location.x, location.y, 20, 20);
+        this.drawingService.previewCtx.strokeRect(location.x, location.y, this.styles.lineWidth, this.styles.lineWidth);
     }
 }
