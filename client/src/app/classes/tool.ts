@@ -42,18 +42,22 @@ export abstract class Tool {
         this.currentCommand = this.localShortcuts.get(key) as () => void;
         this.currentCommand();
     }
-
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {}
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[], style: ToolStyles): void {}
 
     setStyles(): void {
         if (this.styles.fill) {
             this.drawingService.previewCtx.fillStyle = this.styles.fillColor as string;
             this.drawingService.baseCtx.fillStyle = this.styles.fillColor as string;
         }
-
         this.drawingService.previewCtx.strokeStyle = this.styles.lineColor;
         this.drawingService.baseCtx.strokeStyle = this.styles.lineColor;
         this.drawingService.previewCtx.lineWidth = this.styles.lineWidth;
         this.drawingService.baseCtx.lineWidth = this.styles.lineWidth;
+    }
+
+    changeWidth(newWidth: number): void {
+        // this.lastWidth = this.currentWidth;
+        // this.penWidth = parseInt(newWidth);
+        this.styles.lineWidth = newWidth;
     }
 }

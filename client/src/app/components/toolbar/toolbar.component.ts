@@ -16,16 +16,15 @@ export class ToolbarComponent {
         this.tools = toolManager.tools;
     }
     setRectangleStyle(n: number): void {
-        this.toolManager.rectangleService.fill = false;
-        this.toolManager.rectangleService.contour = false;
-
-        if (n == 0) {
-            this.toolManager.rectangleService.fill = true;
-        } else if (n == 1) {
-            this.toolManager.rectangleService.contour = true;
+        if (n === 0) {
+            this.toolManager.rectangleService.styles.fill = true;
+            this.toolManager.rectangleService.styles.lineColor = 'white';
+        } else if (n === 1) {
+            this.toolManager.rectangleService.styles.fill = false;
+            this.toolManager.rectangleService.styles.lineColor = 'red';
         } else {
-            this.toolManager.rectangleService.fill = true;
-            this.toolManager.rectangleService.contour = true;
+            this.toolManager.rectangleService.styles.fill = true;
+            this.toolManager.rectangleService.styles.lineColor = 'black';
         }
     }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import { Tool, ToolStyles } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton } from './pencil-service';
@@ -10,24 +10,24 @@ import { MouseButton } from './pencil-service';
 export class RectangleService extends Tool {
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
-    eventTest: boolean;
-    fill: boolean = false;
-    contour: boolean = false;
+    eventListenerIsSet: boolean;
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = '1';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
+        this.drawingService.drawingHistory = new Map([]);
+        this.currentLine = [];
+        this.index = 2;
         this.styles = {
-            lineColor: 'black',
-            lineWidth: 20,
+            lineColor: 'red',
+            lineWidth: 1,
             fill: false,
-            fillColor: 'white',
+            fillColor: 'black',
         };
     }
 
-    private startingPoint: Vec2;
-    private endPoint: Vec2;
-    private lineWidth: number;
+    startingPoint: Vec2;
+    endPoint: Vec2;
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
@@ -46,7 +46,7 @@ export class RectangleService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
             }
         }
-    };
+    }
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -54,7 +54,7 @@ export class RectangleService extends Tool {
                 this.shiftIsPressed = false;
                 window.removeEventListener('keypress', this.setShiftIfPressed);
                 window.removeEventListener('keyup', this.setShiftNonPressed);
-                this.eventTest = false;
+                this.eventListenerIsSet = false;
                 this.currentLine = [this.startingPoint, this.endPoint];
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
@@ -62,13 +62,13 @@ export class RectangleService extends Tool {
                 this.shiftIsPressed = false;
             }
         }
-    };
+    }
 
     onShift(): void {
-        if (!this.eventTest) {
+        if (!this.eventListenerIsSet) {
             window.addEventListener('keydown', this.setShiftIfPressed);
             window.addEventListener('keyup', this.setShiftNonPressed);
-            this.eventTest = true;
+            this.eventListenerIsSet = true;
         }
     }
 
@@ -133,26 +133,30 @@ export class RectangleService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.endPoint];
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
+                // this.drawingService.previewCtx.strokeStyle = 'black';
+                // this.drawingService.previewCtx.strokeRect(
+                //     this.startingPoint.x,
+                //     this.startingPoint.y,
+                //     this.endPoint.x - this.startingPoint.x,
+                //     this.endPoint.y - this.startingPoint.y,
+                // );
             }
         }
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        this.setStyles();
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.styles.lineWidth;
         // ctx.lineCap = 'round';
+        path = this.currentLine;
 
         if (ctx === this.drawingService.baseCtx) {
-            this.drawingService.drawingHistory.set(path, this);
+            // let test: ToolStyles = { ...this.styles };
+            this.drawingService.drawingHistory.set(path, [this, { ...this.styles }]);
+            console.log(this.styles);
             this.drawingService.drawingStarted = true;
-        }
-
-        if (this.contour) {
-            ctx.strokeStyle = 'blue';
-            ctx.lineWidth = 20;
-        } else {
-            ctx.strokeStyle = 'white';
         }
 
         ctx.moveTo(path[0].x, path[0].y);
@@ -178,18 +182,17 @@ export class RectangleService extends Tool {
         // currentLine = [{ x: path[1].x, y: path[0].y }, path[1]];
         // this.drawingService.drawings.set(currentLine, this);
         ctx.stroke();
-        if (this.fill) {
-            ctx.fillStyle = 'red';
+        if (this.styles.fill) {
             ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
-        } else {
-            ctx.fillStyle = 'white';
         }
     }
 
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[], style: ToolStyles): void {
+        this.styles = style;
+        this.setStyles();
+        console.log('rect ' + this.styles.fill);
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.lineWidth;
         // ctx.lineCap = 'round';
 
         ctx.moveTo(path[0].x, path[0].y);
@@ -205,5 +208,14 @@ export class RectangleService extends Tool {
         ctx.lineTo(path[1].x, path[1].y);
 
         ctx.stroke();
+        if (this.styles.fill) {
+            ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
+        }
     }
+
+    // changeWidth(newWidth: number): void {
+    //     //this.lastWidth = this.currentWidth;
+    //     // this.penWidth = parseInt(newWidth);
+    //     this.styles.lineWidth = newWidth;
+    // }
 }

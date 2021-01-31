@@ -12,6 +12,6 @@ export class SidebarComponent {
     constructor(private toolManger: ToolManagerService) {}
 
     changeWidth(width: number): void {
-        this.toolManger.getPencilService().changeWidth(width);
+        this.toolManger.currentTool.changeWidth(width);
     }
 }

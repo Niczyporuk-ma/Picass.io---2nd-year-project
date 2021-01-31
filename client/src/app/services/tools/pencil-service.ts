@@ -73,11 +73,11 @@ export class PencilService extends Tool {
         this.drawingService.baseCtx.strokeStyle = 'blue';
     }
 
-    changeWidth(newWidth: number): void {
-        //this.lastWidth = this.currentWidth;
-        // this.penWidth = parseInt(newWidth);
-        this.styles.lineWidth = newWidth;
-    }
+    // changeWidth(newWidth: number): void {
+    //     //this.lastWidth = this.currentWidth;
+    //     // this.penWidth = parseInt(newWidth);
+    //     this.styles.lineWidth = newWidth;
+    // }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         if (ctx === this.drawingService.baseCtx) {
