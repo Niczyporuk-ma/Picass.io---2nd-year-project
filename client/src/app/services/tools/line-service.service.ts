@@ -34,6 +34,10 @@ export class LineServiceService extends Tool {
         ]);
         this.index = 1;
         this.pencilService = pencilService;
+        this.styles = {
+            lineColor: 'black',
+            lineWidth: 20,
+        };
     }
 
     localShortCutHandler(key: string): void {
@@ -252,7 +256,7 @@ export class LineServiceService extends Tool {
         }
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.lineWidth;
+        ctx.lineWidth = this.styles.lineWidth;
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
@@ -262,7 +266,7 @@ export class LineServiceService extends Tool {
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.lineWidth;
+        ctx.lineWidth = this.styles.lineWidth;
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);

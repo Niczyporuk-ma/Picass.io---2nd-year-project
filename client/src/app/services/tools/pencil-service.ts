@@ -28,6 +28,10 @@ export class PencilService extends Tool {
         this.localShortcuts = new Map([['Shift', this.test]]);
         this.index = 0;
         this.drawingService.pencilDrawings = [];
+        this.styles = {
+            lineColor: 'black',
+            lineWidth: 1,
+        };
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -70,9 +74,9 @@ export class PencilService extends Tool {
     }
 
     changeWidth(newWidth: number): void {
-        this.lastWidth = this.currentWidth;
+        //this.lastWidth = this.currentWidth;
         // this.penWidth = parseInt(newWidth);
-        this.currentWidth = newWidth;
+        this.styles.lineWidth = newWidth;
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
@@ -80,7 +84,7 @@ export class PencilService extends Tool {
             this.drawingService.drawingStarted = true;
         }
         ctx.beginPath();
-        ctx.lineWidth = this.currentWidth;
+        ctx.lineWidth = this.styles.lineWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'source-over';
         for (const [index, point] of path.entries()) {

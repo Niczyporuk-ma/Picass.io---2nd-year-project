@@ -17,6 +17,12 @@ export class RectangleService extends Tool {
         super(drawingService);
         this.shortcut = '1';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
+        this.styles = {
+            lineColor: 'black',
+            lineWidth: 20,
+            fill: false,
+            fillColor: 'white',
+        };
     }
 
     private startingPoint: Vec2;
@@ -134,7 +140,7 @@ export class RectangleService extends Tool {
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.lineWidth;
+        ctx.lineWidth = this.styles.lineWidth;
         // ctx.lineCap = 'round';
 
         if (ctx === this.drawingService.baseCtx) {
