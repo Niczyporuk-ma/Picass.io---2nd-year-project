@@ -38,6 +38,8 @@ export class EllipseService extends Tool {
             if (!this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.closestSquare([this.startingPoint, this.endPoint])];
+                //might cause problems
+                this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             }
         }
     };
@@ -50,7 +52,8 @@ export class EllipseService extends Tool {
                 window.removeEventListener('keyup', this.setShiftNonPressed);
                 this.eventTest = false;
                 this.currentLine = [this.startingPoint, this.endPoint];
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                //might cause problems
+                // this.drawingService.clearCanvas(this.drawingService.previewCtx);
             } else {
                 this.shiftIsPressed = false;
             }
