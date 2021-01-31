@@ -40,6 +40,7 @@ export class EllipseService extends Tool {
                 this.currentLine = [this.startingPoint, this.closestSquare([this.startingPoint, this.endPoint])];
                 //might cause problems
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+                this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             }
         }
     };
