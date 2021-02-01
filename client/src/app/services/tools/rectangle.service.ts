@@ -18,7 +18,7 @@ export class RectangleService extends Tool {
         this.drawingService.drawingHistory = new Map([]);
         this.currentLine = [];
         this.index = 2;
-        this.styles = {
+        this.toolStyles = {
             lineColor: 'red',
             lineWidth: 1,
             fill: false,
@@ -148,51 +148,36 @@ export class RectangleService extends Tool {
         this.setStyles();
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        // ctx.lineCap = 'round';
         path = this.currentLine;
 
         if (ctx === this.drawingService.baseCtx) {
-            //let test: ToolStyles = { ...this.styles };
-            this.drawingService.drawingHistory.set(path, [this, { ...this.styles }]);
-            console.log(this.styles);
+            this.drawingService.drawingHistory.set(path, [this, { ...this.toolStyles }]);
+            console.log(this.toolStyles);
             this.drawingService.drawingStarted = true;
         }
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[0].y);
-        // let currentLine: Vec2[] = [path[0], { x: path[1].x, y: path[0].y }];
-        // this.drawingService.drawings.set(currentLine, this);
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[0].x, path[1].y);
-        // currentLine = [path[0], { x: path[0].x, y: path[1].y }];
-        // this.drawingService.drawings.set(currentLine, this);
 
         ctx.moveTo(path[0].x, path[1].y);
         ctx.lineTo(path[1].x, path[1].y);
-        // currentLine = [
-        //     { x: path[0].x, y: path[1].y },
-        //     { x: path[1].x, y: path[1].y },
-        // ];
-        // this.drawingService.drawings.set(currentLine, this);
 
         ctx.moveTo(path[1].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
-        // currentLine = [{ x: path[1].x, y: path[0].y }, path[1]];
-        // this.drawingService.drawings.set(currentLine, this);
         ctx.stroke();
-        if (this.styles.fill) {
+        if (this.toolStyles.fill) {
             ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
         }
     }
 
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[], style: ToolStyles): void {
-        this.styles = style;
+        this.toolStyles = style;
         this.setStyles();
-        console.log('rect ' + this.styles.fill);
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        // ctx.lineCap = 'round';
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[0].y);
@@ -207,7 +192,7 @@ export class RectangleService extends Tool {
         ctx.lineTo(path[1].x, path[1].y);
 
         ctx.stroke();
-        if (this.styles.fill) {
+        if (this.toolStyles.fill) {
             ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
         }
     }

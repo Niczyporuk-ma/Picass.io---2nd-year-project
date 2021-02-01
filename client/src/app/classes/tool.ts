@@ -18,7 +18,7 @@ export abstract class Tool {
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;
     history: Vec2[][];
-    styles: ToolStyles;
+    toolStyles: ToolStyles;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -43,13 +43,16 @@ export abstract class Tool {
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[], style: ToolStyles): void {}
 
     setStyles(): void {
-        if (this.styles.fill) {
-            this.drawingService.previewCtx.fillStyle = this.styles.fillColor as string;
-            this.drawingService.baseCtx.fillStyle = this.styles.fillColor as string;
+        if (this.toolStyles.fill) {
+            this.drawingService.previewCtx.fillStyle = this.toolStyles.fillColor as string;
+            this.drawingService.baseCtx.fillStyle = this.toolStyles.fillColor as string;
+        } else {
+            this.drawingService.previewCtx.fillStyle = 'white';
+            this.drawingService.baseCtx.fillStyle = 'white';
         }
-        this.drawingService.previewCtx.strokeStyle = this.styles.lineColor;
-        this.drawingService.baseCtx.strokeStyle = this.styles.lineColor;
-        this.drawingService.previewCtx.lineWidth = this.styles.lineWidth;
-        this.drawingService.baseCtx.lineWidth = this.styles.lineWidth;
+        this.drawingService.previewCtx.strokeStyle = this.toolStyles.lineColor;
+        this.drawingService.baseCtx.strokeStyle = this.toolStyles.lineColor;
+        this.drawingService.previewCtx.lineWidth = this.toolStyles.lineWidth;
+        this.drawingService.baseCtx.lineWidth = this.toolStyles.lineWidth;
     }
 }

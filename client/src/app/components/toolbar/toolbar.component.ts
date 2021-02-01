@@ -17,14 +17,14 @@ export class ToolbarComponent {
     }
     setRectangleStyle(n: number): void {
         if (n == 0) {
-            this.toolManager.rectangleService.styles.fill = true;
-            this.toolManager.rectangleService.styles.lineColor = 'white';
+            this.toolManager.rectangleService.toolStyles.fill = true;
+            this.toolManager.rectangleService.toolStyles.lineColor = 'white';
         } else if (n == 1) {
-            this.toolManager.rectangleService.styles.fill = false;
-            this.toolManager.rectangleService.styles.lineColor = 'red';
+            this.toolManager.rectangleService.toolStyles.fill = false;
+            this.toolManager.rectangleService.toolStyles.lineColor = 'red';
         } else {
-            this.toolManager.rectangleService.styles.fill = true;
-            this.toolManager.rectangleService.styles.lineColor = 'black';
+            this.toolManager.rectangleService.toolStyles.fill = true;
+            this.toolManager.rectangleService.toolStyles.lineColor = 'black';
         }
     }
 }
