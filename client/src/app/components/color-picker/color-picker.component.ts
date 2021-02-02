@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-//import { ColorService } from '../../services/tools/color.service';
-
+import { ColorService } from '../../services/tools/color.service';
 @Component({
     selector: 'app-color-picker',
     templateUrl: './color-picker.component.html',
@@ -9,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class ColorPickerComponent implements OnInit {
     public hue: string;
     public color: string;
+    public colorService: ColorService;
     constructor() {}
 
     ngOnInit(): void {}
