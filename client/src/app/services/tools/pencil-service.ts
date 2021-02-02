@@ -111,4 +111,8 @@ export class PencilService extends Tool {
     private clearPath(): void {
         this.pathData = [];
     }
+
+    isValid(width: number): boolean {
+        return true;
+    }
 }

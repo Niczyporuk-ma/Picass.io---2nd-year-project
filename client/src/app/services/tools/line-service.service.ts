@@ -315,4 +315,8 @@ export class LineServiceService extends Tool {
     //     // this.penWidth = parseInt(newWidth);
     //     this.styles.lineWidth = newWidth;
     // }
+
+    isValid(width: number): boolean {
+        return true;
+    }
 }

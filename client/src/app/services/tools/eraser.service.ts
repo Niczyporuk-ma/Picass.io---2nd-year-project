@@ -20,7 +20,8 @@ export class EraserService extends Tool {
         this.index = this.indexValue;
         this.styles = {
             lineColor: 'black',
-            lineWidth: 20,
+            lineWidth: 5,
+            fillColor: 'white',
         };
     }
 
@@ -95,5 +96,13 @@ export class EraserService extends Tool {
     //     //this.lastWidth = this.currentWidth;
     //     // this.penWidth = parseInt(newWidth);
     //     this.styles.lineWidth = newWidth;
+    // }
+
+    // isValid(width: number): boolean {
+    //     if (width < 5) {
+    //         return false;
+    //     }
+
+    //     return true;
     // }
 }
