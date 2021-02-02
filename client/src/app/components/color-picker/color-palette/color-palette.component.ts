@@ -88,7 +88,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-            this.colorService.setPrimaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            this.colorService.setPrimaryColor(this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY)); // add opacity
         }
     }
 
@@ -98,7 +98,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
         this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-        this.colorService.setSecondaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+        this.colorService.setSecondaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY)); // add opacity
         return false;
     }
 
@@ -118,5 +118,10 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     getColorAtPosition(x: number, y: number) {
         const imageData = this.ctx.getImageData(x, y, 1, 1).data;
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
+    }
+
+    getColorAtPositionWithOpacity(x: number, y: number) {
+        const imageData = this.ctx.getImageData(x, y, 1, 1).data;
+        return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + this.colorService.opacity + ')';
     }
 }

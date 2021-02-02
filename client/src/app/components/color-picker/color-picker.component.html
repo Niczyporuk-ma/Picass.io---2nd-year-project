@@ -8,3 +8,16 @@
     <div class="color-div" [ngStyle]="{ 'background-color': colorService.secondaryColor || 'white' }"></div>
     <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">Swap</button>
 </div>
+
+<mat-slider
+    min="0"
+    max="1"
+    step="0.01"
+    value="1.5"
+    thumbLabel
+    tickInterval="1"
+    (change)="changeOpacity($event.value)"
+    (input)="opacity = $event.value"
+    [value]="opacity"
+    >{{ opacity }}</mat-slider
+>

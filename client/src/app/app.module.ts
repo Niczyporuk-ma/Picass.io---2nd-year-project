@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSliderModule } from '@angular/material/slider';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -48,6 +49,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         FontAwesomeModule,
         MatButtonToggleModule,
         MatRadioModule,
+        MatSliderModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

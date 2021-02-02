@@ -8,13 +8,14 @@ export class ColorService {
     public secondaryColor: string;
     // public primaryColor: number;
     // public secondaryColor: number;
-    public opacityPrimary: number;
-    public opacitySecondary: number;
+    public opacity: number;
+    //public opacitySecondary: number;
     //public color: number;
 
     constructor() {
         this.primaryColor = 'black';
         this.secondaryColor = 'black';
+        this.opacity = 1;
     }
 
     setPrimaryColor(colorRB: string) {
@@ -29,8 +30,9 @@ export class ColorService {
     }
 
     //TODO concatenate color and opacity
-    setPrimaryColorWithOpacity(): void {
-        //this.primaryColor = concat(this.color, this.opacityPrimary);
+    setPrimaryColorWithOpacity(opacity: number): void {
+        const colors: string[] = this.primaryColor.split(',');
+        this.primaryColor = colors[0] + colors[1] + colors[2] + opacity + ')';
     }
 
     //TODO concatenate color and opacity
