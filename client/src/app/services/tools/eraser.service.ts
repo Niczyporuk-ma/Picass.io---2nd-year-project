@@ -8,9 +8,9 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class EraserService extends Tool {
-    private startingPoint: Vec2;
-    private currentPoint: Vec2;
-    topLeftCorner: Vec2;
+    startingPoint: Vec2;
+    currentPoint: Vec2;
+    coordinate: Vec2;
     indexValue: number = 3;
 
     constructor(drawingService: DrawingService) {
@@ -38,7 +38,7 @@ export class EraserService extends Tool {
     }
 
     // Permet de trouver la bonne prosition pour l'effet du curseur
-    findTopLeftCorner(): Vec2 {
+    findCoordinate(): Vec2 {
         const coord: Vec2 = { x: this.currentPoint.x - this.styles.lineWidth / 2, y: this.currentPoint.y - this.styles.lineWidth / 2 };
         return coord;
     }
@@ -47,8 +47,8 @@ export class EraserService extends Tool {
         this.currentPoint = this.getPositionFromMouse(event);
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.topLeftCorner = this.findTopLeftCorner();
-        this.cursorEffect(this.drawingService.previewCtx, this.topLeftCorner);
+        this.coordinate = this.findCoordinate();
+        this.cursorEffect(this.drawingService.previewCtx, this.coordinate);
 
         if (this.mouseDown) {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
@@ -57,8 +57,8 @@ export class EraserService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.topLeftCorner = this.findTopLeftCorner();
-            this.cursorEffect(this.drawingService.previewCtx, this.topLeftCorner);
+            this.coordinate = this.findCoordinate();
+            this.cursorEffect(this.drawingService.previewCtx, this.coordinate);
         }
     }
 
