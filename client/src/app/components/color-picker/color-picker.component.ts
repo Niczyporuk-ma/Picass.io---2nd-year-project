@@ -9,7 +9,9 @@ export class ColorPickerComponent implements OnInit {
     public hue: string;
     public color: string;
     public colorService: ColorService;
-    constructor() {}
+    constructor(colorService: ColorService) {
+        this.colorService = colorService;
+    }
 
     ngOnInit(): void {}
 }

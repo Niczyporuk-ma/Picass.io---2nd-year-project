@@ -76,7 +76,6 @@ export class PencilService extends Tool {
         this.penWidth = parseInt(newWidth);
     }
 
-
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.strokeStyle = this.penColor;
@@ -93,11 +92,11 @@ export class PencilService extends Tool {
         this.pathData = [];
     }
 
-    getShorcutValue() : string {
+    getShorcutValue(): string {
         return this.shortcut;
     }
 
-    getLocalShorcuts() : Map<string, Function> {
+    getLocalShorcuts(): Map<string, Function> {
         return this.localShortcut;
     }
 }

@@ -4,7 +4,7 @@
 </div>
 <div class="input-wrapper">
     <span class="text">{{ color }}</span>
-    <div class="color-div" [ngStyle]="{ 'background-color': color || 'white' }"></div>
-    <div class="color-div" [ngStyle]="{ 'background-color': color || 'white' }"></div>
-    <button class="swap-button">Swap</button>
+    <div class="color-div" [ngStyle]="{ 'background-color': colorService.primaryColor || 'white' }"></div>
+    <div class="color-div" [ngStyle]="{ 'background-color': colorService.secondaryColor || 'white' }"></div>
+    <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">Swap</button>
 </div>
