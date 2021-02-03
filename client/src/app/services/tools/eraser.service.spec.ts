@@ -29,15 +29,8 @@ describe('EraserService', () => {
         findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
         cursorEffectSpy = spyOn(service, 'cursorEffect').and.callThrough();
 
-        // service.drawingService.baseCtx = baseCtxStub;
-        // service.drawingService.previewCtx = previewCtxStub;
-
-        // Jasmine doesnt copy properties with underlying data
-        // service['drawingService'].baseCtx = baseCtxStub;
-        // service['drawingService'].previewCtx = previewCtxStub;
-
-        service.drawingService.baseCtx = baseCtxStub;
-        service.drawingService.previewCtx = previewCtxStub;
+        //service['drawingService'].baseCtx = baseCtxStub;
+        //service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
             offsetX: 35,

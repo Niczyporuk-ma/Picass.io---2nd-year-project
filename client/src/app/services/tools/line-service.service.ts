@@ -99,7 +99,7 @@ export class LineServiceService extends Tool {
         }
         window.removeEventListener('keydown', this.setShiftIfPressed);
         this.eventTest = false;
-    }
+    };
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -112,7 +112,7 @@ export class LineServiceService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
             }
         }
-    }
+    };
 
     onShift(): void {
         if (!this.eventTest) {
