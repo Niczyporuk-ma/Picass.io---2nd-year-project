@@ -18,7 +18,10 @@ export class ColorPickerComponent implements OnInit {
     changeOpacity(opacity: number): void {
         this.colorService.opacity = opacity;
         this.colorService.setPrimaryColorWithOpacity(opacity);
+        this.colorService.setSecondaryColorWithOpacity(opacity);
         console.log('opacity: ' + this.colorService.opacity);
+        console.log('primary color after opacity: ' + this.colorService.primaryColor);
+        console.log('secondary color after opacity: ' + this.colorService.secondaryColor);
     }
 
     ngOnInit(): void {}
