@@ -8,9 +8,9 @@ export class ColorService {
     secondaryColor: string;
     // public primaryColor: number;
     // public secondaryColor: number;
-    public opacity: number;
-    //public opacitySecondary: number;
-    //public color: number;
+    opacity: number;
+    // public opacitySecondary: number;
+    // public color: number;
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
@@ -29,13 +29,13 @@ export class ColorService {
         console.log('La couleur secondaire recue: ' + this.secondaryColor);
     }
 
-    //TODO concatenate color and opacity
+    // TODO concatenate color and opacity
     setPrimaryColorWithOpacity(opacity: number): void {
         const colors: string[] = this.primaryColor.split(',');
         this.primaryColor = colors[0] + ',' + colors[1] + ',' + colors[2] + ',' + opacity + ')';
     }
 
-    //TODO concatenate color and opacity
+    // TODO concatenate color and opacity
     setSecondaryColorWithOpacity(opacity: number): void {
         const colors: string[] = this.secondaryColor.split(',');
         this.secondaryColor = colors[0] + ',' + colors[1] + ',' + colors[2] + ',' + opacity + ')';

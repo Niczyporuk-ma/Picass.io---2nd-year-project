@@ -1,5 +1,5 @@
+// inspired by : https://malcoded.com/posts/angular-color-picker/
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ColorPaletteComponent } from './color-palette.component';
 
 describe('ColorPaletteComponent', () => {

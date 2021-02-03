@@ -11,9 +11,9 @@ describe('EraserService', () => {
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawLineSpy: jasmine.Spy<any>;
-    let cursorEffectSpy: jasmine.Spy<any>;
-    let findCoordinateSpy: jasmine.Spy<any>;
+    let drawLineSpy: jasmine.Spy;
+    let cursorEffectSpy: jasmine.Spy;
+    let findCoordinateSpy: jasmine.Spy;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -25,9 +25,16 @@ describe('EraserService', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
-        findCoordinateSpy = spyOn<any>(service, 'findCoordinate').and.callThrough();
-        cursorEffectSpy = spyOn<any>(service, 'cursorEffect').and.callThrough();
+        drawLineSpy = spyOn(service, 'drawLine').and.callThrough();
+        findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
+        cursorEffectSpy = spyOn(service, 'cursorEffect').and.callThrough();
+
+        // service.drawingService.baseCtx = baseCtxStub;
+        // service.drawingService.previewCtx = previewCtxStub;
+
+        // Jasmine doesnt copy properties with underlying data
+        // service['drawingService'].baseCtx = baseCtxStub;
+        // service['drawingService'].previewCtx = previewCtxStub;
 
         service.drawingService.baseCtx = baseCtxStub;
         service.drawingService.previewCtx = previewCtxStub;
@@ -75,7 +82,8 @@ describe('EraserService', () => {
     });
 
     it('findCoordinate should set a Vec2 with correct coordinate', () => {
-        service.styles.lineWidth = 20;
+        const widthTest = 20;
+        service.styles.lineWidth = widthTest;
         service.currentPoint = { x: 30, y: 30 };
         const expectedResult: Vec2 = service.findCoordinate();
         expect(expectedResult).toEqual({ x: 20, y: 20 });

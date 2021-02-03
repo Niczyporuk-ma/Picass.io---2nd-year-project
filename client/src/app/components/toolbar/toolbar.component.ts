@@ -10,7 +10,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 export class ToolbarComponent {
     tools: Tool[];
     toolManager: ToolManagerService;
-    showPalette = false;
+    showPalette: boolean = false;
 
     constructor(toolManager: ToolManagerService) {
         this.toolManager = toolManager;
@@ -29,21 +29,20 @@ export class ToolbarComponent {
         }
     }
 
-    onPress() {
+    onPress(): void {
         this.showPalette = !this.showPalette;
     }
-    ngOnInit(): void {}
 
     setEllipseStyle(n: number): void {
-        this.toolManager.ellipseService.fill = false;
+        this.toolManager.ellipseService.styles.fill = false;
         this.toolManager.ellipseService.border = false;
 
-        if (n == 0) {
-            this.toolManager.ellipseService.fill = true;
-        } else if (n == 1) {
+        if (n === 0) {
+            this.toolManager.ellipseService.styles.fill = true;
+        } else if (n === 1) {
             this.toolManager.ellipseService.border = true;
         } else {
-            this.toolManager.ellipseService.fill = true;
+            this.toolManager.ellipseService.styles.fill = true;
             this.toolManager.ellipseService.border = true;
         }
     }

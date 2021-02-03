@@ -19,7 +19,7 @@ export class RectangleService extends Tool {
         this.currentLine = [];
         this.index = 2;
         this.styles = {
-            lineColor: 'red',
+            lineColor: 'rgba(255, 0, 0, 1)', // rouge
             lineWidth: 1,
             fill: false,
             fillColor: 'black',
@@ -219,7 +219,7 @@ export class RectangleService extends Tool {
     //     this.styles.lineWidth = newWidth;
     // }
 
-    isValid(width: number): boolean {
-        return true;
-    }
+    // isValid(width: number): boolean {
+    //     return true;
+    // }
 }

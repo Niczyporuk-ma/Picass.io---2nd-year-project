@@ -1,3 +1,4 @@
+// inspired by : https://malcoded.com/posts/angular-color-picker/
 :host {
     display: block;
     width: 316px;
@@ -23,6 +24,13 @@
     height: 32px;
     border-radius: 50%;
     border: 1px solid rgb(220, 220, 220);
+}
+
+.color-div .selected {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 4px solid rgb(220, 220, 220);
 }
 
 .swap-button {

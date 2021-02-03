@@ -1,3 +1,4 @@
+// inspired by : https://malcoded.com/posts/angular-color-picker/
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ColorService } from '@app/services/tools/color.service';
 import { MouseButton } from '@app/services/tools/pencil-service';
@@ -13,10 +14,12 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     @Output()
     color: EventEmitter<string> = new EventEmitter(true);
 
-    @ViewChild('canvas')
-    canvas: ElementRef<HTMLCanvasElement>;
+    // @ViewChild('canvas') canvasEl : ElementRef;
+    @ViewChild('canvas', { read: ElementRef, static: true }) canvas: ElementRef<HTMLCanvasElement>;
+    // canvas: ElementRef<HTMLCanvasElement>;
 
     private ctx: CanvasRenderingContext2D;
+    // as CanvasRenderingContext2D;
 
     private mousedown: boolean = false;
     private contextmenu: boolean = false;
@@ -33,9 +36,9 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     draw(): void {
-        let radius: number = 10;
-        let startAngle: number = 0;
-        let baseWidth: number = 5;
+        const radius = 10;
+        const startAngle = 0;
+        const baseWidth = 5;
 
         if (!this.ctx) {
             this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -85,10 +88,10 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.mousedown = false;
     }
 
-    onMouseDown(evt: MouseEvent) {
+    onMouseDown(evt: MouseEvent): void {
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = false;
-        if (this.contextmenu == false && this.mousedown == true) {
+        if (this.contextmenu === false && this.mousedown === true) {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
@@ -96,7 +99,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         }
     }
 
-    onRightClickDown(evt: MouseEvent) {
+    onRightClickDown(evt: MouseEvent): boolean {
         this.mousedown = false;
         this.contextmenu = true;
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
@@ -124,7 +127,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
     }
 
-    getColorAtPositionWithOpacity(x: number, y: number) {
+    getColorAtPositionWithOpacity(x: number, y: number): string {
         const imageData = this.ctx.getImageData(x, y, 1, 1).data;
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + this.colorService.opacity + ')';
     }

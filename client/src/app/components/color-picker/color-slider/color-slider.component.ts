@@ -33,14 +33,22 @@ export class ColorSliderComponent implements AfterViewInit {
 
         this.ctx.clearRect(0, 0, width, height);
 
+        const gradientPosition1 = 0;
+        const gradientPosition2 = 0.17;
+        const gradientPosition3 = 0.34;
+        const gradientPosition4 = 0.51;
+        const gradientPosition5 = 0.68;
+        const gradientPosition6 = 0.85;
+        const gradientPosition7 = 1;
+
         const gradient = this.ctx.createLinearGradient(0, 0, 0, height);
-        gradient.addColorStop(0, 'rgba(255, 0, 0, 1)');
-        gradient.addColorStop(0.17, 'rgba(255, 255, 0, 1)');
-        gradient.addColorStop(0.34, 'rgba(0, 255, 0, 1)');
-        gradient.addColorStop(0.51, 'rgba(0, 255, 255, 1)');
-        gradient.addColorStop(0.68, 'rgba(0, 0, 255, 1)');
-        gradient.addColorStop(0.85, 'rgba(255, 0, 255, 1)');
-        gradient.addColorStop(1, 'rgba(255, 0, 0, 1)');
+        gradient.addColorStop(gradientPosition1, 'rgba(255, 0, 0, 1)');
+        gradient.addColorStop(gradientPosition2, 'rgba(255, 255, 0, 1)');
+        gradient.addColorStop(gradientPosition3, 'rgba(0, 255, 0, 1)');
+        gradient.addColorStop(gradientPosition4, 'rgba(0, 255, 255, 1)');
+        gradient.addColorStop(gradientPosition5, 'rgba(0, 0, 255, 1)');
+        gradient.addColorStop(gradientPosition6, 'rgba(255, 0, 255, 1)');
+        gradient.addColorStop(gradientPosition7, 'rgba(255, 0, 0, 1)');
 
         this.ctx.beginPath();
         this.ctx.rect(0, 0, width, height);
@@ -52,26 +60,31 @@ export class ColorSliderComponent implements AfterViewInit {
         if (this.selectedHeight) {
             this.ctx.beginPath();
             this.ctx.strokeStyle = 'white';
-            this.ctx.lineWidth = 5;
-            this.ctx.rect(0, this.selectedHeight - 5, width, 10);
+            const defaultLineWidth = 5;
+            this.ctx.lineWidth = defaultLineWidth;
+            const yAxisSubtrahend = 5;
+            const xCoordStartingPt = 0;
+            const yCoordStartingPt: number = this.selectedHeight - yAxisSubtrahend;
+            const heightRect = 10;
+            this.ctx.rect(xCoordStartingPt, yCoordStartingPt, width, heightRect);
             this.ctx.stroke();
             this.ctx.closePath();
         }
     }
 
     @HostListener('window:mouseup', ['$event'])
-    onMouseUp(evt: MouseEvent) {
+    onMouseUp(): void {
         this.mousedown = false;
     }
 
-    onMouseDown(evt: MouseEvent) {
+    onMouseDown(evt: MouseEvent): void {
         this.mousedown = true;
         this.selectedHeight = evt.offsetY;
         this.draw();
         this.emitColor(evt.offsetX, evt.offsetY);
     }
 
-    onMouseMove(evt: MouseEvent) {
+    onMouseMove(evt: MouseEvent): void {
         if (this.mousedown) {
             this.selectedHeight = evt.offsetY;
             this.draw();
@@ -79,12 +92,12 @@ export class ColorSliderComponent implements AfterViewInit {
         }
     }
 
-    emitColor(x: number, y: number) {
+    emitColor(x: number, y: number): void {
         const rgbaColor = this.getColorAtPosition(x, y);
         this.color.emit(rgbaColor);
     }
 
-    getColorAtPosition(x: number, y: number) {
+    getColorAtPosition(x: number, y: number): string {
         const imageData = this.ctx.getImageData(x, y, 1, 1).data;
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
     }
