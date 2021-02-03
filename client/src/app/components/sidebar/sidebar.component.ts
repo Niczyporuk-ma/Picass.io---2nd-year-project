@@ -13,9 +13,9 @@ export class SidebarComponent {
 
     changeWidth(width: number): void {
         this.widthValue = this.toolManger.currentTool.styles.lineWidth;
-        //if (this.toolManger.currentTool.isValid(width)) {
+        // if (this.toolManger.currentTool.isValid(width)) {
         this.toolManger.currentTool.changeWidth(width);
         console.log(this.toolManger.currentTool);
-        //}
+        // }
     }
 }

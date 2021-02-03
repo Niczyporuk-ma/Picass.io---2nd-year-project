@@ -1,4 +1,4 @@
-//inspired by : https://malcoded.com/posts/angular-color-picker/
+// inspired by : https://malcoded.com/posts/angular-color-picker/
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
 
 @Component({
@@ -20,11 +20,11 @@ export class ColorSliderComponent implements AfterViewInit {
     private mousedown: boolean = false;
     private selectedHeight: number;
 
-    ngAfterViewInit() {
+    ngAfterViewInit(): void {
         this.draw();
     }
 
-    draw() {
+    draw(): void {
         if (!this.ctx) {
             this.ctx = this.canvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         }

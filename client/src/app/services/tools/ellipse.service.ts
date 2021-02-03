@@ -19,8 +19,8 @@ export class EllipseService extends Tool {
     private startingPoint: Vec2;
     private endPoint: Vec2;
     private lineWidth: number;
-    public fill = false;
-    public border = false;
+    fill = false;
+    border = false;
     private colorService: ColorService;
     private primaryColor: string;
     // private secondaryColor: string;
@@ -42,7 +42,7 @@ export class EllipseService extends Tool {
             if (!this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.closestSquare([this.startingPoint, this.endPoint])];
-                //might cause problems
+                // might cause problems
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
                 this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             }
@@ -57,7 +57,7 @@ export class EllipseService extends Tool {
                 window.removeEventListener('keyup', this.setShiftNonPressed);
                 this.eventTest = false;
                 this.currentLine = [this.startingPoint, this.endPoint];
-                //might cause problems
+                // might cause problems
                 // this.drawingService.clearCanvas(this.drawingService.previewCtx);
             } else {
                 this.shiftIsPressed = false;
@@ -124,7 +124,7 @@ export class EllipseService extends Tool {
         ctx.strokeStyle = 'black';
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.lineWidth;
-        //ctx.lineCap = 'round';
+        // ctx.lineCap = 'round';
         ctx.setLineDash([5, 5]);
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, start.y);
@@ -138,8 +138,8 @@ export class EllipseService extends Tool {
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
-        var width = end.y - start.y;
-        var height = end.x - start.x;
+        const width = end.y - start.y;
+        const height = end.x - start.x;
         const radiusX = width / 2;
         const radiusY = height / 2;
 
@@ -147,7 +147,7 @@ export class EllipseService extends Tool {
         ctx.setLineDash([]);
 
         if (this.shiftIsPressed) {
-            //this.drawCircle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            // this.drawCircle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             ctx.ellipse(
                 start.x + Math.min(Math.abs(radiusX), radiusY),
                 start.y + Math.min(radiusX, Math.abs(radiusY)),
@@ -162,18 +162,18 @@ export class EllipseService extends Tool {
         }
 
         if (this.border) {
-            ctx.strokeStyle = 'red'; //secondary color
+            ctx.strokeStyle = 'red'; // secondary color
             this.primaryColor = this.colorService.primaryColor;
-            //TODO this.secondaryColor = this.colorService.secondaryColor;
+            // TODO this.secondaryColor = this.colorService.secondaryColor;
         } else {
             this.primaryColor = this.colorService.primaryColor;
-            ctx.strokeStyle = this.primaryColor; //primary color
+            ctx.strokeStyle = this.primaryColor; // primary color
         }
 
         if (this.fill) {
             ctx.setLineDash([]);
-            //ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
-            ctx.fillStyle = this.primaryColor; //primary color
+            // ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
+            ctx.fillStyle = this.primaryColor; // primary color
             ctx.fill();
         }
 

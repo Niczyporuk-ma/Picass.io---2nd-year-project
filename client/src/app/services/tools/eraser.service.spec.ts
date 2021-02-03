@@ -29,8 +29,8 @@ describe('EraserService', () => {
         findCoordinateSpy = spyOn<any>(service, 'findCoordinate').and.callThrough();
         cursorEffectSpy = spyOn<any>(service, 'cursorEffect').and.callThrough();
 
-        service['drawingService'].baseCtx = baseCtxStub;
-        service['drawingService'].previewCtx = previewCtxStub;
+        service.drawingService.baseCtx = baseCtxStub;
+        service.drawingService.previewCtx = previewCtxStub;
 
         mouseEvent = {
             offsetX: 35,
@@ -77,7 +77,7 @@ describe('EraserService', () => {
     it('findCoordinate should set a Vec2 with correct coordinate', () => {
         service.styles.lineWidth = 20;
         service.currentPoint = { x: 30, y: 30 };
-        let expectedResult: Vec2 = service.findCoordinate();
+        const expectedResult: Vec2 = service.findCoordinate();
         expect(expectedResult).toEqual({ x: 20, y: 20 });
     });
 

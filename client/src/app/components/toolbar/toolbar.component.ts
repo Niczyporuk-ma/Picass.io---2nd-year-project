@@ -10,7 +10,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 export class ToolbarComponent {
     tools: Tool[];
     toolManager: ToolManagerService;
-    public showPalette = false;
+    showPalette = false;
 
     constructor(toolManager: ToolManagerService) {
         this.toolManager = toolManager;
