@@ -8,6 +8,11 @@
     <div class="color-div" [ngStyle]="{ 'background-color': colorService.secondaryColor || 'white' }"></div>
     <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">Swap</button>
 </div>
+<div class="side-input-wrapper">
+    <label>Rouge: <input type="text" (keyup)="adjustRed($event)" placeholder="Rouge" /><br /> </label>
+    <label>Vert: <input type="text" (keyup)="adjustGreen($event)" placeholder="Vert" /> <br /> </label>
+    <label>Bleu: <input type="text" (keyup)="adjustBlue($event)" placeholder="Bleu" /> </label>
+</div>
 
 <mat-slider
     min="0"

@@ -23,6 +23,36 @@ export class ColorPickerComponent implements OnInit {
         console.log('primary color after opacity: ' + this.colorService.primaryColor);
         console.log('secondary color after opacity: ' + this.colorService.secondaryColor);
     }
+    splitColor(colorToSlplit: string): string[] {
+        return colorToSlplit.split(',');
+    }
+
+    //TODO to refactor
+
+    adjustRed(redIntensity: any) {
+        var green = this.splitColor(this.color)[1];
+        var blue = this.splitColor(this.color)[2];
+        var opacity = this.splitColor(this.color)[3];
+        this.color = 'rgba(' + redIntensity.target.value + ',' + green + ',' + blue + ',' + opacity;
+        this.colorService.primaryColor = this.color;
+        this.colorService.setPrimaryColorWithOpacity(this.colorService.opacity);
+    }
+    adjustGreen(greenIntensity: any) {
+        var red = this.splitColor(this.color)[0];
+        var blue = this.splitColor(this.color)[2];
+        var opacity = this.splitColor(this.color)[3];
+        this.color = red + ',' + greenIntensity.target.value + ',' + blue + ',' + opacity;
+        this.colorService.primaryColor = this.color;
+        this.colorService.setPrimaryColorWithOpacity(this.colorService.opacity);
+    }
+    adjustBlue(blueIntensity: any) {
+        var red = this.splitColor(this.color)[0];
+        var green = this.splitColor(this.color)[1];
+        var opacity = this.splitColor(this.color)[3];
+        this.color = red + ',' + green + ',' + blueIntensity.target.value + ',' + opacity;
+        this.colorService.primaryColor = this.color;
+        this.colorService.setPrimaryColorWithOpacity(this.colorService.opacity);
+    }
 
     ngOnInit(): void {}
 }
