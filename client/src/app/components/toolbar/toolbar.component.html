@@ -1,11 +1,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 <div class="btns">
-    <button (click)="this.toolManager.setPencilService()"><fa-icon [icon]="tools[0].icon"></fa-icon></button>
-    <button (click)="this.toolManager.setLineService()"><fa-icon [icon]="tools[1].icon"></fa-icon></button>
-    <button (click)="this.toolManager.setRectangleService()"><span class="material-icons"> crop_16_9 </span></button>
-    <button (click)="this.toolManager.setEraserService()"><fa-icon [icon]="tools[3].icon"></fa-icon></button>
-    <button (click)="this.toolManager.setEllipseService()"><fa-icon [icon]="tools[4].icon"></fa-icon></button>
+    <button (click)="this.toolManager.setPencilService()">Pen</button>
+    <button (click)="this.toolManager.setLineService()">Line</button>
+    <button (click)="this.toolManager.setRectangleService()">Rec</button>
+    <button (click)="this.toolManager.setEraserService()">Eraser</button>
+    <button (click)="this.toolManager.setEllipseService()">Ellipse</button>
+    
     <button (click)="onPress()">Color</button>
     <div *ngIf="showPalette">
         <app-color-picker></app-color-picker>
@@ -18,3 +19,9 @@
     </mat-button-toggle-group>
     
 </div>
+
+<mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService">
+    <mat-button-toggle value="0" (change)="setRectangleStyle($event.value)">Fill</mat-button-toggle>
+    <mat-button-toggle value="1" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
+    <mat-button-toggle value="2" (change)="setRectangleStyle($event.value)">Both</mat-button-toggle>
+</mat-button-toggle-group>

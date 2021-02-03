@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({
@@ -6,16 +6,16 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
+    widthValue: number = this.toolManger.currentTool.styles.lineWidth;
+
     constructor(private toolManger: ToolManagerService) {}
 
-    ngOnInit() {}
-
-    changeColor(color: any) {
-        this.toolManger.getPencilService().changeColor(color.target.value);
-    }
-
-    changeWidth(width: any) {
-        this.toolManger.getPencilService().changeWidth(width.target.value);
+    changeWidth(width: number): void {
+        this.widthValue = this.toolManger.currentTool.styles.lineWidth;
+        //if (this.toolManger.currentTool.isValid(width)) {
+        this.toolManger.currentTool.changeWidth(width);
+        console.log(this.toolManger.currentTool);
+        //}
     }
 }

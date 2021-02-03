@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import { ColorService } from './color.service';
 import { MouseButton } from './pencil-service';
 
@@ -13,14 +12,13 @@ export class EllipseService extends Tool {
     constructor(drawingService: DrawingService, colorService: ColorService) {
         super(drawingService);
         this.shortcut = '2';
-        this.localShortcut = new Map([['Shift', this.onShift]]);
+        this.localShortcuts = new Map([['Shift', this.onShift]]);
         this.colorService = colorService;
     }
 
     private startingPoint: Vec2;
     private endPoint: Vec2;
     private lineWidth: number;
-    public icon = faCircle;
     public fill = false;
     public border = false;
     private colorService: ColorService;
@@ -180,13 +178,5 @@ export class EllipseService extends Tool {
         }
 
         ctx.stroke();
-    }
-
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
     }
 }

@@ -1,16 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Component({
     selector: 'app-menu',
     templateUrl: './menu.component.html',
     styleUrls: ['./menu.component.scss'],
 })
-export class MenuComponent implements OnInit {
-    constructor() {}
+export class MenuComponent {
+    drawingService: DrawingService;
 
-    //@Input() vertical: true;
+    constructor(drawingService: DrawingService) {
+        this.drawingService = drawingService;
+    }
 
-    options: string[] = ['Nouveau dessin', 'Continuer un dessin', 'Ouvrir le caroussel de dessins'];
-
-    ngOnInit(): void {}
+    isStarted(): boolean {
+        return this.drawingService.drawingStarted;
+    }
 }

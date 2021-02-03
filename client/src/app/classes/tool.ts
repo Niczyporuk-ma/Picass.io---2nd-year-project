@@ -1,15 +1,26 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Vec2 } from './vec2';
 
+export interface ToolStyles {
+    lineColor: string;
+    lineWidth: number;
+    fill?: boolean;
+    fillColor?: string;
+}
+
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
 // tslint:disable:no-empty
 export abstract class Tool {
-    protected mouseDownCoord: Vec2;
-    protected mouseDown: boolean = false;
-    public icon: any;
-    protected shortcut: string;
-    protected localShortcut: Map<string, Function>;
-    protected currentCommand : Function;
+    currentWidth: number;
+    lastWidth: number;
+    mouseDownCoord: Vec2;
+    mouseDown: boolean = false;
+    shortcut: string;
+    index: number;
+    styles: ToolStyles;
+    localShortcuts: Map<string, () => void>;
+    currentCommand: () => void;
+    history: Vec2[][];
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -27,16 +38,26 @@ export abstract class Tool {
         return { x: event.offsetX, y: event.offsetY };
     }
 
-    getShorcutValue(): string {
-        return this.shortcut;
-    }
-
-    getLocalShorcuts(): Map<string, Function> {
-        return this.localShortcut;
-    }
-
-    localShortCutHandler(key: string) {
-        this.currentCommand = <Function>this.localShortcut.get(key);
+    localShortCutHandler(key: string): void {
+        this.currentCommand = this.localShortcuts.get(key) as () => void;
         this.currentCommand();
+    }
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[], style: ToolStyles): void {}
+
+    setStyles(): void {
+        if (this.styles.fill) {
+            this.drawingService.previewCtx.fillStyle = this.styles.fillColor as string;
+            this.drawingService.baseCtx.fillStyle = this.styles.fillColor as string;
+        }
+        this.drawingService.previewCtx.strokeStyle = this.styles.lineColor;
+        this.drawingService.baseCtx.strokeStyle = this.styles.lineColor;
+        this.drawingService.previewCtx.lineWidth = this.styles.lineWidth;
+        this.drawingService.baseCtx.lineWidth = this.styles.lineWidth;
+    }
+
+    changeWidth(newWidth: number): void {
+        // this.lastWidth = this.currentWidth;
+        // this.penWidth = parseInt(newWidth);
+        this.styles.lineWidth = newWidth;
     }
 }
