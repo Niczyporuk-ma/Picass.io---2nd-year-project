@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ColorService } from '@app/services/tools/color.service';
+import { MouseButton } from '@app/services/tools/pencil-service';
 @Component({
     selector: 'app-color-palette',
     templateUrl: './color-palette.component.html',
@@ -18,6 +19,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     private ctx: CanvasRenderingContext2D;
 
     private mousedown: boolean = false;
+    private contextmenu: boolean = false;
     colorService: ColorService;
 
     selectedPosition: { x: number; y: number };
@@ -83,26 +85,25 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.mousedown = false;
     }
 
-    onMouseDown(evt: MouseEvent): void {
-        this.mousedown = true;
-        this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
-        this.draw();
-        this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-        this.colorService.setPrimaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+    onMouseDown(evt: MouseEvent) {
+        this.mousedown = evt.button === MouseButton.Left;
+        this.contextmenu = false;
+        if (this.contextmenu == false && this.mousedown == true) {
+            this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
+            this.draw();
+            this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            this.colorService.setPrimaryColor(this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY)); // add opacity
+        }
     }
 
-    onRightClickDown(evt: MouseEvent): void {
-        if (oncontextmenu) {
-            evt.preventDefault();
-
-            console.log('SAH quel plaisir');
-        }
-
-        // this.mousedown = true;
+    onRightClickDown(evt: MouseEvent) {
+        this.mousedown = false;
+        this.contextmenu = true;
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
         this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-        this.colorService.setSecondaryColor(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+        this.colorService.setSecondaryColor(this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY)); // add opacity
+        return false;
     }
 
     onMouseMove(evt: MouseEvent): void {
@@ -121,5 +122,10 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     getColorAtPosition(x: number, y: number): string {
         const imageData = this.ctx.getImageData(x, y, 1, 1).data;
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
+    }
+
+    getColorAtPositionWithOpacity(x: number, y: number) {
+        const imageData = this.ctx.getImageData(x, y, 1, 1).data;
+        return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + this.colorService.opacity + ')';
     }
 }
