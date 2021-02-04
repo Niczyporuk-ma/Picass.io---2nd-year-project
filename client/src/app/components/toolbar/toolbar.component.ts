@@ -17,21 +17,12 @@ export class ToolbarComponent {
         this.tools = toolManager.tools;
     }
     setRectangleStyle(n: number): void {
-<<<<<<< HEAD
         if (n == 0) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.toolStyles.lineColor = 'white';
         } else if (n == 1) {
             this.toolManager.rectangleService.toolStyles.fill = false;
             this.toolManager.rectangleService.toolStyles.lineColor = 'red';
-=======
-        if (n === 0) {
-            this.toolManager.rectangleService.styles.fill = true;
-            this.toolManager.rectangleService.styles.lineColor = 'white';
-        } else if (n === 1) {
-            this.toolManager.rectangleService.styles.fill = false;
-            this.toolManager.rectangleService.styles.lineColor = 'red';
->>>>>>> 0728b6cdb76bf3154bcc75deb2a016c4733c3e6a
         } else {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.toolStyles.lineColor = 'black';

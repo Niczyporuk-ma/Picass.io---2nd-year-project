@@ -18,13 +18,8 @@ export class RectangleService extends Tool {
         this.drawingService.drawingHistory = new Map([]);
         this.currentLine = [];
         this.index = 2;
-<<<<<<< HEAD
-        this.toolStyles = {
-            lineColor: 'red',
-=======
         this.styles = {
             lineColor: 'rgba(255, 0, 0, 1)', // rouge
->>>>>>> 0728b6cdb76bf3154bcc75deb2a016c4733c3e6a
             lineWidth: 1,
             fill: false,
             fillColor: 'black',
@@ -153,13 +148,6 @@ export class RectangleService extends Tool {
         this.setStyles();
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-<<<<<<< HEAD
-        path = this.currentLine;
-
-        if (ctx === this.drawingService.baseCtx) {
-            this.drawingService.drawingHistory.set(path, [this, { ...this.toolStyles }]);
-            console.log(this.toolStyles);
-=======
         ctx.lineWidth = this.styles.lineWidth;
         // ctx.lineCap = 'round';
         path = this.currentLine;
@@ -168,7 +156,6 @@ export class RectangleService extends Tool {
             // let test: ToolStyles = { ...this.styles };
             this.drawingService.drawingHistory.set(path, [this, { ...this.styles }]);
             console.log(this.styles);
->>>>>>> 0728b6cdb76bf3154bcc75deb2a016c4733c3e6a
             this.drawingService.drawingStarted = true;
         }
 

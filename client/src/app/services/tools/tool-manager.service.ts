@@ -38,17 +38,10 @@ export class ToolManagerService {
         ]);
     }
 
-<<<<<<< HEAD
     //getters
-   getPencilService() : PencilService {
-       return this.pencilService;
-   }
-=======
-    // getters
     getPencilService(): PencilService {
         return this.pencilService;
     }
->>>>>>> 0728b6cdb76bf3154bcc75deb2a016c4733c3e6a
 
     // setters
     setTool(tool: Tool): void {

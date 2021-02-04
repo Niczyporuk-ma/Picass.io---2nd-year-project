@@ -21,10 +21,7 @@ export abstract class Tool {
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;
     history: Vec2[][];
-<<<<<<< HEAD
     toolStyles: ToolStyles;
-=======
->>>>>>> 0728b6cdb76bf3154bcc75deb2a016c4733c3e6a
 
     constructor(protected drawingService: DrawingService) {}
 
