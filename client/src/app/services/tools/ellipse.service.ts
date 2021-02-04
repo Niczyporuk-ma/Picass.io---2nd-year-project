@@ -146,6 +146,7 @@ export class EllipseService extends Tool {
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+        ctx.globalCompositeOperation = 'source-over';
         const width = end.y - start.y;
         const height = end.x - start.x;
         const radiusX = width / 2;
