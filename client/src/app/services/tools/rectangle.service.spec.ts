@@ -12,7 +12,7 @@ describe('RectangleService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawLineSpy: jasmine.Spy<any>;
+    let drawLineSpy: jasmine.Spy;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -25,7 +25,7 @@ describe('RectangleService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(RectangleService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.stub(); //appeller la fonction original
+        drawLineSpy = spyOn(service, 'drawLine').and.stub(); // appeller la fonction original
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal

@@ -118,12 +118,12 @@ export class LineServiceService extends Tool {
     }
 
     redrawCurrentPreview(): void {
-        for (let line of this.currentLine) {
+        for (const line of this.currentLine) {
             this.drawLine(this.drawingService.previewCtx, line);
         }
     }
     redrawCurrentBase(): void {
-        for (let line of this.currentLine) {
+        for (const line of this.currentLine) {
             this.drawLine(this.drawingService.baseCtx, line);
         }
         this.currentLine = [];
@@ -157,7 +157,7 @@ export class LineServiceService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.lineHelper.pixelDistanceUtil(this.startingPoint, mousePosition)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            //this.drawLine(this.drawingService.baseCtx, line);
+            // this.drawLine(this.drawingService.baseCtx, line);
             this.redrawCurrentBase();
             return;
         } else {
@@ -165,7 +165,7 @@ export class LineServiceService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.endPoint = mousePosition;
                 this.currentLine.push([this.startingPoint, this.endPoint]);
-                //this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.endPoint]);
+                // this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.endPoint]);
                 this.redrawCurrentBase();
             } else {
                 this.endPoint = this.angledEndPoint;
@@ -202,11 +202,13 @@ export class LineServiceService extends Tool {
         this.setStyles();
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
-            this.drawingService.drawingHistory.set(path, [this, { ...this.toolStyles }]);
+            // let test: ToolStyles = { ...this.styles };
+            this.drawingService.drawingHistory.set(path, [this, { ...this.styles }]);
         }
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.lineWidth;
+        ctx.lineWidth = this.styles.lineWidth;
+
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
@@ -217,8 +219,20 @@ export class LineServiceService extends Tool {
         this.setStyles();
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
+        ctx.lineWidth = this.styles.lineWidth;
+
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
+    }
+
+    // changeWidth(newWidth: number): void {
+    //     //this.lastWidth = this.currentWidth;
+    //     // this.penWidth = parseInt(newWidth);
+    //     this.styles.lineWidth = newWidth;
+    // }
+
+    isValid(width: number): boolean {
+        return true;
     }
 }

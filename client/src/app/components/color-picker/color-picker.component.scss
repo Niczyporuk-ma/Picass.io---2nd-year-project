@@ -1,0 +1,49 @@
+// inspired by : https://malcoded.com/posts/angular-color-picker/
+:host {
+    display: block;
+    width: 316px;
+    padding: 16px;
+}
+.color-wrapper {
+    display: flex;
+    height: 250px;
+}
+
+.input-wrapper {
+    margin-top: 16px;
+    display: flex;
+    border-radius: 1px;
+    border: 1px solid rgb(220, 220, 220);
+    padding: 8px;
+    height: 32px;
+    justify-content: center;
+}
+
+.color-div {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgb(220, 220, 220);
+}
+
+.color-div .selected {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 4px solid rgb(220, 220, 220);
+}
+
+.swap-button {
+    width: 50px;
+    height: 32px;
+    border-radius: 25%;
+    border: 1px solid rgb(220, 220, 220);
+    font-weight: bold;
+    color: black;
+}
+
+.text {
+    flex: 1;
+    font-family: 'Helvetica';
+    line-height: 32px;
+}

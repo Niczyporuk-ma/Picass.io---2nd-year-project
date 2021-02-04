@@ -11,14 +11,20 @@ export interface ToolStyles {
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
 // tslint:disable:no-empty
 export abstract class Tool {
+    currentWidth: number;
+    lastWidth: number;
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
     shortcut: string;
     index: number;
+    styles: ToolStyles;
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;
     history: Vec2[][];
+<<<<<<< HEAD
     toolStyles: ToolStyles;
+=======
+>>>>>>> 0728b6cdb76bf3154bcc75deb2a016c4733c3e6a
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -54,5 +60,11 @@ export abstract class Tool {
         this.drawingService.baseCtx.strokeStyle = this.toolStyles.lineColor;
         this.drawingService.previewCtx.lineWidth = this.toolStyles.lineWidth;
         this.drawingService.baseCtx.lineWidth = this.toolStyles.lineWidth;
+    }
+
+    changeWidth(newWidth: number): void {
+        // this.lastWidth = this.currentWidth;
+        // this.penWidth = parseInt(newWidth);
+        this.styles.lineWidth = newWidth;
     }
 }
