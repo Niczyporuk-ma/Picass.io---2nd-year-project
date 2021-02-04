@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool, ToolStyles } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorService } from './color.service';
 import { LineHelperService } from './line-helper.service';
 import { PencilService } from './pencil-service';
 
@@ -23,8 +24,9 @@ export class LineServiceService extends Tool {
     angledEndPoint: Vec2;
     calledFromMouseClick: boolean = false;
     lineHelper: LineHelperService;
+    colorService: ColorService;
 
-    constructor(drawingService: DrawingService, pencilService: PencilService, lineHelper: LineHelperService) {
+    constructor(drawingService: DrawingService, pencilService: PencilService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
         this.isStarted = false;
         this.shortcut = 'l';
@@ -37,6 +39,7 @@ export class LineServiceService extends Tool {
         this.pencilService = pencilService;
         this.toolStyles = { lineColor: 'blue', lineWidth: 5 };
         this.lineHelper = lineHelper;
+        this.colorService = colorService;
     }
 
     localShortCutHandler(key: string): void {
@@ -199,7 +202,9 @@ export class LineServiceService extends Tool {
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        this.toolStyles.lineColor = this.colorService.primaryColor;
         this.setStyles();
+
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
             // let test: ToolStyles = { ...this.toolStyles };
