@@ -202,12 +202,12 @@ export class LineServiceService extends Tool {
         this.setStyles();
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
-            // let test: ToolStyles = { ...this.styles };
-            this.drawingService.drawingHistory.set(path, [this, { ...this.styles }]);
+            // let test: ToolStyles = { ...this.toolStyles };
+            this.drawingService.drawingHistory.set(path, [this, { ...this.toolStyles }]);
         }
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
@@ -219,7 +219,7 @@ export class LineServiceService extends Tool {
         this.setStyles();
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
@@ -229,7 +229,7 @@ export class LineServiceService extends Tool {
     // changeWidth(newWidth: number): void {
     //     //this.lastWidth = this.currentWidth;
     //     // this.penWidth = parseInt(newWidth);
-    //     this.styles.lineWidth = newWidth;
+    //     this.toolStyles.lineWidth = newWidth;
     // }
 
     isValid(width: number): boolean {
