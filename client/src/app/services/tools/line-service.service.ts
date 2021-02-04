@@ -189,6 +189,7 @@ export class LineServiceService extends Tool {
                     this.redrawCurrentPreview();
                     this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
                 }
+                console.log();
             } else {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.redrawCurrentPreview();
