@@ -34,6 +34,7 @@ export class EllipseService extends Tool {
     eventTest: boolean;
     currentLine: Vec2[] = [];
 
+    //TODO: renommer eventTest
     onShift(): void {
         if (!this.eventTest) {
             window.addEventListener('keydown', this.setShiftIfPressed);
@@ -47,8 +48,6 @@ export class EllipseService extends Tool {
             this.shiftIsPressed = true;
             if (!this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentLine = [this.startingPoint, this.closestSquare([this.startingPoint, this.endPoint])];
-                // might cause problems
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
                 this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             }
@@ -62,9 +61,7 @@ export class EllipseService extends Tool {
                 window.removeEventListener('keypress', this.setShiftIfPressed);
                 window.removeEventListener('keyup', this.setShiftNonPressed);
                 this.eventTest = false;
-                this.currentLine = [this.startingPoint, this.endPoint];
-                // might cause problems
-                // this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
             } else {
                 this.shiftIsPressed = false;
             }
@@ -72,8 +69,8 @@ export class EllipseService extends Tool {
     };
 
     checkIfIsSquare(pos: Vec2[]): boolean {
-        const horizontalDistance: number = pos[0].x - pos[1].x;
-        const verticalDistance: number = pos[0].y - pos[1].y;
+        const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
+        const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
 
         if (horizontalDistance === verticalDistance) {
             return true;
@@ -100,11 +97,13 @@ export class EllipseService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
+        //TODO: gestion de MouseDown pour tous les tools (mettre dans l'interface)
         this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.startingPoint = this.mouseDownCoord;
+        if (!this.mouseDown) {
+            return;
         }
+        this.mouseDownCoord = this.getPositionFromMouse(event);
+        this.startingPoint = this.mouseDownCoord;
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -122,7 +121,7 @@ export class EllipseService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            // this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
         }
     }
@@ -145,7 +144,7 @@ export class EllipseService extends Tool {
         ctx.stroke();
     }
 
-    private drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+    public drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         ctx.globalCompositeOperation = 'source-over';
         const width = end.y - start.y;
         const height = end.x - start.x;
