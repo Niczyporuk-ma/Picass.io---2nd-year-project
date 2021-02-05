@@ -12,7 +12,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^10.0.14",
+    "@angular/animations": "^10.2.4",
     "@angular/cdk": "^10.2.7",
     "@angular/common": "~10.0.9",
     "@angular/compiler": "~10.0.9",
@@ -27,6 +27,8 @@
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
     "@fortawesome/free-regular-svg-icons": "^5.15.1",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@material/slider": "^9.0.0",
+    "hammerjs": "^2.0.8",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

@@ -8,9 +8,9 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class EraserService extends Tool {
-    private startingPoint: Vec2;
-    private currentPoint: Vec2;
-    baseWidht: number = 20;
+    startingPoint: Vec2;
+    currentPoint: Vec2;
+    coordinate: Vec2;
     indexValue: number = 3;
 
     constructor(drawingService: DrawingService) {
@@ -18,6 +18,11 @@ export class EraserService extends Tool {
         this.shortcut = 'e';
         this.localShortcuts = new Map();
         this.index = this.indexValue;
+        this.styles = {
+            lineColor: 'black',
+            lineWidth: 5,
+            fillColor: 'white',
+        };
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -32,18 +37,48 @@ export class EraserService extends Tool {
         this.mouseDown = false;
     }
 
+    // Permet de trouver la bonne prosition pour l'effet du curseur
+    findCoordinate(): Vec2 {
+        const coord: Vec2 = { x: this.currentPoint.x - this.styles.lineWidth / 2, y: this.currentPoint.y - this.styles.lineWidth / 2 };
+        return coord;
+    }
+
     onMouseMove(event: MouseEvent): void {
+        this.currentPoint = this.getPositionFromMouse(event);
+        // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.coordinate = this.findCoordinate();
+        this.cursorEffect(this.drawingService.previewCtx, this.coordinate);
+
         if (this.mouseDown) {
-            this.currentPoint = this.getPositionFromMouse(event);
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, [this.currentPoint]);
+
+            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.coordinate = this.findCoordinate();
+            this.cursorEffect(this.drawingService.previewCtx, this.coordinate);
         }
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.lineWidth = this.baseWidht;
+
+        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineCap = 'round';
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
+        ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
+        ctx.stroke();
+
+        this.startingPoint.x = this.currentPoint.x;
+        this.startingPoint.y = this.currentPoint.y;
+    }
+
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
+        ctx.lineWidth = this.styles.lineWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
@@ -51,13 +86,23 @@ export class EraserService extends Tool {
         ctx.stroke();
     }
 
-    // redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-    //     ctx.beginPath();
-    //     ctx.lineWidth = this.baseWidht;
-    //     ctx.lineCap = 'round';
-    //     ctx.globalCompositeOperation = 'destination-out';
-    //     ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
-    //     ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
-    //     ctx.stroke();
+    // Permet la previsualisation de notre efface
+    cursorEffect(ctx: CanvasRenderingContext2D, location: Vec2): void {
+        this.drawingService.previewCtx.lineWidth = 1;
+        this.drawingService.previewCtx.strokeRect(location.x, location.y, this.styles.lineWidth, this.styles.lineWidth);
+    }
+
+    // changeWidth(newWidth: number): void {
+    //     //this.lastWidth = this.currentWidth;
+    //     // this.penWidth = parseInt(newWidth);
+    //     this.styles.lineWidth = newWidth;
+    // }
+
+    // isValid(width: number): boolean {
+    //     if (width < 5) {
+    //         return false;
+    //     }
+
+    //     return true;
     // }
 }

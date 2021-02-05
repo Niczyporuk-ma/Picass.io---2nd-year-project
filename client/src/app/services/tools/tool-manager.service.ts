@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { LineServiceService } from '@app/services/tools/line-service.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { Subject } from 'rxjs';
+import { EllipseService } from './ellipse.service';
 import { EraserService } from './eraser.service';
 import { RectangleService } from './rectangle.service';
 
@@ -14,7 +15,7 @@ export class ToolManagerService {
     currentToolChange: Subject<Tool> = new Subject<Tool>();
     currentTool: Tool;
     // changer ca pour un autre conteneur
-    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService];
+    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService, this.ellipseService];
     toolBoxShortcuts: Map<string, Tool>;
     lineHistory: Vec2[][] = [];
     pencilHistory: Vec2[][] = [];
@@ -25,6 +26,7 @@ export class ToolManagerService {
         public lineService: LineServiceService,
         public rectangleService: RectangleService,
         public eraserService: EraserService,
+        public ellipseService: EllipseService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
@@ -37,9 +39,9 @@ export class ToolManagerService {
     }
 
     //getters
-   getPencilService() : PencilService {
-       return this.pencilService;
-   }
+    getPencilService(): PencilService {
+        return this.pencilService;
+    }
 
     // setters
     setTool(tool: Tool): void {
@@ -61,5 +63,9 @@ export class ToolManagerService {
 
     setEraserService(): void {
         this.currentToolChange.next(this.eraserService);
+    }
+
+    setEllipseService(): void {
+        this.currentToolChange.next(this.ellipseService);
     }
 }

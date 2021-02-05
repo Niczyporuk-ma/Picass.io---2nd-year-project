@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { MenuComponent } from './menu.component';
 
 describe('MenuComponent', () => {
@@ -20,5 +19,10 @@ describe('MenuComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it(' isStarted should return the right boolean value ', () => {
+        let drawingState: boolean = component.isStarted();
+        expect(drawingState).toEqual(component.drawingService.drawingStarted);
     });
 });

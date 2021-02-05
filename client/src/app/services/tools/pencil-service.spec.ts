@@ -26,7 +26,7 @@ describe('PencilService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(PencilService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough(); //appeller la fonction original
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal

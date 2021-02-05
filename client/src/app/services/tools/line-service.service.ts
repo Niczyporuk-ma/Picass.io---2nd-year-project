@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool, ToolStyles } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorService } from './color.service';
 import { LineHelperService } from './line-helper.service';
 import { PencilService } from './pencil-service';
 
@@ -11,9 +12,9 @@ import { PencilService } from './pencil-service';
 export class LineServiceService extends Tool {
     shortcutToBeUsed: () => void;
     shiftIsPressed: boolean = false;
-    private isStarted: boolean;
-    private startingPoint: Vec2;
-    private endPoint: Vec2;
+    isStarted: boolean;
+    startingPoint: Vec2;
+    endPoint: Vec2;
     lineWidth: number;
     eventTest: boolean;
     currentSegment: Vec2[] = [];
@@ -23,8 +24,9 @@ export class LineServiceService extends Tool {
     angledEndPoint: Vec2;
     calledFromMouseClick: boolean = false;
     lineHelper: LineHelperService;
+    colorService: ColorService;
 
-    constructor(drawingService: DrawingService, pencilService: PencilService, lineHelper: LineHelperService) {
+    constructor(drawingService: DrawingService, pencilService: PencilService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
         this.isStarted = false;
         this.shortcut = 'l';
@@ -37,6 +39,7 @@ export class LineServiceService extends Tool {
         this.pencilService = pencilService;
         this.toolStyles = { lineColor: 'blue', lineWidth: 5 };
         this.lineHelper = lineHelper;
+        this.colorService = colorService;
     }
 
     localShortCutHandler(key: string): void {
@@ -118,12 +121,12 @@ export class LineServiceService extends Tool {
     }
 
     redrawCurrentPreview(): void {
-        for (let line of this.currentLine) {
+        for (const line of this.currentLine) {
             this.drawLine(this.drawingService.previewCtx, line);
         }
     }
     redrawCurrentBase(): void {
-        for (let line of this.currentLine) {
+        for (const line of this.currentLine) {
             this.drawLine(this.drawingService.baseCtx, line);
         }
         this.currentLine = [];
@@ -157,7 +160,7 @@ export class LineServiceService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.lineHelper.pixelDistanceUtil(this.startingPoint, mousePosition)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            //this.drawLine(this.drawingService.baseCtx, line);
+            // this.drawLine(this.drawingService.baseCtx, line);
             this.redrawCurrentBase();
             return;
         } else {
@@ -165,7 +168,7 @@ export class LineServiceService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.endPoint = mousePosition;
                 this.currentLine.push([this.startingPoint, this.endPoint]);
-                //this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.endPoint]);
+                // this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.endPoint]);
                 this.redrawCurrentBase();
             } else {
                 this.endPoint = this.angledEndPoint;
@@ -199,14 +202,18 @@ export class LineServiceService extends Tool {
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        this.toolStyles.lineColor = this.colorService.primaryColor;
         this.setStyles();
+
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
+            // let test: ToolStyles = { ...this.toolStyles };
             this.drawingService.drawingHistory.set(path, [this, { ...this.toolStyles }]);
         }
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
+
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
@@ -217,8 +224,20 @@ export class LineServiceService extends Tool {
         this.setStyles();
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
+        ctx.lineWidth = this.toolStyles.lineWidth;
+
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
+    }
+
+    // changeWidth(newWidth: number): void {
+    //     //this.lastWidth = this.currentWidth;
+    //     // this.penWidth = parseInt(newWidth);
+    //     this.toolStyles.lineWidth = newWidth;
+    // }
+
+    isValid(width: number): boolean {
+        return true;
     }
 }

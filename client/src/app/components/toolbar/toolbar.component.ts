@@ -10,21 +10,40 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 export class ToolbarComponent {
     tools: Tool[];
     toolManager: ToolManagerService;
+    showPalette: boolean = false;
 
     constructor(toolManager: ToolManagerService) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
     }
     setRectangleStyle(n: number): void {
-        if (n == 0) {
+        if (n == 3) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.toolStyles.lineColor = 'white';
-        } else if (n == 1) {
+        } else if (n == 4) {
             this.toolManager.rectangleService.toolStyles.fill = false;
             this.toolManager.rectangleService.toolStyles.lineColor = 'red';
-        } else {
+        } else if (n == 5) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.toolStyles.lineColor = 'black';
+        }
+    }
+
+    onPress(): void {
+        this.showPalette = !this.showPalette;
+    }
+
+    setEllipseStyle(n: number): void {
+        this.toolManager.ellipseService.styles.fill = false;
+        this.toolManager.ellipseService.border = false;
+
+        if (n === 0) {
+            this.toolManager.ellipseService.styles.fill = true;
+        } else if (n === 1) {
+            this.toolManager.ellipseService.border = true;
+        } else {
+            this.toolManager.ellipseService.styles.fill = true;
+            this.toolManager.ellipseService.border = true;
         }
     }
 }

@@ -19,7 +19,7 @@ export class RectangleService extends Tool {
         this.currentLine = [];
         this.index = 2;
         this.toolStyles = {
-            lineColor: 'red',
+            lineColor: 'rgba(255, 0, 0, 1)', // rouge
             lineWidth: 1,
             fill: false,
             fillColor: 'black',
@@ -87,8 +87,8 @@ export class RectangleService extends Tool {
     }
 
     checkIfIsSquare(pos: Vec2[]): boolean {
-        const horizontalDistance: number = pos[0].x - pos[1].x;
-        const verticalDistance: number = pos[0].y - pos[1].y;
+        const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
+        const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
 
         if (horizontalDistance === verticalDistance) {
             return true;
@@ -133,7 +133,7 @@ export class RectangleService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.endPoint];
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
-                //this.drawingService.previewCtx.strokeStyle = 'black';
+                // this.drawingService.previewCtx.strokeStyle = 'black';
                 // this.drawingService.previewCtx.strokeRect(
                 //     this.startingPoint.x,
                 //     this.startingPoint.y,
@@ -148,11 +148,14 @@ export class RectangleService extends Tool {
         this.setStyles();
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
+        ctx.lineWidth = this.toolStyles.lineWidth;
+        // ctx.lineCap = 'round';
         path = this.currentLine;
 
         if (ctx === this.drawingService.baseCtx) {
-            this.drawingService.drawingHistory.set(path, [this, { ...this.toolStyles }]);
-            console.log(this.toolStyles);
+            // let test: ToolStyles = { ...this.styles };
+            this.drawingService.drawingHistory.set(path, [this, { ...this.styles }]);
+            //console.log(this.styles);
             this.drawingService.drawingStarted = true;
         }
 
@@ -196,4 +199,14 @@ export class RectangleService extends Tool {
             ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
         }
     }
+
+    // changeWidth(newWidth: number): void {
+    //     //this.lastWidth = this.currentWidth;
+    //     // this.penWidth = parseInt(newWidth);
+    //     this.styles.lineWidth = newWidth;
+    // }
+
+    // isValid(width: number): boolean {
+    //     return true;
+    // }
 }

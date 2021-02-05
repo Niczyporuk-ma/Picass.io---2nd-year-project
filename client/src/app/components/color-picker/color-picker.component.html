@@ -1,0 +1,31 @@
+<!-- inspired by : https://malcoded.com/posts/angular-color-picker/ -->
+<div class="color-wrapper">
+    <app-color-palette [hue]="hue" (color)="color = $event"></app-color-palette>
+    <app-color-slider (color)="hue = $event" style="margin-left: 16px"></app-color-slider>
+</div>
+<!-- TODO: css for the selected color( the class in css already exists) -->
+<div class="input-wrapper">
+    <span class="text">{{ color }}</span>
+    <div class="color-div" (click)="selectPrimaryColor($event)" [ngStyle]="{ 'background-color': colorService.primaryColor || 'white' }"></div>
+    <div class="color-div" (click)="selectSecondaryColor($event)" [ngStyle]="{ 'background-color': colorService.secondaryColor || 'white' }"></div>
+    <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">Swap</button>
+</div>
+<div class="side-input-wrapper">
+    <label>R: <input type="text" (keyup)="adjustRed($event)" [(ngModel)]="red" /><br /> </label>
+    <label>V: <input type="text" (keyup)="adjustGreen($event)" [(ngModel)]="green" /> <br /> </label>
+    <label>B: <input type="text" (keyup)="adjustBlue($event)" [(ngModel)]="blue" /> </label>
+
+    <!--  <label>Width: <input [(ngModel)]="widthValue" (change)="changeWidth(widthValue)" /></label> -->
+</div>
+
+<mat-slider
+    min="0"
+    max="1"
+    step="0.01"
+    thumbLabel
+    tickInterval="1"
+    (change)="changeOpacity($event.value)"
+    (input)="opacity = $event.value"
+    [value]="opacity"
+    >{{ opacity }}</mat-slider
+>
