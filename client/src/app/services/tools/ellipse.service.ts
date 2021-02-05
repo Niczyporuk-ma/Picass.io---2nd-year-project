@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { ColorService } from './color.service';
 import { MouseButton } from './pencil-service';
 
@@ -9,7 +10,7 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    constructor(drawingService: DrawingService, colorService: ColorService) {
+    constructor(drawingService: DrawingService, colorService: ColorService, private squareHelperService: SquareHelperService) {
         super(drawingService);
         this.shortcut = '2';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
@@ -46,7 +47,7 @@ export class EllipseService extends Tool {
     setShiftIfPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
             this.shiftIsPressed = true;
-            if (!this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
                 this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
@@ -67,36 +68,6 @@ export class EllipseService extends Tool {
             }
         }
     };
-
-    //TODO refactor: a faire dans un service a part
-    checkIfIsSquare(pos: Vec2[]): boolean {
-        const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
-        const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
-
-        if (horizontalDistance === verticalDistance) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    //TODO refactor: a faire dans un service a part
-    closestSquare(pos: Vec2[]): Vec2 {
-        const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
-        const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
-        const isLeft: boolean = pos[0].x > pos[1].x;
-        const isDownward: boolean = pos[0].y > pos[1].y;
-
-        const smallest = Math.min(horizontalDistance, verticalDistance);
-
-        if (smallest === horizontalDistance) {
-            const newPos: Vec2 = { x: pos[1].x, y: isDownward ? pos[0].y - horizontalDistance : pos[0].y + horizontalDistance };
-            return newPos;
-        } else {
-            const newPos: Vec2 = { x: isLeft ? pos[0].x - verticalDistance : pos[0].x + verticalDistance, y: pos[1].y };
-            return newPos;
-        }
-    }
 
     onMouseDown(event: MouseEvent): void {
         //TODO: gestion de MouseDown pour tous les tools (mettre dans l'interface)
@@ -127,7 +98,9 @@ export class EllipseService extends Tool {
             this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
         }
     }
-    private drawRectangle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+
+    //TODO: fix the dashline
+    public drawRectangle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         const gapBetweenDash = 5;
         const dashLength = 5;
         ctx.beginPath();

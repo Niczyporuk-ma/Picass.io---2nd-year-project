@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool, ToolStyles } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { MouseButton } from './pencil-service';
 
 @Injectable({
@@ -11,7 +12,7 @@ export class RectangleService extends Tool {
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService) {
         super(drawingService);
         this.shortcut = '1';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
@@ -40,9 +41,9 @@ export class RectangleService extends Tool {
     setShiftIfPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
             this.shiftIsPressed = true;
-            if (!this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentLine = [this.startingPoint, this.closestSquare([this.startingPoint, this.endPoint])];
+                this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
             }
         }
@@ -86,46 +87,18 @@ export class RectangleService extends Tool {
         this.mouseDown = false;
     }
 
-    checkIfIsSquare(pos: Vec2[]): boolean {
-        const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
-        const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
-
-        if (horizontalDistance === verticalDistance) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    closestSquare(pos: Vec2[]): Vec2 {
-        const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
-        const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
-        const isLeft: boolean = pos[0].x > pos[1].x;
-        const isDownward: boolean = pos[0].y > pos[1].y;
-
-        const smallest = Math.min(horizontalDistance, verticalDistance);
-
-        if (smallest === horizontalDistance) {
-            const newPos: Vec2 = { x: pos[1].x, y: isDownward ? pos[0].y - horizontalDistance : pos[0].y + horizontalDistance };
-            return newPos;
-        } else {
-            const newPos: Vec2 = { x: isLeft ? pos[0].x - verticalDistance : pos[0].x + verticalDistance, y: pos[1].y };
-            return newPos;
-        }
-    }
-
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             if (this.shiftIsPressed) {
-                if (this.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+                if (this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                     this.drawingService.clearCanvas(this.drawingService.previewCtx);
                     this.currentLine = [this.startingPoint, this.endPoint];
                     this.drawLine(this.drawingService.previewCtx, this.currentLine);
                 } else {
                     this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.currentLine = [this.startingPoint, this.closestSquare([this.startingPoint, this.endPoint])];
+                    this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
                     this.drawLine(this.drawingService.previewCtx, this.currentLine);
                 }
             } else {
