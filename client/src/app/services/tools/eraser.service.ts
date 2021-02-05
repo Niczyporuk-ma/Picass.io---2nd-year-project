@@ -66,7 +66,7 @@ export class EraserService extends Tool {
         ctx.beginPath();
 
         ctx.lineWidth = this.styles.lineWidth;
-        ctx.lineCap = 'round';
+        ctx.lineCap = 'square';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
         ctx.lineTo(this.currentPoint.x, this.currentPoint.y);

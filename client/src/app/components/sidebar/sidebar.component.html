@@ -12,8 +12,8 @@
     <mat-card>
         <mat-slider
             min="1"
-            max="100"
-            step="0.5"
+            max="50"
+            step="1"
             value="1"
             class="slider"
             (change)="changeWidth($event.value)"
@@ -21,8 +21,6 @@
             [value]="widthValue"
         ></mat-slider>
         {{ widthValue }}
-        <p></p>
-        <label>Width: <input [(ngModel)]="widthValue" (change)="changeWidth(widthValue)" /></label>
     </mat-card>
 
     <app-toolbar></app-toolbar>
