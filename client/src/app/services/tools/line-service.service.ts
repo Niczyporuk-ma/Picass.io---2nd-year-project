@@ -12,9 +12,9 @@ import { PencilService } from './pencil-service';
 export class LineServiceService extends Tool {
     shortcutToBeUsed: () => void;
     shiftIsPressed: boolean = false;
-    private isStarted: boolean;
-    private startingPoint: Vec2;
-    private endPoint: Vec2;
+    isStarted: boolean;
+    startingPoint: Vec2;
+    endPoint: Vec2;
     lineWidth: number;
     eventTest: boolean;
     currentSegment: Vec2[] = [];

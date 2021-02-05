@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from './eraser.service';
@@ -7,10 +6,10 @@ import { EraserService } from './eraser.service';
 describe('EraserService', () => {
     let service: EraserService;
     let mouseEvent: MouseEvent;
-    let canvasTestHelper: CanvasTestHelper;
+    // let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let baseCtxStub: CanvasRenderingContext2D;
-    let previewCtxStub: CanvasRenderingContext2D;
+    // let baseCtxStub: CanvasRenderingContext2D;
+    // let previewCtxStub: CanvasRenderingContext2D;
     let drawLineSpy: jasmine.Spy;
     let cursorEffectSpy: jasmine.Spy;
     let findCoordinateSpy: jasmine.Spy;
@@ -22,9 +21,9 @@ describe('EraserService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(EraserService);
-        canvasTestHelper = TestBed.inject(CanvasTestHelper);
-        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        // canvasTestHelper = TestBed.inject(CanvasTestHelper);
+        // baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        // previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawLineSpy = spyOn(service, 'drawLine').and.callThrough();
         findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
         cursorEffectSpy = spyOn(service, 'cursorEffect').and.callThrough();

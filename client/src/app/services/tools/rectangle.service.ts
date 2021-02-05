@@ -87,8 +87,8 @@ export class RectangleService extends Tool {
     }
 
     checkIfIsSquare(pos: Vec2[]): boolean {
-        const horizontalDistance: number = pos[0].x - pos[1].x;
-        const verticalDistance: number = pos[0].y - pos[1].y;
+        const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
+        const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
 
         if (horizontalDistance === verticalDistance) {
             return true;

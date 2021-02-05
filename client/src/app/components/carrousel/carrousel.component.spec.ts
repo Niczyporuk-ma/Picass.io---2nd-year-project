@@ -20,4 +20,15 @@ describe('CarrouselComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it(' ngOnInit should initialize visible to false', () => {
+        component.ngOnInit();
+        expect(component.visible).not.toEqual(true);
+    });
+
+    it(' toggleCarrousel should change visible from false to true', () => {
+        component.ngOnInit();
+        component.toggleCarrousel();
+        expect(component.visible).toEqual(true);
+    });
 });
