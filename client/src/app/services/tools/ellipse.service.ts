@@ -68,6 +68,7 @@ export class EllipseService extends Tool {
         }
     };
 
+    //TODO refactor: a faire dans un service a part
     checkIfIsSquare(pos: Vec2[]): boolean {
         const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
         const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
@@ -79,6 +80,7 @@ export class EllipseService extends Tool {
         }
     }
 
+    //TODO refactor: a faire dans un service a part
     closestSquare(pos: Vec2[]): Vec2 {
         const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
         const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);
@@ -172,6 +174,8 @@ export class EllipseService extends Tool {
         } else {
             ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
         }
+
+        //TODO: fix border & fill + fait les tests respectifs
 
         if (this.border) {
             ctx.strokeStyle = this.secondaryColor;
