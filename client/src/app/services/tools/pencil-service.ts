@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorService } from '@app/services/tools/color.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -21,7 +22,7 @@ export class PencilService extends Tool {
     private pathData: Vec2[];
     isEraser: boolean = false;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, public colorService: ColorService) {
         super(drawingService);
         this.clearPath();
         this.shortcut = 'p';
@@ -68,6 +69,9 @@ export class PencilService extends Tool {
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
+        this.setColors(this.colorService);
+        this.setStyles();
+
         ctx.beginPath();
         ctx.lineWidth = this.toolStyles.lineWidth;
         ctx.lineCap = 'round';

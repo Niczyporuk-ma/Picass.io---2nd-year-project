@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorService } from '@app/services/tools/color.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { MouseButton } from './pencil-service';
 
@@ -12,7 +13,8 @@ export class RectangleService extends Tool {
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;
-    constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService) {
+    contour: boolean = true;
+    constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '1';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
@@ -117,7 +119,11 @@ export class RectangleService extends Tool {
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        this.setColors(this.colorService);
         this.setStyles();
+        if (!this.contour) {
+            ctx.strokeStyle = 'white';
+        }
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.toolStyles.lineWidth;

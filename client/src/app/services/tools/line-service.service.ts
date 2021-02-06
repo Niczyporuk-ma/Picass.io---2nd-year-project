@@ -184,7 +184,7 @@ export class LineServiceService extends Tool {
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.toolStyles.primaryColor = this.colorService.primaryColor;
+        this.setColors(this.colorService);
         this.setStyles();
 
         if (ctx === this.drawingService.baseCtx) {

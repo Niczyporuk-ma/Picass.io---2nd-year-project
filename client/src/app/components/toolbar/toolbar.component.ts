@@ -32,13 +32,13 @@ export class ToolbarComponent {
     setRectangleStyle(n: number): void {
         if (n == 3) {
             this.toolManager.rectangleService.toolStyles.fill = true;
-            this.toolManager.rectangleService.toolStyles.primaryColor = 'white';
+            this.toolManager.rectangleService.contour = false;
         } else if (n == 4) {
             this.toolManager.rectangleService.toolStyles.fill = false;
-            this.toolManager.rectangleService.toolStyles.primaryColor = 'red';
+            this.toolManager.rectangleService.contour = true;
         } else if (n == 5) {
             this.toolManager.rectangleService.toolStyles.fill = true;
-            this.toolManager.rectangleService.toolStyles.primaryColor = 'black';
+            this.toolManager.rectangleService.contour = true;
         }
     }
 
@@ -47,12 +47,10 @@ export class ToolbarComponent {
     }
 
     setEllipseStyle(n: number): void {
-        this.toolManager.ellipseService.toolStyles.fill = false;
-        this.toolManager.ellipseService.border = false;
-
-        if (n === 0) {
+        if (n == 0) {
             this.toolManager.ellipseService.toolStyles.fill = true;
-        } else if (n === 1) {
+            this.toolManager.ellipseService.border = false;
+        } else if (n == 1) {
             this.toolManager.ellipseService.border = true;
         } else {
             this.toolManager.ellipseService.toolStyles.fill = true;
