@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { LineServiceService } from '@app/services/tools/line-service.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { Subject } from 'rxjs';
+import { ColorService } from './color.service';
 import { EllipseService } from './ellipse.service';
 import { EraserService } from './eraser.service';
 import { RectangleService } from './rectangle.service';
@@ -27,6 +28,7 @@ export class ToolManagerService {
         public rectangleService: RectangleService,
         public eraserService: EraserService,
         public ellipseService: EllipseService,
+        public colorService: ColorService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
@@ -46,26 +48,26 @@ export class ToolManagerService {
     // setters
     setTool(tool: Tool): void {
         this.currentToolChange.next(tool);
-        console.log(tool);
+        this.currentTool.setColors(this.colorService);
     }
 
-    setPencilService(): void {
-        this.currentToolChange.next(this.pencilService);
-    }
+    // setPencilService(): void {
+    //     this.currentToolChange.next(this.pencilService);
+    // }
 
-    setLineService(): void {
-        this.currentToolChange.next(this.lineService);
-    }
+    // setLineService(): void {
+    //     this.currentToolChange.next(this.lineService);
+    // }
 
-    setRectangleService(): void {
-        this.currentToolChange.next(this.rectangleService);
-    }
+    // setRectangleService(): void {
+    //     this.currentToolChange.next(this.rectangleService);
+    // }
 
-    setEraserService(): void {
-        this.currentToolChange.next(this.eraserService);
-    }
+    // setEraserService(): void {
+    //     this.currentToolChange.next(this.eraserService);
+    // }
 
-    setEllipseService(): void {
-        this.currentToolChange.next(this.ellipseService);
-    }
+    // setEllipseService(): void {
+    //     this.currentToolChange.next(this.ellipseService);
+    // }
 }

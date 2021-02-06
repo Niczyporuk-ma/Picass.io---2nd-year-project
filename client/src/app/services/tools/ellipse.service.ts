@@ -3,18 +3,18 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
-import { ColorService } from './color.service';
+// import { ColorService } from './color.service';
 import { MouseButton } from './pencil-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    constructor(drawingService: DrawingService, colorService: ColorService, private squareHelperService: SquareHelperService) {
+    constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService) {
         super(drawingService);
         this.shortcut = '2';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
-        this.colorService = colorService;
+        // this.colorService = colorService;
         this.toolStyles = {
             primaryColor: 'black',
             lineWidth: 1,
@@ -27,8 +27,8 @@ export class EllipseService extends Tool {
     private endPoint: Vec2;
     // private lineWidth: number;
     border: boolean = false;
-    private colorService: ColorService;
-    private primaryColor: string;
+    // private colorService: ColorService;
+    // private primaryColor: string;
     // private secondaryColor: string;
 
     shiftIsPressed: boolean;
@@ -129,7 +129,7 @@ export class EllipseService extends Tool {
         const radiusX = width / 2;
         const radiusY = height / 2;
 
-        this.primaryColor = this.colorService.primaryColor;
+        // this.primaryColor = this.colorService.primaryColor;
         // this.secondaryColor = this.colorService.secondaryColor;
 
         ctx.beginPath();
@@ -156,12 +156,12 @@ export class EllipseService extends Tool {
         if (this.border) {
             ctx.strokeStyle = this.toolStyles.primaryColor; //this.secondaryColor;
         } else {
-            ctx.strokeStyle = this.primaryColor;
+            ctx.strokeStyle = this.toolStyles.primaryColor;
         }
 
         if (this.toolStyles.fill) {
             ctx.setLineDash([]);
-            ctx.fillStyle = this.primaryColor;
+            ctx.fillStyle = this.toolStyles.primaryColor;
             ctx.fill();
         }
 

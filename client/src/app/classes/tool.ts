@@ -1,4 +1,5 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorService } from '@app/services/tools/color.service';
 import { Vec2 } from './vec2';
 
 export interface ToolStyles {
@@ -62,5 +63,10 @@ export abstract class Tool {
         // this.lastWidth = this.currentWidth;
         // this.penWidth = parseInt(newWidth);
         this.toolStyles.lineWidth = newWidth;
+    }
+
+    setColors(colorService: ColorService): void {
+        this.toolStyles.primaryColor = colorService.primaryColor;
+        this.toolStyles.secondaryColor = colorService.secondaryColor;
     }
 }

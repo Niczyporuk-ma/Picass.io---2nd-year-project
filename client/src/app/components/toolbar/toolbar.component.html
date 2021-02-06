@@ -17,11 +17,11 @@
 </div>
 
 <div class="btns">
-    <button (click)="this.toolManager.setPencilService(); updateSliderWidth()">Pen</button>
-    <button (click)="this.toolManager.setLineService(); updateSliderWidth()">Line</button>
-    <button (click)="this.toolManager.setRectangleService(); updateSliderWidth()">Rec</button>
-    <button (click)="this.toolManager.setEraserService(); updateSliderWidth()">Eraser</button>
-    <button (click)="this.toolManager.setEllipseService(); updateSliderWidth()">Ellipse</button>
+    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()">Pen</button>
+    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth()">Line</button>
+    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth()">Rec</button>
+    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth()">Eraser</button>
+    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth()">Ellipse</button>
 
     <button (click)="onPress()">Color</button>
     <div *ngIf="showPalette">
