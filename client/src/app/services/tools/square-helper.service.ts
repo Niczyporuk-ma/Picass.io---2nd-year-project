@@ -5,8 +5,6 @@ import { Vec2 } from '@app/classes/vec2';
     providedIn: 'root',
 })
 export class SquareHelperService {
-    constructor() {}
-
     checkIfIsSquare(pos: Vec2[]): boolean {
         const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
         const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);

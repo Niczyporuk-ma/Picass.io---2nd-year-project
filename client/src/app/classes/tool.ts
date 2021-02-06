@@ -60,8 +60,6 @@ export abstract class Tool {
     }
 
     changeWidth(newWidth: number): void {
-        // this.lastWidth = this.currentWidth;
-        // this.penWidth = parseInt(newWidth);
         this.toolStyles.lineWidth = newWidth;
     }
 

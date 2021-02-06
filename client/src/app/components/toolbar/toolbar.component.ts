@@ -18,19 +18,8 @@ export class ToolbarComponent {
         this.tools = toolManager.tools;
     }
 
-    updateSliderWidth(): void {
-        console.log(this.toolManager.currentTool);
-        this.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
-    }
-
-    changeWidth(width: number): void {
-        // if (this.toolManger.currentTool.isValid(width)) {
-        this.toolManager.currentTool.changeWidth(width);
-        console.log(this.toolManager.currentTool);
-        // }
-    }
     setRectangleStyle(n: number): void {
-        if (n == 3) {
+        if (n === 3) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = false;
         } else if (n == 4) {
@@ -56,5 +45,14 @@ export class ToolbarComponent {
             this.toolManager.ellipseService.toolStyles.fill = true;
             this.toolManager.ellipseService.border = true;
         }
+    }
+
+    updateSliderWidth(): void {
+        this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+    }
+
+    changeWidth(width: number): void {
+        this.toolManager.currentTool.changeWidth(width);
+        this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
 }

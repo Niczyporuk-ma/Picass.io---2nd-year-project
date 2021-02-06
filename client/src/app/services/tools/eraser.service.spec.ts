@@ -24,9 +24,9 @@ describe('EraserService', () => {
         // canvasTestHelper = TestBed.inject(CanvasTestHelper);
         // baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         // previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawLineSpy = spyOn(service, 'drawLine').and.callThrough();
-        findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
-        cursorEffectSpy = spyOn(service, 'cursorEffect').and.callThrough();
+        drawLineSpy = spyOn(service, 'drawLine').and.stub();
+        findCoordinateSpy = spyOn(service, 'findCoordinate').and.stub();
+        cursorEffectSpy = spyOn(service, 'cursorEffect').and.stub();
 
         // service['drawingService'].baseCtx = baseCtxStub;
         // service['drawingService'].previewCtx = previewCtxStub;
@@ -59,6 +59,7 @@ describe('EraserService', () => {
     });
 
     it('onMouseMove should call findCoordinate if mouse was not already down', () => {
+        service.toolStyles.lineWidth = 10;
         service.mouseDown = false;
         service.mouseDownCoord = { x: 25, y: 25 };
         service.onMouseMove(mouseEvent);
@@ -67,18 +68,19 @@ describe('EraserService', () => {
 
     it('onMouseMove should call drawLine if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
+        service.toolStyles.lineWidth = 5;
         service.mouseDown = true;
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
-    it('findCoordinate should set a Vec2 with correct coordinate', () => {
-        const widthTest = 20;
-        service.toolStyles.lineWidth = widthTest;
+    //Erreur bizzare ??
+    it('findCoordinate should return the correct position to create the square effect of the eraser', () => {
+        service.toolStyles.lineWidth = 20;
         service.currentPoint = { x: 30, y: 30 };
-        const expectedResult: Vec2 = service.findCoordinate();
-        expect(expectedResult).toEqual({ x: 20, y: 20 });
+        const expectedResult: Vec2 = { x: 20, y: 20 };
+        expect(service.findCoordinate()).toEqual(expectedResult);
     });
 
     it('onMouseMove should call findCoordinate if mouse was already down', () => {
@@ -88,17 +90,35 @@ describe('EraserService', () => {
         expect(findCoordinateSpy).toHaveBeenCalled();
     });
 
-    it('onMouseMove should call cursorEffect if mouse was already down', () => {
+    it('onMouseMove should call cursorEffect two times if mouse was already down', () => {
         service.mouseDown = true;
         service.mouseDownCoord = { x: 25, y: 25 };
         service.onMouseMove(mouseEvent);
-        expect(cursorEffectSpy).toHaveBeenCalled();
+        expect(cursorEffectSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('onMouseMove should call cursorEffect if mouse was not already down', () => {
+    it('onMouseMove should call cursorEffect one time if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 25, y: 25 };
         service.onMouseMove(mouseEvent);
-        expect(cursorEffectSpy).not.toHaveBeenCalled();
+        expect(cursorEffectSpy).toHaveBeenCalledTimes(1);
+    });
+
+    //Fonctionne pas ->????
+    it('drawLine should call moveTo and lineTo one time each', () => {
+        service.startingPoint = { x: 10, y: 30 };
+        service.currentPoint = { x: 30, y: 10 };
+        const drawLineSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'beginPath',
+            'lineWidth',
+            'lineCap',
+            'globalCompositeOperation',
+            'moveTo',
+            'lineTo',
+            'stroke',
+        ]);
+        service.drawLine(drawLineSpyObject);
+        expect(drawLineSpyObject.lineTo).toHaveBeenCalledTimes(1);
+        expect(drawLineSpyObject.moveTo).toHaveBeenCalledTimes(1);
     });
 });

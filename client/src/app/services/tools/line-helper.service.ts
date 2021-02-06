@@ -11,8 +11,6 @@ const TO_RADIAN = Math.PI / 180;
     providedIn: 'root',
 })
 export class LineHelperService {
-    constructor() {}
-
     closestValidAngle(start: Vec2, end: Vec2): number {
         let closestValid = 999;
 
