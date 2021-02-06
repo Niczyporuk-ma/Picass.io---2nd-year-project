@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
-<div>
+<div class="widthSlider">
     <mat-card>
         <mat-slider
             min="1"
@@ -9,10 +9,10 @@
             value="1"
             class="slider"
             (change)="changeWidth($event.value)"
-            (input)="widthValue = $event.value"
-            [value]="widthValue"
+            (input)="this.toolManager.widthValue = $event.value"
+            [value]="this.toolManager.widthValue"
         ></mat-slider>
-        {{ widthValue }}
+        {{ this.toolManager.widthValue }}
     </mat-card>
 </div>
 

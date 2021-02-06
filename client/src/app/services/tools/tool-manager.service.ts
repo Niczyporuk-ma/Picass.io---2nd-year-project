@@ -20,6 +20,7 @@ export class ToolManagerService {
     lineHistory: Vec2[][] = [];
     pencilHistory: Vec2[][] = [];
     rectangleHistory: Vec2[][] = [];
+    widthValue: number = 1;
 
     constructor(
         public pencilService: PencilService,

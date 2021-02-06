@@ -17,6 +17,7 @@ export class KeyboardShortcutManagerService {
         } else {
             if (this.toolManagerService.toolBoxShortcuts.has(key)) {
                 this.toolManager.setTool(this.toolManager.toolBoxShortcuts.get(key) as Tool);
+                this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
             }
         }
     }

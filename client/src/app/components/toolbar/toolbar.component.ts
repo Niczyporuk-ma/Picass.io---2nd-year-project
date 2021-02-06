@@ -11,7 +11,7 @@ export class ToolbarComponent {
     tools: Tool[];
     toolManager: ToolManagerService;
     showPalette: boolean = false;
-    widthValue: number = 1;
+    // widthValue: number = 1;
 
     constructor(toolManager: ToolManagerService) {
         this.toolManager = toolManager;
@@ -49,11 +49,11 @@ export class ToolbarComponent {
     }
 
     updateSliderWidth(): void {
-        this.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+        this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
 
     changeWidth(width: number): void {
         this.toolManager.currentTool.changeWidth(width);
-        this.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+        this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
 }
