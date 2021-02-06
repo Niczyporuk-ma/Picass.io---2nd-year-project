@@ -9,7 +9,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 })
 export class ToolbarComponent {
     tools: Tool[];
-    //toolManager: ToolManagerService;
+    // toolManager: ToolManagerService;
     showPalette: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
 

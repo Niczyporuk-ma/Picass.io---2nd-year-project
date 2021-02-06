@@ -128,7 +128,7 @@ export class RectangleService extends Tool {
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.toolStyles.lineWidth;
         // ctx.lineCap = 'round';
-        //path = this.currentLine;
+        // path = this.currentLine;
 
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;

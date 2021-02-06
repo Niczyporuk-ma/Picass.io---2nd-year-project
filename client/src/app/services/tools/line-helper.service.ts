@@ -20,7 +20,7 @@ export class LineHelperService {
         const b: number = Math.abs(start.y - end.y);
         let angle: number = Math.atan2(b, a) * (180 / Math.PI);
         angle = this.angleQuadrantConverter(start, end, angle);
-        //console.log('current : ' + angle);
+        // console.log('current : ' + angle);
         for (const angles of POSSIBLE_ANGLES) {
             if (Math.abs(angle - angles) < Math.abs(angle - closestValid)) {
                 closestValid = angles;
@@ -69,12 +69,12 @@ export class LineHelperService {
         let angle: number = Math.atan2(b, a) * (180 / Math.PI);
 
         angle = this.angleQuadrantConverter(start, end, angle);
-        //console.log(angle);
+        // console.log(angle);
         if (angle % 45 === 0) {
-            //console.log('true');
+            // console.log('true');
             return true;
         } else {
-            //console.log('false');
+            // console.log('false');
             return false;
         }
     }

@@ -86,7 +86,7 @@ export class PencilService extends Tool {
         this.pathData = [];
     }
 
-    //????
+    // ????
     isValid(width: number): boolean {
         return true;
     }

@@ -18,7 +18,7 @@ export class SquareHelperService {
         }
     }
 
-    //TODO : use if when drawing a circle
+    // TODO : use if when drawing a circle
     closestSquare(pos: Vec2[]): Vec2 {
         const horizontalDistance: number = Math.abs(pos[0].x - pos[1].x);
         const verticalDistance: number = Math.abs(pos[0].y - pos[1].y);

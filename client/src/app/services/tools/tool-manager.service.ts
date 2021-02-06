@@ -40,7 +40,7 @@ export class ToolManagerService {
         ]);
     }
 
-    //getters
+    // getters
     getPencilService(): PencilService {
         return this.pencilService;
     }

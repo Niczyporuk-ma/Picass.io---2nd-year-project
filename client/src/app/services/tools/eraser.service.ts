@@ -103,7 +103,7 @@ export class EraserService extends Tool {
         console.log('Change eraser');
     }
 
-    //permet de verifier la limite de la largeur de l'efface
+    // permet de verifier la limite de la largeur de l'efface
     isValid(width: number): boolean {
         if (width < 5) {
             return false;

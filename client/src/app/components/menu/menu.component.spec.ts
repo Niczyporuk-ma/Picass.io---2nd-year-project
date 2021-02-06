@@ -22,7 +22,7 @@ describe('MenuComponent', () => {
     });
 
     it(' isStarted should return the right boolean value ', () => {
-        let drawingState: boolean = component.isStarted();
+        const drawingState: boolean = component.isStarted();
         expect(drawingState).toEqual(component.drawingService.drawingStarted);
     });
 });

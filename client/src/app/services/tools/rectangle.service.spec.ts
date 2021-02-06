@@ -14,7 +14,7 @@ describe('RectangleService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); //un genre de proxy
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
@@ -104,7 +104,7 @@ describe('RectangleService', () => {
     it(' onMouseMove should call drawLine if shiftIsPresse is false & moveDown is true', () => {
         service.mouseDown = true;
         service.shiftIsPressed = false;
-        service.mouseDownCoord = { x: 0, y: 0 }; 
+        service.mouseDownCoord = { x: 0, y: 0 };
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 9, y: 1 };
         const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
@@ -119,8 +119,8 @@ describe('RectangleService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-     //PROBLEMATIQUE
-   /* it(' onMouseMove should not call closestSquare when we already have a square', () => {
+    // PROBLEMATIQUE
+    /* it(' onMouseMove should not call closestSquare when we already have a square', () => {
         service.mouseDown = true;
         service.shiftIsPressed = true;
         service.mouseDownCoord = { x: 0, y: 0 };
@@ -132,14 +132,10 @@ describe('RectangleService', () => {
         //expect(service.currentLine).toEqual([{x:1,y:5},{x:5,y:1}]);
     });*/
 
-
-
-
-
     it('setShiftPressed should have called both drawEllipse and drawRectangle', () => {
         const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
 
-        let event = new KeyboardEvent('keydown', { key: 'Shift' });
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 5, y: 5 };
 
@@ -149,7 +145,7 @@ describe('RectangleService', () => {
 
     it('setShiftNonPressed sets shifts shiftIsPressed and eventTest to false when mouseDown is true', () => {
         service.mouseDown = true;
-        let event = new KeyboardEvent('keydown', { key: 'Shift' });
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 5, y: 5 };
         service.setShiftNonPressed(event);
@@ -159,7 +155,7 @@ describe('RectangleService', () => {
 
     it('setShiftNonPressed sets shifts shiftIsPressed to false when mouseDown is false', () => {
         service.mouseDown = false;
-        let event = new KeyboardEvent('keydown', { key: 'Shift' });
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.setShiftNonPressed(event);
         expect(service.shiftIsPressed).toEqual(false);
     });
@@ -179,10 +175,13 @@ describe('RectangleService', () => {
             'stroke',
             'moveTo',
             'lineTo',
-            'fillRect'
+            'fillRect',
         ]);
         service.toolStyles.fill = true;
-        service.drawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 2, y: 2 }]);
+        service.drawLine(rectangleSpyObject, [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+        ]);
         expect(rectangleSpyObject.fillRect).toHaveBeenCalled();
     });
 
@@ -196,9 +195,11 @@ describe('RectangleService', () => {
             'moveTo',
             'lineTo',
         ]);
-        service.drawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 2, y: 2 }]);
+        service.drawLine(rectangleSpyObject, [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+        ]);
         expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
         expect(rectangleSpyObject.moveTo).toHaveBeenCalledTimes(4);
     });
-
 });

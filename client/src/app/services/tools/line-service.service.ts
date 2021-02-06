@@ -131,7 +131,7 @@ export class LineServiceService extends Tool {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
             } else {
-                //this.endPoint = this.angledEndPoint;
+                // this.endPoint = this.angledEndPoint;
             }
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
             this.currentLine.push([this.startingPoint, this.endPoint]);

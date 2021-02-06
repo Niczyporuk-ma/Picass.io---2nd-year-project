@@ -7,7 +7,7 @@ export class ColorService {
     primaryColor: string;
     secondaryColor: string;
     opacity: number;
-    //TODO opactity for each color
+    // TODO opactity for each color
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
@@ -34,5 +34,5 @@ export class ColorService {
         this.secondaryColor = temp;
     }
 
-    //TODO : faire les 10 derniers couleurs (le bouffer)
+    // TODO : faire les 10 derniers couleurs (le bouffer)
 }

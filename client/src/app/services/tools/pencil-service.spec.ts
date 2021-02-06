@@ -26,7 +26,7 @@ fdescribe('PencilService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(PencilService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough(); //appeller la fonction original
+        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough(); // appeller la fonction original
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -107,7 +107,12 @@ fdescribe('PencilService', () => {
             'stroke',
             'lineTo',
         ]);
-        service.drawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 1, y: 2 },{ x: 2, y: 1 },{ x: 2, y: 2 }]);
+        service.drawLine(rectangleSpyObject, [
+            { x: 1, y: 1 },
+            { x: 1, y: 2 },
+            { x: 2, y: 1 },
+            { x: 2, y: 2 },
+        ]);
         expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
     });
 
@@ -132,7 +137,10 @@ fdescribe('PencilService', () => {
             'lineTo',
         ]);
         const pushSpy = spyOn<any>(service['drawingService'].pencilDrawings, 'push').and.stub();
-        service.drawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 1, y: 2 }]);
+        service.drawLine(rectangleSpyObject, [
+            { x: 1, y: 1 },
+            { x: 1, y: 2 },
+        ]);
         expect(pushSpy).toHaveBeenCalled();
     });
 
@@ -144,17 +152,19 @@ fdescribe('PencilService', () => {
             'stroke',
             'lineTo',
         ]);
-        service.redrawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 1, y: 2 },{ x: 2, y: 1 },{ x: 2, y: 2 }]);
+        service.redrawLine(rectangleSpyObject, [
+            { x: 1, y: 1 },
+            { x: 1, y: 2 },
+            { x: 2, y: 1 },
+            { x: 2, y: 2 },
+        ]);
         expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
     });
 
     it('clearPath should set pathData to []', () => {
-       service['clearPath'];
-       expect(service['pathData']).toEqual([]);
+        service['clearPath'];
+        expect(service['pathData']).toEqual([]);
     });
-
-
-
 
     // Exemple de test d'intégration qui est quand même utile
     it(' should change the pixel of the canvas ', () => {
