@@ -58,5 +58,9 @@ export abstract class Tool {
         this.drawingService.baseCtx.lineWidth = this.toolStyles.lineWidth;
     }
 
-    changeWidth(newWidth: number): void {}
+    changeWidth(newWidth: number): void {
+        // this.lastWidth = this.currentWidth;
+        // this.penWidth = parseInt(newWidth);
+        this.toolStyles.lineWidth = newWidth;
+    }
 }
