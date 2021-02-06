@@ -12,13 +12,14 @@ export class EraserService extends Tool {
     currentPoint: Vec2;
     coordinate: Vec2;
     indexValue: number = 3;
+    minimumWidth: number = 5;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'e';
         this.localShortcuts = new Map();
         this.index = this.indexValue;
-        this.styles = {
+        this.toolStyles = {
             lineColor: 'black',
             lineWidth: 5,
             fillColor: 'white',
@@ -39,7 +40,7 @@ export class EraserService extends Tool {
 
     // Permet de trouver la bonne prosition pour l'effet du curseur
     findCoordinate(): Vec2 {
-        const coord: Vec2 = { x: this.currentPoint.x - this.styles.lineWidth / 2, y: this.currentPoint.y - this.styles.lineWidth / 2 };
+        const coord: Vec2 = { x: this.currentPoint.x - this.toolStyles.lineWidth / 2, y: this.currentPoint.y - this.toolStyles.lineWidth / 2 };
         return coord;
     }
 
@@ -65,7 +66,7 @@ export class EraserService extends Tool {
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
 
-        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
         ctx.lineCap = 'square';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
@@ -78,7 +79,7 @@ export class EraserService extends Tool {
 
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
@@ -89,20 +90,25 @@ export class EraserService extends Tool {
     // Permet la previsualisation de notre efface
     cursorEffect(ctx: CanvasRenderingContext2D, location: Vec2): void {
         this.drawingService.previewCtx.lineWidth = 1;
-        this.drawingService.previewCtx.strokeRect(location.x, location.y, this.styles.lineWidth, this.styles.lineWidth);
+        this.drawingService.previewCtx.strokeRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
     }
 
-    // changeWidth(newWidth: number): void {
-    //     //this.lastWidth = this.currentWidth;
-    //     // this.penWidth = parseInt(newWidth);
-    //     this.styles.lineWidth = newWidth;
-    // }
+    changeWidth(newWidth: number): void {
+        if (this.isValid(newWidth)) {
+            this.toolStyles.lineWidth = newWidth;
+        } else {
+            this.toolStyles.lineWidth = 5;
+        }
 
-    // isValid(width: number): boolean {
-    //     if (width < 5) {
-    //         return false;
-    //     }
+        console.log('Change eraser');
+    }
 
-    //     return true;
-    // }
+    //permet de verifier la limite de la largeur de l'efface
+    isValid(width: number): boolean {
+        if (width < 5) {
+            return false;
+        }
+
+        return true;
+    }
 }

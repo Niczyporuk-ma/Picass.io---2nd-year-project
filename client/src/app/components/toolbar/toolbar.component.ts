@@ -11,6 +11,7 @@ export class ToolbarComponent {
     tools: Tool[];
     toolManager: ToolManagerService;
     showPalette: boolean = false;
+    widthValue: number = 1;
 
     constructor(toolManager: ToolManagerService) {
         this.toolManager = toolManager;
@@ -34,16 +35,21 @@ export class ToolbarComponent {
     }
 
     setEllipseStyle(n: number): void {
-        this.toolManager.ellipseService.styles.fill = false;
+        this.toolManager.ellipseService.toolStyles.fill = false;
         this.toolManager.ellipseService.border = false;
 
         if (n === 0) {
-            this.toolManager.ellipseService.styles.fill = true;
+            this.toolManager.ellipseService.toolStyles.fill = true;
         } else if (n === 1) {
             this.toolManager.ellipseService.border = true;
         } else {
-            this.toolManager.ellipseService.styles.fill = true;
+            this.toolManager.ellipseService.toolStyles.fill = true;
             this.toolManager.ellipseService.border = true;
         }
+    }
+
+    changeWidth(width: number): void {
+        this.toolManager.currentTool.changeWidth(width);
+        this.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
 }

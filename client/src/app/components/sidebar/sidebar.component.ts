@@ -7,13 +7,12 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    widthValue: number = this.toolManger.currentTool.styles.lineWidth;
+    widthValue: number = 25;
 
     constructor(private toolManger: ToolManagerService) {}
 
     changeWidth(width: number): void {
-        // if (this.toolManger.currentTool.isValid(width)) {
         this.toolManger.currentTool.changeWidth(width);
-        // }
+        this.widthValue = this.toolManger.currentTool.styles.lineWidth;
     }
 }

@@ -28,7 +28,7 @@ export class PencilService extends Tool {
         this.localShortcuts = new Map([['Shift', this.test]]);
         this.index = 0;
         this.drawingService.pencilDrawings = [];
-        this.styles = {
+        this.toolStyles = {
             lineColor: 'black',
             lineWidth: 1,
         };
@@ -84,7 +84,7 @@ export class PencilService extends Tool {
             this.drawingService.drawingStarted = true;
         }
         ctx.beginPath();
-        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'source-over';
         for (const [index, point] of path.entries()) {

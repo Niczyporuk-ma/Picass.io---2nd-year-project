@@ -1,11 +1,27 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
+<div>
+    <mat-card>
+        <mat-slider
+            min="1"
+            max="50"
+            step="1"
+            value="1"
+            class="slider"
+            (change)="changeWidth($event.value)"
+            (input)="widthValue = $event.value"
+            [value]="widthValue"
+        ></mat-slider>
+        {{ widthValue }}
+    </mat-card>
+</div>
+
 <div class="btns">
-    <button (click)="this.toolManager.setPencilService()">Pen</button>
-    <button (click)="this.toolManager.setLineService()">Line</button>
-    <button (click)="this.toolManager.setRectangleService()">Rec</button>
-    <button (click)="this.toolManager.setEraserService()">Eraser</button>
-    <button (click)="this.toolManager.setEllipseService()">Ellipse</button>
+    <button (click)="this.toolManager.setPencilService()" (click)="widthValue = this.toolManager.currentTool.toolStyles.lineWidth">Pen</button>
+    <button (click)="this.toolManager.setLineService()" (click)="widthValue = this.toolManager.currentTool.toolStyles.lineWidth">Line</button>
+    <button (click)="this.toolManager.setRectangleService()" (click)="widthValue = this.toolManager.currentTool.toolStyles.lineWidth">Rec</button>
+    <button (click)="this.toolManager.setEraserService()" (click)="widthValue = this.toolManager.currentTool.toolStyles.lineWidth">Eraser</button>
+    <button (click)="this.toolManager.setEllipseService()" (click)="widthValue = this.toolManager.currentTool.toolStyles.lineWidth">Ellipse</button>
 
     <button (click)="onPress()">Color</button>
     <div *ngIf="showPalette">
