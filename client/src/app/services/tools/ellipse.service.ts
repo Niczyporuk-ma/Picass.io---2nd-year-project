@@ -35,7 +35,7 @@ export class EllipseService extends Tool {
     eventTest: boolean;
     currentLine: Vec2[] = [];
 
-    //TODO: renommer eventTest
+    // TODO: renommer eventTest
     onShift(): void {
         if (!this.eventTest) {
             window.addEventListener('keydown', this.setShiftIfPressed);
@@ -53,7 +53,7 @@ export class EllipseService extends Tool {
                 this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             }
         }
-    };
+    }
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -67,10 +67,10 @@ export class EllipseService extends Tool {
                 this.shiftIsPressed = false;
             }
         }
-    };
+    }
 
     onMouseDown(event: MouseEvent): void {
-        //TODO: gestion de MouseDown pour tous les tools (mettre dans l'interface)
+        // TODO: gestion de MouseDown pour tous les tools (mettre dans l'interface)
         this.mouseDown = event.button === MouseButton.Left;
         if (!this.mouseDown) {
             return;
@@ -99,8 +99,8 @@ export class EllipseService extends Tool {
         }
     }
 
-    //TODO: fix the dashline
-    public drawRectangle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+    // TODO: fix the dashline
+    drawRectangle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         const gapBetweenDash = 5;
         const dashLength = 5;
         ctx.beginPath();
@@ -119,7 +119,7 @@ export class EllipseService extends Tool {
         ctx.stroke();
     }
 
-    public drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+    drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         ctx.globalCompositeOperation = 'source-over';
         const width = end.y - start.y;
         const height = end.x - start.x;
@@ -148,7 +148,7 @@ export class EllipseService extends Tool {
             ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
         }
 
-        //TODO: fix border & fill + fait les tests respectifs
+        // TODO: fix border & fill + fait les tests respectifs
 
         if (this.border) {
             ctx.strokeStyle = this.secondaryColor;

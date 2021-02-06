@@ -13,7 +13,7 @@ describe('ToolManagerService', () => {
         expect(service).toBeTruthy();
     });
 
-    //source : https://stackoverflow.com/questions/52091882/angular-unit-testing-subject
+    // source : https://stackoverflow.com/questions/52091882/angular-unit-testing-subject
     it(' setTool should call the next() method to set the Subject', () => {
         const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
         service.setTool(service.lineService);

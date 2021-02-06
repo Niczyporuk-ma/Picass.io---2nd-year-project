@@ -10,8 +10,6 @@ const PIXEL_DISTANCE = 20;
     providedIn: 'root',
 })
 export class LineHelperService {
-    constructor() {}
-
     closestValidAngle(start: Vec2, end: Vec2): number {
         let closestValid = 999;
 

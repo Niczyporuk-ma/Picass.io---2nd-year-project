@@ -87,7 +87,7 @@ export class LineServiceService extends Tool {
         }
         window.removeEventListener('keydown', this.setShiftIfPressed);
         this.eventTest = false;
-    };
+    }
 
     setShiftNonPressed = (e?: KeyboardEvent) => {
         if ((e != undefined && e.key === 'Shift') || this.calledFromMouseClick) {
@@ -100,7 +100,7 @@ export class LineServiceService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
             }
         }
-    };
+    }
 
     onShift(): void {
         if (!this.eventTest) {
@@ -229,15 +229,5 @@ export class LineServiceService extends Tool {
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
-    }
-
-    // changeWidth(newWidth: number): void {
-    //     //this.lastWidth = this.currentWidth;
-    //     // this.penWidth = parseInt(newWidth);
-    //     this.toolStyles.lineWidth = newWidth;
-    // }
-
-    isValid(width: number): boolean {
-        return true;
     }
 }

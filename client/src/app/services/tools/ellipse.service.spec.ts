@@ -72,8 +72,8 @@ describe('EllipseService', () => {
     });
 
     it(' onMouseUp should not call drawEllipse if mouse was not already down', () => {
-        const drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.stub(); //appeller la fonction original
-        //precious ass shit:
+        const drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.stub(); // appeller la fonction original
+        // precious ass shit:
         // service[''] : pour
         // const ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', ['fill']);
         // service['drawEllipse'](ctxSpyObject, { x: 1, y: 1 }, { x: 1, y: 1 });
@@ -84,7 +84,7 @@ describe('EllipseService', () => {
 
         service.onMouseUp(mouseEvent);
         expect(drawEllipseSpy).not.toHaveBeenCalled();
-        //expect(drawRectangleSpy).not.toHaveBeenCalled();
+        // expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawEllipse if mouse was already down', () => {
@@ -114,7 +114,7 @@ describe('EllipseService', () => {
         const drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.stub();
         const drawRectangleSpy = spyOn<any>(service, 'drawRectangle').and.stub();
 
-        let event = new KeyboardEvent('keydown', { key: 'Shift' });
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 5, y: 5 };
 
@@ -155,7 +155,7 @@ describe('EllipseService', () => {
 
     it('setShiftNonPressed sets shifts shiftIsPressed and eventTest to false when mouseDown is true', () => {
         service.mouseDown = true;
-        let event = new KeyboardEvent('keydown', { key: 'Shift' });
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.setShiftNonPressed(event);
         expect(service.shiftIsPressed).toEqual(false);
         expect(service.eventTest).toEqual(false);
@@ -163,7 +163,7 @@ describe('EllipseService', () => {
 
     it('setShiftNonPressed sets shifts shiftIsPressed to false when mouseDown is false', () => {
         service.mouseDown = false;
-        let event = new KeyboardEvent('keydown', { key: 'Shift' });
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.setShiftNonPressed(event);
         expect(service.shiftIsPressed).toEqual(false);
     });

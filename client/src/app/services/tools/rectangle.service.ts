@@ -47,7 +47,7 @@ export class RectangleService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
             }
         }
-    };
+    }
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -63,7 +63,7 @@ export class RectangleService extends Tool {
                 this.shiftIsPressed = false;
             }
         }
-    };
+    }
 
     onShift(): void {
         if (!this.eventListenerIsSet) {
@@ -128,7 +128,7 @@ export class RectangleService extends Tool {
         if (ctx === this.drawingService.baseCtx) {
             // let test: ToolStyles = { ...this.styles };
             this.drawingService.drawingHistory.set(path, [this, { ...this.styles }]);
-            //console.log(this.styles);
+            // console.log(this.styles);
             this.drawingService.drawingStarted = true;
         }
 
@@ -172,14 +172,4 @@ export class RectangleService extends Tool {
             ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
         }
     }
-
-    // changeWidth(newWidth: number): void {
-    //     //this.lastWidth = this.currentWidth;
-    //     // this.penWidth = parseInt(newWidth);
-    //     this.styles.lineWidth = newWidth;
-    // }
-
-    // isValid(width: number): boolean {
-    //     return true;
-    // }
 }

@@ -40,7 +40,7 @@ export class EraserService extends Tool {
 
     // Permet de trouver la bonne prosition pour l'effet du curseur
     findCoordinate(): Vec2 {
-        const coord: Vec2 = { x: this.currentPoint.x - this.toolStyles.lineWidth / 2, y: this.currentPoint.y - this.toolStyles.lineWidth / 2 };
+        const coord: Vec2 = { x: this.currentPoint.x - (this.toolStyles.lineWidth / 2), y: this.currentPoint.y - (this.toolStyles.lineWidth / 2) };
         return coord;
     }
 
@@ -48,22 +48,20 @@ export class EraserService extends Tool {
         this.currentPoint = this.getPositionFromMouse(event);
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.coordinate = this.findCoordinate();
-        this.cursorEffect(this.drawingService.previewCtx, this.coordinate);
+        this.cursorEffect(this.drawingService.previewCtx, this.findCoordinate());
 
         if (this.mouseDown) {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, [this.currentPoint]);
+            this.drawLine(this.drawingService.baseCtx);
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.coordinate = this.findCoordinate();
-            this.cursorEffect(this.drawingService.previewCtx, this.coordinate);
+            this.cursorEffect(this.drawingService.previewCtx, this.findCoordinate());
         }
     }
 
-    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawLine(ctx: CanvasRenderingContext2D): void {
         ctx.beginPath();
 
         ctx.lineWidth = this.toolStyles.lineWidth;
@@ -97,18 +95,15 @@ export class EraserService extends Tool {
         if (this.isValid(newWidth)) {
             this.toolStyles.lineWidth = newWidth;
         } else {
-            this.toolStyles.lineWidth = 5;
+            this.toolStyles.lineWidth = this.minimumWidth;
         }
-
-        console.log('Change eraser');
     }
 
-    //permet de verifier la limite de la largeur de l'efface
+    // permet de verifier la limite de la largeur de l'efface
     isValid(width: number): boolean {
-        if (width < 5) {
+        if (width < this.minimumWidth) {
             return false;
         }
-
         return true;
     }
 }
