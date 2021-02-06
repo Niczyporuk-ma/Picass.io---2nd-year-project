@@ -20,10 +20,10 @@ export class RectangleService extends Tool {
         this.currentLine = [];
         this.index = 2;
         this.toolStyles = {
-            lineColor: 'rgba(255, 0, 0, 1)', // rouge
+            primaryColor: 'rgba(255, 0, 0, 1)', // rouge
             lineWidth: 1,
             fill: false,
-            fillColor: 'black',
+            secondaryColor: 'black',
         };
     }
 
@@ -127,7 +127,7 @@ export class RectangleService extends Tool {
 
         if (ctx === this.drawingService.baseCtx) {
             // let test: ToolStyles = { ...this.styles };
-            this.drawingService.drawingHistory.set(path, [this, { ...this.styles }]);
+            this.drawingService.drawingHistory.set(path, [this, { ...this.toolStyles }]);
             //console.log(this.styles);
             this.drawingService.drawingStarted = true;
         }

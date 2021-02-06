@@ -18,10 +18,10 @@ export class EraserService extends Tool {
         this.shortcut = 'e';
         this.localShortcuts = new Map();
         this.index = this.indexValue;
-        this.styles = {
-            lineColor: 'black',
+        this.toolStyles = {
+            primaryColor: 'black',
             lineWidth: 5,
-            fillColor: 'white',
+            secondaryColor: 'white',
         };
     }
 
@@ -39,7 +39,7 @@ export class EraserService extends Tool {
 
     // Permet de trouver la bonne prosition pour l'effet du curseur
     findCoordinate(): Vec2 {
-        const coord: Vec2 = { x: this.currentPoint.x - this.styles.lineWidth / 2, y: this.currentPoint.y - this.styles.lineWidth / 2 };
+        const coord: Vec2 = { x: this.currentPoint.x - this.toolStyles.lineWidth / 2, y: this.currentPoint.y - this.toolStyles.lineWidth / 2 };
         return coord;
     }
 
@@ -65,7 +65,7 @@ export class EraserService extends Tool {
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
 
-        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
@@ -78,7 +78,7 @@ export class EraserService extends Tool {
 
     redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
@@ -89,7 +89,7 @@ export class EraserService extends Tool {
     // Permet la previsualisation de notre efface
     cursorEffect(ctx: CanvasRenderingContext2D, location: Vec2): void {
         this.drawingService.previewCtx.lineWidth = 1;
-        this.drawingService.previewCtx.strokeRect(location.x, location.y, this.styles.lineWidth, this.styles.lineWidth);
+        this.drawingService.previewCtx.strokeRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
     }
 
     // changeWidth(newWidth: number): void {

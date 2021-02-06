@@ -75,7 +75,7 @@ describe('EraserService', () => {
 
     it('findCoordinate should set a Vec2 with correct coordinate', () => {
         const widthTest = 20;
-        service.styles.lineWidth = widthTest;
+        service.toolStyles.lineWidth = widthTest;
         service.currentPoint = { x: 30, y: 30 };
         const expectedResult: Vec2 = service.findCoordinate();
         expect(expectedResult).toEqual({ x: 20, y: 20 });

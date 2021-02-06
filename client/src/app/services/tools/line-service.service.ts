@@ -37,7 +37,7 @@ export class LineServiceService extends Tool {
         ]);
         this.index = 1;
         this.pencilService = pencilService;
-        this.toolStyles = { lineColor: 'blue', lineWidth: 5 };
+        this.toolStyles = { primaryColor: 'blue', lineWidth: 5 };
         this.lineHelper = lineHelper;
         this.colorService = colorService;
     }
@@ -202,7 +202,7 @@ export class LineServiceService extends Tool {
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.toolStyles.lineColor = this.colorService.primaryColor;
+        this.toolStyles.primaryColor = this.colorService.primaryColor;
         this.setStyles();
 
         if (ctx === this.drawingService.baseCtx) {

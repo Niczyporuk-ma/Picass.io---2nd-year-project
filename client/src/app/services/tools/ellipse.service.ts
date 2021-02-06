@@ -15,11 +15,11 @@ export class EllipseService extends Tool {
         this.shortcut = '2';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
         this.colorService = colorService;
-        this.styles = {
-            lineColor: 'black',
+        this.toolStyles = {
+            primaryColor: 'black',
             lineWidth: 1,
             fill: false,
-            fillColor: 'white',
+            secondaryColor: 'white',
         };
     }
 
@@ -29,7 +29,7 @@ export class EllipseService extends Tool {
     border: boolean = false;
     private colorService: ColorService;
     private primaryColor: string;
-    private secondaryColor: string;
+    // private secondaryColor: string;
 
     shiftIsPressed: boolean;
     eventTest: boolean;
@@ -127,11 +127,11 @@ export class EllipseService extends Tool {
         const radiusY = height / 2;
 
         this.primaryColor = this.colorService.primaryColor;
-        this.secondaryColor = this.colorService.secondaryColor;
+        // this.secondaryColor = this.colorService.secondaryColor;
 
         ctx.beginPath();
         ctx.setLineDash([]);
-        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
 
         if (this.shiftIsPressed) {
             // this.drawCircle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
@@ -151,12 +151,12 @@ export class EllipseService extends Tool {
         //TODO: fix border & fill + fait les tests respectifs
 
         if (this.border) {
-            ctx.strokeStyle = this.secondaryColor;
+            ctx.strokeStyle = this.toolStyles.primaryColor; //this.secondaryColor;
         } else {
             ctx.strokeStyle = this.primaryColor;
         }
 
-        if (this.styles.fill) {
+        if (this.toolStyles.fill) {
             ctx.setLineDash([]);
             ctx.fillStyle = this.primaryColor;
             ctx.fill();
