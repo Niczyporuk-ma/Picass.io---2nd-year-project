@@ -4,7 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from './color.service';
 import { LineHelperService } from './line-helper.service';
-import { PencilService } from './pencil-service';
 
 @Injectable({
     providedIn: 'root',
@@ -19,15 +18,15 @@ export class LineServiceService extends Tool {
     eventTest: boolean;
     currentSegment: Vec2[] = [];
     currentLine: Vec2[][] = [];
-    pencilService: PencilService;
     toolStyles: ToolStyles;
     angledEndPoint: Vec2;
     calledFromMouseClick: boolean = false;
     lineHelper: LineHelperService;
     colorService: ColorService;
     angle: number;
+    mousePosition: Vec2;
 
-    constructor(drawingService: DrawingService, pencilService: PencilService, lineHelper: LineHelperService, colorService: ColorService) {
+    constructor(drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
         this.isStarted = false;
         this.shortcut = 'l';
@@ -37,7 +36,6 @@ export class LineServiceService extends Tool {
             ['Escape', this.onEscape],
         ]);
         this.index = 1;
-        this.pencilService = pencilService;
         this.toolStyles = { primaryColor: 'blue', lineWidth: 5 };
         this.lineHelper = lineHelper;
         this.colorService = colorService;
@@ -88,7 +86,7 @@ export class LineServiceService extends Tool {
             if (this.isStarted) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.redrawCurrentPreview();
-                this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
+                this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.mousePosition]);
             }
         }
     };
@@ -173,8 +171,8 @@ export class LineServiceService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.isStarted) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.endPoint = mousePosition;
+            this.mousePosition = this.getPositionFromMouse(event);
+            this.endPoint = this.mousePosition;
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             if (this.shiftIsPressed) {
                 this.endPoint = this.lineHelper.closestAngledPoint(this.startingPoint, this.endPoint);
