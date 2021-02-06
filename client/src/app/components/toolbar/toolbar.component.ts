@@ -48,6 +48,10 @@ export class ToolbarComponent {
         }
     }
 
+    updateSliderWidth(): void {
+        this.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+    }
+
     changeWidth(width: number): void {
         this.toolManager.currentTool.changeWidth(width);
         this.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;

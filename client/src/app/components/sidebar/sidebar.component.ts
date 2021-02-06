@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -9,10 +8,11 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 export class SidebarComponent {
     widthValue: number = 25;
 
-    constructor(private toolManger: ToolManagerService) {}
+    //constructor(private toolManger: ToolManagerService) {}
+    constructor() {}
 
-    changeWidth(width: number): void {
-        this.toolManger.currentTool.changeWidth(width);
-        this.widthValue = this.toolManger.currentTool.styles.lineWidth;
-    }
+    // changeWidth(width: number): void {
+    //     this.toolManger.currentTool.changeWidth(width);
+    //     this.widthValue = this.toolManger.currentTool.styles.lineWidth;
+    // }
 }
