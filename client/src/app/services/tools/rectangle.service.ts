@@ -36,9 +36,6 @@ export class RectangleService extends Tool {
             this.startingPoint = this.mouseDownCoord;
         }
     }
-    changeWidth(newWidth: number): void {
-        this.toolStyles.lineWidth = newWidth;
-    }
 
     setShiftIfPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -125,7 +122,7 @@ export class RectangleService extends Tool {
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.toolStyles.lineWidth;
         // ctx.lineCap = 'round';
-        path = this.currentLine;
+        //path = this.currentLine;
 
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;

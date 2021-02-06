@@ -20,12 +20,27 @@ describe('ToolManagerService', () => {
         expect(nextSpy).toHaveBeenCalled();
     });
 
-    it(' setTool should set current tool to the right Tool', () => {
+    it(' setTool should set current tool to line', () => {
         service.setTool(service.lineService);
         expect(service.currentTool).toEqual(service.lineService);
     });
 
-    it(' setPencilService should  call the next() method to set the Subject', () => {
+    it(' setTool should set current tool to eraser', () => {
+        service.setTool(service.eraserService);
+        expect(service.currentTool).toEqual(service.eraserService);
+    });
+
+    it(' setTool should set current tool to pencil', () => {
+        service.setTool(service.pencilService);
+        expect(service.currentTool).toEqual(service.pencilService);
+    });
+
+    it(' setTool should set current tool to rectangle', () => {
+        service.setTool(service.rectangleService);
+        expect(service.currentTool).toEqual(service.rectangleService);
+    });
+
+    /*it(' setPencilService should  call the next() method to set the Subject', () => {
         const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
         service.setPencilService();
         expect(nextSpy).toHaveBeenCalled();
@@ -67,5 +82,5 @@ describe('ToolManagerService', () => {
     it(' setRectangleService should set the current Tool to Rectangle', () => {
         service.setRectangleService();
         expect(service.currentTool).toEqual(service.rectangleService);
-    });
+    })*/
 });

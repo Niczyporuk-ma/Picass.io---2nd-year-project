@@ -63,13 +63,6 @@ export class PencilService extends Tool {
             this.drawLine(this.drawingService.previewCtx, this.pathData);
         }
     }
-    changeWidth(newWidth: number): void {
-        this.toolStyles.lineWidth = newWidth;
-    }
-
-    changeColorBlue(): void {
-        this.drawingService.baseCtx.strokeStyle = 'blue';
-    }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         if (ctx === this.drawingService.baseCtx) {
@@ -89,6 +82,7 @@ export class PencilService extends Tool {
         this.pathData = [];
     }
 
+    //????
     isValid(width: number): boolean {
         return true;
     }
