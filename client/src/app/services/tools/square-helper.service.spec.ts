@@ -24,7 +24,7 @@ describe('SquareHelperService', () => {
         let initialCoord: Vec2 = { x: 1, y: 5 };
         let endingCoord: Vec2 = { x: 14, y: 20 };
         let expected: boolean = service.checkIfIsSquare([initialCoord, endingCoord]);
-        expect(expected).not.toEqual(true);
+        expect(expected).toEqual(false);
     });
 
     it(' checkIfIsSquare detect a square when its a single point', () => {

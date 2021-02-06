@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from './pencil-service';
 
 // tslint:disable:no-any
-describe('PencilService', () => {
+fdescribe('PencilService', () => {
     let service: PencilService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -98,6 +98,63 @@ describe('PencilService', () => {
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
+
+    it('drawLine should calls moveTo and lineTo 4 times', () => {
+        const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'stroke',
+            'lineTo',
+        ]);
+        service.drawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 1, y: 2 },{ x: 2, y: 1 },{ x: 2, y: 2 }]);
+        expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
+    });
+
+    it('drawLine should calls moveTo and lineTo 0 times (no line drawn)', () => {
+        const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'stroke',
+            'lineTo',
+        ]);
+        service.drawLine(rectangleSpyObject, []);
+        expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(0);
+    });
+
+    it('drawLine should calls the push method', () => {
+        const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'stroke',
+            'lineTo',
+        ]);
+        const pushSpy = spyOn<any>(service['drawingService'].pencilDrawings, 'push').and.stub();
+        service.drawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 1, y: 2 }]);
+        expect(pushSpy).toHaveBeenCalled();
+    });
+
+    it('redrawLine should calls moveTo and lineTo 4 times', () => {
+        const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'stroke',
+            'lineTo',
+        ]);
+        service.redrawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 1, y: 2 },{ x: 2, y: 1 },{ x: 2, y: 2 }]);
+        expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
+    });
+
+    it('clearPath should set pathData to []', () => {
+       service['clearPath'];
+       expect(service['pathData']).toEqual([]);
+    });
+
+
+
 
     // Exemple de test d'intégration qui est quand même utile
     it(' should change the pixel of the canvas ', () => {

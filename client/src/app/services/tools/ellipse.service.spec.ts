@@ -147,7 +147,7 @@ describe('EllipseService', () => {
         expect(ellipseSpyObject.ellipse).toHaveBeenCalledWith(5, 4.5, 1.5, 4, Math.PI / 2, 0, 2 * Math.PI);
     });
 
-    it('onShift returns eventTest true', () => {
+    it('onShift sets eventTest true', () => {
         service.eventTest = false;
         service.onShift();
         expect(service.eventTest).toEqual(true);
@@ -168,7 +168,7 @@ describe('EllipseService', () => {
         expect(service.shiftIsPressed).toEqual(false);
     });
 
-    it('drawRectangle calls moveTo and lineTo 4 times', () => {
+    it('drawRectangle should calls moveTo and lineTo 4 times', () => {
         const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
             'strokeStyle',
             'beginPath',

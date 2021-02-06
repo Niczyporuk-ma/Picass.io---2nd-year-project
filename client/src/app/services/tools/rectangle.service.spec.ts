@@ -78,4 +78,127 @@ describe('RectangleService', () => {
         service.onMouseUp(mouseEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
+
+    it(' onMouseMove should  call drawLine if shiftIsPresse & moveDown are true and we already have a square', () => {
+        service.mouseDown = true;
+        service.shiftIsPressed = true;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service['startingPoint'] = { x: 1, y: 5 };
+        service['endPoint'] = { x: 5, y: 1 };
+        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        service.onMouseMove(mouseEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseMove should  call drawLine if shiftIsPresse & moveDown are true and we dont already have a square', () => {
+        service.mouseDown = true;
+        service.shiftIsPressed = true;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service['startingPoint'] = { x: 1, y: 5 };
+        service['endPoint'] = { x: 9, y: 1 };
+        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        service.onMouseMove(mouseEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseMove should call drawLine if shiftIsPresse is false & moveDown is true', () => {
+        service.mouseDown = true;
+        service.shiftIsPressed = false;
+        service.mouseDownCoord = { x: 0, y: 0 }; 
+        service['startingPoint'] = { x: 1, y: 5 };
+        service['endPoint'] = { x: 9, y: 1 };
+        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        service.onMouseMove(mouseEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseMove should  not call drawLine if mouseDown is false true', () => {
+        service.mouseDown = false;
+        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        service.onMouseMove(mouseEvent);
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+     //PROBLEMATIQUE
+   /* it(' onMouseMove should not call closestSquare when we already have a square', () => {
+        service.mouseDown = true;
+        service.shiftIsPressed = true;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service['startingPoint'] = { x: 1, y: 5 };
+        service['endPoint'] = { x: 5, y: 5 };
+        const closestSquareSpy: jasmine.Spy<any> = spyOn<any>(service['squareHelperService'], 'closestSquare').and.stub();
+        service.onMouseMove(mouseEvent);
+        expect(closestSquareSpy).not.toHaveBeenCalled();
+        //expect(service.currentLine).toEqual([{x:1,y:5},{x:5,y:1}]);
+    });*/
+
+
+
+
+
+    it('setShiftPressed should have called both drawEllipse and drawRectangle', () => {
+        const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
+
+        let event = new KeyboardEvent('keydown', { key: 'Shift' });
+        service['startingPoint'] = { x: 1, y: 5 };
+        service['endPoint'] = { x: 5, y: 5 };
+
+        service.setShiftIfPressed(event);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('setShiftNonPressed sets shifts shiftIsPressed and eventTest to false when mouseDown is true', () => {
+        service.mouseDown = true;
+        let event = new KeyboardEvent('keydown', { key: 'Shift' });
+        service['startingPoint'] = { x: 1, y: 5 };
+        service['endPoint'] = { x: 5, y: 5 };
+        service.setShiftNonPressed(event);
+        expect(service.shiftIsPressed).toEqual(false);
+        expect(service.eventListenerIsSet).toEqual(false);
+    });
+
+    it('setShiftNonPressed sets shifts shiftIsPressed to false when mouseDown is false', () => {
+        service.mouseDown = false;
+        let event = new KeyboardEvent('keydown', { key: 'Shift' });
+        service.setShiftNonPressed(event);
+        expect(service.shiftIsPressed).toEqual(false);
+    });
+
+    it('onShift returns eventTest true', () => {
+        service.eventListenerIsSet = false;
+        service.onShift();
+        expect(service.eventListenerIsSet).toEqual(true);
+    });
+
+    it('drawLine should calls fillRect when toolStyle.fill is true', () => {
+        const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'setLineDash',
+            'stroke',
+            'moveTo',
+            'lineTo',
+            'fillRect'
+        ]);
+        service.toolStyles.fill = true;
+        service.drawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 2, y: 2 }]);
+        expect(rectangleSpyObject.fillRect).toHaveBeenCalled();
+    });
+
+    it('drawLine should calls moveTo and lineTo 4 times', () => {
+        const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'setLineDash',
+            'stroke',
+            'moveTo',
+            'lineTo',
+        ]);
+        service.drawLine(rectangleSpyObject, [{ x: 1, y: 1 }, { x: 2, y: 2 }]);
+        expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
+        expect(rectangleSpyObject.moveTo).toHaveBeenCalledTimes(4);
+    });
+
 });
