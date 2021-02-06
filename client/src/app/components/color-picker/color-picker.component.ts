@@ -11,7 +11,7 @@ import { MouseButton } from '@app/services/tools/pencil-service';
 })
 export class ColorPickerComponent {
     hue: string;
-    color: string = 'Choisissez une couleur!';
+    color: string = 'rgba(0,0,0,1)';
     red: string = '';
     green: string = '';
     blue: string = '';
@@ -28,6 +28,7 @@ export class ColorPickerComponent {
     }
 
     // TODO: Adjust when palette is clicked undefined behaviour
+    // TODO : opacite pour les 2 couleurs (separement)
     changeOpacity(opacity: number): void {
         this.colorService.opacity = opacity;
         this.colorService.setPrimaryColorWithOpacity(opacity);
@@ -96,7 +97,6 @@ export class ColorPickerComponent {
     }
 
     adjustBlue(blueIntensity: KeyboardEvent): void {
-        // change any type
         let value = '';
         value += (blueIntensity.target as HTMLInputElement).value;
         this.red = this.splitColor(this.color)[this.redIndex];

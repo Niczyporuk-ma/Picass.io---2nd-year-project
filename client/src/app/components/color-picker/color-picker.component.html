@@ -11,9 +11,9 @@
     <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">Swap</button>
 </div>
 <div class="side-input-wrapper">
-    <label>R: <input type="text" (keyup)="adjustRed($event)" [(ngModel)]="red" /><br /> </label>
-    <label>V: <input type="text" (keyup)="adjustGreen($event)" [(ngModel)]="green" /> <br /> </label>
-    <label>B: <input type="text" (keyup)="adjustBlue($event)" [(ngModel)]="blue" /> </label>
+    <label>R: <input type="text" (keyup)="adjustRed($event)" [(ngModel)]="splitColor(color)[redIndex]" /><br /> </label>
+    <label>V: <input type="text" (keyup)="adjustGreen($event)" [(ngModel)]="splitColor(color)[greenIndex]" /> <br /> </label>
+    <label>B: <input type="text" (keyup)="adjustBlue($event)" [(ngModel)]="splitColor(color)[blueIndex]" /> </label>
 
     <!--  <label>Width: <input [(ngModel)]="widthValue" (change)="changeWidth(widthValue)" /></label> -->
 </div>

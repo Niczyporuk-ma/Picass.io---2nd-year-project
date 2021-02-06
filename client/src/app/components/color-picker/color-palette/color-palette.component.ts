@@ -95,7 +95,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-            this.colorService.setPrimaryColor(this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY)); // add opacity
+            this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
         }
     }
 
@@ -105,7 +105,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
         this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-        this.colorService.setSecondaryColor(this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY)); // add opacity
+        this.colorService.secondaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
         return false;
     }
 
@@ -114,6 +114,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.emitColor(evt.offsetX, evt.offsetY);
+            this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY);
         }
     }
 

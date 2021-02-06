@@ -2,10 +2,10 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Vec2 } from './vec2';
 
 export interface ToolStyles {
-    lineColor: string;
+    primaryColor: string;
     lineWidth: number;
     fill?: boolean;
-    fillColor?: string;
+    secondaryColor?: string;
 }
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
@@ -17,7 +17,7 @@ export abstract class Tool {
     mouseDown: boolean = false;
     shortcut: string;
     index: number;
-    styles: ToolStyles;
+    // styles: ToolStyles;
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;
     history: Vec2[][];
@@ -47,14 +47,14 @@ export abstract class Tool {
 
     setStyles(): void {
         if (this.toolStyles.fill) {
-            this.drawingService.previewCtx.fillStyle = this.toolStyles.fillColor as string;
-            this.drawingService.baseCtx.fillStyle = this.toolStyles.fillColor as string;
+            this.drawingService.previewCtx.fillStyle = this.toolStyles.secondaryColor as string;
+            this.drawingService.baseCtx.fillStyle = this.toolStyles.secondaryColor as string;
         } else {
             this.drawingService.previewCtx.fillStyle = 'white';
             this.drawingService.baseCtx.fillStyle = 'white';
         }
-        this.drawingService.previewCtx.strokeStyle = this.toolStyles.lineColor;
-        this.drawingService.baseCtx.strokeStyle = this.toolStyles.lineColor;
+        this.drawingService.previewCtx.strokeStyle = this.toolStyles.primaryColor;
+        this.drawingService.baseCtx.strokeStyle = this.toolStyles.primaryColor;
         this.drawingService.previewCtx.lineWidth = this.toolStyles.lineWidth;
         this.drawingService.baseCtx.lineWidth = this.toolStyles.lineWidth;
     }
@@ -62,6 +62,6 @@ export abstract class Tool {
     changeWidth(newWidth: number): void {
         // this.lastWidth = this.currentWidth;
         // this.penWidth = parseInt(newWidth);
-        this.styles.lineWidth = newWidth;
+        this.toolStyles.lineWidth = newWidth;
     }
 }
