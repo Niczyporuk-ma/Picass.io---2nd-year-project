@@ -9,12 +9,25 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 })
 export class ToolbarComponent {
     tools: Tool[];
-    toolManager: ToolManagerService;
+    //toolManager: ToolManagerService;
     showPalette: boolean = false;
+    widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
 
-    constructor(toolManager: ToolManagerService) {
+    constructor(public toolManager: ToolManagerService) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
+    }
+
+    updateSliderWidth(): void {
+        console.log(this.toolManager.currentTool);
+        this.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+    }
+
+    changeWidth(width: number): void {
+        // if (this.toolManger.currentTool.isValid(width)) {
+        this.toolManager.currentTool.changeWidth(width);
+        console.log(this.toolManager.currentTool);
+        // }
     }
     setRectangleStyle(n: number): void {
         if (n == 3) {

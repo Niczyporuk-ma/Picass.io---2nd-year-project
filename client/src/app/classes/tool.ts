@@ -17,7 +17,6 @@ export abstract class Tool {
     mouseDown: boolean = false;
     shortcut: string;
     index: number;
-    // styles: ToolStyles;
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;
     history: Vec2[][];

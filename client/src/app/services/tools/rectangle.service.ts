@@ -37,6 +37,9 @@ export class RectangleService extends Tool {
             this.startingPoint = this.mouseDownCoord;
         }
     }
+    changeWidth(newWidth: number): void {
+        this.toolStyles.lineWidth = newWidth;
+    }
 
     setShiftIfPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {

@@ -12,6 +12,7 @@ export class EraserService extends Tool {
     currentPoint: Vec2;
     coordinate: Vec2;
     indexValue: number = 3;
+    minimumWidth: number = 5;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -66,7 +67,7 @@ export class EraserService extends Tool {
         ctx.beginPath();
 
         ctx.lineWidth = this.toolStyles.lineWidth;
-        ctx.lineCap = 'round';
+        ctx.lineCap = 'square';
         ctx.globalCompositeOperation = 'destination-out';
         ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
         ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
@@ -92,17 +93,22 @@ export class EraserService extends Tool {
         this.drawingService.previewCtx.strokeRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
     }
 
-    // changeWidth(newWidth: number): void {
-    //     //this.lastWidth = this.currentWidth;
-    //     // this.penWidth = parseInt(newWidth);
-    //     this.styles.lineWidth = newWidth;
-    // }
+    changeWidth(newWidth: number): void {
+        if (this.isValid(newWidth)) {
+            this.toolStyles.lineWidth = newWidth;
+        } else {
+            this.toolStyles.lineWidth = 5;
+        }
 
-    // isValid(width: number): boolean {
-    //     if (width < 5) {
-    //         return false;
-    //     }
+        console.log('Change eraser');
+    }
 
-    //     return true;
-    // }
+    //permet de verifier la limite de la largeur de l'efface
+    isValid(width: number): boolean {
+        if (width < 5) {
+            return false;
+        }
+
+        return true;
+    }
 }

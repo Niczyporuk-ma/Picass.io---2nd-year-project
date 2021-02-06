@@ -43,6 +43,9 @@ export class EllipseService extends Tool {
             this.eventTest = true;
         }
     }
+    changeWidth(newWidth: number): void {
+        this.toolStyles.lineWidth = newWidth;
+    }
 
     setShiftIfPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {

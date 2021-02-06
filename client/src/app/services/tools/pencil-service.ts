@@ -68,6 +68,9 @@ export class PencilService extends Tool {
             this.drawLine(this.drawingService.previewCtx, this.pathData);
         }
     }
+    changeWidth(newWidth: number): void {
+        this.toolStyles.lineWidth = newWidth;
+    }
 
     changeColorBlue(): void {
         this.drawingService.baseCtx.strokeStyle = 'blue';
