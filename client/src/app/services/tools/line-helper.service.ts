@@ -69,8 +69,6 @@ export class LineHelperService {
         let angle: number = Math.atan2(b, a) * (180 / Math.PI);
 
         angle = this.angleQuadrantConverter(start, end, angle);
-        console.log(angle);
-
         if (angle % 45 === 0) {
             return true;
         } else {

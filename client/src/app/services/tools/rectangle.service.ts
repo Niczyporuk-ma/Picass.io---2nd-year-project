@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Tool, ToolStyles } from '@app/classes/tool';
+import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
@@ -16,7 +16,6 @@ export class RectangleService extends Tool {
         super(drawingService);
         this.shortcut = '1';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
-        this.drawingService.drawingHistory = new Map([]);
         this.currentLine = [];
         this.index = 2;
         this.toolStyles = {
@@ -129,9 +128,6 @@ export class RectangleService extends Tool {
         path = this.currentLine;
 
         if (ctx === this.drawingService.baseCtx) {
-            // let test: ToolStyles = { ...this.styles };
-            this.drawingService.drawingHistory.set(path, [this, { ...this.toolStyles }]);
-            //console.log(this.styles);
             this.drawingService.drawingStarted = true;
         }
 
@@ -151,38 +147,4 @@ export class RectangleService extends Tool {
             ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
         }
     }
-
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[], style: ToolStyles): void {
-        this.toolStyles = style;
-        this.setStyles();
-        ctx.beginPath();
-        ctx.globalCompositeOperation = 'source-over';
-
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[1].x, path[0].y);
-
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[0].x, path[1].y);
-
-        ctx.moveTo(path[0].x, path[1].y);
-        ctx.lineTo(path[1].x, path[1].y);
-
-        ctx.moveTo(path[1].x, path[0].y);
-        ctx.lineTo(path[1].x, path[1].y);
-
-        ctx.stroke();
-        if (this.toolStyles.fill) {
-            ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
-        }
-    }
-
-    // changeWidth(newWidth: number): void {
-    //     //this.lastWidth = this.currentWidth;
-    //     // this.penWidth = parseInt(newWidth);
-    //     this.styles.lineWidth = newWidth;
-    // }
-
-    // isValid(width: number): boolean {
-    //     return true;
-    // }
 }

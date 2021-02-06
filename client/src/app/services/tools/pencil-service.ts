@@ -25,9 +25,8 @@ export class PencilService extends Tool {
         super(drawingService);
         this.clearPath();
         this.shortcut = 'p';
-        this.localShortcuts = new Map([['Shift', this.test]]);
+        this.localShortcuts = new Map();
         this.index = 0;
-        this.drawingService.pencilDrawings = [];
         this.toolStyles = {
             primaryColor: 'black',
             lineWidth: 1,
@@ -54,10 +53,6 @@ export class PencilService extends Tool {
         this.clearPath();
     }
 
-    test(): void {
-        alert('gg sa fonctionne, sah quel plaisir');
-    }
-
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
@@ -76,33 +71,12 @@ export class PencilService extends Tool {
         this.drawingService.baseCtx.strokeStyle = 'blue';
     }
 
-    // changeWidth(newWidth: number): void {
-    //     //this.lastWidth = this.currentWidth;
-    //     // this.penWidth = parseInt(newWidth);
-    //     this.styles.lineWidth = newWidth;
-    // }
-
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
         ctx.beginPath();
         ctx.lineWidth = this.toolStyles.lineWidth;
-        ctx.lineCap = 'round';
-        ctx.globalCompositeOperation = 'source-over';
-        for (const [index, point] of path.entries()) {
-            ctx.lineTo(point.x, point.y);
-            if (index !== 0) {
-                const start: Vec2 = path[index - 1];
-                const end: Vec2 = path[index];
-                const line: Vec2[] = [start, end];
-                this.drawingService.pencilDrawings.push(line);
-            }
-        }
-        ctx.stroke();
-    }
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.globalCompositeOperation = 'source-over';
         for (const point of path) {
