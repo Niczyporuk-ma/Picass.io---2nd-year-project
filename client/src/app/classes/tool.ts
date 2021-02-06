@@ -17,7 +17,6 @@ export abstract class Tool {
     mouseDown: boolean = false;
     shortcut: string;
     index: number;
-    styles: ToolStyles;
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;
     history: Vec2[][];
@@ -59,9 +58,5 @@ export abstract class Tool {
         this.drawingService.baseCtx.lineWidth = this.toolStyles.lineWidth;
     }
 
-    changeWidth(newWidth: number): void {
-        // this.lastWidth = this.currentWidth;
-        // this.penWidth = parseInt(newWidth);
-        this.styles.lineWidth = newWidth;
-    }
+    changeWidth(newWidth: number): void {}
 }

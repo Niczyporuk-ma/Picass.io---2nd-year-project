@@ -52,6 +52,9 @@ export class LineServiceService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.currentLine = [];
     }
+    changeWidth(newWidth: number): void {
+        this.toolStyles.lineWidth = newWidth;
+    }
 
     onBackspace(): void {
         if (this.drawingService.drawingHistory.size > 0) {

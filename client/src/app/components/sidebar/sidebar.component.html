@@ -9,19 +9,5 @@
         N'oubliez pas de regarder les tests dans les fichiers spec.ts aussi!
     </p>
 
-    <mat-card>
-        <mat-slider
-            min="1"
-            max="50"
-            step="1"
-            value="1"
-            class="slider"
-            (change)="changeWidth($event.value)"
-            (input)="widthValue = $event.value"
-            [value]="widthValue"
-        ></mat-slider>
-        {{ widthValue }}
-    </mat-card>
-
     <app-toolbar></app-toolbar>
 </div>

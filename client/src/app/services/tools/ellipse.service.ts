@@ -15,7 +15,7 @@ export class EllipseService extends Tool {
         this.shortcut = '2';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
         this.colorService = colorService;
-        this.styles = {
+        this.toolStyles = {
             lineColor: 'black',
             lineWidth: 1,
             fill: false,
@@ -42,6 +42,9 @@ export class EllipseService extends Tool {
             window.addEventListener('keyup', this.setShiftNonPressed);
             this.eventTest = true;
         }
+    }
+    changeWidth(newWidth: number): void {
+        this.toolStyles.lineWidth = newWidth;
     }
 
     setShiftIfPressed = (e: KeyboardEvent) => {
@@ -131,7 +134,7 @@ export class EllipseService extends Tool {
 
         ctx.beginPath();
         ctx.setLineDash([]);
-        ctx.lineWidth = this.styles.lineWidth;
+        ctx.lineWidth = this.toolStyles.lineWidth;
 
         if (this.shiftIsPressed) {
             // this.drawCircle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
@@ -156,7 +159,7 @@ export class EllipseService extends Tool {
             ctx.strokeStyle = this.primaryColor;
         }
 
-        if (this.styles.fill) {
+        if (this.toolStyles.fill) {
             ctx.setLineDash([]);
             ctx.fillStyle = this.primaryColor;
             ctx.fill();

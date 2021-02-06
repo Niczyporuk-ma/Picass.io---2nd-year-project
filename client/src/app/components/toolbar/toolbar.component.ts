@@ -9,12 +9,25 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 })
 export class ToolbarComponent {
     tools: Tool[];
-    toolManager: ToolManagerService;
+    //toolManager: ToolManagerService;
     showPalette: boolean = false;
+    widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
 
-    constructor(toolManager: ToolManagerService) {
+    constructor(public toolManager: ToolManagerService) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
+    }
+
+    updateSliderWidth(): void {
+        console.log(this.toolManager.currentTool);
+        this.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+    }
+
+    changeWidth(width: number): void {
+        // if (this.toolManger.currentTool.isValid(width)) {
+        this.toolManager.currentTool.changeWidth(width);
+        console.log(this.toolManager.currentTool);
+        // }
     }
     setRectangleStyle(n: number): void {
         if (n == 3) {
@@ -34,15 +47,15 @@ export class ToolbarComponent {
     }
 
     setEllipseStyle(n: number): void {
-        this.toolManager.ellipseService.styles.fill = false;
+        this.toolManager.ellipseService.toolStyles.fill = false;
         this.toolManager.ellipseService.border = false;
 
         if (n === 0) {
-            this.toolManager.ellipseService.styles.fill = true;
+            this.toolManager.ellipseService.toolStyles.fill = true;
         } else if (n === 1) {
             this.toolManager.ellipseService.border = true;
         } else {
-            this.toolManager.ellipseService.styles.fill = true;
+            this.toolManager.ellipseService.toolStyles.fill = true;
             this.toolManager.ellipseService.border = true;
         }
     }
