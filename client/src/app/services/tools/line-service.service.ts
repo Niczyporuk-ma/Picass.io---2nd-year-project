@@ -25,6 +25,7 @@ export class LineServiceService extends Tool {
     calledFromMouseClick: boolean = false;
     lineHelper: LineHelperService;
     colorService: ColorService;
+    angle: number;
 
     constructor(drawingService: DrawingService, pencilService: PencilService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
@@ -60,7 +61,9 @@ export class LineServiceService extends Tool {
         if (this.currentLine.length > 0) {
             this.startingPoint = this.currentLine[this.currentLine.length - 1][0];
             this.currentLine.pop();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.redrawCurrentPreview();
+            this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
         }
     }
 
@@ -130,7 +133,7 @@ export class LineServiceService extends Tool {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
             } else {
-                this.endPoint = this.angledEndPoint;
+                //this.endPoint = this.angledEndPoint;
             }
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
             this.currentLine.push([this.startingPoint, this.endPoint]);
@@ -150,7 +153,6 @@ export class LineServiceService extends Tool {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.redrawCurrentBase();
             this.currentLine = [];
-            console.log('test');
         } else {
             if (!this.shiftIsPressed) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -175,17 +177,11 @@ export class LineServiceService extends Tool {
             this.endPoint = mousePosition;
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             if (this.shiftIsPressed) {
-                if (this.lineHelper.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
-                    this.angledEndPoint = this.endPoint;
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.redrawCurrentPreview();
-                    this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
-                }
-            } else {
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.redrawCurrentPreview();
-                this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
+                this.endPoint = this.lineHelper.closestAngledPoint(this.startingPoint, this.endPoint);
             }
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.redrawCurrentPreview();
+            this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
         }
     }
 
