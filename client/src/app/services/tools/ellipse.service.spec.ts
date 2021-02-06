@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from './ellipse.service';
 
-fdescribe('EllipseService', () => {
+describe('EllipseService', () => {
     let service: EllipseService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -166,5 +166,20 @@ fdescribe('EllipseService', () => {
         let event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.setShiftNonPressed(event);
         expect(service.shiftIsPressed).toEqual(false);
+    });
+
+    it('drawRectangle calls moveTo and lineTo 4 times', () => {
+        const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'setLineDash',
+            'stroke',
+            'moveTo',
+            'lineTo',
+        ]);
+        service.drawRectangle(rectangleSpyObject, { x: 1, y: 1 }, { x: 2, y: 2 });
+        expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
+        expect(rectangleSpyObject.moveTo).toHaveBeenCalledTimes(4);
     });
 });
