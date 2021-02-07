@@ -107,13 +107,6 @@ export class RectangleService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.endPoint];
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
-                // this.drawingService.previewCtx.strokeStyle = 'black';
-                // this.drawingService.previewCtx.strokeRect(
-                //     this.startingPoint.x,
-                //     this.startingPoint.y,
-                //     this.endPoint.x - this.startingPoint.x,
-                //     this.endPoint.y - this.startingPoint.y,
-                // );
             }
         }
     }
