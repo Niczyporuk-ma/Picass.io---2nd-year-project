@@ -97,9 +97,18 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-            this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-            if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
-                this.colorService.tenLastUsedColors.dequeue();
+            if(!this.colorService.contains(this.getColorAtPosition(evt.offsetX, evt.offsetY))){
+                this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
+                    this.colorService.tenLastUsedColors.dequeue();
+                }
+            }
+            else {
+                this.colorService.tenLastUsedColors.remove(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
+                    this.colorService.tenLastUsedColors.dequeue();
+                }
             }
             console.log("len: " + this.colorService.tenLastUsedColors.length + " head: " + this.colorService.tenLastUsedColors.head);
             this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
@@ -112,9 +121,18 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
         this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-        this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-        if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
-            this.colorService.tenLastUsedColors.dequeue();
+        if(!this.colorService.contains(this.getColorAtPosition(evt.offsetX, evt.offsetY))){
+            this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
+                this.colorService.tenLastUsedColors.dequeue();
+            }
+        }
+        else {
+            this.colorService.tenLastUsedColors.remove(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
+                this.colorService.tenLastUsedColors.dequeue();
+            }
         }
         console.log("len: " + this.colorService.tenLastUsedColors.length + " head: " + this.colorService.tenLastUsedColors.head);
         this.colorService.secondaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity

@@ -37,5 +37,16 @@ export class ColorService {
         this.secondaryColor = temp;
     }
 
+    contains(color: string): boolean {
+        let array = this.tenLastUsedColors.toArray();
+        for(let i = 0; i < array.length; i++){
+            if(array[i] == color){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     // TODO : faire les 10 derniers couleurs (le bouffer)
 }
