@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Queue } from 'queue-typescript';
 
 @Injectable({
     providedIn: 'root',
@@ -8,11 +9,13 @@ export class ColorService {
     secondaryColor: string;
     opacity: number;
     // TODO opactity for each color
+    tenLastUsedColors: Queue<string>;
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
         this.secondaryColor = 'rgba(0,0,0,1)';
         this.opacity = 1;
+        this.tenLastUsedColors = new Queue<string>();
     }
 
     // TODO concatenate color and opacity
