@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ToolManagerService } from './tool-manager.service';
 
-describe('ToolManagerService', () => {
+fdescribe('ToolManagerService', () => {
     let service: ToolManagerService;
 
     beforeEach(() => {
@@ -40,47 +40,34 @@ describe('ToolManagerService', () => {
         expect(service.currentTool).toEqual(service.rectangleService);
     });
 
-    /*it(' setPencilService should  call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
-        service.setPencilService();
-        expect(nextSpy).toHaveBeenCalled();
+    //HOW????????
+    /*it(' setTool should call setColors', () => {
+        const setColorSpy = spyOn<any>(service.currentTool, 'setColors');
+        service.setTool(service.eraserService);
+        expect(setColorSpy).toHaveBeenCalled();
+    });*/
+
+    it(' clearArrays should call clearCanvas twice', () => {
+        spyOn(window, 'confirm').and.returnValue(true);
+        const clearCanvasSpy = spyOn<any>(service['drawingService'], 'clearCanvas');
+        service.clearArrays();
+        expect(clearCanvasSpy).toHaveBeenCalledTimes(2);
     });
 
-    it(' setEraserService should call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
-        service.setEraserService();
-        expect(nextSpy).toHaveBeenCalled();
+    //a demander
+    it(' clearArrays should call clearArrays for every tool', () => {
+        spyOn(window, 'confirm').and.returnValue(true);
+        spyOn(service['drawingService'],'clearCanvas').and.returnValue();
+        const clearArrayEraserSpy = spyOn<any>(service.eraserService, 'clearArrays');
+        const clearArrayPencilSpy = spyOn<any>(service.pencilService, 'clearArrays');
+        const clearArrayRectangleSpy = spyOn<any>(service.rectangleService, 'clearArrays');
+        const clearArrayLineSpy = spyOn<any>(service.lineService, 'clearArrays');
+        service.clearArrays();
+        expect(clearArrayEraserSpy).toHaveBeenCalled();
+        expect(clearArrayPencilSpy).toHaveBeenCalled();
+        expect(clearArrayRectangleSpy).toHaveBeenCalled();
+        expect(clearArrayLineSpy).toHaveBeenCalled();
     });
 
-    it(' setLineService should call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
-        service.setLineService();
-        expect(nextSpy).toHaveBeenCalled();
-    });
 
-    it(' setRectangleService should call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
-        service.setRectangleService();
-        expect(nextSpy).toHaveBeenCalled();
-    });
-
-    it(' setPencilService should set the current Tool to Pencil', () => {
-        service.setPencilService();
-        expect(service.currentTool).toEqual(service.pencilService);
-    });
-
-    it(' setEraserService should set the current Tool to Eraser', () => {
-        service.setEraserService();
-        expect(service.currentTool).toEqual(service.eraserService);
-    });
-
-    it(' setLineService should set the current Tool to Line', () => {
-        service.setLineService();
-        expect(service.currentTool).toEqual(service.lineService);
-    });
-
-    it(' setRectangleService should set the current Tool to Rectangle', () => {
-        service.setRectangleService();
-        expect(service.currentTool).toEqual(service.rectangleService);
-    })*/
 });

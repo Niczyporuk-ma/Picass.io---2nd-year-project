@@ -36,13 +36,13 @@ export class ToolManagerService {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
         this.toolBoxShortcuts = new Map([
-            [this.lineService.shortcut, this.tools[1]],
+            [this.lineService.shortcut, this.tools[this.lineService.index]],
             [this.rectangleService.shortcut, this.tools[this.rectangleService.index]],
             [this.eraserService.shortcut, this.tools[this.eraserService.index]],
             [this.pencilService.shortcut, this.tools[this.pencilService.index]],
         ]);
     }
-
+    //A TESTER
     clearArrays(): void {
         if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
             for (const tool of this.tools) {
@@ -64,23 +64,4 @@ export class ToolManagerService {
         this.currentTool.setColors(this.colorService);
     }
 
-    // setPencilService(): void {
-    //     this.currentToolChange.next(this.pencilService);
-    // }
-
-    // setLineService(): void {
-    //     this.currentToolChange.next(this.lineService);
-    // }
-
-    // setRectangleService(): void {
-    //     this.currentToolChange.next(this.rectangleService);
-    // }
-
-    // setEraserService(): void {
-    //     this.currentToolChange.next(this.eraserService);
-    // }
-
-    // setEllipseService(): void {
-    //     this.currentToolChange.next(this.ellipseService);
-    // }
 }
