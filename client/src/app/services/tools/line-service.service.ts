@@ -143,8 +143,10 @@ export class LineServiceService extends Tool {
         for (const line of this.currentLine) {
             this.drawLine(this.drawingService.baseCtx, line);
         }
-        for (const [index, junction] of this.junctions.entries()) {
-            this.drawJunction(this.drawingService.baseCtx, junction, this.junctionsRadius[index]);
+        if (this.junctions.length > 0) {
+            for (const [index, junction] of this.junctions.entries()) {
+                this.drawJunction(this.drawingService.baseCtx, junction, this.junctionsRadius[index]);
+            }
         }
         this.currentLine = [];
         this.segmentStyles = [];
@@ -194,10 +196,14 @@ export class LineServiceService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.endPoint = mousePosition;
                 this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.junctions.push(this.endPoint);
+                this.junctionsRadius.push(this.currentRadius);
                 this.redrawCurrentBase();
             } else {
                 this.endPoint = this.angledEndPoint;
                 this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.junctions.push(this.endPoint);
+                this.junctionsRadius.push(this.currentRadius);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.redrawCurrentBase();
             }
