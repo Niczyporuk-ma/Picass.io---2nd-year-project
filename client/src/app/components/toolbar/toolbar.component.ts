@@ -52,6 +52,18 @@ export class ToolbarComponent {
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
 
+    setLineJunction(n: number): void {
+        if (n == 0) {
+            this.toolManager.lineService.hasJunction = false;
+        } else {
+            this.toolManager.lineService.hasJunction = true;
+        }
+    }
+
+    changeDiameter(n: number): void {
+        this.toolManager.lineService.currentRadius = n / 2;
+    }
+
     changeWidth(width: number): void {
         this.toolManager.currentTool.changeWidth(width);
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;

@@ -18,6 +18,10 @@ export class LineServiceService extends Tool {
     eventTest: boolean;
     currentSegment: Vec2[] = [];
     currentLine: Vec2[][] = [];
+    segmentStyles: ToolStyles[] = [];
+    junctions: Vec2[] = [];
+    junctionsRadius: number[] = [];
+    currentRadius: number = 0;
     toolStyles: ToolStyles;
     angledEndPoint: Vec2;
     calledFromMouseClick: boolean = false;
@@ -25,6 +29,7 @@ export class LineServiceService extends Tool {
     colorService: ColorService;
     angle: number;
     mousePosition: Vec2;
+    hasJunction: boolean = true;
 
     constructor(drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
@@ -50,6 +55,9 @@ export class LineServiceService extends Tool {
         this.isStarted = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.currentLine = [];
+        this.segmentStyles = [];
+        this.junctions = [];
+        this.junctionsRadius = [];
     }
     changeWidth(newWidth: number): void {
         this.toolStyles.lineWidth = newWidth;
@@ -59,6 +67,9 @@ export class LineServiceService extends Tool {
         if (this.currentLine.length > 0) {
             this.startingPoint = this.currentLine[this.currentLine.length - 1][0];
             this.currentLine.pop();
+            this.segmentStyles.pop();
+            this.junctions.pop();
+            this.junctionsRadius.pop();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.redrawCurrentPreview();
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
@@ -100,6 +111,15 @@ export class LineServiceService extends Tool {
         }
     }
 
+    drawJunction(ctx: CanvasRenderingContext2D, center: Vec2, radius: number) {
+        if (this.hasJunction) {
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = 'black';
+            ctx.fill();
+        }
+    }
+
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
@@ -113,12 +133,23 @@ export class LineServiceService extends Tool {
         for (const line of this.currentLine) {
             this.drawLine(this.drawingService.previewCtx, line);
         }
+        if (this.junctions.length > 0) {
+            for (const [index, junction] of this.junctions.entries()) {
+                this.drawJunction(this.drawingService.previewCtx, junction, this.junctionsRadius[index]);
+            }
+        }
     }
     redrawCurrentBase(): void {
         for (const line of this.currentLine) {
             this.drawLine(this.drawingService.baseCtx, line);
         }
+        for (const [index, junction] of this.junctions.entries()) {
+            this.drawJunction(this.drawingService.baseCtx, junction, this.junctionsRadius[index]);
+        }
         this.currentLine = [];
+        this.segmentStyles = [];
+        this.junctions = [];
+        this.junctionsRadius = [];
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -126,6 +157,9 @@ export class LineServiceService extends Tool {
             this.isStarted = true;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.startingPoint = this.mouseDownCoord;
+            this.junctions.push(this.startingPoint);
+            this.junctionsRadius.push(this.currentRadius);
+            this.drawJunction(this.drawingService.previewCtx, this.startingPoint, this.currentRadius);
         } else {
             if (!this.shiftIsPressed) {
                 const mousePosition = this.getPositionFromMouse(event);
@@ -134,6 +168,9 @@ export class LineServiceService extends Tool {
                 // this.endPoint = this.angledEndPoint;
             }
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
+            this.junctions.push(this.endPoint);
+            this.junctionsRadius.push(this.currentRadius);
+            this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentRadius);
             this.currentLine.push([this.startingPoint, this.endPoint]);
             this.startingPoint = this.endPoint;
             if (this.shiftIsPressed) {
@@ -147,22 +184,21 @@ export class LineServiceService extends Tool {
 
     onDoubleClick(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
-        if (this.lineHelper.pixelDistanceUtil(this.startingPoint, mousePosition)) {
+        if (this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
+            this.endPoint = this.currentLine[0][0];
+            this.currentLine.push([this.startingPoint, this.endPoint]);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.redrawCurrentBase();
-            this.currentLine = [];
         } else {
             if (!this.shiftIsPressed) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.endPoint = mousePosition;
                 this.currentLine.push([this.startingPoint, this.endPoint]);
                 this.redrawCurrentBase();
-                this.currentLine = [];
             } else {
                 this.endPoint = this.angledEndPoint;
                 this.currentLine.push([this.startingPoint, this.endPoint]);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentLine = [];
                 this.redrawCurrentBase();
             }
         }
@@ -176,6 +212,7 @@ export class LineServiceService extends Tool {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             if (this.shiftIsPressed) {
                 this.endPoint = this.lineHelper.closestAngledPoint(this.startingPoint, this.endPoint);
+                this.angledEndPoint = this.endPoint;
             }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.redrawCurrentPreview();

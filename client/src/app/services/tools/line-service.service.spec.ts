@@ -73,21 +73,19 @@ describe('LineService', () => {
         expect(service.startingPoint).toEqual(expectedResult);
     });
 
-    // probleme du set dans drawline
-    /*it(' mouseClick should set endingPosition to correct position when the line is started', () => {
-        
-        const expectedResult: Vec2 = { x: 25, y: 25 };
-        service.isStarted = true;
-        service.onMouseClick(mouseEvent);
-        expect(service.endingPosition).toEqual(expectedResult);
-    });*/
+    // // probleme du set dans drawline
+    // it(' mouseClick should set endingPosition to correct position when the line is started', () => {
 
-    /*
+    //     const expectedResult: Vec2 = { x: 25, y: 25 };
+    //     service.isStarted = true;
+    //     service.onMouseClick(mouseEvent);
+    //     expect(service.endingPosition).toEqual(expectedResult);
+    // });
+
     it(' mouseClick should call drawLine() when endingPoint is set', () => {
         service.isStarted = true;
         service.onMouseClick(mouseEvent);
-        const drawLineSpy : jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
         expect(drawLineSpy).toHaveBeenCalled();
     });
-    */
 });

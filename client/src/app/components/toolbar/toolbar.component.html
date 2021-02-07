@@ -40,3 +40,25 @@
     <mat-button-toggle value="4" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
     <mat-button-toggle value="5" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
 </mat-button-toggle-group>
+
+<mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
+    <mat-button-toggle value="0" (change)="setLineJunction($event.value)">Sans jonction</mat-button-toggle>
+    <mat-button-toggle value="1" (change)="setLineJunction($event.value)">Avec jonction</mat-button-toggle>
+</mat-button-toggle-group>
+
+<br />
+<div class="junctionRadiusSlider" *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
+    <mat-card>
+        <mat-slider
+            min="2"
+            max="50"
+            step="1"
+            value="1"
+            class="slider"
+            (change)="changeDiameter($event.value)"
+            (input)="this.toolManager.lineService.currentRadius = $event.value / 2"
+            [value]="this.toolManager.widthValue"
+        ></mat-slider>
+        {{ this.toolManager.lineService.currentRadius * 2 }}
+    </mat-card>
+</div>
