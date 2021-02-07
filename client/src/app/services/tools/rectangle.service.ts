@@ -121,13 +121,20 @@ export class RectangleService extends Tool {
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.setColors(this.colorService);
         this.setStyles();
+
+        this.drawingService.previewCtx.fillStyle = this.toolStyles.primaryColor as string;
+        this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
+
+        this.drawingService.previewCtx.strokeStyle = this.toolStyles.secondaryColor as string;
+        this.drawingService.baseCtx.strokeStyle = this.toolStyles.secondaryColor as string;
+
         if (!this.contour) {
-            ctx.strokeStyle = 'white';
+            ctx.strokeStyle = this.colorService.primaryColor;
         }
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.toolStyles.lineWidth;
-        // ctx.lineCap = 'round';
+        ctx.lineCap = 'square';
         // path = this.currentLine;
 
         if (ctx === this.drawingService.baseCtx) {

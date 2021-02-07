@@ -11,7 +11,7 @@ export class ColorService {
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
-        this.secondaryColor = 'rgba(255,255,255,1)';
+        this.secondaryColor = 'rgba(0,0,0,1)';
         this.opacity = 1;
     }
 
