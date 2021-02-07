@@ -21,7 +21,7 @@ export class LineServiceService extends Tool {
     segmentStyles: ToolStyles[] = [];
     junctions: Vec2[] = [];
     junctionsRadius: number[] = [];
-    currentDiameter: number = 1;
+    currentDiameter: number = 5;
     toolStyles: ToolStyles;
     angledEndPoint: Vec2;
     calledFromMouseClick: boolean = false;

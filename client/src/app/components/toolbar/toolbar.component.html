@@ -51,6 +51,7 @@
 <br />
 <div class="junctionRadiusSlider" *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
     <mat-card>
+        <mat-card-subtitle>Diamètre</mat-card-subtitle>
         <mat-slider
             min="2"
             max="50"
@@ -62,5 +63,6 @@
             [value]="this.toolManager.lineService.currentDiameter"
         ></mat-slider>
         {{ this.toolManager.lineService.currentDiameter }}
+        <br />
     </mat-card>
 </div>
