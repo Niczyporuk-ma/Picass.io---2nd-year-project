@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
@@ -52,6 +53,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         FormsModule,
         MatRadioModule,
         MatButtonToggleModule,
+        DragDropModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

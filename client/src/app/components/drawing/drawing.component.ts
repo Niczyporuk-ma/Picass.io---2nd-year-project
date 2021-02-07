@@ -4,7 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { KeyboardShortcutManagerService } from '@app/services/tools/keyboard-shortcut-manager.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-// import {DragDropModule} from '@angular/cdk/drag-drop';
 
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
@@ -24,10 +23,10 @@ export class DrawingComponent implements AfterViewInit {
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    // private previousX: number;
-    // private previousY: number;
-    // private newX: number;
-    // private newY: number;
+    private previousX: number;
+    private previousY: number;
+    private newX: number;
+    private newY: number;
 
     timeOutDuration: number = 170;
 
@@ -88,37 +87,46 @@ export class DrawingComponent implements AfterViewInit {
 
     // //Inspired by: https://www.youtube.com/watch?v=NyZSIhzz5Do&ab_channel=JonasGr%C3%B8ndahl
 
-    // startResize(event: MouseEvent) {
-    //     console.log('I got clicked!');
-    //     this.previousX = event.clientX;
-    //     this.previousY = event.clientY;
-    //     console.log(this.previousX);
-    //     console.log(this.previousY);
+    startResize(event: MouseEvent) {
+        console.log('I got clicked!');
+        this.previousX = event.clientX;
+        this.previousY = event.clientY;
+        console.log(this.previousX);
+        console.log(this.previousY);
 
-    //     bottomAnchor.addEventListener('mousemove', this.resize);
-    //     bottomAnchor.addEventListener('mouseup', this.stopResize);
-    // }
+        // bottomAnchor.addEventListener('mousemove', this.resize);
+        // bottomAnchor.addEventListener('mouseup', this.stopResize);
+    }
 
-    // resize(event: MouseEvent) {
-    //     const rect = bottomAnchor.getBoundingClientRect();
+    resize(event: MouseEvent) {
+        console.log('je bouuuuuuge');
 
-    //     this.newX = this.previousX - event.clientX;
-    //     this.newY = this.previousY - event.clientY;
-    //     console.log('new position' + this.newX);
-    //     console.log('new position' + this.newY);
-    //     const newValueX = String(rect.left - this.newX);
-    //     const newValueY = String(rect.top - this.newY);
+        this.newX = event.clientX;
+        this.newY = event.clientY;
+        console.log(this.newX);
+        console.log(this.newY);
+        // const rect = bottomAnchor.getBoundingClientRect();
+        // this.newX = this.previousX - event.clientX;
+        // this.newY = this.previousY - event.clientY;
+        // console.log('new position' + this.newX);
+        // console.log('new position' + this.newY);
+        // const newValueX = String(rect.left - this.newX);
+        // const newValueY = String(rect.top - this.newY);
+        // bottomAnchor.setAttribute('left', newValueX + 'px');
+        // bottomAnchor.setAttribute('top', newValueY + 'px');
+        // this.canvasSize.y = this.canvasSize.y - this.newY;
+    }
 
-    //     bottomAnchor.setAttribute('left', newValueX + 'px');
-    //     bottomAnchor.setAttribute('top', newValueY + 'px');
+    stopResize(event: MouseEvent) {
+        console.log('hello');
+        this.newX = event.clientX;
+        this.newY = event.clientY;
+        console.log(this.newX);
+        console.log(this.newY);
 
-    //     this.canvasSize.y = this.canvasSize.y - this.newY;
-    // }
-
-    // stopResize() {
-    //     window.removeEventListener('mousemove', this.resize);
-    //     window.removeEventListener('mouseup', this.stopResize);
-    // }
+        // window.removeEventListener('mousemove', this.resize);
+        // window.removeEventListener('mouseup', this.stopResize);
+    }
 
     get width(): number {
         return this.canvasSize.x;
