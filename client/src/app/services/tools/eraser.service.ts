@@ -40,11 +40,13 @@ export class EraserService extends Tool {
 
     // Permet de trouver la bonne prosition pour l'effet du curseur
     findCoordinate(): Vec2 {
-        const coord: Vec2 = { x: this.currentPoint.x - (this.toolStyles.lineWidth / 2), y: this.currentPoint.y - (this.toolStyles.lineWidth / 2) };
+        const coord: Vec2 = { x: this.currentPoint.x - this.toolStyles.lineWidth / 2, y: this.currentPoint.y - this.toolStyles.lineWidth / 2 };
         return coord;
     }
 
     onMouseMove(event: MouseEvent): void {
+        this.drawingService.previewCtx.strokeStyle = 'black';
+
         this.currentPoint = this.getPositionFromMouse(event);
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -62,6 +64,8 @@ export class EraserService extends Tool {
     }
 
     drawLine(ctx: CanvasRenderingContext2D): void {
+        ctx.strokeStyle = 'black';
+
         ctx.beginPath();
 
         ctx.lineWidth = this.toolStyles.lineWidth;

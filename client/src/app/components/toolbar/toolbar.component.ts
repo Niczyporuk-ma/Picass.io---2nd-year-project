@@ -19,7 +19,7 @@ export class ToolbarComponent {
     }
 
     setRectangleStyle(n: number): void {
-        if (n === 3) {
+        if (n == 3) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = false;
         } else if (n == 4) {
@@ -40,6 +40,7 @@ export class ToolbarComponent {
             this.toolManager.ellipseService.toolStyles.fill = true;
             this.toolManager.ellipseService.border = false;
         } else if (n == 1) {
+            this.toolManager.ellipseService.toolStyles.fill = false;
             this.toolManager.ellipseService.border = true;
         } else {
             this.toolManager.ellipseService.toolStyles.fill = true;
