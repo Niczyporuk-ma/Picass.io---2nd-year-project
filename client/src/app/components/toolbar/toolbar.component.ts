@@ -61,7 +61,7 @@ export class ToolbarComponent {
     }
 
     changeDiameter(n: number): void {
-        this.toolManager.lineService.currentRadius = n / 2;
+        this.toolManager.lineService.currentDiameter = n;
     }
 
     changeWidth(width: number): void {

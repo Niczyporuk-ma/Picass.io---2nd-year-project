@@ -21,7 +21,7 @@ export class LineServiceService extends Tool {
     segmentStyles: ToolStyles[] = [];
     junctions: Vec2[] = [];
     junctionsRadius: number[] = [];
-    currentRadius: number = 0;
+    currentDiameter: number = 1;
     toolStyles: ToolStyles;
     angledEndPoint: Vec2;
     calledFromMouseClick: boolean = false;
@@ -41,7 +41,7 @@ export class LineServiceService extends Tool {
             ['Escape', this.onEscape],
         ]);
         this.index = 1;
-        this.toolStyles = { primaryColor: 'blue', lineWidth: 5 };
+        this.toolStyles = { primaryColor: 'black', lineWidth: 5 };
         this.lineHelper = lineHelper;
         this.colorService = colorService;
     }
@@ -54,13 +54,14 @@ export class LineServiceService extends Tool {
     onEscape(): void {
         this.isStarted = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.clearLineAndJunctions();
+    }
+
+    clearLineAndJunctions(): void {
         this.currentLine = [];
         this.segmentStyles = [];
         this.junctions = [];
         this.junctionsRadius = [];
-    }
-    changeWidth(newWidth: number): void {
-        this.toolStyles.lineWidth = newWidth;
     }
 
     onBackspace(): void {
@@ -148,20 +149,20 @@ export class LineServiceService extends Tool {
                 this.drawJunction(this.drawingService.baseCtx, junction, this.junctionsRadius[index]);
             }
         }
-        this.currentLine = [];
-        this.segmentStyles = [];
-        this.junctions = [];
-        this.junctionsRadius = [];
+        this.clearLineAndJunctions();
+    }
+
+    pushNewJunction(center: Vec2, radius: number): void {
+        this.junctions.push(center);
+        this.junctionsRadius.push(radius);
     }
 
     onMouseClick(event: MouseEvent): void {
         if (!this.isStarted) {
             this.isStarted = true;
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.startingPoint = this.mouseDownCoord;
-            this.junctions.push(this.startingPoint);
-            this.junctionsRadius.push(this.currentRadius);
-            this.drawJunction(this.drawingService.previewCtx, this.startingPoint, this.currentRadius);
+            this.startingPoint = this.getPositionFromMouse(event);
+            this.pushNewJunction(this.startingPoint, this.currentDiameter / 2);
+            this.drawJunction(this.drawingService.previewCtx, this.startingPoint, this.currentDiameter / 2);
         } else {
             if (!this.shiftIsPressed) {
                 const mousePosition = this.getPositionFromMouse(event);
@@ -170,9 +171,8 @@ export class LineServiceService extends Tool {
                 // this.endPoint = this.angledEndPoint;
             }
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
-            this.junctions.push(this.endPoint);
-            this.junctionsRadius.push(this.currentRadius);
-            this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentRadius);
+            this.pushNewJunction(this.endPoint, this.currentDiameter / 2);
+            this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentDiameter / 2);
             this.currentLine.push([this.startingPoint, this.endPoint]);
             this.startingPoint = this.endPoint;
             if (this.shiftIsPressed) {
@@ -197,13 +197,13 @@ export class LineServiceService extends Tool {
                 this.endPoint = mousePosition;
                 this.currentLine.push([this.startingPoint, this.endPoint]);
                 this.junctions.push(this.endPoint);
-                this.junctionsRadius.push(this.currentRadius);
+                this.junctionsRadius.push(this.currentDiameter / 2);
                 this.redrawCurrentBase();
             } else {
                 this.endPoint = this.angledEndPoint;
                 this.currentLine.push([this.startingPoint, this.endPoint]);
                 this.junctions.push(this.endPoint);
-                this.junctionsRadius.push(this.currentRadius);
+                this.junctionsRadius.push(this.currentDiameter / 2);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.redrawCurrentBase();
             }
@@ -240,9 +240,5 @@ export class LineServiceService extends Tool {
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
-    }
-
-    isValid(width: number): boolean {
-        return true;
     }
 }
