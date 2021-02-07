@@ -34,6 +34,10 @@ export class PencilService extends Tool {
         };
     }
 
+    clearArrays(): void {
+        this.pathData = [];
+    }
+
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {

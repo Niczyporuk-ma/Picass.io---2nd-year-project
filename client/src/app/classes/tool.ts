@@ -67,4 +67,6 @@ export abstract class Tool {
         this.toolStyles.primaryColor = colorService.primaryColor;
         this.toolStyles.secondaryColor = colorService.secondaryColor;
     }
+
+    clearArrays(): void {}
 }

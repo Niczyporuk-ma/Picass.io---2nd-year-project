@@ -31,6 +31,10 @@ export class RectangleService extends Tool {
     startingPoint: Vec2;
     endPoint: Vec2;
 
+    clearArrays(): void {
+        this.currentLine = [];
+    }
+
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {

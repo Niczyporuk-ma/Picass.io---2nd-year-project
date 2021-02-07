@@ -46,6 +46,10 @@ export class LineServiceService extends Tool {
         this.colorService = colorService;
     }
 
+    clearArrays(): void {
+        this.clearLineAndJunctions();
+    }
+
     localShortCutHandler(key: string): void {
         this.shortcutToBeUsed = this.localShortcuts.get(key) as () => void;
         this.shortcutToBeUsed();

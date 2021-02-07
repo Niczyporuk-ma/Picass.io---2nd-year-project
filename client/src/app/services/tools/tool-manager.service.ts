@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineServiceService } from '@app/services/tools/line-service.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { Subject } from 'rxjs';
@@ -30,6 +31,7 @@ export class ToolManagerService {
         public eraserService: EraserService,
         public ellipseService: EllipseService,
         public colorService: ColorService,
+        public drawingService: DrawingService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
@@ -39,6 +41,16 @@ export class ToolManagerService {
             [this.eraserService.shortcut, this.tools[this.eraserService.index]],
             [this.pencilService.shortcut, this.tools[this.pencilService.index]],
         ]);
+    }
+
+    clearArrays(): void {
+        if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
+            for (const tool of this.tools) {
+                tool.clearArrays();
+            }
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        }
     }
 
     // getters

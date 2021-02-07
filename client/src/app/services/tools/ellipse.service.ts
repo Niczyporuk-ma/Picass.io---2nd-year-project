@@ -29,6 +29,10 @@ export class EllipseService extends Tool {
         };
     }
 
+    clearArrays(): void {
+        this.currentLine = [];
+    }
+
     //TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
     //quand on dessine du bas vers le haut, et de droite vers la gauche
 

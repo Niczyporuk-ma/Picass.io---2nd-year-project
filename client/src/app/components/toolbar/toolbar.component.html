@@ -28,6 +28,8 @@
         <app-color-picker></app-color-picker>
     </div>
 
+    <button (click)="this.toolManager.clearArrays()">Nouveau dessin</button>
+
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService">
         <mat-button-toggle value="0" (change)="setEllipseStyle($event.value)">Remplissage</mat-button-toggle>
         <mat-button-toggle value="1" (change)="setEllipseStyle($event.value)">Contour</mat-button-toggle>
