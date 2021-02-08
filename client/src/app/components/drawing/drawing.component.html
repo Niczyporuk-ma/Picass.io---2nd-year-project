@@ -3,12 +3,28 @@
     <canvas id="previewLayer" #previewCanvas [attr.width]="width" [attr.height]="height"> </canvas>
     <button
         id="bottomAnchor"
+        (click)="this.isBottom = true"
         (mousedown)="startResize($event)"
         (mousemove)="resize($event)"
         (mouseup)="stopResize($event)"
         cdkDragLockAxis="y"
         cdkDrag
     ></button>
-    <button id="sideAnchor" cdkDragLockAxis="x" cdkDrag></button>
-    <button id="cornerAnchor" cdkDrag></button>
+    <button
+        id="sideAnchor"
+        (click)="this.isSide = true"
+        (mousedown)="startResize($event)"
+        (mousemove)="resize($event)"
+        (mouseup)="stopResize($event)"
+        cdkDragLockAxis="x"
+        cdkDrag
+    ></button>
+    <button
+        (click)="this.isCorner = true"
+        id="cornerAnchor"
+        (mousedown)="startResize($event)"
+        (mousemove)="resize($event)"
+        (mouseup)="stopResize($event)"
+        cdkDrag
+    ></button>
 </div>

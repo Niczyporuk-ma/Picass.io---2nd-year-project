@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { KeyboardShortcutManagerService } from '@app/services/tools/keyboard-shortcut-manager.service';
+import { MouseButton } from '@app/services/tools/pencil-service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 // TODO : Avoir un fichier séparé pour les constantes ?
@@ -22,11 +23,17 @@ export class DrawingComponent implements AfterViewInit {
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
+    private copyCtx: CanvasRenderingContext2D;
+
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    private previousX: number;
-    private previousY: number;
-    private newX: number;
-    private newY: number;
+    // private previousX: number;
+    // private previousY: number;
+    // private newX: number;
+    // private newY: number;
+    private mouseDown: boolean = false;
+    isCorner: boolean = false;
+    isSide: boolean = false;
+    isBottom: boolean = false;
 
     timeOutDuration: number = 170;
 
@@ -47,6 +54,7 @@ export class DrawingComponent implements AfterViewInit {
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.copyCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
@@ -88,44 +96,82 @@ export class DrawingComponent implements AfterViewInit {
     // //Inspired by: https://www.youtube.com/watch?v=NyZSIhzz5Do&ab_channel=JonasGr%C3%B8ndahl
 
     startResize(event: MouseEvent) {
-        console.log('I got clicked!');
-        this.previousX = event.clientX;
-        this.previousY = event.clientY;
-        console.log(this.previousX);
-        console.log(this.previousY);
+        this.copyCtx = this.drawingService.baseCtx;
+        this.mouseDown = event.button === MouseButton.Left;
+        if (this.mouseDown) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.previewCtx.setLineDash([5, 5]);
+            this.previewCtx.beginPath();
+            if (this.isBottom) {
+                console.log('bottom anchor:' + document.getElementById('bottomAnchor'));
+                this.previewCtx.moveTo(0, event.clientY);
+                this.previewCtx.lineTo(1000, event.clientY);
+            } else if (this.isSide) {
+                console.log('side anchor:' + document.getElementById('sideAnchor'));
+                this.previewCtx.moveTo(event.clientX, 0);
+                this.previewCtx.lineTo(event.clientX, 800);
+            } else if (this.isCorner) {
+                console.log('corner anchor:' + document.getElementById('cornerAnchor'));
+                this.previewCtx.moveTo(event.clientX, event.clientX);
+                this.previewCtx.lineTo(event.clientX, event.clientX);
+            }
+            this.previewCtx.stroke();
 
-        // bottomAnchor.addEventListener('mousemove', this.resize);
-        // bottomAnchor.addEventListener('mouseup', this.stopResize);
+            // console.log('I got clicked!');
+            // this.previousX = event.clientX;
+            // this.previousY = event.clientY;
+            // console.log(this.previousX);
+            // console.log(this.previousY);
+            // console.log(this.mouseDown);
+        }
     }
 
     resize(event: MouseEvent) {
-        console.log('je bouuuuuuge');
-
-        this.newX = event.clientX;
-        this.newY = event.clientY;
-        console.log(this.newX);
-        console.log(this.newY);
-        // const rect = bottomAnchor.getBoundingClientRect();
-        // this.newX = this.previousX - event.clientX;
-        // this.newY = this.previousY - event.clientY;
-        // console.log('new position' + this.newX);
-        // console.log('new position' + this.newY);
-        // const newValueX = String(rect.left - this.newX);
-        // const newValueY = String(rect.top - this.newY);
-        // bottomAnchor.setAttribute('left', newValueX + 'px');
-        // bottomAnchor.setAttribute('top', newValueY + 'px');
-        // this.canvasSize.y = this.canvasSize.y - this.newY;
+        if (this.mouseDown) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.previewCtx.setLineDash([5, 5]);
+            this.previewCtx.beginPath();
+            if (this.isBottom) {
+                console.log('bottom');
+                this.previewCtx.moveTo(0, event.clientY);
+                this.previewCtx.lineTo(1000, event.clientY);
+            } else if (this.isSide) {
+                console.log('side');
+                this.previewCtx.moveTo(event.clientX - 518, 0);
+                this.previewCtx.lineTo(event.clientX - 518, 800);
+            } else if (this.isCorner) {
+                console.log('corner');
+                // this.previewCtx.moveTo(event.clientX, event.clientX);
+                // this.previewCtx.lineTo(event.clientX, event.clientX);
+                //dash vertical
+                this.previewCtx.moveTo(event.clientX - 518, 0);
+                this.previewCtx.lineTo(event.clientX - 518, event.clientY);
+                //Dash horizontal
+                this.previewCtx.moveTo(0, event.clientY);
+                this.previewCtx.lineTo(event.clientX - 518, event.clientY);
+            }
+            this.previewCtx.stroke();
+        }
     }
 
     stopResize(event: MouseEvent) {
-        console.log('hello');
-        this.newX = event.clientX;
-        this.newY = event.clientY;
-        console.log(this.newX);
-        console.log(this.newY);
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
-        // window.removeEventListener('mousemove', this.resize);
-        // window.removeEventListener('mouseup', this.stopResize);
+        if (this.isBottom) {
+            this.canvasSize.y = event.clientY;
+        } else if (this.isSide) {
+            this.canvasSize.x = event.clientX - 518;
+            console.log('stop resize: end position : ' + event.clientX);
+        } else if (this.isCorner) {
+            this.canvasSize.x = event.clientX - 518;
+            this.canvasSize.y = event.clientY;
+        }
+
+        this.isBottom = false;
+        this.isCorner = false;
+        this.isSide = false;
+        this.drawingService.baseCtx = this.copyCtx;
     }
 
     get width(): number {
