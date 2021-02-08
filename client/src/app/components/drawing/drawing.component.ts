@@ -30,6 +30,8 @@ export class DrawingComponent implements AfterViewInit {
     isCorner: boolean = false;
     isSide: boolean = false;
     isBottom: boolean = false;
+    minHeight: number = 250;
+    minWidth: number = 250;
 
     timeOutDuration: number = 170;
 
@@ -120,7 +122,7 @@ export class DrawingComponent implements AfterViewInit {
             this.previewCtx.setLineDash([5, 5]);
             this.previewCtx.beginPath();
             if (this.isBottom) {
-                console.log('bottom');
+                console.log(event.clientX + " - " + event.clientY);
                 this.previewCtx.moveTo(0, event.clientY);
                 this.previewCtx.lineTo(1000, event.clientY);
             } else if (this.isSide) {
@@ -142,10 +144,11 @@ export class DrawingComponent implements AfterViewInit {
 
     stopResize(event: MouseEvent) {
         this.mouseDown = false;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        //this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
         if (this.isBottom) {
             this.canvasSize.y = event.clientY;
+            //this.canvasSize.y = this.canvasSizeVerificationForY(event);
         } else if (this.isSide) {
             this.canvasSize.x = event.clientX - 518;
             console.log('stop resize: end position : ' + event.clientX);
@@ -166,5 +169,19 @@ export class DrawingComponent implements AfterViewInit {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    /* *** Pour une raison quelconque sa fait disparaitre le anchor  quand on depasse 
+     * on depassse la limite de 250x250 ***
+    */
+    canvasSizeVerificationForY(event: MouseEvent):number {
+        if(event.clientY < this.minHeight)
+        {
+            const bottomAnchor = document.getElementById('bottomAnchor')!
+            bottomAnchor.style.top = '250px';
+            return this.minHeight
+        }
+
+        return event.clientY;
     }
 }
