@@ -26,10 +26,6 @@ export class DrawingComponent implements AfterViewInit {
     private copyCtx: CanvasRenderingContext2D;
 
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    // private previousX: number;
-    // private previousY: number;
-    // private newX: number;
-    // private newY: number;
     private mouseDown: boolean = false;
     isCorner: boolean = false;
     isSide: boolean = false;
@@ -94,7 +90,6 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     // //Inspired by: https://www.youtube.com/watch?v=NyZSIhzz5Do&ab_channel=JonasGr%C3%B8ndahl
-
     startResize(event: MouseEvent) {
         this.copyCtx = this.drawingService.baseCtx;
         this.mouseDown = event.button === MouseButton.Left;
@@ -116,13 +111,6 @@ export class DrawingComponent implements AfterViewInit {
                 this.previewCtx.lineTo(event.clientX, event.clientX);
             }
             this.previewCtx.stroke();
-
-            // console.log('I got clicked!');
-            // this.previousX = event.clientX;
-            // this.previousY = event.clientY;
-            // console.log(this.previousX);
-            // console.log(this.previousY);
-            // console.log(this.mouseDown);
         }
     }
 
@@ -141,8 +129,6 @@ export class DrawingComponent implements AfterViewInit {
                 this.previewCtx.lineTo(event.clientX - 518, 800);
             } else if (this.isCorner) {
                 console.log('corner');
-                // this.previewCtx.moveTo(event.clientX, event.clientX);
-                // this.previewCtx.lineTo(event.clientX, event.clientX);
                 //dash vertical
                 this.previewCtx.moveTo(event.clientX - 518, 0);
                 this.previewCtx.lineTo(event.clientX - 518, event.clientY);
