@@ -9,7 +9,8 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
-// const bottomAnchor = document.querySelector('bottomAnchor') as Element;
+export const MIN_HEIGH = 250;
+export const MIN_WIDTH = 250;
 
 @Component({
     selector: 'app-drawing',
@@ -23,15 +24,12 @@ export class DrawingComponent implements AfterViewInit {
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
-    private copyCtx: CanvasRenderingContext2D;
 
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     private mouseDown: boolean = false;
     isCorner: boolean = false;
     isSide: boolean = false;
     isBottom: boolean = false;
-    minHeight: number = 250;
-    minWidth: number = 250;
 
     timeOutDuration: number = 170;
 
@@ -52,7 +50,6 @@ export class DrawingComponent implements AfterViewInit {
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.copyCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
@@ -93,7 +90,6 @@ export class DrawingComponent implements AfterViewInit {
 
     // //Inspired by: https://www.youtube.com/watch?v=NyZSIhzz5Do&ab_channel=JonasGr%C3%B8ndahl
     startResize(event: MouseEvent) {
-        this.copyCtx = this.drawingService.baseCtx;
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -122,7 +118,7 @@ export class DrawingComponent implements AfterViewInit {
             this.previewCtx.setLineDash([5, 5]);
             this.previewCtx.beginPath();
             if (this.isBottom) {
-                console.log(event.clientX + " - " + event.clientY);
+                console.log(event.clientX + ' - ' + event.clientY);
                 this.previewCtx.moveTo(0, event.clientY);
                 this.previewCtx.lineTo(1000, event.clientY);
             } else if (this.isSide) {
@@ -139,15 +135,18 @@ export class DrawingComponent implements AfterViewInit {
                 this.previewCtx.lineTo(event.clientX - 518, event.clientY);
             }
             this.previewCtx.stroke();
+            this.previewCtx.setLineDash([]);
         }
     }
 
     stopResize(event: MouseEvent) {
+        console.log('stop!');
         this.mouseDown = false;
         //this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
         if (this.isBottom) {
             this.canvasSize.y = event.clientY;
+            // it works great but the rectangle for resizing disappears! LOL
             //this.canvasSize.y = this.canvasSizeVerificationForY(event);
         } else if (this.isSide) {
             this.canvasSize.x = event.clientX - 518;
@@ -160,7 +159,22 @@ export class DrawingComponent implements AfterViewInit {
         this.isBottom = false;
         this.isCorner = false;
         this.isSide = false;
-        this.drawingService.baseCtx = this.copyCtx;
+        this.copyCanvas(this.baseCanvas);
+    }
+
+    //TODO: BUG quand full ellipse in color
+    // partially inspired by the answer dating from Nov 10 '10 at 14:31
+    //https://stackoverflow.com/questions/4137372/display-canvas-image-from-one-canvas-to-another-canvas-using-base64
+    copyCanvas(baseCanvas: ElementRef<HTMLCanvasElement>): void {
+        //save the old canvas temporarly as an image and then redrow it
+        const imageTemp = new Image();
+        imageTemp.src = baseCanvas.nativeElement.toDataURL();
+        const newCtx = baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        imageTemp.onload = () => {
+            newCtx.fillStyle = 'white';
+            newCtx.fillRect(0, 0, newCtx.canvas.width, newCtx.canvas.height);
+            newCtx.drawImage(imageTemp, 0, 0);
+        };
     }
 
     get width(): number {
@@ -171,15 +185,14 @@ export class DrawingComponent implements AfterViewInit {
         return this.canvasSize.y;
     }
 
-    /* *** Pour une raison quelconque sa fait disparaitre le anchor  quand on depasse 
+    /* *** Pour une raison quelconque sa fait disparaitre le anchor  quand on depasse
      * on depassse la limite de 250x250 ***
-    */
-    canvasSizeVerificationForY(event: MouseEvent):number {
-        if(event.clientY < this.minHeight)
-        {
-            const bottomAnchor = document.getElementById('bottomAnchor')!
+     */
+    canvasSizeVerificationForY(event: MouseEvent): number {
+        if (event.clientY < MIN_HEIGH) {
+            const bottomAnchor = document.getElementById('bottomAnchor')!;
             bottomAnchor.style.top = '250px';
-            return this.minHeight
+            return MIN_HEIGH;
         }
 
         return event.clientY;
