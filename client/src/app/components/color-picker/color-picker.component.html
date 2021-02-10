@@ -29,14 +29,14 @@
 
     <!--  <label>Width: <input [(ngModel)]="widthValue" (change)="changeWidth(widthValue)" /></label> -->
 </div>
-
-<mat-slider
-    min="0"
-    max="1"
-    step="0.01"
-    thumbLabel
-    tickInterval="1"
-    (change)="changeOpacity($event.value)"
-    (input)="opacity = $event.value"
-    [value]="opacity"
-    >{{ opacity }}</mat-slider>
+<mat-card>
+    Opacité: <mat-slider
+        min="0"
+        max="1"
+        step="0.01"
+        (change)="changeOpacity($event.value)"
+        (input)="opacity = $event.value"
+        [value]="opacity"
+        ></mat-slider>
+        {{ opacity }}
+</mat-card>
