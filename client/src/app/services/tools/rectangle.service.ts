@@ -10,6 +10,7 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
+    currentCommand: () => void;
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;

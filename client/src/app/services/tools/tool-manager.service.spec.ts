@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ToolManagerService } from './tool-manager.service';
 
-fdescribe('ToolManagerService', () => {
+describe('ToolManagerService', () => {
     let service: ToolManagerService;
 
     beforeEach(() => {
@@ -57,7 +57,7 @@ fdescribe('ToolManagerService', () => {
     //a demander
     it(' clearArrays should call clearArrays for every tool', () => {
         spyOn(window, 'confirm').and.returnValue(true);
-        spyOn(service['drawingService'],'clearCanvas').and.returnValue();
+        spyOn(service['drawingService'], 'clearCanvas').and.returnValue();
         const clearArrayEraserSpy = spyOn<any>(service.eraserService, 'clearArrays');
         const clearArrayPencilSpy = spyOn<any>(service.pencilService, 'clearArrays');
         const clearArrayRectangleSpy = spyOn<any>(service.rectangleService, 'clearArrays');
@@ -68,6 +68,4 @@ fdescribe('ToolManagerService', () => {
         expect(clearArrayRectangleSpy).toHaveBeenCalled();
         expect(clearArrayLineSpy).toHaveBeenCalled();
     });
-
-
 });

@@ -9,14 +9,11 @@ import { LineHelperService } from './line-helper.service';
     providedIn: 'root',
 })
 export class LineServiceService extends Tool {
-    shortcutToBeUsed: () => void;
     shiftIsPressed: boolean = false;
     isStarted: boolean;
     startingPoint: Vec2;
     endPoint: Vec2;
-    lineWidth: number;
     eventTest: boolean;
-    currentSegment: Vec2[] = [];
     currentLine: Vec2[][] = [];
     segmentStyles: ToolStyles[] = [];
     junctions: Vec2[] = [];
@@ -31,8 +28,9 @@ export class LineServiceService extends Tool {
     mousePosition: Vec2;
     hasJunction: boolean = true;
 
-    constructor(drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
+    constructor(public drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
+        //this.test = Function;
         this.isStarted = false;
         this.shortcut = 'l';
         this.localShortcuts = new Map([
@@ -48,11 +46,6 @@ export class LineServiceService extends Tool {
 
     clearArrays(): void {
         this.clearLineAndJunctions();
-    }
-
-    localShortCutHandler(key: string): void {
-        this.shortcutToBeUsed = this.localShortcuts.get(key) as () => void;
-        this.shortcutToBeUsed();
     }
 
     onEscape(): void {
@@ -83,7 +76,7 @@ export class LineServiceService extends Tool {
 
     setShiftIsPressed = () => {
         this.shiftIsPressed = true;
-        if (!this.lineHelper.shiftAngleCalculator(this.startingPoint, this.endPoint) && this.isStarted) {
+        if (this.isStarted && !this.lineHelper.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.redrawCurrentPreview();
             const line: Vec2[] = [this.startingPoint, this.lineHelper.closestAngledPoint(this.startingPoint, this.endPoint)];
@@ -145,8 +138,10 @@ export class LineServiceService extends Tool {
         }
     }
     redrawCurrentBase(): void {
-        for (const line of this.currentLine) {
-            this.drawLine(this.drawingService.baseCtx, line);
+        if (this.currentLine.length > 0) {
+            for (const line of this.currentLine) {
+                this.drawLine(this.drawingService.baseCtx, line);
+            }
         }
         if (this.junctions.length > 0) {
             for (const [index, junction] of this.junctions.entries()) {
@@ -171,9 +166,9 @@ export class LineServiceService extends Tool {
             if (!this.shiftIsPressed) {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
-            } else {
-                // this.endPoint = this.angledEndPoint;
-            }
+            } // else {
+            //     // this.endPoint = this.angledEndPoint;
+            // }
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
             this.pushNewJunction(this.endPoint, this.currentDiameter / 2);
             this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentDiameter / 2);
@@ -190,7 +185,7 @@ export class LineServiceService extends Tool {
 
     onDoubleClick(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
-        if (this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
+        if (this.currentLine.length > 0 && this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
             this.endPoint = this.currentLine[0][0];
             this.currentLine.push([this.startingPoint, this.endPoint]);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
