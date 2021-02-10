@@ -69,7 +69,7 @@ export class LineServiceService extends Tool {
             this.junctions.pop();
             this.junctionsRadius.pop();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentPreview();
+            this.redrawCurrentLine(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
         }
     }
@@ -78,7 +78,7 @@ export class LineServiceService extends Tool {
         this.shiftIsPressed = true;
         if (this.isStarted && !this.lineHelper.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentPreview();
+            this.redrawCurrentLine(this.drawingService.previewCtx);
             const line: Vec2[] = [this.startingPoint, this.lineHelper.closestAngledPoint(this.startingPoint, this.endPoint)];
             this.angledEndPoint = line[1];
             this.drawLine(this.drawingService.previewCtx, line);
@@ -94,7 +94,7 @@ export class LineServiceService extends Tool {
             this.eventTest = false;
             if (this.isStarted) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.redrawCurrentPreview();
+                this.redrawCurrentLine(this.drawingService.previewCtx);
                 this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.mousePosition]);
             }
         }
@@ -127,28 +127,18 @@ export class LineServiceService extends Tool {
         this.mouseDown = false;
     }
 
-    redrawCurrentPreview(): void {
+    redrawCurrentLine(ctx: CanvasRenderingContext2D): void {
         for (const line of this.currentLine) {
-            this.drawLine(this.drawingService.previewCtx, line);
+            this.drawLine(ctx, line);
         }
         if (this.junctions.length > 0) {
             for (const [index, junction] of this.junctions.entries()) {
-                this.drawJunction(this.drawingService.previewCtx, junction, this.junctionsRadius[index]);
+                this.drawJunction(ctx, junction, this.junctionsRadius[index]);
             }
         }
-    }
-    redrawCurrentBase(): void {
-        if (this.currentLine.length > 0) {
-            for (const line of this.currentLine) {
-                this.drawLine(this.drawingService.baseCtx, line);
-            }
+        if (ctx == this.drawingService.baseCtx) {
+            this.clearLineAndJunctions();
         }
-        if (this.junctions.length > 0) {
-            for (const [index, junction] of this.junctions.entries()) {
-                this.drawJunction(this.drawingService.baseCtx, junction, this.junctionsRadius[index]);
-            }
-        }
-        this.clearLineAndJunctions();
     }
 
     pushNewJunction(center: Vec2, radius: number): void {
@@ -189,7 +179,7 @@ export class LineServiceService extends Tool {
             this.endPoint = this.currentLine[0][0];
             this.currentLine.push([this.startingPoint, this.endPoint]);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentBase();
+            this.redrawCurrentLine(this.drawingService.baseCtx);
         } else {
             if (!this.shiftIsPressed) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -197,14 +187,14 @@ export class LineServiceService extends Tool {
                 this.currentLine.push([this.startingPoint, this.endPoint]);
                 this.junctions.push(this.endPoint);
                 this.junctionsRadius.push(this.currentDiameter / 2);
-                this.redrawCurrentBase();
+                this.redrawCurrentLine(this.drawingService.baseCtx);
             } else {
                 this.endPoint = this.angledEndPoint;
                 this.currentLine.push([this.startingPoint, this.endPoint]);
                 this.junctions.push(this.endPoint);
                 this.junctionsRadius.push(this.currentDiameter / 2);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.redrawCurrentBase();
+                this.redrawCurrentLine(this.drawingService.baseCtx);
             }
         }
         this.isStarted = false;
@@ -220,7 +210,7 @@ export class LineServiceService extends Tool {
                 this.angledEndPoint = this.endPoint;
             }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentPreview();
+            this.redrawCurrentLine(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
         }
     }

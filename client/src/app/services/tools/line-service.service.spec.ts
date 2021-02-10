@@ -178,9 +178,9 @@ fdescribe('LineService', () => {
         expect(junctionsSpy).toHaveBeenCalled();
     });
 
-    it('onBackspace should call clearcanvas, redrawCurrentPreview and drawLine if currentLine isnt empty', () => {
+    it('onBackspace should call clearcanvas, redrawCurrentLine and drawLine if currentLine isnt empty', () => {
         //const clearCanvasSpy = spyOn<any>(service.drawingService, 'clearCanvas').and.stub();
-        const redrawCurrentPreviewSpy = spyOn<any>(service, 'redrawCurrentPreview').and.stub();
+        const redrawCurrentLineSpy = spyOn<any>(service, 'redrawCurrentLine').and.stub();
         const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
 
         const mockSegmentOne: Vec2[] = [
@@ -191,7 +191,7 @@ fdescribe('LineService', () => {
 
         service.onBackspace();
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(redrawCurrentPreviewSpy).toHaveBeenCalled();
+        expect(redrawCurrentLineSpy).toHaveBeenCalled();
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
@@ -210,15 +210,15 @@ fdescribe('LineService', () => {
         expect(service.junctionsRadius[service.junctionsRadius.length - 1]).toEqual(mockRadius);
     });
 
-    it('redrawCurrentBase shouldnt call drawLine if currentLine is empty', () => {
+    it('redrawCurrentLine shouldnt call drawLine if currentLine is empty', () => {
         const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
         service.currentLine = [];
 
-        service.redrawCurrentBase();
+        service.redrawCurrentLine(service.drawingService.baseCtx);
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-    it('redrawCurrentBase should call drawLine if currentLine isnt empty', () => {
+    it('redrawCurrentLine should call drawLine if currentLine isnt empty', () => {
         const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
         service.currentLine = [];
         const mockSegmentOne: Vec2[] = [
@@ -227,27 +227,27 @@ fdescribe('LineService', () => {
         ];
         service.currentLine.push(mockSegmentOne);
 
-        service.redrawCurrentBase();
+        service.redrawCurrentLine(service.drawingService.baseCtx);
         expect(drawLineSpy).toHaveBeenCalled();
     });
-    it('redrawCurrentBase shouldnt call drawJunction if junctions is empty', () => {
+    it('redrawCurrentLine shouldnt call drawJunction if junctions is empty', () => {
         const drawJunctionSpy = spyOn<any>(service, 'drawJunction').and.stub();
         service.junctions = [];
-        service.redrawCurrentBase();
+        service.redrawCurrentLine(service.drawingService.baseCtx);
         expect(drawJunctionSpy).not.toHaveBeenCalled();
     });
 
-    it('redrawCurrentBase should call drawJunction if junctions isnt empty', () => {
+    it('redrawCurrentLine should call drawJunction if junctions isnt empty', () => {
         const drawJunctionSpy = spyOn<any>(service, 'drawJunction').and.stub();
         service.junctions = [];
         const mockCenter: Vec2 = { x: 5, y: 5 };
         service.junctions.push(mockCenter);
-        service.redrawCurrentBase();
+        service.redrawCurrentLine(service.drawingService.baseCtx);
         expect(drawJunctionSpy).toHaveBeenCalled();
     });
-    it('redrawCurrentBase should call clearLineAndJunctions', () => {
+    it('redrawCurrentLine should call clearLineAndJunctions only if ctx is baseCtx', () => {
         const clearLineAndJunctionsSpy = spyOn<any>(service, 'clearLineAndJunctions').and.stub();
-        service.redrawCurrentBase();
+        service.redrawCurrentLine(service.drawingService.baseCtx);
         expect(clearLineAndJunctionsSpy).toHaveBeenCalled();
     });
 
@@ -297,5 +297,30 @@ fdescribe('LineService', () => {
         service.startingPoint = mockStartingPoint;
         service.onMouseClick(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('mouseClick should set calledFromMouseClick true and false afterward if shiftIsPressed is true', () => {
+        const mockStartingPoint = { x: 0, y: 0 };
+        const mockEndingPoint = { x: 1, y: 1 };
+        service.startingPoint = mockStartingPoint;
+        service.endPoint = mockEndingPoint;
+        service.isStarted = true;
+        service.onMouseClick(mouseEvent);
+        expect(service.calledFromMouseClick).toHaveBeenCalledTimes(2);
+    });
+
+    it('mouseMove should do nothing if isStarted is false', () => {
+        service.isStarted = false;
+        const getPositionSpy = spyOn<any>(service, 'getPositionFromMouse').and.stub();
+        service.onMouseMove(mouseEvent);
+        expect(getPositionSpy).not.toHaveBeenCalled();
+    });
+    it(' mouseMove should set endPosition to current mouse position when called', () => {
+        const expectedResult: Vec2 = { x: 25, y: 25 };
+        const mockStartingPoint = { x: 0, y: 0 };
+        service.startingPoint = mockStartingPoint;
+        service.isStarted = true;
+        service.onMouseMove(mouseEvent);
+        expect(service.endPoint).toEqual(expectedResult);
     });
 });
