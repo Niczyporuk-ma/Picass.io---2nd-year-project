@@ -5,7 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineServiceService } from './line-service.service';
 
-fdescribe('LineService', () => {
+describe('LineService', () => {
     let service: LineServiceService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;

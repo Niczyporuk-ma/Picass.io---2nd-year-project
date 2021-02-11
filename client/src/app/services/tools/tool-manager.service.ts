@@ -23,6 +23,7 @@ export class ToolManagerService {
     pencilHistory: Vec2[][] = [];
     rectangleHistory: Vec2[][] = [];
     widthValue: number = 1;
+    blockEventListener: boolean = false;
 
     constructor(
         public pencilService: PencilService,
@@ -44,12 +45,37 @@ export class ToolManagerService {
     }
     //A TESTER
     clearArrays(): void {
-        if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
-            for (const tool of this.tools) {
-                tool.clearArrays();
+        if (this.drawingService.drawingStarted) {
+            if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
+                for (const tool of this.tools) {
+                    tool.clearArrays();
+                }
+                this.drawingService.drawingStarted = false;
+                this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
             }
-            this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        }
+    }
+
+    waitForOPress(): void {
+        if (!this.blockEventListener) {
+            this.blockEventListener = true;
+            window.addEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
+            window.addEventListener('keyup', (event: KeyboardEvent) => {
+                if (event.key == 'Control') {
+                    window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
+                    this.blockEventListener = false;
+                }
+            });
+        }
+    }
+
+    OPressHandler(event: KeyboardEvent): void {
+        if (event.key == 'o') {
+            this.clearArrays();
+            window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
+            event.preventDefault();
+            //event.stopPropagation();
         }
     }
 
@@ -63,5 +89,4 @@ export class ToolManagerService {
         this.currentToolChange.next(tool);
         this.currentTool.setColors(this.colorService);
     }
-
 }
