@@ -68,4 +68,38 @@ fdescribe('LineHelperService', () => {
             expect(service.closestAngledPoint(mockStartingPoint, point).y).toBeCloseTo(expectedResults[index].y, 0.1);
         }
     });
+
+    it('distanceUtil should return the right distance', () => {
+        const mockStartingPoint: Vec2 = { x: 0, y: 0 };
+        const mockEndingPoints: Vec2[] = [
+            { x: 0, y: 1 },
+            { x: 1, y: 3 },
+            { x: -1, y: -5 },
+            { x: 0, y: 0 },
+        ];
+
+        const expectedResults: number[] = [1, Math.sqrt(10), Math.sqrt(26), 0];
+        for (let [index, point] of mockEndingPoints.entries()) {
+            expect(service.distanceUtil(mockStartingPoint, point)).toEqual(expectedResults[index]);
+        }
+    });
+
+    it('angleQuadrantConverter should return the right angle', () => {
+        const mockStartingPoint: Vec2 = { x: 0, y: 0 };
+        const mockEndingPoints: Vec2[] = [
+            { x: 5, y: 5 },
+            { x: -5, y: 5 },
+            { x: -5, y: -5 },
+            { x: 5, y: -5 },
+            { x: 5, y: 0 },
+            { x: -5, y: 0 },
+            { x: 0, y: -5 },
+            { x: 0, y: 5 },
+        ];
+        const expectedResults: number[] = [315, 225, 135, 45];
+
+        for (let [index, point] of mockEndingPoints.entries()) {
+            expect(service.angleQuadrantConverter(mockStartingPoint, point, 45)).toEqual(expectedResults[index]);
+        }
+    });
 });
