@@ -195,10 +195,88 @@ fdescribe('LineService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
+    it('onShift should do nothing if blockOnShift is true', () => {
+        const setShiftIsPressedSpy = spyOn<any>(service, 'setShiftIsPressed').and.stub();
+        service.blockOnShift = true;
+        service.onShift();
+        expect(setShiftIsPressedSpy).not.toHaveBeenCalled();
+    });
+
+    it('onShift should call setShiftIsPressed and add an event listener is blockOnShift is false', () => {
+        const setShiftIsPressedSpy = spyOn<any>(service, 'setShiftIsPressed').and.stub();
+        const windowEventListenerSpy = spyOn<any>(window, 'addEventListener').and.stub();
+        service.onShift();
+        expect(setShiftIsPressedSpy).toHaveBeenCalled();
+        expect(windowEventListenerSpy).toHaveBeenCalled();
+    });
+
+    it('onShift should set blockOnShift as true if it was false', () => {
+        service.blockOnShift = false;
+        service.onShift();
+        expect(service.blockOnShift).toBeTrue();
+    });
+
     it('setShiftIsPressed should put shiftIsPressed to true', () => {
         service.shiftIsPressed = false;
         service.setShiftIsPressed();
         expect(service.shiftIsPressed).toBeTrue();
+    });
+
+    it('setShiftIsPressed should call clearCanvas, redrawCurrentLine and drawLine if line is started and shiftAngleCalculator returns false ', () => {
+        const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
+        const redrawCurrentLineSpy = spyOn<any>(service, 'redrawCurrentLine').and.stub();
+        const mockStartingPoint = { x: 0, y: 0 };
+        const mockEndingPoint = { x: 5, y: 1 };
+        service.isStarted = true;
+        service.startingPoint = mockStartingPoint;
+        service.endPoint = mockEndingPoint;
+        service.setShiftIsPressed();
+        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(redrawCurrentLineSpy).toHaveBeenCalled();
+    });
+    it('setShiftIsPressed shouldnt call clearCanvas, redrawCurrentLine and drawLine if line is started and shiftAngleCalculator returns true ', () => {
+        const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
+        const redrawCurrentLineSpy = spyOn<any>(service, 'redrawCurrentLine').and.stub();
+        const mockStartingPoint = { x: 0, y: 0 };
+        const mockEndingPoint = { x: 1, y: 1 };
+        service.isStarted = true;
+        service.startingPoint = mockStartingPoint;
+        service.endPoint = mockEndingPoint;
+        service.setShiftIsPressed();
+        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(redrawCurrentLineSpy).not.toHaveBeenCalled();
+    });
+
+    it('setShiftNonPressed should do nothing if key isnt shift', () => {
+        service.shiftIsPressed = true;
+        let mockKeyboardEvent: KeyboardEvent = new KeyboardEvent('keydown', { key: 'A' });
+        service.setShiftNonPressed(mockKeyboardEvent);
+        expect(service.shiftIsPressed).toBeTrue();
+    });
+
+    it('setShiftNonPressed should call clearCanvas, redrawCurrentLine and drawLine if isStarted is true', () => {
+        const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
+        const redrawCurrentLineSpy = spyOn<any>(service, 'redrawCurrentLine').and.stub();
+        service.shiftIsPressed = true;
+        service.isStarted = true;
+        let mockKeyboardEvent: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Shift' });
+        service.setShiftNonPressed(mockKeyboardEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+        expect(redrawCurrentLineSpy).toHaveBeenCalled();
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled;
+    });
+    it('setShiftNonPressed shouldnt call clearCanvas, redrawCurrentLine and drawLine if isStarted is false', () => {
+        const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
+        const redrawCurrentLineSpy = spyOn<any>(service, 'redrawCurrentLine').and.stub();
+        service.shiftIsPressed = true;
+        service.isStarted = false;
+        let mockKeyboardEvent: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Shift' });
+        service.setShiftNonPressed(mockKeyboardEvent);
+        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(redrawCurrentLineSpy).not.toHaveBeenCalled();
+        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled;
     });
 
     it('pushNewJunction should add a new center to junctions and a new radius to junctionRadius', () => {
@@ -208,6 +286,29 @@ fdescribe('LineService', () => {
         service.pushNewJunction(mockCenter, mockRadius);
         expect(service.junctions[service.junctions.length - 1]).toEqual(mockCenter);
         expect(service.junctionsRadius[service.junctionsRadius.length - 1]).toEqual(mockRadius);
+    });
+
+    it('drawJunction should do nothing if hasJunction is false', () => {
+        const beginPathSpy = spyOn<any>(drawingServiceSpy.baseCtx, 'beginPath').and.stub();
+        service.hasJunction = false;
+        const mockCenter: Vec2 = { x: 0, y: 0 };
+        const mockRadius: number = 1;
+        service.drawJunction(drawingServiceSpy.baseCtx, mockCenter, mockRadius);
+        expect(beginPathSpy).not.toHaveBeenCalled();
+    });
+
+    it('drawJunction should call beginPath, arc, fillstyle and fill if hasJunction is true', () => {
+        const beginPathSpy = spyOn<any>(drawingServiceSpy.baseCtx, 'beginPath').and.stub();
+        const arcSpy = spyOn<any>(drawingServiceSpy.baseCtx, 'arc').and.stub();
+        const fillSpy = spyOn<any>(drawingServiceSpy.baseCtx, 'fill').and.stub();
+        const mockCenter: Vec2 = { x: 0, y: 0 };
+        const mockRadius: number = 1;
+        service.hasJunction = true;
+        service.drawJunction(drawingServiceSpy.baseCtx, mockCenter, mockRadius);
+        expect(beginPathSpy).toHaveBeenCalled();
+        expect(arcSpy).toHaveBeenCalled();
+        expect(fillSpy).toHaveBeenCalled();
+        expect(drawingServiceSpy.baseCtx.fillStyle).toEqual('#000000');
     });
 
     it('redrawCurrentLine shouldnt call drawLine if currentLine is empty', () => {
@@ -261,6 +362,19 @@ fdescribe('LineService', () => {
         expect(setStylesSpy).toHaveBeenCalled();
     });
 
+    it('drawLine should call lineTo, moveTo, beginPath and stroke', () => {
+        const lineToSpy = spyOn<any>(drawingServiceSpy.baseCtx, 'lineTo').and.stub();
+        const beginPathSpy = spyOn<any>(drawingServiceSpy.baseCtx, 'beginPath').and.stub();
+        const strokeSpy = spyOn<any>(drawingServiceSpy.baseCtx, 'stroke').and.stub();
+        const mockStartingPoint: Vec2 = { x: 0, y: 0 };
+        const mockEndingPoint: Vec2 = { x: 1, y: 1 };
+        const mockPath: Vec2[] = [mockStartingPoint, mockEndingPoint];
+        service.drawLine(drawingServiceSpy.baseCtx, mockPath);
+        expect(lineToSpy).toHaveBeenCalled();
+        expect(beginPathSpy).toHaveBeenCalled();
+        expect(strokeSpy).toHaveBeenCalled();
+    });
+
     it('drawLine should set drawingStarted to true only if the ctx is baseCtx', () => {
         const mockStartingPoint = { x: 0, y: 0 };
         const mockEndingPoint = { x: 1, y: 1 };
@@ -271,8 +385,7 @@ fdescribe('LineService', () => {
         expect(service.drawingService.drawingStarted).toBeFalse();
     });
 
-    // // probleme du set dans drawline
-    it(' mouseClick should set endingPosition to correct position when the line is started', () => {
+    it(' mouseClick should set endingPosition to mouse position when the line is started and shift isnt pressed', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
         const mockStartingPoint = { x: 0, y: 0 };
         service.startingPoint = mockStartingPoint;
@@ -282,9 +395,6 @@ fdescribe('LineService', () => {
     });
 
     it('mouseclick should set isStarted to true if it was false', () => {
-        // const mockStartingPoint = { x: 0, y: 0 };
-        // const mockEndingPoint = { x: 1, y: 1 };
-        // service.startingPoint
         service.isStarted = false;
         service.onMouseClick(mouseEvent);
         expect(service.isStarted).toBeTrue();
@@ -299,14 +409,31 @@ fdescribe('LineService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
-    it('mouseClick should set calledFromMouseClick true and false afterward if shiftIsPressed is true', () => {
+    it('mouseClick should set calledFromMouseClick false if shiftIsPressed is true', () => {
         const mockStartingPoint = { x: 0, y: 0 };
         const mockEndingPoint = { x: 1, y: 1 };
         service.startingPoint = mockStartingPoint;
         service.endPoint = mockEndingPoint;
+        service.mousePosition = mockEndingPoint;
         service.isStarted = true;
+        service.calledFromMouseClick = true;
+        service.shiftIsPressed = true;
         service.onMouseClick(mouseEvent);
-        expect(service.calledFromMouseClick).toHaveBeenCalledTimes(2);
+        expect(service.calledFromMouseClick).toBeFalse();
+    });
+
+    it('mouseClick should set startingPoint as mouse position if it isnt started', () => {
+        const expectedResult: Vec2 = { x: 25, y: 25 };
+        service.onMouseClick(mouseEvent);
+        expect(service.startingPoint).toEqual(expectedResult);
+    });
+
+    it('mouseClick should call pushNewJunction and drawJunction if it isnt started', () => {
+        const pushNewJunctionSpy = spyOn<any>(service, 'pushNewJunction').and.stub();
+        const drawJunctionSpy = spyOn<any>(service, 'drawJunction').and.stub();
+        service.onMouseClick(mouseEvent);
+        expect(pushNewJunctionSpy).toHaveBeenCalled();
+        expect(drawJunctionSpy).toHaveBeenCalled();
     });
 
     it('mouseMove should do nothing if isStarted is false', () => {
@@ -321,6 +448,54 @@ fdescribe('LineService', () => {
         service.startingPoint = mockStartingPoint;
         service.isStarted = true;
         service.onMouseMove(mouseEvent);
+        expect(service.endPoint).toEqual(expectedResult);
+    });
+
+    it('onMouseMove should set angledEndPoint and endPoint to what closestAngledPoint returns if shiftIsPressed is true', () => {
+        const mockStartingPoint = { x: 0, y: 0 };
+        service.startingPoint = mockStartingPoint;
+        service.shiftIsPressed = true;
+        service.isStarted = true;
+        mouseEvent = {
+            offsetX: 5,
+            offsetY: 1,
+            button: 0,
+        } as MouseEvent;
+        const mockEndingPoint = { x: mouseEvent.offsetX, y: mouseEvent.offsetY };
+        const expectedResult = service.lineHelper.closestAngledPoint(mockStartingPoint, mockEndingPoint);
+        service.onMouseMove(mouseEvent);
+        expect(service.endPoint).toEqual(expectedResult);
+        expect(service.angledEndPoint).toEqual(expectedResult);
+    });
+
+    it('onDoubleClick should set the endPoint as the starting point of the line if the click is done < 20px from the original point', () => {
+        const mockStartingPointSegmentOne = { x: 15, y: 15 };
+        const mockEndingPointSegmentOne = { x: 20, y: 20 };
+        service.currentLine.push([mockStartingPointSegmentOne, mockEndingPointSegmentOne]);
+        service.startingPoint = mockEndingPointSegmentOne;
+        service.onDoubleClick(mouseEvent);
+        expect(service.endPoint).toEqual(mockStartingPointSegmentOne);
+    });
+
+    it('onDoubleClick should set endPoint as mouse position if shift isnt pressed', () => {
+        const mockStartingPointSegmentOne = { x: 0, y: 0 };
+        const mockEndingPointSegmentOne = { x: 1, y: 1 };
+        const expectedResult: Vec2 = { x: 25, y: 25 };
+        service.currentLine.push([mockStartingPointSegmentOne, mockEndingPointSegmentOne]);
+        service.startingPoint = mockEndingPointSegmentOne;
+        service.onDoubleClick(mouseEvent);
+        expect(service.endPoint).toEqual(expectedResult);
+    });
+
+    it('onDoubleClick should set endPoint as angledEndPoint if shit if pressed', () => {
+        service.shiftIsPressed = true;
+        service.angledEndPoint = { x: 5, y: 5 };
+        const mockStartingPointSegmentOne = { x: 0, y: 0 };
+        const mockEndingPointSegmentOne = { x: 1, y: 1 };
+        const expectedResult: Vec2 = { x: 5, y: 5 };
+        service.currentLine.push([mockStartingPointSegmentOne, mockEndingPointSegmentOne]);
+        service.startingPoint = mockEndingPointSegmentOne;
+        service.onDoubleClick(mouseEvent);
         expect(service.endPoint).toEqual(expectedResult);
     });
 });

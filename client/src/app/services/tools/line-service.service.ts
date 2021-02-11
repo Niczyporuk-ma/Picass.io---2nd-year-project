@@ -13,7 +13,7 @@ export class LineServiceService extends Tool {
     isStarted: boolean;
     startingPoint: Vec2;
     endPoint: Vec2;
-    eventTest: boolean;
+    blockOnShift: boolean;
     currentLine: Vec2[][] = [];
     segmentStyles: ToolStyles[] = [];
     junctions: Vec2[] = [];
@@ -84,14 +84,14 @@ export class LineServiceService extends Tool {
             this.drawLine(this.drawingService.previewCtx, line);
         }
         window.removeEventListener('keydown', this.setShiftIsPressed);
-        this.eventTest = false;
+        this.blockOnShift = false;
     };
 
     setShiftNonPressed = (e?: KeyboardEvent) => {
         if ((e != undefined && e.key === 'Shift') || this.calledFromMouseClick) {
             this.shiftIsPressed = false;
             window.removeEventListener('keyup', this.setShiftNonPressed);
-            this.eventTest = false;
+            this.blockOnShift = false;
             if (this.isStarted) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.redrawCurrentLine(this.drawingService.previewCtx);
@@ -101,11 +101,11 @@ export class LineServiceService extends Tool {
     };
 
     onShift(): void {
-        if (!this.eventTest) {
+        if (!this.blockOnShift) {
             // window.addEventListener('keydown', this.setShiftIsPressed);
             this.setShiftIsPressed();
             window.addEventListener('keyup', this.setShiftNonPressed);
-            this.eventTest = true;
+            this.blockOnShift = true;
         }
     }
 
@@ -156,9 +156,7 @@ export class LineServiceService extends Tool {
             if (!this.shiftIsPressed) {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
-            } // else {
-            //     // this.endPoint = this.angledEndPoint;
-            // }
+            }
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
             this.pushNewJunction(this.endPoint, this.currentDiameter / 2);
             this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentDiameter / 2);
@@ -182,20 +180,15 @@ export class LineServiceService extends Tool {
             this.redrawCurrentLine(this.drawingService.baseCtx);
         } else {
             if (!this.shiftIsPressed) {
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.endPoint = mousePosition;
-                this.currentLine.push([this.startingPoint, this.endPoint]);
-                this.junctions.push(this.endPoint);
-                this.junctionsRadius.push(this.currentDiameter / 2);
-                this.redrawCurrentLine(this.drawingService.baseCtx);
             } else {
                 this.endPoint = this.angledEndPoint;
-                this.currentLine.push([this.startingPoint, this.endPoint]);
-                this.junctions.push(this.endPoint);
-                this.junctionsRadius.push(this.currentDiameter / 2);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.redrawCurrentLine(this.drawingService.baseCtx);
             }
+            this.currentLine.push([this.startingPoint, this.endPoint]);
+            this.junctions.push(this.endPoint);
+            this.junctionsRadius.push(this.currentDiameter / 2);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.redrawCurrentLine(this.drawingService.baseCtx);
         }
         this.isStarted = false;
     }
