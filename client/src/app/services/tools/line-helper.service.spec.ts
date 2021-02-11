@@ -4,7 +4,7 @@ import { LineHelperService, POSSIBLE_ANGLES } from './line-helper.service';
 
 fdescribe('LineHelperService', () => {
     let service: LineHelperService;
-
+    const SQRT2_OVER2 = Math.sqrt(2) / 2;
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(LineHelperService);
@@ -40,7 +40,6 @@ fdescribe('LineHelperService', () => {
     });
 
     it('closestAngledPoint should return the right points', () => {
-        const SQRT2_OVER2 = Math.sqrt(2) / 2;
         const mockStartingPoint: Vec2 = { x: 0, y: 0 };
         const mockEndingPoint: Vec2[] = [
             { x: 1, y: -0.1 },
@@ -91,15 +90,55 @@ fdescribe('LineHelperService', () => {
             { x: -5, y: 5 },
             { x: -5, y: -5 },
             { x: 5, y: -5 },
-            { x: 5, y: 0 },
-            { x: -5, y: 0 },
-            { x: 0, y: -5 },
-            { x: 0, y: 5 },
         ];
         const expectedResults: number[] = [315, 225, 135, 45];
 
         for (let [index, point] of mockEndingPoints.entries()) {
             expect(service.angleQuadrantConverter(mockStartingPoint, point, 45)).toEqual(expectedResults[index]);
+        }
+    });
+
+    it('shiftAngleCalculator should return right boolean', () => {
+        const mockStartingPoint: Vec2 = { x: 0, y: 0 };
+        const mockEndingPoints: Vec2[] = [
+            { x: 0, y: 0 },
+            { x: SQRT2_OVER2, y: SQRT2_OVER2 },
+            { x: -5, y: -5 },
+            { x: 1, y: 2 },
+            { x: -SQRT2_OVER2, y: SQRT2_OVER2 },
+        ];
+        const expectedResults: boolean[] = [true, true, true, false, true];
+
+        for (let [index, point] of mockEndingPoints.entries()) {
+            expect(service.shiftAngleCalculator(mockStartingPoint, point)).toEqual(expectedResults[index]);
+        }
+    });
+
+    it('pixelDistanceUtil should return true if horizontal and vertical distances are <= 20 px', () => {
+        const mockStartingPoint: Vec2 = { x: 0, y: 0 };
+        const mockEndingPoints: Vec2[] = [
+            { x: 0, y: 0 },
+            { x: -10, y: -10 },
+            { x: 20, y: -20 },
+            { x: -20, y: 20 },
+        ];
+
+        for (let point of mockEndingPoints) {
+            expect(service.pixelDistanceUtil(mockStartingPoint, point)).toBeTrue();
+        }
+    });
+
+    it('pixelDistanceUtil should return false if horizontal or vertical distance is > 20 px', () => {
+        const mockStartingPoint: Vec2 = { x: 0, y: 0 };
+        const mockEndingPoints: Vec2[] = [
+            { x: 21, y: 0 },
+            { x: -21, y: -10 },
+            { x: 0, y: -21 },
+            { x: -21, y: -21 },
+        ];
+
+        for (let point of mockEndingPoints) {
+            expect(service.pixelDistanceUtil(mockStartingPoint, point)).toBeFalse();
         }
     });
 });
