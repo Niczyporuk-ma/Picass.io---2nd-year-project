@@ -41,6 +41,7 @@ export class ToolManagerService {
             [this.rectangleService.shortcut, this.tools[this.rectangleService.index]],
             [this.eraserService.shortcut, this.tools[this.eraserService.index]],
             [this.pencilService.shortcut, this.tools[this.pencilService.index]],
+            [this.ellipseService.shortcut, this.tools[this.ellipseService.index]],
         ]);
     }
     //A TESTER
