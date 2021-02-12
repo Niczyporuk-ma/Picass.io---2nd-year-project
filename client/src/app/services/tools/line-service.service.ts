@@ -10,15 +10,16 @@ import { LineHelperService } from './line-helper.service';
     providedIn: 'root',
 })
 export class LineServiceService extends Tool {
-    shortcutToBeUsed: () => void;
     shiftIsPressed: boolean = false;
     isStarted: boolean;
     startingPoint: Vec2;
     endPoint: Vec2;
-    lineWidth: number;
-    eventTest: boolean;
-    currentSegment: Vec2[] = [];
+    blockOnShift: boolean;
     currentLine: Vec2[][] = [];
+    segmentStyles: ToolStyles[] = [];
+    junctions: Vec2[] = [];
+    junctionsRadius: number[] = [];
+    currentDiameter: number = 5;
     toolStyles: ToolStyles;
     angledEndPoint: Vec2;
     calledFromMouseClick: boolean = false;
@@ -27,9 +28,11 @@ export class LineServiceService extends Tool {
     angle: number;
     mousePosition: Vec2;
     public icon = faSlash;
+    hasJunction: boolean = true;
 
-    constructor(drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
+    constructor(public drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
+        //this.test = Function;
         this.isStarted = false;
         this.shortcut = 'l';
         this.localShortcuts = new Map([
@@ -38,67 +41,82 @@ export class LineServiceService extends Tool {
             ['Escape', this.onEscape],
         ]);
         this.index = 1;
-        this.toolStyles = { primaryColor: 'blue', lineWidth: 5 };
+        this.toolStyles = { primaryColor: 'black', lineWidth: 5 };
         this.lineHelper = lineHelper;
         this.colorService = colorService;
     }
 
-    localShortCutHandler(key: string): void {
-        this.shortcutToBeUsed = this.localShortcuts.get(key) as () => void;
-        this.shortcutToBeUsed();
+    clearArrays(): void {
+        this.clearLineAndJunctions();
     }
 
     onEscape(): void {
         this.isStarted = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.currentLine = [];
+        this.clearLineAndJunctions();
     }
-    changeWidth(newWidth: number): void {
-        this.toolStyles.lineWidth = newWidth;
+
+    clearLineAndJunctions(): void {
+        this.currentLine = [];
+        this.segmentStyles = [];
+        this.junctions = [];
+        this.junctionsRadius = [];
     }
 
     onBackspace(): void {
         if (this.currentLine.length > 0) {
             this.startingPoint = this.currentLine[this.currentLine.length - 1][0];
             this.currentLine.pop();
+            this.segmentStyles.pop();
+            this.junctions.pop();
+            this.junctionsRadius.pop();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentPreview();
+            this.redrawCurrentLine(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
         }
     }
 
     setShiftIsPressed = () => {
         this.shiftIsPressed = true;
-        if (!this.lineHelper.shiftAngleCalculator(this.startingPoint, this.endPoint) && this.isStarted) {
+        if (this.isStarted && !this.lineHelper.shiftAngleCalculator(this.startingPoint, this.endPoint)) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentPreview();
+            this.redrawCurrentLine(this.drawingService.previewCtx);
             const line: Vec2[] = [this.startingPoint, this.lineHelper.closestAngledPoint(this.startingPoint, this.endPoint)];
             this.angledEndPoint = line[1];
             this.drawLine(this.drawingService.previewCtx, line);
         }
         window.removeEventListener('keydown', this.setShiftIsPressed);
-        this.eventTest = false;
+        this.blockOnShift = false;
     };
 
     setShiftNonPressed = (e?: KeyboardEvent) => {
         if ((e != undefined && e.key === 'Shift') || this.calledFromMouseClick) {
             this.shiftIsPressed = false;
             window.removeEventListener('keyup', this.setShiftNonPressed);
-            this.eventTest = false;
+            this.blockOnShift = false;
             if (this.isStarted) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.redrawCurrentPreview();
+                this.redrawCurrentLine(this.drawingService.previewCtx);
                 this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.mousePosition]);
             }
         }
     };
 
     onShift(): void {
-        if (!this.eventTest) {
+        if (!this.blockOnShift) {
             // window.addEventListener('keydown', this.setShiftIsPressed);
             this.setShiftIsPressed();
             window.addEventListener('keyup', this.setShiftNonPressed);
-            this.eventTest = true;
+            this.blockOnShift = true;
+        }
+    }
+
+    drawJunction(ctx: CanvasRenderingContext2D, center: Vec2, radius: number) {
+        if (this.hasJunction) {
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = 'black';
+            ctx.fill();
         }
     }
 
@@ -111,31 +129,39 @@ export class LineServiceService extends Tool {
         this.mouseDown = false;
     }
 
-    redrawCurrentPreview(): void {
+    redrawCurrentLine(ctx: CanvasRenderingContext2D): void {
         for (const line of this.currentLine) {
-            this.drawLine(this.drawingService.previewCtx, line);
+            this.drawLine(ctx, line);
+        }
+        if (this.junctions.length > 0) {
+            for (const [index, junction] of this.junctions.entries()) {
+                this.drawJunction(ctx, junction, this.junctionsRadius[index]);
+            }
+        }
+        if (ctx == this.drawingService.baseCtx) {
+            this.clearLineAndJunctions();
         }
     }
-    redrawCurrentBase(): void {
-        for (const line of this.currentLine) {
-            this.drawLine(this.drawingService.baseCtx, line);
-        }
-        this.currentLine = [];
+
+    pushNewJunction(center: Vec2, radius: number): void {
+        this.junctions.push(center);
+        this.junctionsRadius.push(radius);
     }
 
     onMouseClick(event: MouseEvent): void {
         if (!this.isStarted) {
             this.isStarted = true;
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.startingPoint = this.mouseDownCoord;
+            this.startingPoint = this.getPositionFromMouse(event);
+            this.pushNewJunction(this.startingPoint, this.currentDiameter / 2);
+            this.drawJunction(this.drawingService.previewCtx, this.startingPoint, this.currentDiameter / 2);
         } else {
             if (!this.shiftIsPressed) {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
-            } else {
-                // this.endPoint = this.angledEndPoint;
             }
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
+            this.pushNewJunction(this.endPoint, this.currentDiameter / 2);
+            this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentDiameter / 2);
             this.currentLine.push([this.startingPoint, this.endPoint]);
             this.startingPoint = this.endPoint;
             if (this.shiftIsPressed) {
@@ -149,28 +175,26 @@ export class LineServiceService extends Tool {
 
     onDoubleClick(event: MouseEvent): void {
         if(this.isStarted){
-            const mousePosition = this.getPositionFromMouse(event);
-            if (this.lineHelper.pixelDistanceUtil(this.startingPoint, mousePosition)) {
+                const mousePosition = this.getPositionFromMouse(event);
+            if (this.currentLine.length > 0 && this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
+                this.endPoint = this.currentLine[0][0];
+                this.currentLine.push([this.startingPoint, this.endPoint]);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.redrawCurrentBase();
-                this.currentLine = [];
+                this.redrawCurrentLine(this.drawingService.baseCtx);
             } else {
                 if (!this.shiftIsPressed) {
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
                     this.endPoint = mousePosition;
-                    this.currentLine.push([this.startingPoint, this.endPoint]);
-                    this.redrawCurrentBase();
-                    this.currentLine = [];
                 } else {
                     this.endPoint = this.angledEndPoint;
-                    this.currentLine.push([this.startingPoint, this.endPoint]);
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.currentLine = [];
-                    this.redrawCurrentBase();
                 }
+                this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.junctions.push(this.endPoint);
+                this.junctionsRadius.push(this.currentDiameter / 2);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.redrawCurrentLine(this.drawingService.baseCtx);
             }
-            this.isStarted = false;
         }
+        
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -180,9 +204,10 @@ export class LineServiceService extends Tool {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             if (this.shiftIsPressed) {
                 this.endPoint = this.lineHelper.closestAngledPoint(this.startingPoint, this.endPoint);
+                this.angledEndPoint = this.endPoint;
             }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentPreview();
+            this.redrawCurrentLine(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
         }
     }
@@ -201,9 +226,5 @@ export class LineServiceService extends Tool {
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
-    }
-
-    isValid(width: number): boolean {
-        return true;
     }
 }

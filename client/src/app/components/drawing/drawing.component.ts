@@ -47,6 +47,11 @@ export class DrawingComponent implements AfterViewInit {
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             this.shortcutKeyboardManager.onKeyPress(event.key);
         });
+        window.addEventListener('keydown', (event: KeyboardEvent) => {
+            if (event.key == 'Control') {
+                this.shortcutKeyboardManager.waitForOPress();
+            }
+        });
     }
 
     @HostListener('mousemove', ['$event'])

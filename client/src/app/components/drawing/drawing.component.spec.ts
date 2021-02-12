@@ -1,9 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { DrawingComponent } from './drawing.component';
+
 
 class ToolStub extends Tool {}
 
@@ -75,4 +75,22 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
+
+    /*it(" ngAfterViewInit should add an event listener with keyDown and onKeyPress  ", () => {
+        const enventListenerSpy = spyOn(window,'addEventListener').and.callThrough();
+        component.ngAfterViewInit();
+        //????????
+        expect(enventListenerSpy).toHaveBeenCalledWith('keydown',(event: KeyboardEvent) => {
+            component.shortcutKeyboardManager.onKeyPress(event.key);
+        });
+    });*/
+
+    it(" ngAfterViewInit should add an event listener", () => {
+        const enventListenerSpy = spyOn(window,'addEventListener').and.callThrough();
+        component.ngAfterViewInit();
+        expect(enventListenerSpy).toHaveBeenCalled();
+        
+    });
+
+
 });

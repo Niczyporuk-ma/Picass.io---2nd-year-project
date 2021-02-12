@@ -22,6 +22,7 @@ export class EllipseService extends Tool {
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '2';
+        this.index = 4;
         this.localShortcuts = new Map([['Shift', this.onShift]]);
         this.toolStyles = {
             primaryColor: 'white',
@@ -29,6 +30,10 @@ export class EllipseService extends Tool {
             fill: false,
             secondaryColor: 'black',
         };
+    }
+
+    clearArrays(): void {
+        this.currentLine = [];
     }
 
     //TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement

@@ -11,6 +11,7 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
+    currentCommand: () => void;
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;
@@ -32,6 +33,10 @@ export class RectangleService extends Tool {
 
     startingPoint: Vec2;
     endPoint: Vec2;
+
+    clearArrays(): void {
+        this.currentLine = [];
+    }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
@@ -109,13 +114,6 @@ export class RectangleService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.endPoint];
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
-                // this.drawingService.previewCtx.strokeStyle = 'black';
-                // this.drawingService.previewCtx.strokeRect(
-                //     this.startingPoint.x,
-                //     this.startingPoint.y,
-                //     this.endPoint.x - this.startingPoint.x,
-                //     this.endPoint.y - this.startingPoint.y,
-                // );
             }
         }
     }

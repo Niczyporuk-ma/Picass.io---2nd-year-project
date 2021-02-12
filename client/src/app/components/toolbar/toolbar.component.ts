@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { faCircle, faSquare } from '@fortawesome/free-regular-svg-icons';
+import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -21,6 +21,7 @@ export class ToolbarComponent {
     faEraser = faEraser;
     faCircle = faCircle;
     faPalette = faPalette;
+    faPlusSquare = faPlusSquare;
 
     constructor(public toolManager: ToolManagerService) {
         this.toolManager = toolManager;
@@ -63,6 +64,18 @@ export class ToolbarComponent {
 
     updateSliderWidth(): void {
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+    }
+
+    setLineJunction(n: number): void {
+        if (n == 0) {
+            this.toolManager.lineService.hasJunction = false;
+        } else {
+            this.toolManager.lineService.hasJunction = true;
+        }
+    }
+
+    changeDiameter(n: number): void {
+        this.toolManager.lineService.currentDiameter = n;
     }
 
     changeWidth(width: number): void {
