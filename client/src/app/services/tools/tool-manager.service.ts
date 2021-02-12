@@ -75,7 +75,6 @@ export class ToolManagerService {
             this.clearArrays();
             window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
             event.preventDefault();
-            //event.stopPropagation();
         }
     }
 
