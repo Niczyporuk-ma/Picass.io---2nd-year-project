@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
 import { LineHelperService, POSSIBLE_ANGLES } from './line-helper.service';
 
-fdescribe('LineHelperService', () => {
+describe('LineHelperService', () => {
     let service: LineHelperService;
     const SQRT2_OVER2 = Math.sqrt(2) / 2;
     beforeEach(() => {

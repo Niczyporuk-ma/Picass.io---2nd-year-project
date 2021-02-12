@@ -172,25 +172,27 @@ export class LineServiceService extends Tool {
     }
 
     onDoubleClick(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        if (this.currentLine.length > 0 && this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
-            this.endPoint = this.currentLine[0][0];
-            this.currentLine.push([this.startingPoint, this.endPoint]);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentLine(this.drawingService.baseCtx);
-        } else {
-            if (!this.shiftIsPressed) {
-                this.endPoint = mousePosition;
+        if (this.isStarted) {
+            const mousePosition = this.getPositionFromMouse(event);
+            if (this.currentLine.length > 0 && this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
+                this.endPoint = this.currentLine[0][0];
+                this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.redrawCurrentLine(this.drawingService.baseCtx);
             } else {
-                this.endPoint = this.angledEndPoint;
+                if (!this.shiftIsPressed) {
+                    this.endPoint = mousePosition;
+                } else {
+                    this.endPoint = this.angledEndPoint;
+                }
+                this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.junctions.push(this.endPoint);
+                this.junctionsRadius.push(this.currentDiameter / 2);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.redrawCurrentLine(this.drawingService.baseCtx);
             }
-            this.currentLine.push([this.startingPoint, this.endPoint]);
-            this.junctions.push(this.endPoint);
-            this.junctionsRadius.push(this.currentDiameter / 2);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentLine(this.drawingService.baseCtx);
+            this.isStarted = false;
         }
-        this.isStarted = false;
     }
 
     onMouseMove(event: MouseEvent): void {
