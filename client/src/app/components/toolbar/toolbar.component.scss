@@ -48,3 +48,19 @@ button:focus{
 ::ng-deep .mat-tooltip { //tooltip
     background-color: rgb(53, 64, 75, 0.9);
 }
+
+// ::ng-deep .mat-slider { //tooltip
+//     color: rgb(107, 240, 206);
+// }
+
+
+mat-button-toggle-group {
+    z-index: 3;
+    position: relative;
+}
+
+mat-card {
+    z-index: 3;
+    position: relative;
+    width: 230%;
+}
