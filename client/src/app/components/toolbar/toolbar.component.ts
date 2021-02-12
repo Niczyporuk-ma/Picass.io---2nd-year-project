@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
+import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-toolbar',
@@ -10,8 +12,16 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 export class ToolbarComponent {
     tools: Tool[];
     // toolManager: ToolManagerService;
+    showAdvanced: boolean = false;
     showPalette: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
+    faPen = faPen;
+    faSquare = faSquare;
+    faSlash = faSlash;
+    faEraser = faEraser;
+    faCircle = faCircle;
+    faPalette = faPalette;
+    faPlusSquare = faPlusSquare;
 
     constructor(public toolManager: ToolManagerService) {
         this.toolManager = toolManager;
@@ -32,6 +42,10 @@ export class ToolbarComponent {
     }
 
     onPress(): void {
+        this.showAdvanced = !this.showAdvanced;
+    }
+
+    onPressPalette(): void {
         this.showPalette = !this.showPalette;
     }
 

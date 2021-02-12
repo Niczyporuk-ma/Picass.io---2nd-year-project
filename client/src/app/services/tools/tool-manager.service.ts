@@ -58,26 +58,6 @@ export class ToolManagerService {
         }
     }
 
-    waitForOPress(): void {
-        if (!this.blockEventListener) {
-            this.blockEventListener = true;
-            window.addEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
-            window.addEventListener('keyup', (event: KeyboardEvent) => {
-                if (event.key == 'Control') {
-                    window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
-                    this.blockEventListener = false;
-                }
-            });
-        }
-    }
-
-    OPressHandler(event: KeyboardEvent): void {
-        if (event.key == 'o') {
-            this.clearArrays();
-            window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
-            event.preventDefault();
-        }
-    }
 
     // getters
     getPencilService(): PencilService {

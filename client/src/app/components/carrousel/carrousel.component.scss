@@ -7,3 +7,8 @@
     /* bring your own prefixes */
     transform: translate(-50%, -50%);
 }
+
+mat-list-option:hover {
+    background-color: rgb(197, 243, 231);
+    transition: 0.3s;
+}

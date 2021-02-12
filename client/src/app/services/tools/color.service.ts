@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { faPalette } from '@fortawesome/free-solid-svg-icons';
+import { Queue } from 'queue-typescript';
 
 @Injectable({
     providedIn: 'root',
@@ -8,11 +10,14 @@ export class ColorService {
     secondaryColor: string;
     opacity: number;
     // TODO opactity for each color
+    tenLastUsedColors: Queue<string>;
+    public icon = faPalette;
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
         this.secondaryColor = 'rgba(0,0,0,1)';
         this.opacity = 1;
+        this.tenLastUsedColors = new Queue<string>();
     }
 
     // TODO concatenate color and opacity
@@ -33,6 +38,17 @@ export class ColorService {
         this.primaryColor = this.secondaryColor;
         this.secondaryColor = temp;
     }
+
+    contains(color: string): boolean {
+        let array = this.tenLastUsedColors.toArray();
+        for(let i = 0; i < array.length; i++){
+            if(array[i] == color){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     // TODO : faire les 10 derniers couleurs (le bouffer)
 }

@@ -45,33 +45,49 @@ describe('ToolManagerService', () => {
         expect(service.currentTool).toEqual(service.rectangleService);
     });
 
-    // HOW????????
+    
     it(' setTool should call setColors', () => {
         const setColorSpy = spyOn<any>(service.eraserService, 'setColors');
         service.setTool(service.eraserService);
         expect(setColorSpy).toHaveBeenCalled();
     });
 
-    it(' clearArrays should call clearCanvas twice', () => {
+    it(' clearArrays should call clearCanvas twice when the client has confirmed his choice to start a new drawing', () => {
         spyOn(window, 'confirm').and.returnValue(true);
         drawingServiceSpy.drawingStarted = true;
-        //const clearCanvasSpy = spyOn<any>(drawingServiceSpy, 'clearCanvas');
         service.clearArrays();
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
     });
 
+    it(' clearArrays should not call clearCanvaswhen the client has not confirmed his choice to start a new drawing', () => {
+        spyOn(window, 'confirm').and.returnValue(false);
+        drawingServiceSpy.drawingStarted = true;
+        service.clearArrays();
+        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
+    });
+
     //a demander
-    it(' clearArrays should call clearArrays for every tool', () => {
+    it(' clearArrays should call clearArrays for every tool when the client has confirmed his choice to start a new drawing', () => {
+        spyOn(window, 'confirm').and.returnValue(true);
+        
+        for(const tool of service.tools)
+        {
+            drawingServiceSpy.drawingStarted = true;
+            const clearArraySpy = spyOn(tool,'clearArrays');
+            service.clearArrays();
+            expect(clearArraySpy).toHaveBeenCalled();
+        }
+    });
+
+    
+    it(' clearArrays should set drawingStarted to false when the client has confirmed his choice to start a new drawing ', () => {
         spyOn(window, 'confirm').and.returnValue(true);
         drawingServiceSpy.drawingStarted = true;
-        const clearArrayEraserSpy = spyOn<any>(service.eraserService, 'clearArrays');
-        const clearArrayPencilSpy = spyOn<any>(service.pencilService, 'clearArrays');
-        const clearArrayRectangleSpy = spyOn<any>(service.rectangleService, 'clearArrays');
-        const clearArrayLineSpy = spyOn<any>(service.lineService, 'clearArrays');
         service.clearArrays();
-        expect(clearArrayEraserSpy).toHaveBeenCalled();
-        expect(clearArrayPencilSpy).toHaveBeenCalled();
-        expect(clearArrayRectangleSpy).toHaveBeenCalled();
-        expect(clearArrayLineSpy).toHaveBeenCalled();
+        expect(drawingServiceSpy.drawingStarted).toEqual(false);
     });
+
+
+
+
 });
