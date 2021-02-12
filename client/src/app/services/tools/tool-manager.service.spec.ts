@@ -1,11 +1,16 @@
 import { TestBed } from '@angular/core/testing';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from './tool-manager.service';
 
-describe('ToolManagerService', () => {
+fdescribe('ToolManagerService', () => {
     let service: ToolManagerService;
+    let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
+        TestBed.configureTestingModule({
+            providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
+        });
         service = TestBed.inject(ToolManagerService);
     });
 
@@ -40,24 +45,25 @@ describe('ToolManagerService', () => {
         expect(service.currentTool).toEqual(service.rectangleService);
     });
 
-    //HOW????????
-    /*it(' setTool should call setColors', () => {
-        const setColorSpy = spyOn<any>(service.currentTool, 'setColors');
+    // HOW????????
+    it(' setTool should call setColors', () => {
+        const setColorSpy = spyOn<any>(service.eraserService, 'setColors');
         service.setTool(service.eraserService);
         expect(setColorSpy).toHaveBeenCalled();
-    });*/
+    });
 
     it(' clearArrays should call clearCanvas twice', () => {
         spyOn(window, 'confirm').and.returnValue(true);
-        const clearCanvasSpy = spyOn<any>(service['drawingService'], 'clearCanvas');
+        drawingServiceSpy.drawingStarted = true;
+        //const clearCanvasSpy = spyOn<any>(drawingServiceSpy, 'clearCanvas');
         service.clearArrays();
-        expect(clearCanvasSpy).toHaveBeenCalledTimes(2);
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
     });
 
     //a demander
     it(' clearArrays should call clearArrays for every tool', () => {
         spyOn(window, 'confirm').and.returnValue(true);
-        spyOn(service['drawingService'], 'clearCanvas').and.returnValue();
+        drawingServiceSpy.drawingStarted = true;
         const clearArrayEraserSpy = spyOn<any>(service.eraserService, 'clearArrays');
         const clearArrayPencilSpy = spyOn<any>(service.pencilService, 'clearArrays');
         const clearArrayRectangleSpy = spyOn<any>(service.rectangleService, 'clearArrays');
