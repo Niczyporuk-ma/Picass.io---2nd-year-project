@@ -12,6 +12,8 @@
 .color-tool{
     z-index: 3;
     position: relative;
+    background-color: slategray;
+    padding: 8px;
 }
 
 .input-wrapper {
@@ -72,4 +74,8 @@
     flex: 1;
     font-family: 'Helvetica';
     line-height: 32px;
+}
+
+mat-card{
+    background-color:slategray;
 }

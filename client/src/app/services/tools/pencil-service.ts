@@ -27,7 +27,7 @@ export class PencilService extends Tool {
     constructor(drawingService: DrawingService, public colorService: ColorService) {
         super(drawingService);
         this.clearPath();
-        this.shortcut = 'p';
+        this.shortcut = 'c';
         this.localShortcuts = new Map();
         this.index = 0;
         this.toolStyles = {

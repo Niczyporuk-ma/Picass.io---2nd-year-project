@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-//import { library } from '@fortawesome/fontawesome-svg-core';
-import { faCircle, faEraser, faPalette, faPen, faSlash, faSquare } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faSquare } from '@fortawesome/free-regular-svg-icons';
+import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-toolbar',
@@ -21,14 +21,10 @@ export class ToolbarComponent {
     faEraser = faEraser;
     faCircle = faCircle;
     faPalette = faPalette;
-    icons: any[] = [];
 
     constructor(public toolManager: ToolManagerService) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
-        for (let tool of this.tools){
-            this.icons.push(tool.icon)
-        }
     }
 
     setRectangleStyle(n: number): void {

@@ -148,27 +148,29 @@ export class LineServiceService extends Tool {
     }
 
     onDoubleClick(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        if (this.lineHelper.pixelDistanceUtil(this.startingPoint, mousePosition)) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentBase();
-            this.currentLine = [];
-        } else {
-            if (!this.shiftIsPressed) {
+        if(this.isStarted){
+            const mousePosition = this.getPositionFromMouse(event);
+            if (this.lineHelper.pixelDistanceUtil(this.startingPoint, mousePosition)) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.endPoint = mousePosition;
-                this.currentLine.push([this.startingPoint, this.endPoint]);
                 this.redrawCurrentBase();
                 this.currentLine = [];
             } else {
-                this.endPoint = this.angledEndPoint;
-                this.currentLine.push([this.startingPoint, this.endPoint]);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentLine = [];
-                this.redrawCurrentBase();
+                if (!this.shiftIsPressed) {
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                    this.endPoint = mousePosition;
+                    this.currentLine.push([this.startingPoint, this.endPoint]);
+                    this.redrawCurrentBase();
+                    this.currentLine = [];
+                } else {
+                    this.endPoint = this.angledEndPoint;
+                    this.currentLine.push([this.startingPoint, this.endPoint]);
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                    this.currentLine = [];
+                    this.redrawCurrentBase();
+                }
             }
+            this.isStarted = false;
         }
-        this.isStarted = false;
     }
 
     onMouseMove(event: MouseEvent): void {

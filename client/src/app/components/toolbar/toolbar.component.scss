@@ -44,3 +44,7 @@ button:focus{
     background-color: rgb(107, 240, 206);
     color:black;
 }
+
+::ng-deep .mat-tooltip { //tooltip
+    background-color: rgb(53, 64, 75, 0.9);
+}
