@@ -14,12 +14,14 @@ const BIG_NUMBER = 999;
 export class LineHelperService {
     closestValidAngle(start: Vec2, end: Vec2): number {
         let closestValid = BIG_NUMBER;
-
+        //a et b?
         const a: number = Math.abs(start.x - end.x);
         const b: number = Math.abs(start.y - end.y);
+        //meilleur nom pour angle
         let angle: number = Math.atan2(b, a) * (180 / Math.PI);
         console.log(angle);
         angle = this.angleQuadrantConverter(start, end, angle);
+        //a enlever
         console.log(angle);
         for (const angles of POSSIBLE_ANGLES) {
             if (Math.abs(angle - angles) < Math.abs(angle - closestValid)) {
@@ -41,6 +43,7 @@ export class LineHelperService {
     }
 
     distanceUtil(start: Vec2, end: Vec2): number {
+        //a et b?
         const a = Math.abs(start.x - end.x);
         const b = Math.abs(start.y - end.y);
 
@@ -49,6 +52,7 @@ export class LineHelperService {
 
     angleQuadrantConverter(start: Vec2, end: Vec2, angle: number): number {
         if (start.x <= end.x && start.y >= end.y) {
+            //inutile
             angle = angle;
             return angle;
         } else if (start.x <= end.x && start.y <= end.y) {
@@ -64,6 +68,7 @@ export class LineHelperService {
     }
 
     shiftAngleCalculator(start: Vec2, end: Vec2): boolean {
+        //a et b?
         const a: number = Math.abs(start.x - end.x);
         const b: number = Math.abs(start.y - end.y);
         let angle: number = Math.atan2(b, a) * (180 / Math.PI);
