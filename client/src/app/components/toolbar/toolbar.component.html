@@ -1,41 +1,41 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
-<!-- <div class="widthSlider">
-    <mat-card>
-        <mat-slider
-            min="1"
-            max="50"
-            step="1"
-            value="1"
-            class="slider"
-            (change)="changeWidth($event.value)"
-            (input)="this.toolManager.widthValue = $event.value"
-            [value]="this.toolManager.widthValue"
-        ></mat-slider>
-        {{ this.toolManager.widthValue }}
-    </mat-card>
-</div> -->
-
 <div class="btns">
-    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()"><fa-icon [icon]="tools[0].icon"></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth()"><fa-icon [icon]="tools[1].icon"></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth()"><fa-icon [icon]="tools[2].icon"></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth()"><fa-icon [icon]="tools[3].icon"></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth()"><fa-icon [icon]="tools[4].icon"></fa-icon></button>
-    <button (click)="onPress()">color</button>
-    <div *ngIf="showPalette">
-        <app-color-picker></app-color-picker>
-    </div>
+    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth(); onPress()"><fa-icon [icon]="tools[0].icon" size=lg></fa-icon></button>
+    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth(); onPress()"><fa-icon [icon]="tools[1].icon" size=lg></fa-icon></button>
+    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth(); onPress()"><fa-icon [icon]="tools[2].icon" size=lg></fa-icon></button>
+    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth(); onPress()"><fa-icon [icon]="tools[3].icon" size=lg></fa-icon></button>
+    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth(); onPress()"><fa-icon [icon]="tools[4].icon" size=lg></fa-icon></button>
 
-    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService">
+    <div class="widthSlider" *ngIf="showAdvanced">
+        <mat-card>
+            <mat-slider
+                min="1"
+                max="50"
+                step="1"
+                value="1"
+                class="slider"
+                (change)="changeWidth($event.value)"
+                (input)="this.toolManager.widthValue = $event.value"
+                [value]="this.toolManager.widthValue"
+            ></mat-slider>
+            {{ this.toolManager.widthValue }}
+        </mat-card>
+    </div>
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService && showAdvanced">
         <mat-button-toggle value="0" (change)="setEllipseStyle($event.value)">Remplissage</mat-button-toggle>
         <mat-button-toggle value="1" (change)="setEllipseStyle($event.value)">Contour</mat-button-toggle>
         <mat-button-toggle value="2" (change)="setEllipseStyle($event.value)">Les Deux</mat-button-toggle>
     </mat-button-toggle-group>
-</div>
 
-<mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService">
-    <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Remplissage</mat-button-toggle>
-    <mat-button-toggle value="4" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
-    <mat-button-toggle value="5" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
-</mat-button-toggle-group>
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService && showAdvanced">
+        <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Remplissage</mat-button-toggle>
+        <mat-button-toggle value="4" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
+        <mat-button-toggle value="5" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
+    </mat-button-toggle-group>
+    
+    <button (click)="onPressPalette()"><fa-icon [icon]="faPalette" size=lg></fa-icon></button>
+    <div *ngIf="showPalette">
+        <app-color-picker></app-color-picker>
+    </div>
+</div>

@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
-import { faSquare } from '@fortawesome/free-solid-svg-icons';
+import { faSquare } from '@fortawesome/free-regular-svg-icons';
 import { MouseButton } from './pencil-service';
 
 @Injectable({

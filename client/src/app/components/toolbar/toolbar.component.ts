@@ -12,6 +12,7 @@ import { faCircle, faEraser, faPalette, faPen, faSlash, faSquare } from '@fortaw
 export class ToolbarComponent {
     tools: Tool[];
     // toolManager: ToolManagerService;
+    showAdvanced: boolean = false;
     showPalette: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
     faPen = faPen;
@@ -44,6 +45,10 @@ export class ToolbarComponent {
     }
 
     onPress(): void {
+        this.showAdvanced = !this.showAdvanced;
+    }
+
+    onPressPalette(): void {
         this.showPalette = !this.showPalette;
     }
 
