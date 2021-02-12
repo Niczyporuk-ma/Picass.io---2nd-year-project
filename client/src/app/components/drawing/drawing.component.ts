@@ -21,6 +21,7 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+    // @ViewChild('bottomAnchor', { static: false }) bottomAnchor: ElementRef<button>;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -91,27 +92,7 @@ export class DrawingComponent implements AfterViewInit {
     // //Inspired by: https://www.youtube.com/watch?v=NyZSIhzz5Do&ab_channel=JonasGr%C3%B8ndahl
     startResize(event: MouseEvent) {
         console.log('start resize!');
-
         this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.previewCtx.setLineDash([5, 5]);
-            this.previewCtx.beginPath();
-            if (this.isBottom) {
-                console.log('bottom anchor:' + event.clientX + ' - ' + event.clientY);
-                this.previewCtx.moveTo(0, event.clientY);
-                this.previewCtx.lineTo(1000, event.clientY);
-            } else if (this.isSide) {
-                console.log('side anchor:' + document.getElementById('sideAnchor'));
-                this.previewCtx.moveTo(event.clientX, 0);
-                this.previewCtx.lineTo(event.clientX, 800);
-            } else if (this.isCorner) {
-                console.log('corner anchor:' + event.clientX + ' - ' + event.clientY);
-                this.previewCtx.moveTo(event.clientX, event.clientX);
-                this.previewCtx.lineTo(event.clientX, event.clientX);
-            }
-            this.previewCtx.stroke();
-        }
     }
 
     resize(event: MouseEvent) {
@@ -124,27 +105,15 @@ export class DrawingComponent implements AfterViewInit {
                 this.previewCtx.setLineDash([5, 5]);
                 this.previewCtx.beginPath();
                 if (this.isBottom) {
-                    // if (event.clientY <= MIN_HEIGH) {
-                    //     console.log('resize if');
-                    //     document.getElementById('bottomAnchor')!.style.setProperty('top', '250px');
-                    //     this.previewCtx.moveTo(0, MIN_HEIGH);
-                    //     this.previewCtx.lineTo(1000, MIN_HEIGH);
-                    // } else {
                     console.log('bottom');
-                    console.log(event.clientX + ' - ' + event.clientY);
-                    //     this.previewCtx.moveTo(0, event.clientY);
-                    //     this.previewCtx.lineTo(1000, event.clientY);
-                    // }
-
                     this.previewCtx.moveTo(0, event.clientY);
                     this.previewCtx.lineTo(1000, event.clientY);
                 } else if (this.isSide) {
-                    console.log('side');
+                    console.log('resize side');
                     this.previewCtx.moveTo(event.clientX - 518, 0);
                     this.previewCtx.lineTo(event.clientX - 518, 800);
                 } else if (this.isCorner) {
-                    console.log('corner');
-                    console.log(event.clientX + ' - ' + event.clientY);
+                    console.log(' resize corner');
                     //dash vertical
                     this.previewCtx.moveTo(event.clientX - 518, 0);
                     this.previewCtx.lineTo(event.clientX - 518, event.clientY);
@@ -161,11 +130,7 @@ export class DrawingComponent implements AfterViewInit {
     stopResize(event: MouseEvent) {
         console.log('stop!');
         this.mouseDown = false;
-        //const rightCornerFromSideAnchor: number = event.clientX - 518;
-        //const middleRightSide: number = Math.floor(event.clientY / 2);
-        //const middleBottom: number = Math.floor(((event.clientX + 518) / 2)) - 518;
-
-        //this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        debugger;
 
         if (this.isBottom) {
             console.log('bottom anchor stopResize');
@@ -174,16 +139,13 @@ export class DrawingComponent implements AfterViewInit {
             console.log(this.canvasSize.y + ' - ' + topCorner);
 
             //Relocate the other two anchors
+            // TODO: the angular way of accessing the DOM avec ViewChild
+
             document.getElementById('cornerAnchor')!.style.top = this.canvasSize.y.toString() + 'px';
-            document.getElementById('cornerAnchor')!.style.left = this.canvasSize.x.toString() + 'px';
             document.getElementById('sideAnchor')!.style.top = topCorner.toString() + 'px';
-            document.getElementById('sideAnchor')!.style.left = this.canvasSize.x.toString() + 'px';
 
             console.log(document.getElementById('cornerAnchor')!.style);
             console.log(this.canvasSize.x.toString() + ' - ' + this.canvasSize.y.toString());
-
-            // it works great but the rectangle for resizing disappears! LOL
-            //this.canvasSize.y = this.canvasSizeVerificationForY(event);\
         } else if (this.isSide) {
             console.log('side anchor stopResize');
             this.canvasSize.x = event.clientX - 518;
@@ -191,8 +153,6 @@ export class DrawingComponent implements AfterViewInit {
 
             //Relocate the other two anchors
             document.getElementById('cornerAnchor')!.style.left = this.canvasSize.x.toString() + 'px';
-            document.getElementById('cornerAnchor')!.style.top = this.canvasSize.y.toString() + 'px';
-            document.getElementById('bottomAnchor')!.style.top = this.canvasSize.y.toString() + 'px';
             document.getElementById('bottomAnchor')!.style.left = middleBottom + 'px';
         } else if (this.isCorner) {
             console.log('corner anchor stopResize');
@@ -237,16 +197,16 @@ export class DrawingComponent implements AfterViewInit {
         return this.canvasSize.y;
     }
 
-    /* *** Pour une raison quelconque sa fait disparaitre le anchor  quand on depasse
-     * on depassse la limite de 250x250 ***
-     */
-    canvasSizeVerificationForY(event: MouseEvent): number {
-        if (event.clientY < MIN_HEIGH) {
-            const bottomAnchor = document.getElementById('bottomAnchor')!;
-            bottomAnchor.style.top = '250px';
-            return MIN_HEIGH;
-        }
-        console.log('verif');
-        return event.clientY;
-    }
+    // /* *** Pour une raison quelconque sa fait disparaitre le anchor  quand on depasse
+    //  * on depassse la limite de 250x250 ***
+    //  */
+    // canvasSizeVerificationForY(event: MouseEvent): number {
+    //     if (event.clientY < MIN_HEIGH) {
+    //         const bottomAnchor = document.getElementById('bottomAnchor')!;
+    //         bottomAnchor.style.top = '250px';
+    //         return MIN_HEIGH;
+    //     }
+    //     console.log('verif');
+    //     return event.clientY;
+    // }
 }

@@ -5,14 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug server (Attach)",
-            "port": 9229,
-            "request": "attach",
-            "skipFiles": ["<node_internals>/**"],
-            "restart": true,
-            "sourceMaps": true,
-            "localRoot": "${workspaceFolder}/server",
-            "type": "pwa-node"
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:4200",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }
