@@ -21,8 +21,10 @@ canvas {
 button {
     width: 10px;
     height: 15px;
-    border: 2px solid black;
+    border: 2px solid blue;
+    border-radius: 50%;
     background: white;
+    opacity: 0.7;
 }
 
 #bottomAnchor {
