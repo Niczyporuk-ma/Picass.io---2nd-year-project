@@ -17,13 +17,12 @@
 </div> -->
 
 <div class="btns">
-    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()">Pen</button>
-    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth()">Line</button>
-    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth()">Rec</button>
-    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth()">Eraser</button>
-    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth()">Ellipse</button>
-
-    <button (click)="onPress()">Color</button>
+    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()"><fa-icon [icon]="tools[0].icon"></fa-icon></button>
+    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth()"><fa-icon [icon]="tools[1].icon"></fa-icon></button>
+    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth()"><fa-icon [icon]="tools[2].icon"></fa-icon></button>
+    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth()"><fa-icon [icon]="tools[3].icon"></fa-icon></button>
+    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth()"><fa-icon [icon]="tools[4].icon"></fa-icon></button>
+    <button (click)="onPress()">color</button>
     <div *ngIf="showPalette">
         <app-color-picker></app-color-picker>
     </div>

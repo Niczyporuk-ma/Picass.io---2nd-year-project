@@ -12,6 +12,7 @@ export interface ToolStyles {
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
 // tslint:disable:no-empty
 export abstract class Tool {
+    public icon: any;
     currentWidth: number;
     lastWidth: number;
     mouseDownCoord: Vec2;

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool, ToolStyles } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { faSlash } from '@fortawesome/free-solid-svg-icons';
 import { ColorService } from './color.service';
 import { LineHelperService } from './line-helper.service';
 
@@ -25,6 +26,7 @@ export class LineServiceService extends Tool {
     colorService: ColorService;
     angle: number;
     mousePosition: Vec2;
+    public icon = faSlash;
 
     constructor(drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { faEraser } from '@fortawesome/free-solid-svg-icons';
 import { MouseButton } from './pencil-service';
 
 @Injectable({
@@ -13,6 +14,7 @@ export class EraserService extends Tool {
     coordinate: Vec2;
     indexValue: number = 3;
     minimumWidth: number = 5;
+    public icon = faEraser;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
