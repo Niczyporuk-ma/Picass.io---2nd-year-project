@@ -16,7 +16,7 @@ export class EraserService extends Tool {
     minimumWidth: number = 5;
     public icon = faEraser;
 
-    constructor(drawingService: DrawingService) {
+    constructor(public drawingService: DrawingService) {
         super(drawingService);
         this.shortcut = 'e';
         this.localShortcuts = new Map();
@@ -26,6 +26,7 @@ export class EraserService extends Tool {
             lineWidth: 5,
             secondaryColor: 'white',
         };
+        this.drawingService = drawingService;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -67,7 +68,6 @@ export class EraserService extends Tool {
 
     drawLine(ctx: CanvasRenderingContext2D): void {
         ctx.strokeStyle = 'black';
-
         ctx.beginPath();
 
         ctx.lineWidth = this.toolStyles.lineWidth;

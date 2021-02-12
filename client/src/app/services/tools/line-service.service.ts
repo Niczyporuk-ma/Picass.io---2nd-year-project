@@ -174,8 +174,8 @@ export class LineServiceService extends Tool {
     }
 
     onDoubleClick(event: MouseEvent): void {
-        if(this.isStarted){
-                const mousePosition = this.getPositionFromMouse(event);
+        if (this.isStarted) {
+            const mousePosition = this.getPositionFromMouse(event);
             if (this.currentLine.length > 0 && this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
                 this.endPoint = this.currentLine[0][0];
                 this.currentLine.push([this.startingPoint, this.endPoint]);
@@ -193,8 +193,8 @@ export class LineServiceService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.redrawCurrentLine(this.drawingService.baseCtx);
             }
+            this.isStarted = false;
         }
-        
     }
 
     onMouseMove(event: MouseEvent): void {
