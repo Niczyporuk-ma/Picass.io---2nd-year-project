@@ -25,7 +25,7 @@ describe('KeyboardShortcutManagerService', () => {
     it(' onKeyPress should call setTool when the shortcut does not exist within the current tool but it is used to change to another tool', () => {
         service.toolManager.setTool(service.toolManager.rectangleService);
         const toolManagerSpy = spyOn<any>(service.toolManager, 'setTool');
-        service.onKeyPress("1");
+        service.onKeyPress("e");
         expect(toolManagerSpy).toHaveBeenCalled();
     });
 
@@ -35,6 +35,13 @@ describe('KeyboardShortcutManagerService', () => {
         service.onKeyPress("!2_k");
         expect(toolManagerSpy).not.toHaveBeenCalled();
         expect(currentToolSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onKeyPress should set the witdhValue of the tool manager when the shortcut is used to change to another tool', () => {
+        service.toolManager.setTool(service.toolManager.rectangleService);
+        service.toolManager.eraserService.toolStyles.lineWidth = 14;
+        service.onKeyPress("e");
+        expect(service.toolManager.widthValue).toEqual(14);
     });
 
 

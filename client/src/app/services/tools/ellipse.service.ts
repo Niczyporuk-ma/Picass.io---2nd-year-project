@@ -20,6 +20,7 @@ export class EllipseService extends Tool {
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '2';
+        this.index = 4;
         this.localShortcuts = new Map([['Shift', this.onShift]]);
         this.toolStyles = {
             primaryColor: 'white',

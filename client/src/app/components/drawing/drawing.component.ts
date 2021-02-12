@@ -49,7 +49,7 @@ export class DrawingComponent implements AfterViewInit {
         });
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (event.key == 'Control') {
-                this.toolManager.waitForOPress();
+                this.shortcutKeyboardManager.waitForOPress();
             }
         });
     }
