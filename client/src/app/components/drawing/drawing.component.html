@@ -4,6 +4,8 @@
     <button
         class="resizer"
         id="bottomAnchor"
+        [style.top.px]="bottomAnchorPosition.y"
+        [style.left.px]="bottomAnchorPosition.x"
         (mousedown)="startResize($event); this.isBottom = true"
         (mousemove)="resize($event)"
         (mouseup)="stopResize($event)"
@@ -14,6 +16,8 @@
     <button
         class="resizer"
         id="sideAnchor"
+        [style.top.px]="sideAnchorPosition.y"
+        [style.left.px]="sideAnchorPosition.x"
         (mousedown)="startResize($event); this.isSide = true"
         (mousemove)="resize($event)"
         (mouseup)="stopResize($event)"
@@ -24,6 +28,8 @@
     <button
         class="resizer"
         id="cornerAnchor"
+        [style.top.px]="cornerAnchorPosition.y"
+        [style.left.px]="cornerAnchorPosition.x"
         (mousedown)="startResize($event); this.isCorner = true"
         (mousemove)="resize($event)"
         (mouseup)="stopResize($event)"
