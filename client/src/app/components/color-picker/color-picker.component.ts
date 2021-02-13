@@ -35,7 +35,7 @@ export class ColorPickerComponent {
         this.colorService.opacity = opacity;
         if (this.primary) {
             this.colorService.setPrimaryColorWithOpacity(opacity);
-        } else{
+        } else {
             this.colorService.setSecondaryColorWithOpacity(opacity);
         }
     }
@@ -49,8 +49,7 @@ export class ColorPickerComponent {
             this.primary = true;
             this.color = this.colorService.primaryColor;
             // var copyColor = this.color;
-            const split: string[] = this.splitColor(this.color); 
-            console.log( this.splitColor(this.color));
+            const split: string[] = this.splitColor(this.color);
             // const split = this.splitColor(this.color);
             this.red = split[this.redIndex];
             this.green = split[this.greenIndex];
@@ -86,7 +85,6 @@ export class ColorPickerComponent {
             this.colorService.secondaryColor = this.color;
             this.colorService.setSecondaryColorWithOpacity(this.colorService.opacity);
         }
-        console.log()
     }
 
     adjustGreen(greenIntensity: KeyboardEvent): void {
@@ -122,15 +120,11 @@ export class ColorPickerComponent {
         }
     }
 
-    
-    
     disableShortcut(): void {
         this.toolManager.allowKeyPressEvents = false;
     }
 
     enableShortcut(): void {
         this.toolManager.allowKeyPressEvents = true;
-
     }
 }
-

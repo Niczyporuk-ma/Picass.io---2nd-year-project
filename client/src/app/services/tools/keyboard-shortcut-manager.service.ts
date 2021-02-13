@@ -12,7 +12,7 @@ export class KeyboardShortcutManagerService {
     toolManager: ToolManagerService;
 
     onKeyPress(key: string): void {
-        if(this.toolManager.allowKeyPressEvents){
+        if (this.toolManager.allowKeyPressEvents) {
             if (this.toolManagerService.currentTool.localShortcuts.has(key)) {
                 this.toolManager.currentTool.localShortCutHandler(key);
             } else {
@@ -20,9 +20,8 @@ export class KeyboardShortcutManagerService {
                     this.toolManager.setTool(this.toolManager.toolBoxShortcuts.get(key) as Tool);
                     this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
                 }
-            }    
+            }
         }
-        
     }
 
     waitForOPress(): void {

@@ -234,7 +234,9 @@ describe('LineService', () => {
 
     it('setShiftNonPressed should do nothing if key isnt shift', () => {
         service.shiftIsPressed = true;
-        const mockKeyboardEvent: KeyboardEvent = new KeyboardEvent('keydown', { key: 'A' });
+        const mockKeyboardEvent: KeyboardEvent = new KeyboardEvent('keydown', {
+            key: 'A',
+        });
         service.setShiftNonPressed(mockKeyboardEvent);
         expect(service.shiftIsPressed).toBeTrue();
     });
@@ -244,7 +246,9 @@ describe('LineService', () => {
         const redrawCurrentLineSpy = spyOn(service, 'redrawCurrentLine').and.stub();
         service.shiftIsPressed = true;
         service.isStarted = true;
-        const mockKeyboardEvent: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Shift' });
+        const mockKeyboardEvent: KeyboardEvent = new KeyboardEvent('keydown', {
+            key: 'Shift',
+        });
         service.setShiftNonPressed(mockKeyboardEvent);
         expect(drawLineSpy).toHaveBeenCalled();
         expect(redrawCurrentLineSpy).toHaveBeenCalled();
@@ -255,7 +259,9 @@ describe('LineService', () => {
         const redrawCurrentLineSpy = spyOn(service, 'redrawCurrentLine').and.stub();
         service.shiftIsPressed = true;
         service.isStarted = false;
-        const mockKeyboardEvent: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Shift' });
+        const mockKeyboardEvent: KeyboardEvent = new KeyboardEvent('keydown', {
+            key: 'Shift',
+        });
         service.setShiftNonPressed(mockKeyboardEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
         expect(redrawCurrentLineSpy).not.toHaveBeenCalled();

@@ -26,10 +26,16 @@ export class SquareHelperService {
         const smallest = Math.min(horizontalDistance, verticalDistance);
 
         if (smallest === horizontalDistance) {
-            const newPos: Vec2 = { x: pos[1].x, y: isDownward ? pos[0].y - horizontalDistance : pos[0].y + horizontalDistance };
+            const newPos: Vec2 = {
+                x: pos[1].x,
+                y: isDownward ? pos[0].y - horizontalDistance : pos[0].y + horizontalDistance,
+            };
             return newPos;
         } else {
-            const newPos: Vec2 = { x: isLeft ? pos[0].x - verticalDistance : pos[0].x + verticalDistance, y: pos[1].y };
+            const newPos: Vec2 = {
+                x: isLeft ? pos[0].x - verticalDistance : pos[0].x + verticalDistance,
+                y: pos[1].y,
+            };
             return newPos;
         }
     }

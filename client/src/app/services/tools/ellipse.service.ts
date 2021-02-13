@@ -11,8 +11,8 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    public startingPoint: Vec2;
-    public endPoint: Vec2;
+    startingPoint: Vec2;
+    endPoint: Vec2;
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     border: boolean = true;
@@ -64,7 +64,7 @@ export class EllipseService extends Tool {
                 );
             }
         }
-    };
+    }
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -79,7 +79,7 @@ export class EllipseService extends Tool {
                 this.shiftIsPressed = false;
             }
         }
-    };
+    }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
