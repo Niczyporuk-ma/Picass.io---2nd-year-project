@@ -22,6 +22,7 @@ export abstract class Tool {
     currentCommand: () => void;
     history: Vec2[][];
     toolStyles: ToolStyles;
+    isActive: boolean = false;
 
     constructor(protected drawingService: DrawingService) {}
 
