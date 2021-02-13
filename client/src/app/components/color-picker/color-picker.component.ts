@@ -31,12 +31,15 @@ export class ColorPickerComponent {
     // TODO : opacite pour les 2 couleurs (separement)
     changeOpacity(opacity: number): void {
         this.colorService.opacity = opacity;
-        this.colorService.setPrimaryColorWithOpacity(opacity);
-        this.colorService.setSecondaryColorWithOpacity(opacity);
+        if (this.primary) {
+            this.colorService.setPrimaryColorWithOpacity(opacity);
+        } else{
+            this.colorService.setSecondaryColorWithOpacity(opacity);
+        }
     }
 
     splitColor(colorToSlplit: string): string[] {
-        return colorToSlplit.replace('rgba(', '').split(',');
+        return colorToSlplit.replace('rgba(', '').replace(')', '').split(',');
     }
 
     selectPrimaryColor(evt: MouseEvent): void {
@@ -44,10 +47,13 @@ export class ColorPickerComponent {
             this.primary = true;
             this.color = this.colorService.primaryColor;
             // var copyColor = this.color;
-            const split: string[] = this.splitColor(this.color); // const split = this.splitColor(this.color);
+            const split: string[] = this.splitColor(this.color); 
+            console.log( this.splitColor(this.color));
+            // const split = this.splitColor(this.color);
             this.red = split[this.redIndex];
             this.green = split[this.greenIndex];
             this.blue = split[this.blueIndex];
+            this.opacity = +split[this.opacityIndex];
         }
     }
 
@@ -59,6 +65,7 @@ export class ColorPickerComponent {
             this.red = split[this.redIndex];
             this.green = split[this.greenIndex];
             this.blue = split[this.blueIndex];
+            this.opacity = +split[this.opacityIndex];
         }
     }
 

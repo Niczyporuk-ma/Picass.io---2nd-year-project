@@ -3,21 +3,21 @@
 <div class="btns">
     <button (click)="this.toolManager.clearArrays()" matTooltip="Créer un nouveau dessin" matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faPlusSquare" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth(); onPress()" 
+    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth(); this.toolManager.onPress()" 
     matTooltip="Outil crayon (C): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options" matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faPen" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth(); onPress()"
+    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth(); this.toolManager.onPress()"
     matTooltip="Outil efface (E): Cliquer et glisser pour effacer. Cliquez ici pour voir plus d'options" matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faEraser" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth(); onPress()"
+    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth(); this.toolManager.onPress()"
     matTooltip="Outil ligne (L): Cliquer et glisser pour déssiner une ligne. Cliquer à la fin pour enchaîner
     les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'options" matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faSlash" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth(); onPress()"
+    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth(); this.toolManager.onPress()"
     matTooltip="Outil rectangle (1): Cliquer et glisser, et relâcher pour déssiner un rectangle. tenir (Shift) pour dessiner un carré. Cliquez ici pour voir plus d'options" 
     matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faSquare" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth(); onPress()"
+    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth(); this.toolManager.onPress()"
     matTooltip="Outil ellipse (2): Cliquer et glisser, et relâcher pour déssiner un ellipse. tenir (Shift) pour dessiner un cercle. Cliquez ici pour voir plus d'options" 
     matTooltipPosition = "after" matTooltipShowDelay="600"><fa-icon [icon]="faCircle" size=lg></fa-icon></button>
     <button (click)="onPressPalette()"
@@ -29,7 +29,7 @@
         <app-color-picker></app-color-picker>
     </div>
 
-    <div class="widthSlider" *ngIf="showAdvanced">
+    <div class="widthSlider" *ngIf="this.toolManager.currentTool.isActive">
         <mat-card>
             <mat-slider
                 min="1"
@@ -44,7 +44,7 @@
             {{ this.toolManager.widthValue }}
         </mat-card>
     </div>
-    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService && showAdvanced">
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService && this.toolManager.ellipseService.isActive">
 
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService">
         <mat-button-toggle value="0" (change)="setEllipseStyle($event.value)">Remplissage</mat-button-toggle>

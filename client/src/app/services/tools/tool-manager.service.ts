@@ -49,6 +49,7 @@ export class ToolManagerService {
         if (this.drawingService.drawingStarted) {
             if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
                 for (const tool of this.tools) {
+                    console.log(tool);
                     tool.clearArrays();
                 }
                 this.drawingService.drawingStarted = false;
@@ -58,6 +59,10 @@ export class ToolManagerService {
         }
     }
 
+    onPress(): void {
+        this.currentTool.isActive = !this.currentTool.isActive;
+        console.log(this.currentTool.isActive);
+    }
 
     // getters
     getPencilService(): PencilService {
