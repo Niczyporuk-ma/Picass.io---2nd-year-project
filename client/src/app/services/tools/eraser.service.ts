@@ -53,7 +53,7 @@ export class EraserService extends Tool {
         this.currentPoint = this.getPositionFromMouse(event);
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.cursorEffect(this.drawingService.previewCtx, this.findCoordinate());
+        this.cursorEffect(this.findCoordinate());
 
         if (this.mouseDown) {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
@@ -62,7 +62,7 @@ export class EraserService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.cursorEffect(this.drawingService.previewCtx, this.findCoordinate());
+            this.cursorEffect(this.findCoordinate());
         }
     }
 
@@ -81,19 +81,9 @@ export class EraserService extends Tool {
         this.startingPoint.y = this.currentPoint.y;
     }
 
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-        ctx.lineWidth = this.toolStyles.lineWidth;
-        ctx.lineCap = 'round';
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
-        ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
-        ctx.stroke();
-    }
-
     // Permet la previsualisation de notre efface
-    cursorEffect(ctx: CanvasRenderingContext2D, location: Vec2): void {
-        this.drawingService.previewCtx.lineWidth = 1;
+    cursorEffect(location: Vec2): void {
+        this.toolStyles.lineWidth = 1;
         this.drawingService.previewCtx.strokeRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
     }
 
@@ -107,9 +97,6 @@ export class EraserService extends Tool {
 
     // permet de verifier la limite de la largeur de l'efface
     isValid(width: number): boolean {
-        if (width < this.minimumWidth) {
-            return false;
-        }
-        return true;
+        return width > this.minimumWidth;
     }
 }
