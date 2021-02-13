@@ -53,7 +53,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         FormsModule,
         MatRadioModule,
         MatButtonToggleModule,
-        MatTooltipModule
+        MatTooltipModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

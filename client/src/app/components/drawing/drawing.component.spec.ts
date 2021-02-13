@@ -4,7 +4,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { DrawingComponent } from './drawing.component';
 
-
 class ToolStub extends Tool {}
 
 // TODO : Déplacer dans un fichier accessible à tous
@@ -85,12 +84,9 @@ describe('DrawingComponent', () => {
         });
     });*/
 
-    it(" ngAfterViewInit should add an event listener", () => {
-        const enventListenerSpy = spyOn(window,'addEventListener').and.callThrough();
+    it(' ngAfterViewInit should add an event listener', () => {
+        const enventListenerSpy = spyOn(window, 'addEventListener').and.callThrough();
         component.ngAfterViewInit();
         expect(enventListenerSpy).toHaveBeenCalled();
-        
     });
-
-
 });

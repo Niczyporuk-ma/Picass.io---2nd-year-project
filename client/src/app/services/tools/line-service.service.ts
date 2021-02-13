@@ -27,12 +27,12 @@ export class LineServiceService extends Tool {
     colorService: ColorService;
     angle: number;
     mousePosition: Vec2;
-    public icon = faSlash;
+    icon = faSlash;
     hasJunction: boolean = true;
 
     constructor(public drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
-        //this.test = Function;
+        // this.test = Function;
         this.isStarted = false;
         this.shortcut = 'l';
         this.localShortcuts = new Map([

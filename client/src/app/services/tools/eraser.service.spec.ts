@@ -23,12 +23,12 @@ fdescribe('EraserService', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        //drawLineSpy = spyOn(service, 'drawLine').and.stub();
-        //findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
+        // drawLineSpy = spyOn(service, 'drawLine').and.stub();
+        // findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
         cursorEffectSpy = spyOn(service, 'cursorEffect').and.stub();
 
-        service['drawingService'].baseCtx = baseCtxStub;
-        service['drawingService'].previewCtx = previewCtxStub;
+        service.drawingService.baseCtx = baseCtxStub;
+        service.drawingService.previewCtx = previewCtxStub;
 
         mouseEvent = {
             offsetX: 35,
@@ -50,6 +50,18 @@ fdescribe('EraserService', () => {
     it('mouseDown should set mouseDown property to true on the left click', () => {
         service.onMouseDown(mouseEvent);
         expect(service.mouseDown).toEqual(true);
+    });
+
+    it('mouseDown shouldnt call getPositionFromMouse if mouseDown is false', () => {
+        const getPositionFromMouseSpy = spyOn<any>(service, 'getPositionFromMouse').and.stub();
+        service.mouseDown = false;
+        mouseEvent = {
+            offsetX: 35,
+            offsetY: 35,
+            button: 1,
+        } as MouseEvent;
+        service.onMouseDown(mouseEvent);
+        expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseUp should set mouseDown property to false', () => {
@@ -78,7 +90,7 @@ fdescribe('EraserService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
-    //Erreur bizzare ??
+    // Erreur bizzare ??
     it('findCoordinate should return the correct position to create the square effect of the eraser', () => {
         service.toolStyles.lineWidth = 20;
         service.currentPoint = { x: 30, y: 30 };
@@ -100,7 +112,7 @@ fdescribe('EraserService', () => {
         service.startingPoint = { x: 10, y: 30 };
         service.currentPoint = { x: 30, y: 10 };
         service.mouseDown = true;
-        //service.mouseDownCoord = { x: 25, y: 25 };
+        // service.mouseDownCoord = { x: 25, y: 25 };
         service.onMouseMove(mouseEvent);
         expect(cursorEffectSpy).toHaveBeenCalledTimes(2);
     });
@@ -112,7 +124,7 @@ fdescribe('EraserService', () => {
         expect(cursorEffectSpy).toHaveBeenCalledTimes(1);
     });
 
-    //Fonctionne pas ->????
+    // Fonctionne pas ->????
     it('drawLine should call moveTo and lineTo one time each', () => {
         service.startingPoint = { x: 10, y: 30 };
         service.currentPoint = { x: 30, y: 10 };

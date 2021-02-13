@@ -6,6 +6,8 @@ describe('LineHelperService', () => {
     let service: LineHelperService;
     const SQRT2_OVER2 = Math.sqrt(2) / 2;
     beforeEach(() => {
+        // tslint:disable:no-magic-numbers
+
         TestBed.configureTestingModule({});
         service = TestBed.inject(LineHelperService);
     });
@@ -16,7 +18,7 @@ describe('LineHelperService', () => {
 
     it('closestValidAngle should the right closest angle', () => {
         const mockStartingPoint: Vec2 = { x: 0, y: 0 };
-        let mockEndingPoints: Vec2[] = [
+        const mockEndingPoints: Vec2[] = [
             { x: 5, y: -1 },
             { x: 5, y: -3.5 },
             { x: 1, y: -5 },
@@ -27,7 +29,7 @@ describe('LineHelperService', () => {
             { x: 3, y: 5 },
         ];
 
-        for (let [index, mockEndingPoint] of mockEndingPoints.entries()) {
+        for (const [index, mockEndingPoint] of mockEndingPoints.entries()) {
             expect(service.closestValidAngle(mockStartingPoint, mockEndingPoint)).toEqual(POSSIBLE_ANGLES[index]);
         }
     });
@@ -62,7 +64,7 @@ describe('LineHelperService', () => {
             { x: SQRT2_OVER2, y: SQRT2_OVER2 },
         ];
 
-        for (let [index, point] of mockEndingPoint.entries()) {
+        for (const [index, point] of mockEndingPoint.entries()) {
             expect(service.closestAngledPoint(mockStartingPoint, point).x).toBeCloseTo(expectedResults[index].x, 0.1);
             expect(service.closestAngledPoint(mockStartingPoint, point).y).toBeCloseTo(expectedResults[index].y, 0.1);
         }
@@ -78,7 +80,7 @@ describe('LineHelperService', () => {
         ];
 
         const expectedResults: number[] = [1, Math.sqrt(10), Math.sqrt(26), 0];
-        for (let [index, point] of mockEndingPoints.entries()) {
+        for (const [index, point] of mockEndingPoints.entries()) {
             expect(service.distanceUtil(mockStartingPoint, point)).toEqual(expectedResults[index]);
         }
     });
@@ -93,7 +95,7 @@ describe('LineHelperService', () => {
         ];
         const expectedResults: number[] = [315, 225, 135, 45];
 
-        for (let [index, point] of mockEndingPoints.entries()) {
+        for (const [index, point] of mockEndingPoints.entries()) {
             expect(service.angleQuadrantConverter(mockStartingPoint, point, 45)).toEqual(expectedResults[index]);
         }
     });
@@ -109,7 +111,7 @@ describe('LineHelperService', () => {
         ];
         const expectedResults: boolean[] = [true, true, true, false, true];
 
-        for (let [index, point] of mockEndingPoints.entries()) {
+        for (const [index, point] of mockEndingPoints.entries()) {
             expect(service.shiftAngleCalculator(mockStartingPoint, point)).toEqual(expectedResults[index]);
         }
     });
@@ -123,7 +125,7 @@ describe('LineHelperService', () => {
             { x: -20, y: 20 },
         ];
 
-        for (let point of mockEndingPoints) {
+        for (const point of mockEndingPoints) {
             expect(service.pixelDistanceUtil(mockStartingPoint, point)).toBeTrue();
         }
     });
@@ -137,7 +139,7 @@ describe('LineHelperService', () => {
             { x: -21, y: -21 },
         ];
 
-        for (let point of mockEndingPoints) {
+        for (const point of mockEndingPoints) {
             expect(service.pixelDistanceUtil(mockStartingPoint, point)).toBeFalse();
         }
     });

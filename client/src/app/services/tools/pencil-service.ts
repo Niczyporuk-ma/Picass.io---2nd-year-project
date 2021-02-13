@@ -22,7 +22,7 @@ export class PencilService extends Tool {
     nexpoint: Vec2;
     private pathData: Vec2[];
     isEraser: boolean = false;
-    public icon = faPen;
+    icon = faPen;
 
     constructor(drawingService: DrawingService, public colorService: ColorService) {
         super(drawingService);

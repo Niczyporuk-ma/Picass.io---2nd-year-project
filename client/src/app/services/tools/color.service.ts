@@ -11,7 +11,7 @@ export class ColorService {
     opacity: number;
     // TODO opactity for each color
     tenLastUsedColors: Queue<string>;
-    public icon = faPalette;
+    icon = faPalette;
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
@@ -40,15 +40,14 @@ export class ColorService {
     }
 
     contains(color: string): boolean {
-        let array = this.tenLastUsedColors.toArray();
-        for(let i = 0; i < array.length; i++){
-            if(array[i] == color){
+        const array = this.tenLastUsedColors.toArray();
+        for (let i = 0; i < array.length; i++) {
+            if (array[i] == color) {
                 return true;
             }
         }
         return false;
     }
-
 
     // TODO : faire les 10 derniers couleurs (le bouffer)
 }

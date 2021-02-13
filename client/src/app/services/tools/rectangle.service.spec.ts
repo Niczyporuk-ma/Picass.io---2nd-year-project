@@ -27,6 +27,7 @@ describe('RectangleService', () => {
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
+        // tslint:disable:no-magic-numbers
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
@@ -65,7 +66,7 @@ describe('RectangleService', () => {
     it(' onMouseUp should call drawLine if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
-        const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
 
         service.onMouseUp(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
@@ -74,7 +75,7 @@ describe('RectangleService', () => {
     it(' onMouseUp should not call drawLine if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
-        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
         service.onMouseUp(mouseEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
@@ -85,7 +86,7 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 5, y: 1 };
-        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
         service.onMouseMove(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
     });
@@ -96,7 +97,7 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 9, y: 1 };
-        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
         service.onMouseMove(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
     });
@@ -107,14 +108,14 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 9, y: 1 };
-        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
         service.onMouseMove(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should  not call drawLine if mouseDown is false true', () => {
         service.mouseDown = false;
-        const drawLineSpy: jasmine.Spy<any> = spyOn<any>(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
         service.onMouseMove(mouseEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
@@ -126,14 +127,14 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 5, y: 5 };
-        const closestSquareSpy: jasmine.Spy<any> = spyOn<any>(service['squareHelperService'], 'closestSquare').and.stub();
+        const closestSquareSpy = spyOn(service['squareHelperService'], 'closestSquare').and.stub();
         service.onMouseMove(mouseEvent);
         expect(closestSquareSpy).not.toHaveBeenCalled();
         //expect(service.currentLine).toEqual([{x:1,y:5},{x:5,y:1}]);
     });*/
 
     it('setShiftPressed should have called both drawEllipse and drawRectangle', () => {
-        const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
 
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service['startingPoint'] = { x: 1, y: 5 };

@@ -16,7 +16,7 @@ export class RectangleService extends Tool {
     currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;
     contour: boolean = true;
-    public icon = faSquare;
+    icon = faSquare;
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '1';
