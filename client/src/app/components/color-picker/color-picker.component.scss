@@ -12,7 +12,7 @@
 .color-tool{
     z-index: 3;
     position: relative;
-    background-color: slategray;
+    background-color: rgba(83, 101, 119);
     padding: 8px;
     margin-right: -17px;
 }
@@ -78,5 +78,5 @@
 }
 
 mat-card{
-    background-color:slategray;
+    background-color: rgba(83, 101, 119);
 }

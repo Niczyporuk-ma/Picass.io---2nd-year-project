@@ -41,12 +41,6 @@ export class ToolbarComponent {
         }
     }
 
-    // onPress(isActive: boolean): void {
-    //     isActive = !isActive;
-    //     console.log(isActive);
-    //     console.log(this.toolManager.currentTool.isActive);
-    // }
-
     onPressPalette(): void {
         this.showPalette = !this.showPalette;
     }

@@ -3,6 +3,7 @@
 import { Component } from '@angular/core';
 import { ColorService } from '@app/services/tools/color.service';
 import { MouseButton } from '@app/services/tools/pencil-service';
+import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({
     selector: 'app-color-picker',
@@ -23,8 +24,9 @@ export class ColorPickerComponent {
     blueIndex: number = 2;
     opacityIndex: number = 3;
 
-    constructor(colorService: ColorService) {
+    constructor(colorService: ColorService, public toolManager: ToolManagerService) {
         this.colorService = colorService;
+        this.toolManager = toolManager;
     }
 
     // TODO: Adjust when palette is clicked undefined behaviour
@@ -38,8 +40,8 @@ export class ColorPickerComponent {
         }
     }
 
-    splitColor(colorToSlplit: string): string[] {
-        return colorToSlplit.replace('rgba(', '').replace(')', '').split(',');
+    splitColor(colorToSplit: string): string[] {
+        return colorToSplit.replace('rgba(', '').replace(')', '').split(',');
     }
 
     selectPrimaryColor(evt: MouseEvent): void {
@@ -76,7 +78,7 @@ export class ColorPickerComponent {
         this.green = this.splitColor(this.color)[this.greenIndex];
         this.blue = this.splitColor(this.color)[this.blueIndex];
         const opacity = this.splitColor(this.color)[this.opacityIndex];
-        this.color = 'rgba(' + value + ',' + this.green + ',' + this.blue + ',' + opacity;
+        this.color = 'rgba(' + value + ',' + this.green + ',' + this.blue + ',' + opacity + ')';
         if (this.primary) {
             this.colorService.primaryColor = this.color;
             this.colorService.setPrimaryColorWithOpacity(this.colorService.opacity);
@@ -84,6 +86,7 @@ export class ColorPickerComponent {
             this.colorService.secondaryColor = this.color;
             this.colorService.setSecondaryColorWithOpacity(this.colorService.opacity);
         }
+        console.log()
     }
 
     adjustGreen(greenIntensity: KeyboardEvent): void {
@@ -93,7 +96,7 @@ export class ColorPickerComponent {
         this.red = this.splitColor(this.color)[this.redIndex];
         this.blue = this.splitColor(this.color)[this.blueIndex];
         const opacity = this.splitColor(this.color)[this.opacityIndex];
-        this.color = 'rgba(' + this.red + ',' + value + ',' + this.blue + ',' + opacity;
+        this.color = 'rgba(' + this.red + ',' + value + ',' + this.blue + ',' + opacity + ')';
         if (this.primary) {
             this.colorService.primaryColor = this.color;
             this.colorService.setPrimaryColorWithOpacity(this.colorService.opacity);
@@ -109,7 +112,7 @@ export class ColorPickerComponent {
         this.red = this.splitColor(this.color)[this.redIndex];
         this.green = this.splitColor(this.color)[this.greenIndex];
         const opacity = this.splitColor(this.color)[this.opacityIndex];
-        this.color = 'rgba(' + this.red + ',' + this.green + ',' + value + ',' + opacity;
+        this.color = 'rgba(' + this.red + ',' + this.green + ',' + value + ',' + opacity + ')';
         if (this.primary) {
             this.colorService.primaryColor = this.color;
             this.colorService.setPrimaryColorWithOpacity(this.colorService.opacity);
@@ -118,4 +121,16 @@ export class ColorPickerComponent {
             this.colorService.setSecondaryColorWithOpacity(this.colorService.opacity);
         }
     }
+
+    
+    
+    disableShortcut(): void {
+        this.toolManager.allowKeyPressEvents = false;
+    }
+
+    enableShortcut(): void {
+        this.toolManager.allowKeyPressEvents = true;
+
+    }
 }
+
