@@ -41,10 +41,6 @@ export class ToolbarComponent {
         }
     }
 
-    onPress(): void {
-        this.showAdvanced = !this.showAdvanced;
-    }
-
     onPressPalette(): void {
         this.showPalette = !this.showPalette;
     }

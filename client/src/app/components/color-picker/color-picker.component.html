@@ -24,9 +24,9 @@
         <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[9] || 'white' }"></div>
     </div>
     <div class="side-input-wrapper">
-        <label>R: <input type="text" (keyup)="adjustRed($event)" [(ngModel)]="splitColor(color)[redIndex]" /><br /> </label>
-        <label>G: <input type="text" (keyup)="adjustGreen($event)" [(ngModel)]="splitColor(color)[greenIndex]" /> <br /> </label>
-        <label>B: <input type="text" (keyup)="adjustBlue($event)" [(ngModel)]="splitColor(color)[blueIndex]" /> </label>
+        <label>R: <input type="text" (keyup)="adjustRed($event)" (focus)="disableShortcut()" (blur)="enableShortcut()" [(ngModel)]="splitColor(color)[redIndex]" /><br /> </label>
+        <label>G: <input type="text" (keyup)="adjustGreen($event)" (focus)="disableShortcut()" (blur)="enableShortcut()" [(ngModel)]="splitColor(color)[greenIndex]" /> <br /> </label>
+        <label>B: <input type="text" (keyup)="adjustBlue($event)" (focus)="disableShortcut()" (blur)="enableShortcut()" [(ngModel)]="splitColor(color)[blueIndex]" /> </label>
 
         <!--  <label>Width: <input [(ngModel)]="widthValue" (change)="changeWidth(widthValue)" /></label> -->
     </div>

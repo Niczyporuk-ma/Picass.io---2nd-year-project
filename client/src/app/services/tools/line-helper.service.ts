@@ -19,10 +19,10 @@ export class LineHelperService {
         const b: number = Math.abs(start.y - end.y);
         // meilleur nom pour angle
         let angle: number = Math.atan2(b, a) * (180 / Math.PI);
-        console.log(angle);
+
         angle = this.angleQuadrantConverter(start, end, angle);
         // a enlever
-        console.log(angle);
+
         for (const angles of POSSIBLE_ANGLES) {
             if (Math.abs(angle - angles) < Math.abs(angle - closestValid)) {
                 closestValid = angles;

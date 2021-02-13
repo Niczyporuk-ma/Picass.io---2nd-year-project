@@ -109,7 +109,6 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
                     this.colorService.tenLastUsedColors.dequeue();
                 }
             }
-            console.log('len: ' + this.colorService.tenLastUsedColors.length + ' head: ' + this.colorService.tenLastUsedColors.head);
             this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
         }
     }
@@ -132,7 +131,6 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
                 this.colorService.tenLastUsedColors.dequeue();
             }
         }
-        console.log('len: ' + this.colorService.tenLastUsedColors.length + ' head: ' + this.colorService.tenLastUsedColors.head);
         this.colorService.secondaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
         return false;
     }

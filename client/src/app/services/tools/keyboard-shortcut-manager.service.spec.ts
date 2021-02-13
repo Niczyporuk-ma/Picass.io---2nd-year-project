@@ -6,6 +6,7 @@ describe('KeyboardShortcutManagerService', () => {
     let service: KeyboardShortcutManagerService;
 
     beforeEach(() => {
+        // tslint:disable:no-magic-numbers
         TestBed.configureTestingModule({});
         service = TestBed.inject(KeyboardShortcutManagerService);
     });
@@ -16,21 +17,21 @@ describe('KeyboardShortcutManagerService', () => {
 
     it(' onKeyPress should call localShortcutHandler when the shortcut exists within the current tool', () => {
         service.toolManager.setTool(service.toolManager.rectangleService);
-        const currentToolSpy = spyOn<any>(service.toolManager.currentTool, 'localShortCutHandler');
+        const currentToolSpy = spyOn(service.toolManager.currentTool, 'localShortCutHandler');
         service.onKeyPress('Shift');
         expect(currentToolSpy).toHaveBeenCalled();
     });
 
     it(' onKeyPress should call setTool when the shortcut does not exist within the current tool but it is used to change to another tool', () => {
         service.toolManager.setTool(service.toolManager.rectangleService);
-        const toolManagerSpy = spyOn<any>(service.toolManager, 'setTool');
+        const toolManagerSpy = spyOn(service.toolManager, 'setTool');
         service.onKeyPress('e');
         expect(toolManagerSpy).toHaveBeenCalled();
     });
 
     it(' onKeyPress should not call setTool or localShortcutHandler if the shorcut does not exist', () => {
-        const currentToolSpy = spyOn<any>(service.toolManager.currentTool, 'localShortCutHandler');
-        const toolManagerSpy = spyOn<any>(service.toolManager, 'setTool');
+        const currentToolSpy = spyOn(service.toolManager.currentTool, 'localShortCutHandler');
+        const toolManagerSpy = spyOn(service.toolManager, 'setTool');
         service.onKeyPress('!2_k');
         expect(toolManagerSpy).not.toHaveBeenCalled();
         expect(currentToolSpy).not.toHaveBeenCalled();

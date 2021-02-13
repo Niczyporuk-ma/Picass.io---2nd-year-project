@@ -43,7 +43,10 @@ export class EraserService extends Tool {
 
     // Permet de trouver la bonne prosition pour l'effet du curseur
     findCoordinate(): Vec2 {
-        const coord: Vec2 = { x: this.currentPoint.x - this.toolStyles.lineWidth / 2, y: this.currentPoint.y - this.toolStyles.lineWidth / 2 };
+        const coord: Vec2 = {
+            x: this.currentPoint.x - this.toolStyles.lineWidth / 2,
+            y: this.currentPoint.y - this.toolStyles.lineWidth / 2,
+        };
         return coord;
     }
 

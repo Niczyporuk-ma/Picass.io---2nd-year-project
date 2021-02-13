@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from './eraser.service';
 
-fdescribe('EraserService', () => {
+describe('EraserService', () => {
     let service: EraserService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -13,6 +13,8 @@ fdescribe('EraserService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
+        // tslint:disable:no-magic-numbers
+
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'baseCtx.lineTo', 'baseCtx.moveTo', 'previewCtx.strokeRect']);
 
         TestBed.configureTestingModule({
@@ -24,7 +26,7 @@ fdescribe('EraserService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         // drawLineSpy = spyOn(service, 'drawLine').and.stub();
         // findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
-        //cursorEffectSpy = spyOn(service, 'cursorEffect').and.stub();
+        // cursorEffectSpy = spyOn(service, 'cursorEffect').and.stub();
 
         service.drawingService.baseCtx = baseCtxStub;
         service.drawingService.previewCtx = previewCtxStub;
@@ -52,7 +54,7 @@ fdescribe('EraserService', () => {
     });
 
     it('mouseDown shouldnt call getPositionFromMouse if mouseDown is false', () => {
-        const getPositionFromMouseSpy = spyOn<any>(service, 'getPositionFromMouse').and.stub();
+        const getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.stub();
         service.mouseDown = false;
         mouseEvent = {
             offsetX: 35,
@@ -74,7 +76,7 @@ fdescribe('EraserService', () => {
         service.toolStyles.lineWidth = 10;
         service.mouseDown = false;
         service.mouseDownCoord = { x: 25, y: 25 };
-        const findCoordinateSpy = spyOn<any>(service, 'findCoordinate').and.callThrough();
+        const findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
         service.onMouseMove(mouseEvent);
         expect(findCoordinateSpy).toHaveBeenCalled();
     });
@@ -85,7 +87,7 @@ fdescribe('EraserService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.toolStyles.lineWidth = 5;
         service.mouseDown = true;
-        const drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawLineSpy).toHaveBeenCalled();
@@ -104,7 +106,7 @@ fdescribe('EraserService', () => {
         service.currentPoint = { x: 30, y: 10 };
         service.mouseDown = true;
         service.mouseDownCoord = { x: 25, y: 25 };
-        const findCoordinateSpy = spyOn<any>(service, 'findCoordinate').and.callThrough();
+        const findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
         service.onMouseMove(mouseEvent);
         expect(findCoordinateSpy).toHaveBeenCalled();
     });
@@ -131,8 +133,8 @@ fdescribe('EraserService', () => {
     it('drawLine should call moveTo and lineTo one time each', () => {
         service.startingPoint = { x: 10, y: 30 };
         service.currentPoint = { x: 30, y: 10 };
-        const lineToSpy = spyOn<any>(drawServiceSpy.baseCtx, 'lineTo').and.stub();
-        const moveToSpy = spyOn<any>(drawServiceSpy.baseCtx, 'moveTo').and.stub();
+        const lineToSpy = spyOn(drawServiceSpy.baseCtx, 'lineTo').and.stub();
+        const moveToSpy = spyOn(drawServiceSpy.baseCtx, 'moveTo').and.stub();
         service.drawLine(drawServiceSpy.baseCtx);
         expect(lineToSpy).toHaveBeenCalled();
         expect(moveToSpy).toHaveBeenCalled();
@@ -153,25 +155,25 @@ fdescribe('EraserService', () => {
     });
 
     it('isValid should return false if the width is invalid', () => {
-        const invalidWidth: number = -5;
-        let result: boolean = service.isValid(invalidWidth);
+        const invalidWidth = -5;
+        const result: boolean = service.isValid(invalidWidth);
         expect(result).not.toBeTrue();
     });
 
     it('isValid should return true if the width is valid', () => {
-        const invalidWidth: number = 6;
-        let result: boolean = service.isValid(invalidWidth);
+        const invalidWidth = 6;
+        const result: boolean = service.isValid(invalidWidth);
         expect(result).toBeTrue();
     });
 
     it('changeWidth should set width as newValue it its valid', () => {
-        const validWidth: number = 6;
+        const validWidth = 6;
         service.changeWidth(validWidth);
         expect(service.toolStyles.lineWidth).toEqual(validWidth);
     });
 
     it('changeWidth should set width as minimumWidth it its invalid', () => {
-        const validWidth: number = 3;
+        const validWidth = 3;
         service.changeWidth(validWidth);
         expect(service.toolStyles.lineWidth).toEqual(service.minimumWidth);
     });

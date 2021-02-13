@@ -24,6 +24,7 @@ export class ToolManagerService {
     rectangleHistory: Vec2[][] = [];
     widthValue: number = 1;
     blockEventListener: boolean = false;
+    allowKeyPressEvents: boolean = true;
 
     constructor(
         public pencilService: PencilService,

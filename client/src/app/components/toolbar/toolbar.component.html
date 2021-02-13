@@ -3,21 +3,21 @@
 <div class="btns">
     <button (click)="this.toolManager.clearArrays()" matTooltip="Créer un nouveau dessin" matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faPlusSquare" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth(); onPress()" 
+    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth();" 
     matTooltip="Outil crayon (C): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options" matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faPen" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth(); onPress()"
+    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth();"
     matTooltip="Outil efface (E): Cliquer et glisser pour effacer. Cliquez ici pour voir plus d'options" matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faEraser" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth(); onPress()"
+    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth();"
     matTooltip="Outil ligne (L): Cliquer et glisser pour déssiner une ligne. Cliquer à la fin pour enchaîner
     les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'options" matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faSlash" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth(); onPress()"
+    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth(); this.toolManager.onPress()"
     matTooltip="Outil rectangle (1): Cliquer et glisser, et relâcher pour déssiner un rectangle. tenir (Shift) pour dessiner un carré. Cliquez ici pour voir plus d'options" 
     matTooltipPosition = "after" matTooltipShowDelay="600">
         <fa-icon [icon]="faSquare" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth(); onPress()"
+    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth(); this.toolManager.onPress()"
     matTooltip="Outil ellipse (2): Cliquer et glisser, et relâcher pour déssiner un ellipse. tenir (Shift) pour dessiner un cercle. Cliquez ici pour voir plus d'options" 
     matTooltipPosition = "after" matTooltipShowDelay="600"><fa-icon [icon]="faCircle" size=lg></fa-icon></button>
     <button (click)="onPressPalette()"
@@ -29,8 +29,8 @@
         <app-color-picker></app-color-picker>
     </div>
 
-    <div class="widthSlider" *ngIf="showAdvanced">
-        <mat-card>
+    <div class="widthSlider">
+        <mat-card> Épaisseur:
             <mat-slider
                 min="1"
                 max="50"
@@ -44,7 +44,6 @@
             {{ this.toolManager.widthValue }}
         </mat-card>
     </div>
-    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService && showAdvanced">
 
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService">
         <mat-button-toggle value="0" (change)="setEllipseStyle($event.value)">Remplissage</mat-button-toggle>
@@ -52,21 +51,20 @@
         <mat-button-toggle value="2" (change)="setEllipseStyle($event.value)">Les Deux</mat-button-toggle>
     </mat-button-toggle-group>
 
-    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService && showAdvanced">
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService">
         <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Remplissage</mat-button-toggle>
         <mat-button-toggle value="4" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
         <mat-button-toggle value="5" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
     </mat-button-toggle-group>
 
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
-        <mat-button-toggle value="0" (change)="setLineJunction($event.value)">Sans jonction</mat-button-toggle>
-        <mat-button-toggle value="1" (change)="setLineJunction($event.value)">Avec jonction</mat-button-toggle>
+        <mat-button-toggle id="jonc" value="0" (change)="setLineJunction($event.value)">Sans jonction</mat-button-toggle>
+        <mat-button-toggle id="jonc" value="1" (change)="setLineJunction($event.value)">Avec jonction</mat-button-toggle>
     </mat-button-toggle-group>
 
     <br />
     <div class="junctionRadiusSlider" *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
-        <mat-card>
-            <mat-card-subtitle>Diamètre</mat-card-subtitle>
+        <mat-card>Diamètre: 
             <mat-slider
                 min="2"
                 max="50"

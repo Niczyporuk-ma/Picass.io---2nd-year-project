@@ -7,6 +7,7 @@ describe('ToolManagerService', () => {
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
+        // tslint:disable:no-magic-numbers
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
@@ -20,7 +21,7 @@ describe('ToolManagerService', () => {
 
     // source : https://stackoverflow.com/questions/52091882/angular-unit-testing-subject
     it(' setTool should call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
+        const nextSpy = spyOn(service.currentToolChange, 'next').and.stub();
         service.setTool(service.lineService);
         expect(nextSpy).toHaveBeenCalled();
     });
@@ -46,7 +47,7 @@ describe('ToolManagerService', () => {
     });
 
     it(' setTool should call setColors', () => {
-        const setColorSpy = spyOn<any>(service.eraserService, 'setColors');
+        const setColorSpy = spyOn(service.eraserService, 'setColors');
         service.setTool(service.eraserService);
         expect(setColorSpy).toHaveBeenCalled();
     });
@@ -65,7 +66,6 @@ describe('ToolManagerService', () => {
         expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
-    // a demander
     it(' clearArrays should call clearArrays for every tool when the client has confirmed his choice to start a new drawing', () => {
         spyOn(window, 'confirm').and.returnValue(true);
 
