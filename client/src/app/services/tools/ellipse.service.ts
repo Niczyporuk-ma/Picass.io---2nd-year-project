@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { ColorService } from './color.service';
 import { MouseButton } from './pencil-service';
 
@@ -16,6 +17,7 @@ export class EllipseService extends Tool {
     currentLine: Vec2[] = [];
     border: boolean = true;
     eventTest: boolean;
+    icon = faCircle;
 
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
@@ -34,8 +36,8 @@ export class EllipseService extends Tool {
         this.currentLine = [];
     }
 
-    //TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
-    //quand on dessine du bas vers le haut, et de droite vers la gauche
+    // TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
+    // quand on dessine du bas vers le haut, et de droite vers la gauche
 
     // TODO: renommer eventTest
     onShift(): void {

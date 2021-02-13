@@ -12,3 +12,55 @@
 .slider:hover {
     opacity: 2;
 }
+
+.btns{
+    width: 100px;
+}
+
+button {
+    display: block;
+    border: none;
+    background-color: rgb(53, 64, 75);
+    color: white;
+    width: 52px;
+    height: 50px;
+    border-radius: 0%;
+    transition: 0.3s;
+}
+
+button:hover {
+    display: block;
+    border: none;
+    background-color: rgb(197, 243, 231);
+    color: black;
+    width: 60%;
+    height: 50px;
+    border-radius: 0%;
+
+}
+
+button:focus{
+    outline: none;
+    background-color: rgb(107, 240, 206);
+    color:black;
+}
+
+::ng-deep .mat-tooltip { //tooltip
+    background-color: rgb(53, 64, 75, 0.9);
+}
+
+// ::ng-deep .mat-slider { //tooltip
+//     color: rgb(107, 240, 206);
+// }
+
+
+mat-button-toggle-group {
+    z-index: 3;
+    position: relative;
+}
+
+mat-card {
+    z-index: 3;
+    position: relative;
+    width: 230%;
+}

@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -21,11 +22,12 @@ export class PencilService extends Tool {
     nexpoint: Vec2;
     private pathData: Vec2[];
     isEraser: boolean = false;
+    icon = faPen;
 
     constructor(drawingService: DrawingService, public colorService: ColorService) {
         super(drawingService);
         this.clearPath();
-        this.shortcut = 'p';
+        this.shortcut = 'c';
         this.localShortcuts = new Map();
         this.index = 0;
         this.toolStyles = {

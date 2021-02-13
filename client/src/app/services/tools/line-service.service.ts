@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool, ToolStyles } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { faSlash } from '@fortawesome/free-solid-svg-icons';
 import { ColorService } from './color.service';
 import { LineHelperService } from './line-helper.service';
 
@@ -26,11 +27,12 @@ export class LineServiceService extends Tool {
     colorService: ColorService;
     angle: number;
     mousePosition: Vec2;
+    icon = faSlash;
     hasJunction: boolean = true;
 
     constructor(public drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
-        //this.test = Function;
+        // this.test = Function;
         this.isStarted = false;
         this.shortcut = 'l';
         this.localShortcuts = new Map([
@@ -172,25 +174,27 @@ export class LineServiceService extends Tool {
     }
 
     onDoubleClick(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        if (this.currentLine.length > 0 && this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
-            this.endPoint = this.currentLine[0][0];
-            this.currentLine.push([this.startingPoint, this.endPoint]);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentLine(this.drawingService.baseCtx);
-        } else {
-            if (!this.shiftIsPressed) {
-                this.endPoint = mousePosition;
+        if (this.isStarted) {
+            const mousePosition = this.getPositionFromMouse(event);
+            if (this.currentLine.length > 0 && this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
+                this.endPoint = this.currentLine[0][0];
+                this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.redrawCurrentLine(this.drawingService.baseCtx);
             } else {
-                this.endPoint = this.angledEndPoint;
+                if (!this.shiftIsPressed) {
+                    this.endPoint = mousePosition;
+                } else {
+                    this.endPoint = this.angledEndPoint;
+                }
+                this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.junctions.push(this.endPoint);
+                this.junctionsRadius.push(this.currentDiameter / 2);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.redrawCurrentLine(this.drawingService.baseCtx);
             }
-            this.currentLine.push([this.startingPoint, this.endPoint]);
-            this.junctions.push(this.endPoint);
-            this.junctionsRadius.push(this.currentDiameter / 2);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.redrawCurrentLine(this.drawingService.baseCtx);
+            this.isStarted = false;
         }
-        this.isStarted = false;
     }
 
     onMouseMove(event: MouseEvent): void {

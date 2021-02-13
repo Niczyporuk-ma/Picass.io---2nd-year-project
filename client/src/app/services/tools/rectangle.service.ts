@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { faSquare } from '@fortawesome/free-regular-svg-icons';
 import { MouseButton } from './pencil-service';
 
 @Injectable({
@@ -15,6 +16,7 @@ export class RectangleService extends Tool {
     currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;
     contour: boolean = true;
+    icon = faSquare;
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '1';

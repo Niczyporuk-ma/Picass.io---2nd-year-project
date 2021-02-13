@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from './tool-manager.service';
 
-
 describe('ToolManagerService', () => {
     let service: ToolManagerService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -46,7 +45,6 @@ describe('ToolManagerService', () => {
         expect(service.currentTool).toEqual(service.rectangleService);
     });
 
-    
     it(' setTool should call setColors', () => {
         const setColorSpy = spyOn<any>(service.eraserService, 'setColors');
         service.setTool(service.eraserService);
@@ -67,28 +65,22 @@ describe('ToolManagerService', () => {
         expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
-    //a demander
+    // a demander
     it(' clearArrays should call clearArrays for every tool when the client has confirmed his choice to start a new drawing', () => {
         spyOn(window, 'confirm').and.returnValue(true);
-        
-        for(const tool of service.tools)
-        {
+
+        for (const tool of service.tools) {
             drawingServiceSpy.drawingStarted = true;
-            const clearArraySpy = spyOn(tool,'clearArrays');
+            const clearArraySpy = spyOn(tool, 'clearArrays');
             service.clearArrays();
             expect(clearArraySpy).toHaveBeenCalled();
         }
     });
 
-    
     it(' clearArrays should set drawingStarted to false when the client has confirmed his choice to start a new drawing ', () => {
         spyOn(window, 'confirm').and.returnValue(true);
         drawingServiceSpy.drawingStarted = true;
         service.clearArrays();
         expect(drawingServiceSpy.drawingStarted).toEqual(false);
     });
-
-
-
-
 });

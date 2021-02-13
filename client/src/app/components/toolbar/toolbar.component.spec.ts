@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ToolbarComponent } from './toolbar.component';
 
-
 describe('ToolbarComponent', () => {
     let component: ToolbarComponent;
     let fixture: ComponentFixture<ToolbarComponent>;
@@ -87,7 +86,7 @@ describe('ToolbarComponent', () => {
         component.changeDiameter(10);
         expect(component.toolManager.lineService.currentDiameter).toEqual(10);
     });
-    
+
     it(' setLineJunction puts hasJunction to false is n = 0', () => {
         component.setLineJunction(0);
         expect(component.toolManager.lineService.hasJunction).toEqual(false);
@@ -103,5 +102,4 @@ describe('ToolbarComponent', () => {
         component.changeWidth(25);
         expect(component.toolManager.widthValue).toEqual(25);
     });
-
 });

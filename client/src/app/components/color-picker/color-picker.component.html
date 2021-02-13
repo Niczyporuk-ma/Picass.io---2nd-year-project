@@ -1,31 +1,44 @@
 <!-- inspired by : https://malcoded.com/posts/angular-color-picker/ -->
-<div class="color-wrapper">
-    <app-color-palette [hue]="hue" (color)="color = $event"></app-color-palette>
-    <app-color-slider (color)="hue = $event" style="margin-left: 16px"></app-color-slider>
-</div>
-<!-- TODO: css for the selected color( the class in css already exists) -->
-<div class="input-wrapper">
-    <span class="text">{{ color }}</span>
-    <div class="color-div" (click)="selectPrimaryColor($event)" [ngStyle]="{ 'background-color': colorService.primaryColor || 'white' }"></div>
-    <div class="color-div" (click)="selectSecondaryColor($event)" [ngStyle]="{ 'background-color': colorService.secondaryColor || 'white' }"></div>
-    <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">Swap</button>
-</div>
-<div class="side-input-wrapper">
-    <label>R: <input type="text" (keyup)="adjustRed($event)" [(ngModel)]="splitColor(color)[redIndex]" /><br /> </label>
-    <label>V: <input type="text" (keyup)="adjustGreen($event)" [(ngModel)]="splitColor(color)[greenIndex]" /> <br /> </label>
-    <label>B: <input type="text" (keyup)="adjustBlue($event)" [(ngModel)]="splitColor(color)[blueIndex]" /> </label>
+<div class="color-tool">
+    <div class="color-wrapper">
+        <app-color-palette [hue]="hue" (color)="color = $event"></app-color-palette>
+        <app-color-slider (color)="hue = $event" style="margin-left: 16px"></app-color-slider>
+    </div>
+    <!-- TODO: css for the selected color( the class in css already exists) -->
+    <div class="input-wrapper">
+        <span class="text">{{ color }}</span>
+        <div class="color-div" (click)="selectPrimaryColor($event)" [ngStyle]="{ 'background-color': colorService.primaryColor || 'white' }"></div>
+        <div class="color-div" (click)="selectSecondaryColor($event)" [ngStyle]="{ 'background-color': colorService.secondaryColor || 'white' }"></div>
+        <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">Swap</button>
+    </div>
+    <div class="ten-last">
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[0] || 'white' }"></div>
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[1] || 'white' }"></div>
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[2] || 'white' }"></div>
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[3] || 'white' }"></div>
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[4] || 'white' }"></div>
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[5] || 'white' }"></div>
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[6] || 'white' }"></div>
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[7] || 'white' }"></div>
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[8] || 'white' }"></div>
+        <div class="color-div" [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[9] || 'white' }"></div>
+    </div>
+    <div class="side-input-wrapper">
+        <label>R: <input type="text" (keyup)="adjustRed($event)" [(ngModel)]="splitColor(color)[redIndex]" /><br /> </label>
+        <label>G: <input type="text" (keyup)="adjustGreen($event)" [(ngModel)]="splitColor(color)[greenIndex]" /> <br /> </label>
+        <label>B: <input type="text" (keyup)="adjustBlue($event)" [(ngModel)]="splitColor(color)[blueIndex]" /> </label>
 
-    <!--  <label>Width: <input [(ngModel)]="widthValue" (change)="changeWidth(widthValue)" /></label> -->
+        <!--  <label>Width: <input [(ngModel)]="widthValue" (change)="changeWidth(widthValue)" /></label> -->
+    </div>
+    <mat-card>
+        Opacité: <mat-slider
+            min="0"
+            max="1"
+            step="0.01"
+            (change)="changeOpacity($event.value)"
+            (input)="opacity = $event.value"
+            [value]="opacity"
+            ></mat-slider>
+            {{ opacity }}
+    </mat-card>
 </div>
-
-<mat-slider
-    min="0"
-    max="1"
-    step="0.01"
-    thumbLabel
-    tickInterval="1"
-    (change)="changeOpacity($event.value)"
-    (input)="opacity = $event.value"
-    [value]="opacity"
-    >{{ opacity }}</mat-slider
->
