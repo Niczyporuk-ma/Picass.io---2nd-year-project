@@ -90,33 +90,13 @@ export class DrawingComponent implements AfterViewInit {
 
     // //Inspired by: https://www.youtube.com/watch?v=NyZSIhzz5Do&ab_channel=JonasGr%C3%B8ndahl
     startResize(event: MouseEvent) {
-        console.log('start resize!');
-
         this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.previewCtx.setLineDash([5, 5]);
-            this.previewCtx.beginPath();
-            if (this.isBottom) {
-                console.log('bottom anchor:' + event.clientX + ' - ' + event.clientY);
-                this.previewCtx.moveTo(0, event.clientY);
-                this.previewCtx.lineTo(1000, event.clientY);
-            } else if (this.isSide) {
-                console.log('side anchor:' + document.getElementById('sideAnchor'));
-                this.previewCtx.moveTo(event.clientX, 0);
-                this.previewCtx.lineTo(event.clientX, 800);
-            } else if (this.isCorner) {
-                console.log('corner anchor:' + event.clientX + ' - ' + event.clientY);
-                this.previewCtx.moveTo(event.clientX, event.clientX);
-                this.previewCtx.lineTo(event.clientX, event.clientX);
-            }
-            this.previewCtx.stroke();
-        }
     }
 
     resize(event: MouseEvent) {
         if (event.button === 0) {
             console.log('resize!');
+            const canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
 
             if (this.mouseDown) {
                 console.log('resize mouse down');
@@ -124,33 +104,23 @@ export class DrawingComponent implements AfterViewInit {
                 this.previewCtx.setLineDash([5, 5]);
                 this.previewCtx.beginPath();
                 if (this.isBottom) {
-                    // if (event.clientY <= MIN_HEIGH) {
-                    //     console.log('resize if');
-                    //     document.getElementById('bottomAnchor')!.style.setProperty('top', '250px');
-                    //     this.previewCtx.moveTo(0, MIN_HEIGH);
-                    //     this.previewCtx.lineTo(1000, MIN_HEIGH);
-                    // } else {
-                    console.log('bottom');
-                    console.log(event.clientX + ' - ' + event.clientY);
-                    //     this.previewCtx.moveTo(0, event.clientY);
-                    //     this.previewCtx.lineTo(1000, event.clientY);
-                    // }
-
-                    this.previewCtx.moveTo(0, event.clientY);
-                    this.previewCtx.lineTo(1000, event.clientY);
-                } else if (this.isSide) {
-                    console.log('side');
-                    this.previewCtx.moveTo(event.clientX - 518, 0);
-                    this.previewCtx.lineTo(event.clientX - 518, 800);
-                } else if (this.isCorner) {
-                    console.log('corner');
-                    console.log(event.clientX + ' - ' + event.clientY);
-                    //dash vertical
-                    this.previewCtx.moveTo(event.clientX - 518, 0);
-                    this.previewCtx.lineTo(event.clientX - 518, event.clientY);
                     //Dash horizontal
-                    this.previewCtx.moveTo(0, event.clientY);
-                    this.previewCtx.lineTo(event.clientX - 518, event.clientY);
+                    console.log(canvas);
+                    //starting point from canvas
+                    this.previewCtx.moveTo(canvas.top + window.scrollY, event.pageY);
+                    this.previewCtx.lineTo(canvas.right + window.scrollX, event.pageY);
+                } else if (this.isSide) {
+                    //dash vertical
+                    console.log(event.pageX);
+                    this.previewCtx.moveTo(event.pageX - (canvas.left + window.scrollX), canvas.top + window.scrollY);
+                    this.previewCtx.lineTo(event.pageX - (canvas.left + window.scrollX), canvas.bottom + window.scrollY);
+                } else if (this.isCorner) {
+                    //dash vertical
+                    this.previewCtx.moveTo(event.pageX - (canvas.left + window.scrollX), canvas.top + window.scrollY);
+                    this.previewCtx.lineTo(event.pageX - (canvas.left + window.scrollX), event.pageY);
+                    //Dash horizontal
+                    this.previewCtx.moveTo(0, event.pageY);
+                    this.previewCtx.lineTo(event.pageX - (canvas.left + window.scrollX), event.pageY);
                 }
                 this.previewCtx.stroke();
                 this.previewCtx.setLineDash([]);
@@ -161,50 +131,19 @@ export class DrawingComponent implements AfterViewInit {
     stopResize(event: MouseEvent) {
         console.log('stop!');
         this.mouseDown = false;
-        //const rightCornerFromSideAnchor: number = event.clientX - 518;
-        //const middleRightSide: number = Math.floor(event.clientY / 2);
-        //const middleBottom: number = Math.floor(((event.clientX + 518) / 2)) - 518;
-
-        //this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        const canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
+        console.log(canvas);
 
         if (this.isBottom) {
             console.log('bottom anchor stopResize');
-            this.canvasSize.y = event.clientY;
-            const topCorner: number = this.canvasSize.y / 2;
-            console.log(this.canvasSize.y + ' - ' + topCorner);
-
-            //Relocate the other two anchors
-            document.getElementById('cornerAnchor')!.style.top = this.canvasSize.y.toString() + 'px';
-            document.getElementById('cornerAnchor')!.style.left = this.canvasSize.x.toString() + 'px';
-            document.getElementById('sideAnchor')!.style.top = topCorner.toString() + 'px';
-            document.getElementById('sideAnchor')!.style.left = this.canvasSize.x.toString() + 'px';
-
-            console.log(document.getElementById('cornerAnchor')!.style);
-            console.log(this.canvasSize.x.toString() + ' - ' + this.canvasSize.y.toString());
-
-            // it works great but the rectangle for resizing disappears! LOL
-            //this.canvasSize.y = this.canvasSizeVerificationForY(event);\
+            this.canvasSize.y = event.pageY - (canvas.top + window.scrollY);
         } else if (this.isSide) {
             console.log('side anchor stopResize');
-            this.canvasSize.x = event.clientX - 518;
-            const middleBottom: number = this.canvasSize.x / 2;
-
-            //Relocate the other two anchors
-            document.getElementById('cornerAnchor')!.style.left = this.canvasSize.x.toString() + 'px';
-            document.getElementById('cornerAnchor')!.style.top = this.canvasSize.y.toString() + 'px';
-            document.getElementById('bottomAnchor')!.style.top = this.canvasSize.y.toString() + 'px';
-            document.getElementById('bottomAnchor')!.style.left = middleBottom + 'px';
+            this.canvasSize.x = event.pageX - (canvas.left + window.scrollX);
         } else if (this.isCorner) {
             console.log('corner anchor stopResize');
-            this.canvasSize.x = event.clientX - 518;
-            this.canvasSize.y = event.clientY;
-            const middleBottomX: number = this.canvasSize.x / 2;
-            const middleSide: number = this.canvasSize.y / 2;
-            //Relocate the other two anchors
-            document.getElementById('bottomAnchor')!.style.top = this.canvasSize.y.toString() + 'px';
-            document.getElementById('bottomAnchor')!.style.left = middleBottomX.toString() + 'px';
-            document.getElementById('sideAnchor')!.style.left = this.canvasSize.x.toString() + 'px';
-            document.getElementById('sideAnchor')!.style.top = middleSide.toString() + 'px';
+            this.canvasSize.x = event.pageX - (canvas.left + window.scrollX);
+            this.canvasSize.y = event.pageY - (canvas.top + window.scrollY);
         }
 
         this.mouseDown = false;
