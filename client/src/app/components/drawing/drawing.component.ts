@@ -21,6 +21,7 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+    // @ViewChild('bottomAnchor', { static: false }) bottomAnchor: ElementRef<button>;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -176,16 +177,16 @@ export class DrawingComponent implements AfterViewInit {
         return this.canvasSize.y;
     }
 
-    /* *** Pour une raison quelconque sa fait disparaitre le anchor  quand on depasse
-     * on depassse la limite de 250x250 ***
-     */
-    canvasSizeVerificationForY(event: MouseEvent): number {
-        if (event.clientY < MIN_HEIGH) {
-            const bottomAnchor = document.getElementById('bottomAnchor')!;
-            bottomAnchor.style.top = '250px';
-            return MIN_HEIGH;
-        }
-        console.log('verif');
-        return event.clientY;
-    }
+    // /* *** Pour une raison quelconque sa fait disparaitre le anchor  quand on depasse
+    //  * on depassse la limite de 250x250 ***
+    //  */
+    // canvasSizeVerificationForY(event: MouseEvent): number {
+    //     if (event.clientY < MIN_HEIGH) {
+    //         const bottomAnchor = document.getElementById('bottomAnchor')!;
+    //         bottomAnchor.style.top = '250px';
+    //         return MIN_HEIGH;
+    //     }
+    //     console.log('verif');
+    //     return event.clientY;
+    // }
 }
