@@ -96,23 +96,19 @@ export class DrawingComponent implements AfterViewInit {
 
     resize(event: MouseEvent) {
         if (event.button === 0) {
-            console.log('resize!');
             const canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
 
             if (this.mouseDown) {
-                console.log('resize mouse down');
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.previewCtx.setLineDash([5, 5]);
                 this.previewCtx.beginPath();
                 if (this.isBottom) {
                     //Dash horizontal
-                    console.log(canvas);
                     //starting point from canvas
                     this.previewCtx.moveTo(canvas.top + window.scrollY, event.pageY);
                     this.previewCtx.lineTo(canvas.right + window.scrollX, event.pageY);
                 } else if (this.isSide) {
                     //dash vertical
-                    console.log(event.pageX);
                     this.previewCtx.moveTo(event.pageX - (canvas.left + window.scrollX), canvas.top + window.scrollY);
                     this.previewCtx.lineTo(event.pageX - (canvas.left + window.scrollX), canvas.bottom + window.scrollY);
                 } else if (this.isCorner) {
@@ -130,19 +126,15 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     stopResize(event: MouseEvent) {
-        console.log('stop!');
         this.mouseDown = false;
         const canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
         console.log(canvas);
 
         if (this.isBottom) {
-            console.log('bottom anchor stopResize');
             this.canvasSize.y = event.pageY - (canvas.top + window.scrollY);
         } else if (this.isSide) {
-            console.log('side anchor stopResize');
             this.canvasSize.x = event.pageX - (canvas.left + window.scrollX);
         } else if (this.isCorner) {
-            console.log('corner anchor stopResize');
             this.canvasSize.x = event.pageX - (canvas.left + window.scrollX);
             this.canvasSize.y = event.pageY - (canvas.top + window.scrollY);
         }
