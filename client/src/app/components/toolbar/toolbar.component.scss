@@ -14,7 +14,7 @@
 }
 
 .btns{
-    width: 100px;
+    width: 355px;
 }
 
 button {
@@ -22,7 +22,7 @@ button {
     border: none;
     background-color: rgb(53, 64, 75);
     color: white;
-    width: 52px;
+    width: 51%;
     height: 50px;
     border-radius: 0%;
     transition: 0.3s;
@@ -59,8 +59,22 @@ mat-button-toggle-group {
     position: relative;
 }
 
+mat-button-toggle{
+    background-color: rgba(83, 101, 119);
+    color: white;
+    width: 81.5px;
+}
+
+#jonc {
+    width: 122.5px;
+}
+
 mat-card {
     z-index: 3;
     position: relative;
-    width: 230%;
+    width: 216px;
+    height: 30px;
+    color: white;
+    background-color: rgba(83, 101, 119);
 }
+

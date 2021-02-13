@@ -24,6 +24,7 @@ export class ToolManagerService {
     rectangleHistory: Vec2[][] = [];
     widthValue: number = 1;
     blockEventListener: boolean = false;
+    allowKeyPressEvents: boolean = true;
 
     constructor(
         public pencilService: PencilService,
@@ -61,7 +62,6 @@ export class ToolManagerService {
 
     onPress(): void {
         this.currentTool.isActive = !this.currentTool.isActive;
-        console.log(this.currentTool.isActive);
     }
 
     // getters
