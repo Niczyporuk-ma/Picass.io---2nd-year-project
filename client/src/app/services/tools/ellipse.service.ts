@@ -11,8 +11,8 @@ import { MouseButton } from './pencil-service';
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    private startingPoint: Vec2;
-    private endPoint: Vec2;
+    public startingPoint: Vec2;
+    public endPoint: Vec2;
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     border: boolean = true;

@@ -60,9 +60,9 @@ describe('ToolbarComponent', () => {
 
     it(' onPress should toggle the showPallet value', () => {
         component.showPalette = false;
-        component.onPress();
+        component.onPressPalette();
         expect(component.showPalette).toEqual(true);
-        component.onPress();
+        component.onPressPalette();
         expect(component.showPalette).toEqual(false);
     });
 

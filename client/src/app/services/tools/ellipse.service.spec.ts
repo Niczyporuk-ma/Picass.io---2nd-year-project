@@ -155,7 +155,9 @@ describe('EllipseService', () => {
         expect(service.eventTest).toEqual(true);
     });
 
-    it('setShiftNonPressed sets shifts shiftIsPressed and eventTest to false when mouseDown is true', () => {
+    it('setShiftNonPressed sets shiftIsPressed and eventTest to false when mouseDown is true', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
         service.mouseDown = true;
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.setShiftNonPressed(event);
@@ -163,7 +165,7 @@ describe('EllipseService', () => {
         expect(service.eventTest).toEqual(false);
     });
 
-    it('setShiftNonPressed sets shifts shiftIsPressed to false when mouseDown is false', () => {
+    it('setShiftNonPressed sets shiftIsPressed to false when mouseDown is false', () => {
         service.mouseDown = false;
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.setShiftNonPressed(event);
