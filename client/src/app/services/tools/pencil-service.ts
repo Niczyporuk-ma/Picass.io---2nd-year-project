@@ -36,7 +36,7 @@ export class PencilService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
@@ -45,7 +45,7 @@ export class PencilService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
@@ -55,7 +55,7 @@ export class PencilService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
 
@@ -69,6 +69,8 @@ export class PencilService extends Tool {
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
+        console.log('pensil component: ' + this.drawingService.drawingStarted);
+
         this.setColors(this.colorService);
         this.setStyles();
 
