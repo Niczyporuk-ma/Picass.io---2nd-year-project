@@ -46,7 +46,7 @@ export class RectangleService extends Tool {
         }
     }
 
-    setShiftIfPressed = (e: KeyboardEvent) => {
+    setShiftIsPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
             this.shiftIsPressed = true;
             if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
@@ -61,7 +61,7 @@ export class RectangleService extends Tool {
         if (e.key === 'Shift') {
             if (this.mouseDown) {
                 this.shiftIsPressed = false;
-                window.removeEventListener('keypress', this.setShiftIfPressed);
+                window.removeEventListener('keypress', this.setShiftIsPressed);
                 window.removeEventListener('keyup', this.setShiftNonPressed);
                 this.eventListenerIsSet = false;
                 this.currentLine = [this.startingPoint, this.endPoint];
@@ -75,7 +75,7 @@ export class RectangleService extends Tool {
 
     onShift(): void {
         if (!this.eventListenerIsSet) {
-            window.addEventListener('keydown', this.setShiftIfPressed);
+            window.addEventListener('keydown', this.setShiftIsPressed);
             window.addEventListener('keyup', this.setShiftNonPressed);
             this.eventListenerIsSet = true;
         }

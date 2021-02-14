@@ -120,6 +120,16 @@ describe('RectangleService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseMove should set currentLine as startingPoint and endPoint is shiftIsPressed and it forms a square', ()=>{
+        service.mouseDown = true;
+        service.shiftIsPressed = true;
+        service.startingPoint = {x : 0, y : 0};
+        //service.endPoint = {x : 2, y : 2};
+        const expectedResult : Vec2[] = [{x : 0, y :0}, {x : 25, y : 25}];
+        service.onMouseMove(mouseEvent);
+        expect(service.currentLine).toEqual(expectedResult);
+    })
+
     // PROBLEMATIQUE
     /* it(' onMouseMove should not call closestSquare when we already have a square', () => {
         service.mouseDown = true;
@@ -133,16 +143,18 @@ describe('RectangleService', () => {
         //expect(service.currentLine).toEqual([{x:1,y:5},{x:5,y:1}]);
     });*/
 
-    it('setShiftPressed should have called both drawEllipse and drawRectangle', () => {
+    it('setShiftIsPressed should have called both drawEllipse and drawRectangle', () => {
         const drawLineSpy = spyOn(service, 'drawLine').and.stub();
 
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 5, y: 5 };
 
-        service.setShiftIfPressed(event);
+        service.setShiftIsPressed(event);
         expect(drawLineSpy).toHaveBeenCalled();
     });
+
+    
 
     it('setShiftNonPressed sets shifts shiftIsPressed and eventTest to false when mouseDown is true', () => {
         service.mouseDown = true;
@@ -203,4 +215,26 @@ describe('RectangleService', () => {
         expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
         expect(rectangleSpyObject.moveTo).toHaveBeenCalledTimes(4);
     });
+
+    it('drawLine should set strokeStyle as primaryColor if contour is false',()=>{
+        const mockPath : Vec2[] = [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+        ];
+        service.contour = false;
+        drawingServiceSpy.baseCtx.strokeStyle = "blue";
+        service.drawLine(drawingServiceSpy.baseCtx, mockPath);
+        expect(drawingServiceSpy.baseCtx.strokeStyle).toEqual("#000000");
+    })
+
+    it('drawLine should set drawingStarted to true if ctx is baseCtx', ()=>{
+        const mockPath : Vec2[] = [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+        ];
+        drawingServiceSpy.drawingStarted = false;
+
+        service.drawLine(drawingServiceSpy.baseCtx, mockPath);
+        expect(drawingServiceSpy.drawingStarted).toBeTrue();
+    })
 });
