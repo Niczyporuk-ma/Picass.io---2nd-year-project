@@ -1,9 +1,11 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 
-import { Component } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { ColorService } from '@app/services/tools/color.service';
 import { MouseButton } from '@app/services/tools/pencil-service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
+
 
 @Component({
     selector: 'app-color-picker',
@@ -23,11 +25,16 @@ export class ColorPickerComponent {
     greenIndex: number = 1;
     blueIndex: number = 2;
     opacityIndex: number = 3;
+    private mousedown: boolean = false;
+    private contextmenu: boolean = false;
 
     constructor(colorService: ColorService, public toolManager: ToolManagerService) {
         this.colorService = colorService;
         this.toolManager = toolManager;
     }
+
+    @Output()
+    colorEmitted: EventEmitter<string> = new EventEmitter(true);
 
     // TODO: Adjust when palette is clicked undefined behaviour
     // TODO : opacite pour les 2 couleurs (separement)
@@ -131,6 +138,54 @@ export class ColorPickerComponent {
     enableShortcut(): void {
         this.toolManager.allowKeyPressEvents = true;
 
+    }
+
+
+
+
+
+
+
+
+    @HostListener('window:mouseup', ['$event'])
+    onMouseUp(evt: MouseEvent): void {
+        this.mousedown = false;
+    }
+
+    onMouseDown(evt: MouseEvent, color: string): void {
+        this.mousedown = evt.button === MouseButton.Left;
+        this.contextmenu = false;
+        let colorTemp: string = color;
+        if (this.contextmenu === false && this.mousedown === true) {
+            this.colorEmitted.emit(color);
+            this.colorService.tenLastUsedColors.remove(color);
+            this.colorService.tenLastUsedColors.append(colorTemp);
+            if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
+                this.colorService.tenLastUsedColors.dequeue();
+            }
+            console.log("len: " + this.colorService.tenLastUsedColors.length + " head: " + this.colorService.tenLastUsedColors.head);
+            this.colorService.primaryColor = color; // TODO: MAKE IT WORK WITH CURRENT OPACITY
+        }
+    }
+
+    onRightClickDown(evt: MouseEvent, color: string): boolean {
+        this.mousedown = evt.button === MouseButton.Left;
+        this.contextmenu = true;
+        let colorTemp: string = color;
+        this.colorEmitted.emit(color);
+        this.colorService.tenLastUsedColors.remove(color);
+        this.colorService.tenLastUsedColors.append(colorTemp);
+        if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
+            this.colorService.tenLastUsedColors.dequeue();
+        }
+        console.log("len: " + this.colorService.tenLastUsedColors.length + " head: " + this.colorService.tenLastUsedColors.head);
+        this.colorService.secondaryColor = color; // TODO: MAKE IT WORK WITH CURRENT OPACITY
+        return false;
+    }
+
+    emitColor(color: string): void {
+        //const rgbaColor = this.getColorAtPosition(x, y);
+        this.colorEmitted.emit(color);
     }
 }
 
