@@ -37,7 +37,7 @@ export class ResizeService {
         }
     }
 
-    stopResize(event: MouseEvent, canvasSize: Vec2, baseCanvas: ElementRef<HTMLCanvasElement>): void {
+    stopResize(canvasSize: Vec2, baseCanvas: ElementRef<HTMLCanvasElement>): void {
         this.copyCanvas(baseCanvas);
 
         if (this.isBottom) {
@@ -69,6 +69,7 @@ export class ResizeService {
             newCtx.drawImage(imageTemp, 0, 0);
         };
     }
+
     relocateHandles(canvasSize: Vec2): void {
         this.sideHandle.y = canvasSize.y / 2;
         this.sideHandle.x = canvasSize.x;
