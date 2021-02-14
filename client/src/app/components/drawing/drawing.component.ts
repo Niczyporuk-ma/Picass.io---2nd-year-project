@@ -118,12 +118,14 @@ export class DrawingComponent implements AfterViewInit {
 
         if (this.mouseDown) {
             if (this.isBottom) {
-                this.preview.y = event.pageY;
+                this.preview.y = event.pageY >= MIN_HEIGH ? event.pageY : MIN_HEIGH;
             } else if (this.isSide) {
-                this.preview.x = event.pageX - (this.canvas.left + window.scrollY);
+                this.preview.x =
+                    event.pageX - (this.canvas.left + window.scrollY) >= MIN_WIDTH ? event.pageX - (this.canvas.left + window.scrollY) : MIN_WIDTH;
             } else if (this.isCorner) {
-                this.preview.y = event.pageY;
-                this.preview.x = event.pageX - (this.canvas.left + window.scrollY);
+                this.preview.y = event.pageY >= MIN_HEIGH ? event.pageY : MIN_HEIGH;
+                this.preview.x =
+                    event.pageX - (this.canvas.left + window.scrollY) >= MIN_WIDTH ? event.pageX - (this.canvas.left + window.scrollY) : MIN_WIDTH;
             }
         }
     }
