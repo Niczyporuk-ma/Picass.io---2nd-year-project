@@ -45,21 +45,21 @@ describe('KeyboardShortcutManagerService', () => {
     });
 
     it(' OPressHandler should remove the event listener when o is pressed', () => {
-        const eventListenerSpy = spyOn(window,'removeEventListener').and.callThrough();
-        const event = {key :'o', preventDefault : () =>{}} as KeyboardEvent;
+        const eventListenerSpy = spyOn(window, 'removeEventListener').and.callThrough();
+        const event = { key: 'o', preventDefault: () => {} } as KeyboardEvent;
         service.OPressHandler(event);
         expect(eventListenerSpy).toHaveBeenCalled();
     });
 
     it(' OPressHandler should call preventDefaut of the event passed to it', () => {
-        const event = {key :'o', preventDefault : () =>{}} as KeyboardEvent;
+        const event = { key: 'o', preventDefault: () => {} } as KeyboardEvent;
         const preventDefaultSpy = spyOn(event, 'preventDefault');
         service.OPressHandler(event);
         expect(preventDefaultSpy).toHaveBeenCalled();
     });
 
     it(' waitForOpress should add two event listener', () => {
-        const eventListenerSpy = spyOn(window,'addEventListener').and.stub();
+        const eventListenerSpy = spyOn(window, 'addEventListener').and.stub();
         service.waitForOPress();
         expect(eventListenerSpy).toHaveBeenCalledTimes(2);
     });
@@ -70,7 +70,7 @@ describe('KeyboardShortcutManagerService', () => {
     });
 
     it(' waitForOpress sets blockEventsListener to false Control is unpressed', async (done) => {
-        const event = new KeyboardEvent('keyup',{key :'Control'});
+        const event = new KeyboardEvent('keyup', { key: 'Control' });
         service.waitForOPress();
         window.dispatchEvent(event);
         setTimeout(() => {
@@ -80,8 +80,8 @@ describe('KeyboardShortcutManagerService', () => {
     });
 
     it(' waitForOpress removes the event listener when Controlis unpressed', async (done) => {
-        const event = new KeyboardEvent('keyup',{key :'Control'});
-        const eventListenerSpy = spyOn(window,'removeEventListener').and.stub();
+        const event = new KeyboardEvent('keyup', { key: 'Control' });
+        const eventListenerSpy = spyOn(window, 'removeEventListener').and.stub();
         service.waitForOPress();
         window.dispatchEvent(event);
         setTimeout(() => {
@@ -89,5 +89,4 @@ describe('KeyboardShortcutManagerService', () => {
             done();
         }, 200);
     });
-
 });

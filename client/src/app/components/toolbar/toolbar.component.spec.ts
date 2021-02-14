@@ -23,37 +23,37 @@ describe('ToolbarComponent', () => {
     });
 
     it('setRectangleStyle puts fill to true and contour to false when n = 1', () => {
-        component.setRectangleStyle("1");
+        component.setRectangleStyle('1');
         expect(component.toolManager.rectangleService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.rectangleService.contour).toEqual(false);
     });
 
     it('setRectangleStyle puts fill to false and contour to true when n = 2', () => {
-        component.setRectangleStyle("2");
+        component.setRectangleStyle('2');
         expect(component.toolManager.rectangleService.toolStyles.fill).toEqual(false);
         expect(component.toolManager.rectangleService.contour).toEqual(true);
     });
 
     it('setRectangleStyle puts fill to true and contour to true when n = 3', () => {
-        component.setRectangleStyle("3");
+        component.setRectangleStyle('3');
         expect(component.toolManager.rectangleService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.rectangleService.contour).toEqual(true);
     });
 
     it('setEllipseStyle puts fill to true and contour to false when n = 1', () => {
-        component.setEllipseStyle("1");
+        component.setEllipseStyle('1');
         expect(component.toolManager.ellipseService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.ellipseService.border).toEqual(false);
     });
 
     it('setEllipseStyle puts fill to false and contour to true when n = 2', () => {
-        component.setEllipseStyle("2");
+        component.setEllipseStyle('2');
         expect(component.toolManager.ellipseService.toolStyles.fill).toEqual(false);
         expect(component.toolManager.ellipseService.border).toEqual(true);
     });
 
     it('setEllipseStyle puts fill to true and contour to true when anything else than 0 and 1', () => {
-        component.setEllipseStyle("3");
+        component.setEllipseStyle('3');
         expect(component.toolManager.ellipseService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.ellipseService.border).toEqual(true);
     });

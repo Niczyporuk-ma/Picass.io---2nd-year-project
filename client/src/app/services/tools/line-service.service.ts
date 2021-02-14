@@ -87,7 +87,7 @@ export class LineServiceService extends Tool {
         }
         window.removeEventListener('keydown', this.setShiftIsPressed);
         this.blockOnShift = false;
-    }
+    };
 
     setShiftNonPressed = (e?: KeyboardEvent) => {
         if ((e != undefined && e.key === 'Shift') || this.calledFromMouseClick) {
@@ -100,7 +100,7 @@ export class LineServiceService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.mousePosition]);
             }
         }
-    }
+    };
 
     onShift(): void {
         if (!this.blockOnShift) {
@@ -159,11 +159,13 @@ export class LineServiceService extends Tool {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
             }
-            this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
-            this.pushNewJunction(this.endPoint, this.currentDiameter / 2);
-            this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentDiameter / 2);
-            this.currentLine.push([this.startingPoint, this.endPoint]);
-            this.startingPoint = this.endPoint;
+            if (!this.drawingService.resizeActive) {
+                this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
+                this.pushNewJunction(this.endPoint, this.currentDiameter / 2);
+                this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentDiameter / 2);
+                this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.startingPoint = this.endPoint;
+            }
             if (this.shiftIsPressed) {
                 this.calledFromMouseClick = true;
                 this.endPoint = this.getPositionFromMouse(event);

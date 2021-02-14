@@ -4,9 +4,9 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
 
-const FILL_VALUE  = '1';
-const CONTOUR_VALUE  = '2';
-const BOTH_VALUE  = '3';
+const FILL_VALUE = '1';
+const CONTOUR_VALUE = '2';
+const BOTH_VALUE = '3';
 
 @Component({
     selector: 'app-toolbar',
@@ -25,7 +25,6 @@ export class ToolbarComponent {
     faCircle = faCircle;
     faPalette = faPalette;
     faPlusSquare = faPlusSquare;
-    
 
     constructor(public toolManager: ToolManagerService) {
         this.toolManager = toolManager;
@@ -33,14 +32,13 @@ export class ToolbarComponent {
     }
 
     setRectangleStyle(n: string): void {
-        
-        if (n  === FILL_VALUE) {
+        if (n === FILL_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = false;
-        } else if (n  === CONTOUR_VALUE) {
+        } else if (n === CONTOUR_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = false;
             this.toolManager.rectangleService.contour = true;
-        } else if (n  === BOTH_VALUE) {
+        } else if (n === BOTH_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = true;
         }

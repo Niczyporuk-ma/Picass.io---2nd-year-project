@@ -75,13 +75,12 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
-    it(" ngAfterViewInit should add two event listener", () => {
-        const enventListenerSpy = spyOn(window,'addEventListener').and.callThrough();
+    it(' ngAfterViewInit should add two event listener', () => {
+        const enventListenerSpy = spyOn(window, 'addEventListener').and.callThrough();
         component.ngAfterViewInit();
         expect(enventListenerSpy).toHaveBeenCalledTimes(2);
-        
     });
-    
+
     /*it(" ngAfterViewInit should call onKeyPress & waitForOPress when Control is pressed", async (done) => {
         const event = new KeyboardEvent('keydown',{key :'Controle'});
         const onKeyPressSpy = spyOn(component.shortcutKeyboardManager,'onKeyPress').and.callFake(function() 
@@ -97,41 +96,37 @@ describe('DrawingComponent', () => {
         
     });*/
 
-    it(" onMouseClick should call onMouseClick of current tool if there is a single click", async(done) => {
+    it(' onMouseClick should call onMouseClick of current tool if there is a single click', async (done) => {
         const event = {} as MouseEvent;
-        const onMouseCLickSpy = spyOn(component.toolManager.currentTool,'onMouseClick').and.callThrough();
+        const onMouseCLickSpy = spyOn(component.toolManager.currentTool, 'onMouseClick').and.callThrough();
         component.onMouseClick(event);
-         setTimeout(() => {
-              expect(onMouseCLickSpy).toHaveBeenCalled();
-              done();
-        },component.timeOutDuration);
-        
+        setTimeout(() => {
+            expect(onMouseCLickSpy).toHaveBeenCalled();
+            done();
+        }, component.timeOutDuration);
     });
 
-    it(" onMouseClick should call onDoubleClick of current tool if there is a double click", async(done) => {
+    it(' onMouseClick should call onDoubleClick of current tool if there is a double click', async (done) => {
         const event = {} as MouseEvent;
-        const onDoubleCLickSpy = spyOn(component.toolManager.currentTool,'onDoubleClick').and.callThrough();
+        const onDoubleCLickSpy = spyOn(component.toolManager.currentTool, 'onDoubleClick').and.callThrough();
         component.onMouseClick(event);
-         setTimeout(() => {
-              component.clickCount++; 
-           done()
-              
-        },component.timeOutDuration/16);
+        setTimeout(() => {
+            component.clickCount++;
+            done();
+        }, component.timeOutDuration / 16);
 
         setTimeout(() => {
-                expect(onDoubleCLickSpy).toHaveBeenCalled();
-                done();
-        },1000);
-
+            expect(onDoubleCLickSpy).toHaveBeenCalled();
+            done();
+        }, 5000); // ca depend de la vitesse de ton ordi :(
     });
 
-    it(" onMouseClick should reset the click count to 0 after processing the event", async(done) => {
+    it(' onMouseClick should reset the click count to 0 after processing the event', async (done) => {
         const event = {} as MouseEvent;
         component.onMouseClick(event);
-         setTimeout(() => {
-              expect(component.clickCount).toEqual(0);
-              done();
-        },component.timeOutDuration);
-        
+        setTimeout(() => {
+            expect(component.clickCount).toEqual(0);
+            done();
+        }, component.timeOutDuration);
     });
 });

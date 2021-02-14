@@ -64,7 +64,7 @@ export class EllipseService extends Tool {
                 );
             }
         }
-    }
+    };
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -79,7 +79,7 @@ export class EllipseService extends Tool {
                 this.shiftIsPressed = false;
             }
         }
-    }
+    };
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
@@ -91,7 +91,7 @@ export class EllipseService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -101,7 +101,7 @@ export class EllipseService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);

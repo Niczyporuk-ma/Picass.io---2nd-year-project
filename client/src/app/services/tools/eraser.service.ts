@@ -51,14 +51,17 @@ export class EraserService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.drawingService.previewCtx.strokeStyle = 'black';
-
         this.currentPoint = this.getPositionFromMouse(event);
+        if (this.isColoredUnderMouse(this.drawingService.baseCtx, event, this.currentPoint)) {
+            this.drawingService.previewCtx.strokeStyle = 'white';
+        } else {
+            this.drawingService.previewCtx.strokeStyle = 'black';
+        }
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.cursorEffect(this.findCoordinate());
 
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx);
@@ -101,5 +104,15 @@ export class EraserService extends Tool {
     // permet de verifier la limite de la largeur de l'efface
     isValid(width: number): boolean {
         return width > this.minimumWidth;
+    }
+
+    isColoredUnderMouse(ctx: CanvasRenderingContext2D, event: MouseEvent, location: Vec2): boolean {
+        const colorUnderMouse = ctx.getImageData(location.x, location.y, 1, 1).data;
+        if (colorUnderMouse[3] > 0) {
+            console.log('Black');
+            return true;
+        } else {
+            return false;
+        }
     }
 }

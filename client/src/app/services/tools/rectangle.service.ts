@@ -49,7 +49,7 @@ export class RectangleService extends Tool {
     setShiftIsPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
             this.shiftIsPressed = true;
-            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint]) && !this.drawingService.resizeActive) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
@@ -59,7 +59,7 @@ export class RectangleService extends Tool {
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
-            if (this.mouseDown) {
+            if (this.mouseDown && !this.drawingService.resizeActive) {
                 this.shiftIsPressed = false;
                 window.removeEventListener('keypress', this.setShiftIsPressed);
                 window.removeEventListener('keyup', this.setShiftNonPressed);
@@ -82,19 +82,19 @@ export class RectangleService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             if (!this.shiftIsPressed) {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
                 this.currentLine = [this.startingPoint, this.endPoint];
-            } 
-                this.drawLine(this.drawingService.baseCtx, this.currentLine);
+            }
+            this.drawLine(this.drawingService.baseCtx, this.currentLine);
         }
         this.mouseDown = false;
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             if (this.shiftIsPressed) {
