@@ -6,6 +6,7 @@ describe('SquareHelperService', () => {
     let service: SquareHelperService;
 
     beforeEach(() => {
+        // tslint:disable:no-magic-numbers
         TestBed.configureTestingModule({});
         service = TestBed.inject(SquareHelperService);
     });

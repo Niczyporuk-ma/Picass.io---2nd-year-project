@@ -1,6 +1,6 @@
 export class Constant {
-    static DEFAULT_WIDTH = 1000;
-    static DEFAULT_HEIGHT = 800;
-    static MIN_HEIGH = 250;
-    static MIN_WIDTH = 250;
+    static DEFAULT_WIDTH: number = 1000;
+    static DEFAULT_HEIGHT: number = 800;
+    static MIN_HEIGH: number = 250;
+    static MIN_WIDTH: number = 250;
 }

@@ -9,12 +9,41 @@
     height: 250px;
 }
 
+.color-tool{
+    z-index: 3;
+    position: relative;
+    background-color: rgba(83, 101, 119);
+    padding: 8px;
+    margin-right: -17px;
+}
+
 .input-wrapper {
     margin-top: 16px;
     display: flex;
     border-radius: 1px;
     border: 1px solid rgb(220, 220, 220);
     padding: 8px;
+    height: 32px;
+    justify-content: center;
+}
+
+.input-wrapper {
+    margin-top: 16px;
+    display: flex;
+    border-radius: 1px;
+    border: 1px solid rgb(220, 220, 220);
+    padding: 8px;
+    height: 32px;
+    justify-content: center;
+}
+
+.ten-last {
+    margin-top: 16px;
+    display: flex;
+    border-radius: 1px;
+    padding: 8px;
+    padding-left: 0px;
+    padding-right: 0px;
     height: 32px;
     justify-content: center;
 }
@@ -46,4 +75,8 @@
     flex: 1;
     font-family: 'Helvetica';
     line-height: 32px;
+}
+
+mat-card{
+    background-color: rgba(83, 101, 119);
 }

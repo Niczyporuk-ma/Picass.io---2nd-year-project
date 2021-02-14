@@ -1,7 +1,9 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { MouseButton } from '@app/enums/enums';
 import { ColorService } from '@app/services/tools/color.service';
-import { MouseButton } from '@app/services/tools/pencil-service';
+const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
+
 @Component({
     selector: 'app-color-palette',
     templateUrl: './color-palette.component.html',
@@ -95,6 +97,18 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            if (!this.colorService.contains(this.getColorAtPosition(evt.offsetX, evt.offsetY))) {
+                this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
+                    this.colorService.tenLastUsedColors.dequeue();
+                }
+            } else {
+                this.colorService.tenLastUsedColors.remove(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
+                    this.colorService.tenLastUsedColors.dequeue();
+                }
+            }
             this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
         }
     }
@@ -105,6 +119,18 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
         this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+        if (!this.colorService.contains(this.getColorAtPosition(evt.offsetX, evt.offsetY))) {
+            this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
+                this.colorService.tenLastUsedColors.dequeue();
+            }
+        } else {
+            this.colorService.tenLastUsedColors.remove(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
+                this.colorService.tenLastUsedColors.dequeue();
+            }
+        }
         this.colorService.secondaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
         return false;
     }

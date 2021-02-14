@@ -1,11 +1,17 @@
 import { TestBed } from '@angular/core/testing';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from './tool-manager.service';
 
 describe('ToolManagerService', () => {
     let service: ToolManagerService;
+    let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        // tslint:disable:no-magic-numbers
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
+        TestBed.configureTestingModule({
+            providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
+        });
         service = TestBed.inject(ToolManagerService);
     });
 
@@ -15,7 +21,7 @@ describe('ToolManagerService', () => {
 
     // source : https://stackoverflow.com/questions/52091882/angular-unit-testing-subject
     it(' setTool should call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
+        const nextSpy = spyOn(service.currentToolChange, 'next').and.stub();
         service.setTool(service.lineService);
         expect(nextSpy).toHaveBeenCalled();
     });
@@ -40,47 +46,41 @@ describe('ToolManagerService', () => {
         expect(service.currentTool).toEqual(service.rectangleService);
     });
 
-    /*it(' setPencilService should  call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
-        service.setPencilService();
-        expect(nextSpy).toHaveBeenCalled();
+    it(' setTool should call setColors', () => {
+        const setColorSpy = spyOn(service.eraserService, 'setColors');
+        service.setTool(service.eraserService);
+        expect(setColorSpy).toHaveBeenCalled();
     });
 
-    it(' setEraserService should call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
-        service.setEraserService();
-        expect(nextSpy).toHaveBeenCalled();
+    it(' clearArrays should call clearCanvas twice when the client has confirmed his choice to start a new drawing', () => {
+        spyOn(window, 'confirm').and.returnValue(true);
+        drawingServiceSpy.drawingStarted = true;
+        service.clearArrays();
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
     });
 
-    it(' setLineService should call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
-        service.setLineService();
-        expect(nextSpy).toHaveBeenCalled();
+    it(' clearArrays should not call clearCanvaswhen the client has not confirmed his choice to start a new drawing', () => {
+        spyOn(window, 'confirm').and.returnValue(false);
+        drawingServiceSpy.drawingStarted = true;
+        service.clearArrays();
+        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
-    it(' setRectangleService should call the next() method to set the Subject', () => {
-        const nextSpy: jasmine.Spy<any> = spyOn<any>(service.currentToolChange, 'next').and.stub();
-        service.setRectangleService();
-        expect(nextSpy).toHaveBeenCalled();
+    it(' clearArrays should call clearArrays for every tool when the client has confirmed his choice to start a new drawing', () => {
+        spyOn(window, 'confirm').and.returnValue(true);
+
+        for (const tool of service.tools) {
+            drawingServiceSpy.drawingStarted = true;
+            const clearArraySpy = spyOn(tool, 'clearArrays');
+            service.clearArrays();
+            expect(clearArraySpy).toHaveBeenCalled();
+        }
     });
 
-    it(' setPencilService should set the current Tool to Pencil', () => {
-        service.setPencilService();
-        expect(service.currentTool).toEqual(service.pencilService);
+    it(' clearArrays should set drawingStarted to false when the client has confirmed his choice to start a new drawing ', () => {
+        spyOn(window, 'confirm').and.returnValue(true);
+        drawingServiceSpy.drawingStarted = true;
+        service.clearArrays();
+        expect(drawingServiceSpy.drawingStarted).toEqual(false);
     });
-
-    it(' setEraserService should set the current Tool to Eraser', () => {
-        service.setEraserService();
-        expect(service.currentTool).toEqual(service.eraserService);
-    });
-
-    it(' setLineService should set the current Tool to Line', () => {
-        service.setLineService();
-        expect(service.currentTool).toEqual(service.lineService);
-    });
-
-    it(' setRectangleService should set the current Tool to Rectangle', () => {
-        service.setRectangleService();
-        expect(service.currentTool).toEqual(service.rectangleService);
-    })*/
 });

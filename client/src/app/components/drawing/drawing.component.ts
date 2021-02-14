@@ -61,6 +61,11 @@ export class DrawingComponent implements AfterViewInit {
             this.shortcutKeyboardManager.onKeyPress(event.key);
         });
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
+        window.addEventListener('keydown', (event: KeyboardEvent) => {
+            if (event.key === 'Control') {
+                this.shortcutKeyboardManager.waitForOPress();
+            }
+        });
     }
 
     @HostListener('window:mousemove', ['$event'])
@@ -75,6 +80,7 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
         this.clickCount++;
+        // changement
         if (this.clickCount === 1) {
             setTimeout(() => {
                 if (this.clickCount === 1) {

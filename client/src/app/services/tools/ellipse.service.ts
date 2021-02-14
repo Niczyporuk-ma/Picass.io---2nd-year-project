@@ -1,25 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { ColorService } from './color.service';
-import { MouseButton } from './pencil-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    private startingPoint: Vec2;
-    private endPoint: Vec2;
+    startingPoint: Vec2;
+    endPoint: Vec2;
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     border: boolean = true;
     eventTest: boolean;
+    icon = faCircle;
 
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '2';
+        this.index = 4;
         this.localShortcuts = new Map([['Shift', this.onShift]]);
         this.toolStyles = {
             primaryColor: 'white',
@@ -27,6 +30,10 @@ export class EllipseService extends Tool {
             fill: false,
             secondaryColor: 'black',
         };
+    }
+
+    clearArrays(): void {
+        this.currentLine = [];
     }
 
     // TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
@@ -84,7 +91,7 @@ export class EllipseService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -94,7 +101,7 @@ export class EllipseService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);

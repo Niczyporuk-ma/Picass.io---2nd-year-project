@@ -22,6 +22,7 @@ export abstract class Tool {
     currentCommand: () => void;
     history: Vec2[][];
     toolStyles: ToolStyles;
+    isActive: boolean = false;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -67,4 +68,6 @@ export abstract class Tool {
         this.toolStyles.primaryColor = colorService.primaryColor;
         this.toolStyles.secondaryColor = colorService.secondaryColor;
     }
+
+    clearArrays(): void {}
 }

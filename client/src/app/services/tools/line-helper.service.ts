@@ -1,31 +1,54 @@
 import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 
-const POSSIBLE_ANGLES: number[] = [0, 45, 90, 135, 180, 225, 270, 315];
+const ZERO = 0;
+const FORT_FIVE = 45;
+const NINETY = 90;
+const ONE_THIRTY_FIVE = 135;
+const ONE_EIGHTY = 180;
+const TWO_TWENTY_FIVE = 225;
+const TWO_SEVENTY = 270;
+const THREE_FIFTEEN = 315;
+const THREE_SIXTY = 360;
+export const POSSIBLE_ANGLES: number[] = [
+    ZERO,
+    FORT_FIVE,
+    NINETY,
+    ONE_THIRTY_FIVE,
+    ONE_EIGHTY,
+    TWO_TWENTY_FIVE,
+    TWO_SEVENTY,
+    THREE_FIFTEEN,
+    THREE_SIXTY,
+];
 const ANGLE_ADJUSTER_180 = 180;
 const ANGLE_ADJUSTER_360 = 360;
 const PIXEL_DISTANCE = 20;
-const TO_RADIAN = Math.PI / 180;
+const TO_RADIAN = Math.PI / ONE_EIGHTY;
+const BIG_NUMBER = 999;
 
 @Injectable({
     providedIn: 'root',
 })
 export class LineHelperService {
     closestValidAngle(start: Vec2, end: Vec2): number {
-        let closestValid = 999;
-
+        let closestValid = BIG_NUMBER;
+        // a et b?
         const a: number = Math.abs(start.x - end.x);
         const b: number = Math.abs(start.y - end.y);
-        let angle: number = Math.atan2(b, a) * (180 / Math.PI);
+        // meilleur nom pour angle
+        let angle: number = Math.atan2(b, a) * (ONE_EIGHTY / Math.PI);
+
         angle = this.angleQuadrantConverter(start, end, angle);
-        // console.log('current : ' + angle);
+        // a enlever
+
         for (const angles of POSSIBLE_ANGLES) {
             if (Math.abs(angle - angles) < Math.abs(angle - closestValid)) {
                 closestValid = angles;
             }
         }
 
-        return closestValid;
+        return closestValid === THREE_SIXTY ? 0 : closestValid;
     }
 
     closestAngledPoint(start: Vec2, end: Vec2): Vec2 {
@@ -39,6 +62,7 @@ export class LineHelperService {
     }
 
     distanceUtil(start: Vec2, end: Vec2): number {
+        // a et b?
         const a = Math.abs(start.x - end.x);
         const b = Math.abs(start.y - end.y);
 
@@ -47,6 +71,7 @@ export class LineHelperService {
 
     angleQuadrantConverter(start: Vec2, end: Vec2, angle: number): number {
         if (start.x <= end.x && start.y >= end.y) {
+            // inutile
             angle = angle;
             return angle;
         } else if (start.x <= end.x && start.y <= end.y) {
@@ -62,19 +87,13 @@ export class LineHelperService {
     }
 
     shiftAngleCalculator(start: Vec2, end: Vec2): boolean {
+        // a et b?
         const a: number = Math.abs(start.x - end.x);
         const b: number = Math.abs(start.y - end.y);
-        let angle: number = Math.atan2(b, a) * (180 / Math.PI);
+        let angle: number = Math.atan2(b, a) * (ONE_EIGHTY / Math.PI);
 
         angle = this.angleQuadrantConverter(start, end, angle);
-        // console.log(angle);
-        if (angle % 45 === 0) {
-            // console.log('true');
-            return true;
-        } else {
-            // console.log('false');
-            return false;
-        }
+        return angle % FORT_FIVE === 0;
     }
 
     pixelDistanceUtil(start: Vec2, end: Vec2): boolean {

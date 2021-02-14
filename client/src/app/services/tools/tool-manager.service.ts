@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineServiceService } from '@app/services/tools/line-service.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { Subject } from 'rxjs';
@@ -22,6 +23,8 @@ export class ToolManagerService {
     pencilHistory: Vec2[][] = [];
     rectangleHistory: Vec2[][] = [];
     widthValue: number = 1;
+    blockEventListener: boolean = false;
+    allowKeyPressEvents: boolean = true;
 
     constructor(
         public pencilService: PencilService,
@@ -30,15 +33,30 @@ export class ToolManagerService {
         public eraserService: EraserService,
         public ellipseService: EllipseService,
         public colorService: ColorService,
+        public drawingService: DrawingService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
         this.toolBoxShortcuts = new Map([
-            [this.lineService.shortcut, this.tools[1]],
+            [this.lineService.shortcut, this.tools[this.lineService.index]],
             [this.rectangleService.shortcut, this.tools[this.rectangleService.index]],
             [this.eraserService.shortcut, this.tools[this.eraserService.index]],
             [this.pencilService.shortcut, this.tools[this.pencilService.index]],
+            [this.ellipseService.shortcut, this.tools[this.ellipseService.index]],
         ]);
+    }
+    // A TESTER
+    clearArrays(): void {
+        if (this.drawingService.drawingStarted) {
+            if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
+                for (const tool of this.tools) {
+                    tool.clearArrays();
+                }
+                this.drawingService.drawingStarted = false;
+                this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            }
+        }
     }
 
     // getters
@@ -51,24 +69,4 @@ export class ToolManagerService {
         this.currentToolChange.next(tool);
         this.currentTool.setColors(this.colorService);
     }
-
-    // setPencilService(): void {
-    //     this.currentToolChange.next(this.pencilService);
-    // }
-
-    // setLineService(): void {
-    //     this.currentToolChange.next(this.lineService);
-    // }
-
-    // setRectangleService(): void {
-    //     this.currentToolChange.next(this.rectangleService);
-    // }
-
-    // setEraserService(): void {
-    //     this.currentToolChange.next(this.eraserService);
-    // }
-
-    // setEllipseService(): void {
-    //     this.currentToolChange.next(this.ellipseService);
-    // }
 }

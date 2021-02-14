@@ -1,8 +1,8 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { Constant } from '@app/constants/general-constants-store';
+import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from '@app/services/tools/pencil-service';
 
 @Injectable({
     providedIn: 'root',
@@ -19,27 +19,19 @@ export class ResizeService {
 
     constructor(private drawingService: DrawingService) {}
 
-    ngAfterViewInit(): void {}
-
     startResize(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         this.drawingService.resizeActive = true;
     }
 
     resize(event: MouseEvent, canvas: DOMRect): void {
-        console.log('resize');
-
         this.drawingService.resizeActive = true;
 
         if (this.mouseDown) {
-            console.log('resize mouseDown');
-
             if (this.isBottom) {
                 this.preview.y = event.pageY >= Constant.MIN_HEIGH ? event.pageY : Constant.MIN_HEIGH;
-                console.log('resize mouseDown isBottom');
             } else if (this.isSide) {
                 this.preview.x = event.pageX - (canvas.left + window.scrollY) >= Constant.MIN_WIDTH ? event.pageX - canvas.left : Constant.MIN_WIDTH;
-                console.log(canvas.left + '-' + window.scrollX);
             } else if (this.isCorner) {
                 this.preview.y = event.pageY >= Constant.MIN_HEIGH ? event.pageY : Constant.MIN_HEIGH;
                 this.preview.x = event.pageX - (canvas.left + window.scrollY) >= Constant.MIN_WIDTH ? event.pageX - canvas.left : Constant.MIN_WIDTH;
@@ -66,8 +58,7 @@ export class ResizeService {
         this.drawingService.resizeActive = false;
     }
 
-    // TODO: BUG quand full ellipse in color
-    // partially inspired by the answer dating from Nov 10 '10 at 14:31
+    // inspired by the answer dating from Nov 10 '10 at 14:31
     // https://stackoverflow.com/questions/4137372/display-canvas-image-from-one-canvas-to-another-canvas-using-base64
     copyCanvas(baseCanvas: ElementRef<HTMLCanvasElement>): void {
         // save the old canvas temporarly as an image and then redrow it
