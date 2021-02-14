@@ -87,10 +87,8 @@ export class RectangleService extends Tool {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
                 this.currentLine = [this.startingPoint, this.endPoint];
+            } 
                 this.drawLine(this.drawingService.baseCtx, this.currentLine);
-            } else {
-                this.drawLine(this.drawingService.baseCtx, this.currentLine);
-            }
         }
         this.mouseDown = false;
     }
@@ -100,21 +98,16 @@ export class RectangleService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             if (this.shiftIsPressed) {
+                this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
                 if (this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
                     this.currentLine = [this.startingPoint, this.endPoint];
-                    this.drawLine(this.drawingService.previewCtx, this.currentLine);
-                } else {
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
-                    this.drawLine(this.drawingService.previewCtx, this.currentLine);
                 }
             } else {
                 // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.endPoint];
-                this.drawLine(this.drawingService.previewCtx, this.currentLine);
             }
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawLine(this.drawingService.previewCtx, this.currentLine);
         }
     }
 

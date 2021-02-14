@@ -112,6 +112,23 @@ describe('EllipseService', () => {
         expect(drawEllipseSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseMove should call drawRectangle if shift is pressed',()=>{
+        const drawRectangleSpy = spyOn(service,'drawRectangle').and.stub();
+        service.mouseDown = true;
+        service.shiftIsPressed = true;
+        service.startingPoint = {x : 0, y :0};
+        service.endPoint = {x :1, y :1};
+        service.onMouseMove(mouseEvent);
+        expect(drawRectangleSpy).toHaveBeenCalled();
+    })
+
+    it('setShiftIsPressed does nothing if the key isnt shift', ()=>{
+        const wrongEvent = new KeyboardEvent('keydown', {key : 'A'});
+        service.shiftIsPressed = false;
+        service.setShiftIfPressed(wrongEvent);
+        expect(service.shiftIsPressed).toBeFalse();
+    })
+
     it('setShiftPressed should have called both drawEllipse and drawRectangle', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
@@ -149,11 +166,38 @@ describe('EllipseService', () => {
         expect(ellipseSpyObject.ellipse).toHaveBeenCalledWith(5, 4.5, 1.5, 4, Math.PI / 2, 0, 2 * Math.PI);
     });
 
+    it('drawEllipse should set strokeStyle as primaryColor if border is false', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        drawServiceSpy.baseCtx.strokeStyle = "blue";
+        service.border = false;
+        service.drawEllipse(drawServiceSpy.baseCtx, service.startingPoint, service.endPoint);
+        expect(drawServiceSpy.baseCtx.strokeStyle).toEqual('#000000');
+    })
+
+    it('drawEllipse should call setLineDash and fill if fill is true', () => {
+        const setLineDashSpy = spyOn(drawServiceSpy.baseCtx, 'setLineDash').and.stub();
+        const fillSpy = spyOn(drawServiceSpy.baseCtx, 'fill').and.stub();
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        service.toolStyles.fill = true;
+        service.drawEllipse(drawServiceSpy.baseCtx, service.startingPoint, service.endPoint);
+        expect(setLineDashSpy).toHaveBeenCalled();
+        expect(fillSpy).toHaveBeenCalled();
+    })
+
     it('onShift sets eventTest true', () => {
         service.eventTest = false;
         service.onShift();
         expect(service.eventTest).toEqual(true);
     });
+
+    it('onShift doesnt add event listeners if eventTest is true', () =>{
+        service.eventTest = true;
+        const eventListenerSpy = spyOn(window, 'addEventListener').and.stub();
+        service.onShift();
+        expect(eventListenerSpy).not.toHaveBeenCalled();
+    })
 
     it('setShiftNonPressed sets shiftIsPressed and eventTest to false when mouseDown is true', () => {
         service.startingPoint = { x: 0, y: 0 };
@@ -186,4 +230,9 @@ describe('EllipseService', () => {
         expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
         expect(rectangleSpyObject.moveTo).toHaveBeenCalledTimes(4);
     });
+
+    it('changeWidth should change the width correctly', ()=>{
+        service.changeWidth(10);
+        expect(service.toolStyles.lineWidth).toEqual(10);
+    })
 });
