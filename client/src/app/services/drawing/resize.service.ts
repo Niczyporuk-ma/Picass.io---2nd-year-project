@@ -54,7 +54,7 @@ export class ResizeService {
             this.isCorner = false;
         }
         this.mouseDown = false;
-        this.relocateAnchors(event, canvasSize);
+        this.relocateAnchors(canvasSize);
         this.drawingService.resizeActive = false;
     }
 
@@ -71,7 +71,7 @@ export class ResizeService {
             newCtx.drawImage(imageTemp, 0, 0);
         };
     }
-    relocateAnchors(event: MouseEvent, canvasSize: Vec2): void {
+    relocateAnchors(canvasSize: Vec2): void {
         this.sideAnchorPosition.y = canvasSize.y / 2;
         this.sideAnchorPosition.x = canvasSize.x;
         this.bottomAnchorPosition.y = canvasSize.y;
