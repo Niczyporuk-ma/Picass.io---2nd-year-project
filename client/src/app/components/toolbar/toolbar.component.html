@@ -30,7 +30,8 @@
     </div>
 
     <div class="widthSlider">
-        <mat-card> Épaisseur:
+        <mat-card>
+            Épaisseur:
             <mat-slider
                 min="1"
                 max="50"
@@ -64,7 +65,8 @@
 
     <br />
     <div class="junctionRadiusSlider" *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
-        <mat-card>Diamètre: 
+        <mat-card
+            >Diamètre:
             <mat-slider
                 min="2"
                 max="50"
@@ -78,4 +80,5 @@
             {{ this.toolManager.lineService.currentDiameter }}
             <br />
         </mat-card>
+    </div>
 </div>
