@@ -13,24 +13,24 @@
     <button
         class="resizer"
         id="bottomAnchor"
-        [style.top.px]="this.resizeService.bottomAnchorPosition.y"
-        [style.left.px]="this.resizeService.bottomAnchorPosition.x"
+        [style.top.px]="this.resizeService.bottomHandle.y"
+        [style.left.px]="this.resizeService.bottomHandle.x"
         (mousedown)="this.resizeService.startResize($event); this.resizeService.isBottom = true"
     ></button>
 
     <button
         class="resizer"
         id="sideAnchor"
-        [style.top.px]="this.resizeService.sideAnchorPosition.y"
-        [style.left.px]="this.resizeService.sideAnchorPosition.x"
+        [style.top.px]="this.resizeService.sideHandle.y"
+        [style.left.px]="this.resizeService.sideHandle.x"
         (mousedown)="this.resizeService.startResize($event); this.resizeService.isSide = true"
     ></button>
 
     <button
         class="resizer"
         id="cornerAnchor"
-        [style.top.px]="this.resizeService.cornerAnchorPosition.y"
-        [style.left.px]="this.resizeService.cornerAnchorPosition.x"
+        [style.top.px]="this.resizeService.cornerHandle.y"
+        [style.left.px]="this.resizeService.cornerHandle.x"
         (mousedown)="this.resizeService.startResize($event); this.resizeService.isCorner = true"
     ></button>
 </div>

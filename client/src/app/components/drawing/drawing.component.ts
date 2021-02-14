@@ -46,9 +46,9 @@ export class DrawingComponent implements AfterViewInit {
         this.shortcutKeyboardManager = keyboardManager;
         this.toolManager.currentToolChange.subscribe((value) => (this.currentTool = value));
         this.currentTool = this.toolManager.currentTool;
-        this.resizeService.bottomAnchorPosition = { x: this.canvasSize.x / 2, y: this.canvasSize.y };
-        this.resizeService.sideAnchorPosition = { x: this.canvasSize.x, y: this.canvasSize.y / 2 };
-        this.resizeService.cornerAnchorPosition = { x: this.canvasSize.x, y: this.canvasSize.y };
+        this.resizeService.bottomHandle = { x: this.canvasSize.x / 2, y: this.canvasSize.y };
+        this.resizeService.sideHandle = { x: this.canvasSize.x, y: this.canvasSize.y / 2 };
+        this.resizeService.cornerHandle = { x: this.canvasSize.x, y: this.canvasSize.y };
     }
 
     ngAfterViewInit(): void {

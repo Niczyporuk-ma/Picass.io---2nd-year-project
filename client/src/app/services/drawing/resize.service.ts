@@ -12,9 +12,9 @@ export class ResizeService {
     isCorner: boolean = false;
     isSide: boolean = false;
     isBottom: boolean = false;
-    bottomAnchorPosition: Vec2;
-    sideAnchorPosition: Vec2;
-    cornerAnchorPosition: Vec2;
+    bottomHandle: Vec2;
+    sideHandle: Vec2;
+    cornerHandle: Vec2;
     preview: Vec2 = { x: Constant.DEFAULT_WIDTH, y: Constant.DEFAULT_HEIGHT };
 
     constructor(private drawingService: DrawingService) {}
@@ -25,8 +25,6 @@ export class ResizeService {
     }
 
     resize(event: MouseEvent, canvas: DOMRect): void {
-        this.drawingService.resizeActive = true;
-
         if (this.mouseDown) {
             if (this.isBottom) {
                 this.preview.y = event.pageY >= Constant.MIN_HEIGH ? event.pageY : Constant.MIN_HEIGH;
@@ -54,7 +52,7 @@ export class ResizeService {
             this.isCorner = false;
         }
         this.mouseDown = false;
-        this.relocateAnchors(canvasSize);
+        this.relocateHandles(canvasSize);
         this.drawingService.resizeActive = false;
     }
 
@@ -71,12 +69,12 @@ export class ResizeService {
             newCtx.drawImage(imageTemp, 0, 0);
         };
     }
-    relocateAnchors(canvasSize: Vec2): void {
-        this.sideAnchorPosition.y = canvasSize.y / 2;
-        this.sideAnchorPosition.x = canvasSize.x;
-        this.bottomAnchorPosition.y = canvasSize.y;
-        this.bottomAnchorPosition.x = canvasSize.x / 2;
-        this.cornerAnchorPosition.y = canvasSize.y;
-        this.cornerAnchorPosition.x = canvasSize.x;
+    relocateHandles(canvasSize: Vec2): void {
+        this.sideHandle.y = canvasSize.y / 2;
+        this.sideHandle.x = canvasSize.x;
+        this.bottomHandle.y = canvasSize.y;
+        this.bottomHandle.x = canvasSize.x / 2;
+        this.cornerHandle.y = canvasSize.y;
+        this.cornerHandle.x = canvasSize.x;
     }
 }
