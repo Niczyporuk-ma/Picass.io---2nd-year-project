@@ -92,7 +92,7 @@ export class DrawingComponent implements AfterViewInit {
         this.currentTool.onMouseDown(event);
     }
 
-    @HostListener('mouseup', ['$event'])
+    @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         if (this.resizeService.mouseDown) {
             this.resizeService.stopResize(event, this.canvasSize, this.baseCanvas);

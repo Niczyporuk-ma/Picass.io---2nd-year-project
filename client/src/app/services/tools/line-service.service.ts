@@ -76,7 +76,7 @@ export class LineServiceService extends Tool {
         }
         window.removeEventListener('keydown', this.setShiftIsPressed);
         this.eventTest = false;
-    }
+    };
 
     setShiftNonPressed = (e?: KeyboardEvent) => {
         if ((e != undefined && e.key === 'Shift') || this.calledFromMouseClick) {
@@ -89,7 +89,7 @@ export class LineServiceService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.mousePosition]);
             }
         }
-    }
+    };
 
     onShift(): void {
         if (!this.eventTest) {
@@ -133,9 +133,11 @@ export class LineServiceService extends Tool {
             } else {
                 // this.endPoint = this.angledEndPoint;
             }
-            this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
-            this.currentLine.push([this.startingPoint, this.endPoint]);
-            this.startingPoint = this.endPoint;
+            if (!this.drawingService.resizeActive) {
+                this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
+                this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.startingPoint = this.endPoint;
+            }
             if (this.shiftIsPressed) {
                 this.calledFromMouseClick = true;
                 this.endPoint = this.getPositionFromMouse(event);

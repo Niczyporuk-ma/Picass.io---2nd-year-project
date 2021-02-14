@@ -55,7 +55,7 @@ export class EraserService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.cursorEffect(this.drawingService.previewCtx, this.findCoordinate());
 
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx);

@@ -48,9 +48,6 @@ export class ResizeService {
     }
 
     stopResize(event: MouseEvent, canvasSize: Vec2, baseCanvas: ElementRef<HTMLCanvasElement>): void {
-        debugger;
-        console.log('stop resize');
-
         this.copyCanvas(baseCanvas);
 
         if (this.isBottom) {
@@ -73,7 +70,6 @@ export class ResizeService {
     // partially inspired by the answer dating from Nov 10 '10 at 14:31
     // https://stackoverflow.com/questions/4137372/display-canvas-image-from-one-canvas-to-another-canvas-using-base64
     copyCanvas(baseCanvas: ElementRef<HTMLCanvasElement>): void {
-        console.log('copy canvas called');
         // save the old canvas temporarly as an image and then redrow it
         const imageTemp = new Image();
         imageTemp.src = baseCanvas.nativeElement.toDataURL();
