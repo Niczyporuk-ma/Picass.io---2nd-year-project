@@ -26,6 +26,11 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     private mousedown: boolean = false;
     private contextmenu: boolean = false;
     colorService: ColorService;
+    isConfirmed: boolean = false;
+    public mouseEvent: MouseEvent;
+    public showConfirmButton: boolean = false;
+    public primaryColorConfirm: boolean = false;
+    public secondaryColorConfirm: boolean = false;
 
     selectedPosition: { x: number; y: number };
 
@@ -90,52 +95,66 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.mousedown = false;
     }
 
-    onMouseDown(evt: MouseEvent): void {
+    onLeftClickDown(evt: MouseEvent): void { //PROBLEM WITH PREVIEW STILL
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = false;
         if (this.contextmenu === false && this.mousedown === true) {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+            if(this.isConfirmed){
+                console.log(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                if(!this.colorService.contains(this.getColorAtPosition(evt.offsetX, evt.offsetY))){
+                    this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                    if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
+                    this.colorService.tenLastUsedColors.dequeue();
+                    }
+                }else {
+                    this.colorService.tenLastUsedColors.remove(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                    this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+                    if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
+                        this.colorService.tenLastUsedColors.dequeue();
+                    }
+                }
+                this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
+                this.resetBoolsAfterDecision();
+            }
+
+        }
+        //this.mousedown = false;
+    }
+
+    resetBoolsAfterDecision(): void{
+        this.isConfirmed = false;
+        this.showConfirmButton = false;
+        this.primaryColorConfirm = false;
+        this.secondaryColorConfirm = false;
+    }
+
+    onRightClickDown(evt: MouseEvent): boolean { //PROBLEM WITH PREVIEW STILL
+        this.mousedown = false;
+        this.contextmenu = true;
+        this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
+        this.draw();
+        this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+        if(this.isConfirmed){
+            console.log(this.getColorAtPosition(evt.offsetX, evt.offsetY));
             if(!this.colorService.contains(this.getColorAtPosition(evt.offsetX, evt.offsetY))){
                 this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
                 if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
-                    this.colorService.tenLastUsedColors.dequeue();
+                this.colorService.tenLastUsedColors.dequeue();
                 }
-            }
-            else {
+            }else {
                 this.colorService.tenLastUsedColors.remove(this.getColorAtPosition(evt.offsetX, evt.offsetY));
                 this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
                 if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
                     this.colorService.tenLastUsedColors.dequeue();
                 }
             }
-            console.log("len: " + this.colorService.tenLastUsedColors.length + " head: " + this.colorService.tenLastUsedColors.head);
-            this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
+            this.colorService.secondaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
+            this.resetBoolsAfterDecision();
+            return false;
         }
-    }
-
-    onRightClickDown(evt: MouseEvent): boolean {
-        this.mousedown = false;
-        this.contextmenu = true;
-        this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
-        this.draw();
-        this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-        if(!this.colorService.contains(this.getColorAtPosition(evt.offsetX, evt.offsetY))){
-            this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-            if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
-                this.colorService.tenLastUsedColors.dequeue();
-            }
-        }
-        else {
-            this.colorService.tenLastUsedColors.remove(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-            this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-            if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
-                this.colorService.tenLastUsedColors.dequeue();
-            }
-        }
-        console.log("len: " + this.colorService.tenLastUsedColors.length + " head: " + this.colorService.tenLastUsedColors.head);
-        this.colorService.secondaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY); // add opacity
         return false;
     }
 
@@ -161,5 +180,11 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     getColorAtPositionWithOpacity(x: number, y: number): string {
         const imageData = this.ctx.getImageData(x, y, 1, 1).data;
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + this.colorService.opacity + ')';
+    }
+
+    paletteClickHandler(evt: MouseEvent): void{
+        this.mouseEvent = evt;
+        this.showConfirmButton = true;
+        console.log(this.showConfirmButton);
     }
 }

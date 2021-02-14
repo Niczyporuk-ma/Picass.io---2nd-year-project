@@ -93,7 +93,6 @@ export class ColorPickerComponent {
             this.colorService.secondaryColor = this.color;
             this.colorService.setSecondaryColorWithOpacity(this.colorService.opacity);
         }
-        console.log()
     }
 
     adjustGreen(greenIntensity: KeyboardEvent): void {
@@ -140,13 +139,6 @@ export class ColorPickerComponent {
 
     }
 
-
-
-
-
-
-
-
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(evt: MouseEvent): void {
         this.mousedown = false;
@@ -159,11 +151,10 @@ export class ColorPickerComponent {
         if (this.contextmenu === false && this.mousedown === true) {
             this.colorEmitted.emit(color);
             this.colorService.tenLastUsedColors.remove(color);
-            this.colorService.tenLastUsedColors.append(colorTemp);
+            this.colorService.tenLastUsedColors.append(colorTemp); //TODO: BUGS WHEN THERES ONLY 1 ELEMENT IN TEN LAST
             if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
                 this.colorService.tenLastUsedColors.dequeue();
             }
-            console.log("len: " + this.colorService.tenLastUsedColors.length + " head: " + this.colorService.tenLastUsedColors.head);
             this.colorService.primaryColor = color; // TODO: MAKE IT WORK WITH CURRENT OPACITY
         }
     }
@@ -174,17 +165,15 @@ export class ColorPickerComponent {
         let colorTemp: string = color;
         this.colorEmitted.emit(color);
         this.colorService.tenLastUsedColors.remove(color);
-        this.colorService.tenLastUsedColors.append(colorTemp);
+        this.colorService.tenLastUsedColors.append(colorTemp); //TODO: BUGS WHEN THERES ONLY 1 ELEMENT IN TEN LAST
         if(this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED){
             this.colorService.tenLastUsedColors.dequeue();
         }
-        console.log("len: " + this.colorService.tenLastUsedColors.length + " head: " + this.colorService.tenLastUsedColors.head);
         this.colorService.secondaryColor = color; // TODO: MAKE IT WORK WITH CURRENT OPACITY
         return false;
     }
 
     emitColor(color: string): void {
-        //const rgbaColor = this.getColorAtPosition(x, y);
         this.colorEmitted.emit(color);
     }
 }

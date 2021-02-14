@@ -48,7 +48,4 @@ export class ColorService {
         }
         return false;
     }
-
-
-    // TODO : faire les 10 derniers couleurs (le bouffer)
 }
