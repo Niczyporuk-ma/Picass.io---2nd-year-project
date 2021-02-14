@@ -29,8 +29,8 @@ export class EllipseService extends Tool {
         };
     }
 
-    //TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
-    //quand on dessine du bas vers le haut, et de droite vers la gauche
+    // TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
+    // quand on dessine du bas vers le haut, et de droite vers la gauche
 
     // TODO: renommer eventTest
     onShift(): void {

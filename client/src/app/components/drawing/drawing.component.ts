@@ -9,7 +9,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
-export const MIN_HEIGH: number = 250;
+export const MIN_HEIGH = 250;
 export const MIN_WIDTH = 250;
 
 @Component({
@@ -100,37 +100,34 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     @HostListener('window:mousemove', ['$event'])
-    resizeCanvas(event: MouseEvent) {
+    resizeCanvas(event: MouseEvent): void {
         if (this.mouseDown) {
             this.resize(event);
-        } else if (!this.mouseDown) {
-            this.stopResize(event);
         }
     }
 
-    startResize(event: MouseEvent) {
+    startResize(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         this.drawingService.resizeActive = true;
     }
 
-    resize(event: MouseEvent) {
+    resize(event: MouseEvent): void {
         this.drawingService.resizeActive = true;
 
         if (this.mouseDown) {
             if (this.isBottom) {
                 this.preview.y = event.pageY >= MIN_HEIGH ? event.pageY : MIN_HEIGH;
             } else if (this.isSide) {
-                this.preview.x =
-                    event.pageX - (this.canvas.left + window.scrollY) >= MIN_WIDTH ? event.pageX - (this.canvas.left + window.scrollY) : MIN_WIDTH;
+                this.preview.x = event.pageX - (this.canvas.left + window.scrollY) >= MIN_WIDTH ? event.pageX - this.canvas.left : MIN_WIDTH;
+                console.log(this.canvas.left + '-' + window.scrollX);
             } else if (this.isCorner) {
                 this.preview.y = event.pageY >= MIN_HEIGH ? event.pageY : MIN_HEIGH;
-                this.preview.x =
-                    event.pageX - (this.canvas.left + window.scrollY) >= MIN_WIDTH ? event.pageX - (this.canvas.left + window.scrollY) : MIN_WIDTH;
+                this.preview.x = event.pageX - (this.canvas.left + window.scrollY) >= MIN_WIDTH ? event.pageX - this.canvas.left : MIN_WIDTH;
             }
         }
     }
 
-    stopResize(event: MouseEvent) {
+    stopResize(event: MouseEvent): void {
         this.copyCanvas(this.baseCanvas);
 
         if (this.isBottom) {
@@ -144,17 +141,17 @@ export class DrawingComponent implements AfterViewInit {
             this.canvasSize.y = this.preview.y;
             this.isCorner = false;
         }
-
         this.mouseDown = false;
         this.relocateAnchors(event);
         this.drawingService.resizeActive = false;
     }
 
-    //TODO: BUG quand full ellipse in color
+    // TODO: BUG quand full ellipse in color
     // partially inspired by the answer dating from Nov 10 '10 at 14:31
-    //https://stackoverflow.com/questions/4137372/display-canvas-image-from-one-canvas-to-another-canvas-using-base64
+    // https://stackoverflow.com/questions/4137372/display-canvas-image-from-one-canvas-to-another-canvas-using-base64
     copyCanvas(baseCanvas: ElementRef<HTMLCanvasElement>): void {
-        //save the old canvas temporarly as an image and then redrow it
+        console.log('copy canvas called');
+        // save the old canvas temporarly as an image and then redrow it
         const imageTemp = new Image();
         imageTemp.src = baseCanvas.nativeElement.toDataURL();
         const newCtx = baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -176,9 +173,9 @@ export class DrawingComponent implements AfterViewInit {
     relocateAnchors(event: MouseEvent): void {
         this.sideAnchorPosition.y = this.canvasSize.y / 2;
         this.sideAnchorPosition.x = this.canvasSize.x;
-        this.bottomAnchorPosition.y = this.canvasSize.y; // + (canvas.top + window.scrollY); // + (canvas.top - window.scrollY); //(canvas.top + window.scrollY);
+        this.bottomAnchorPosition.y = this.canvasSize.y;
         this.bottomAnchorPosition.x = this.canvasSize.x / 2;
-        this.cornerAnchorPosition.y = this.canvasSize.y; //event.pageY - (canvas.top + window.scrollY);
-        this.cornerAnchorPosition.x = this.canvasSize.x; //event.pageX - (canvas.left + window.scrollX);
+        this.cornerAnchorPosition.y = this.canvasSize.y;
+        this.cornerAnchorPosition.x = this.canvasSize.x;
     }
 }

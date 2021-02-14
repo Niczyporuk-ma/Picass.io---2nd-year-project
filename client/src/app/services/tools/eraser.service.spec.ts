@@ -75,7 +75,7 @@ describe('EraserService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
-    //Erreur bizzare ??
+    // Erreur bizzare ??
     it('findCoordinate should return the correct position to create the square effect of the eraser', () => {
         service.toolStyles.lineWidth = 20;
         service.currentPoint = { x: 30, y: 30 };
@@ -104,7 +104,7 @@ describe('EraserService', () => {
         expect(cursorEffectSpy).toHaveBeenCalledTimes(1);
     });
 
-    //Fonctionne pas ->????
+    // Fonctionne pas ->????
     it('drawLine should call moveTo and lineTo one time each', () => {
         service.startingPoint = { x: 10, y: 30 };
         service.currentPoint = { x: 30, y: 10 };
