@@ -5,9 +5,9 @@
         class="color-palette"
         width="250"
         height="250"
-        (mousedown)="paletteClickHandler($event); onLeftClickDown($event); this.primaryColorConfirm = true; this.secondaryColorConfirm = false"
+        (mousedown)="onLeftClickDown($event); paletteClickHandler($event); this.primaryColorConfirm = true; this.secondaryColorConfirm = false"
         (mousemove)="onMouseMove($event)"
-        (contextmenu)="paletteClickHandler($event); onRightClickDown($event); this.secondaryColorConfirm = true; this.primaryColorConfirm = false"
+        (contextmenu)="onRightClickDown($event); paletteClickHandler($event); this.secondaryColorConfirm = true; this.primaryColorConfirm = false"
     >
     </canvas>
     <div *ngIf="this.showConfirmButton">
