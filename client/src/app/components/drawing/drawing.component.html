@@ -1,34 +1,38 @@
 <div id="canvas-container">
     <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height"></canvas>
     <canvas id="previewLayer" #previewCanvas [attr.width]="width" [attr.height]="height"> </canvas>
-
-    <div
-        *ngIf="this.mouseDown"
-        class="preview"
-        [style.height.px]="preview.y"
-        [style.width.px]="preview.x"
+    <button
+        class="resizer"
+        id="bottomAnchor"
+        [style.top.px]="bottomAnchorPosition.y"
+        [style.left.px]="bottomAnchorPosition.x"
+        (mousedown)="startResize($event); this.isBottom = true"
         (mousemove)="resize($event)"
         (mouseup)="stopResize($event)"
-    ></div>
-
-    <button
-        id="bottomAnchor"
-        (mousedown)="startResize($event); this.isBottom = true"
-        [style.top.px]="this.bottomAnchorPosition.y"
-        [style.left.px]="this.bottomAnchorPosition.x"
+        cdkDragLockAxis="y"
+        cdkDrag
     ></button>
 
     <button
+        class="resizer"
         id="sideAnchor"
-        [style.top.px]="this.sideAnchorPosition.y"
-        [style.left.px]="this.sideAnchorPosition.x"
+        [style.top.px]="sideAnchorPosition.y"
+        [style.left.px]="sideAnchorPosition.x"
         (mousedown)="startResize($event); this.isSide = true"
+        (mousemove)="resize($event)"
+        (mouseup)="stopResize($event)"
+        cdkDragLockAxis="x"
+        cdkDrag
     ></button>
 
     <button
+        class="resizer"
         id="cornerAnchor"
-        [style.top.px]="this.cornerAnchorPosition.y"
-        [style.left.px]="this.cornerAnchorPosition.x"
+        [style.top.px]="cornerAnchorPosition.y"
+        [style.left.px]="cornerAnchorPosition.x"
         (mousedown)="startResize($event); this.isCorner = true"
+        (mousemove)="resize($event)"
+        (mouseup)="stopResize($event)"
+        cdkDrag
     ></button>
 </div>
