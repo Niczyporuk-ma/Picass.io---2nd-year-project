@@ -62,6 +62,7 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
         this.clickCount++;
+        //changement
         if (this.clickCount === 1) {
             setTimeout(() => {
                 if (this.clickCount === 1) {
