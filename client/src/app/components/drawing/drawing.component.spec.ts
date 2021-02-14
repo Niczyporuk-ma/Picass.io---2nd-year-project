@@ -10,7 +10,7 @@ class ToolStub extends Tool {}
 const DEFAULT_WIDTH = 1000;
 const DEFAULT_HEIGHT = 800;
 
-fdescribe('DrawingComponent', () => {
+describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let toolStub: ToolStub;

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { faEraser } from '@fortawesome/free-solid-svg-icons';
-import { MouseButton } from './pencil-service';
 
 @Injectable({
     providedIn: 'root',
