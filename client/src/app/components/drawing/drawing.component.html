@@ -2,35 +2,35 @@
     <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height"></canvas>
     <canvas id="previewLayer" #previewCanvas [attr.width]="width" [attr.height]="height"> </canvas>
     <div
-        *ngIf="this.mouseDown"
+        *ngIf="this.resizeService.mouseDown"
         class="preview"
-        [style.height.px]="preview.y"
-        [style.width.px]="preview.x"
-        (mousemove)="resize($event)"
-        (mouseup)="stopResize($event)"
+        [style.height.px]="this.resizeService.preview.y"
+        [style.width.px]="this.resizeService.preview.x"
+        (mousemove)="this.onMouseMove($event)"
+        (mouseup)="this.onMouseUp($event)"
     ></div>
 
     <button
         class="resizer"
         id="bottomAnchor"
-        [style.top.px]="bottomAnchorPosition.y"
-        [style.left.px]="bottomAnchorPosition.x"
-        (mousedown)="startResize($event); this.isBottom = true"
+        [style.top.px]="this.resizeService.bottomAnchorPosition.y"
+        [style.left.px]="this.resizeService.bottomAnchorPosition.x"
+        (mousedown)="this.resizeService.startResize($event); this.resizeService.isBottom = true"
     ></button>
 
     <button
         class="resizer"
         id="sideAnchor"
-        [style.top.px]="sideAnchorPosition.y"
-        [style.left.px]="sideAnchorPosition.x"
-        (mousedown)="startResize($event); this.isSide = true"
+        [style.top.px]="this.resizeService.sideAnchorPosition.y"
+        [style.left.px]="this.resizeService.sideAnchorPosition.x"
+        (mousedown)="this.resizeService.startResize($event); this.resizeService.isSide = true"
     ></button>
 
     <button
         class="resizer"
         id="cornerAnchor"
-        [style.top.px]="cornerAnchorPosition.y"
-        [style.left.px]="cornerAnchorPosition.x"
-        (mousedown)="startResize($event); this.isCorner = true"
+        [style.top.px]="this.resizeService.cornerAnchorPosition.y"
+        [style.left.px]="this.resizeService.cornerAnchorPosition.x"
+        (mousedown)="this.resizeService.startResize($event); this.resizeService.isCorner = true"
     ></button>
 </div>
