@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class DrawingService {
+    resizeActive: boolean = false;
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;

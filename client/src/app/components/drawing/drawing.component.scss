@@ -18,6 +18,12 @@ canvas {
     position: absolute;
 }
 
+.preview {
+    border: 1px dotted red;
+    position: absolute;
+    z-index: 3;
+}
+
 button {
     width: 10px;
     height: 15px;
