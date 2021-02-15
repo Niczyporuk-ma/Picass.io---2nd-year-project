@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
 import { Constant } from '@app/constants/general-constants-store';
 import { ResizeService } from './resize.service';
-
 // export class MockElementRef extends ElementRef {}
 
 describe('ResizeService', () => {
@@ -12,6 +11,7 @@ describe('ResizeService', () => {
     const canvas: DOMRect = { left: 500, right: 1500, top: 0, bottom: 500 } as DOMRect;
     const canvasSize: Vec2 = { x: 500, y: 300 };
     // let baseCanvas: ElementRef<HTMLCanvasElement>;
+    // tslint:disable:no-magic-numbers
 
     mouseEvent = {
         button: 0,

@@ -77,14 +77,14 @@ export class EllipseService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
                 this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
-            } 
-                window.removeEventListener('keydown', this.setShiftIfPressed);
-                window.removeEventListener('keyup', this.setShiftNonPressed);
-                this.eventTest = false;
-                if(!this.mouseDown){
-                    this.drawingService.clearBackground();
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                };
+            }
+            window.removeEventListener('keydown', this.setShiftIfPressed);
+            window.removeEventListener('keyup', this.setShiftNonPressed);
+            this.eventTest = false;
+            if (!this.mouseDown) {
+                this.drawingService.clearBackground();
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            }
         }
     }
 
@@ -105,10 +105,10 @@ export class EllipseService extends Tool {
             this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
             this.drawingService.clearBackground();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            //this.shiftIsPressed = false;
+            // this.shiftIsPressed = false;
             // window.removeEventListener('keyup', this.setShiftNonPressed);
-            //window.removeEventListener('keydown', this.setShiftIfPressed);
-            }
+            // window.removeEventListener('keydown', this.setShiftIfPressed);
+        }
         this.mouseDown = false;
     }
 
