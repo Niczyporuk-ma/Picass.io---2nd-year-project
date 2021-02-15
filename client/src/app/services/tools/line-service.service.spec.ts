@@ -5,7 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineServiceService } from './line-service.service';
 
-describe('LineService', () => {
+fdescribe('LineService', () => {
     let service: LineServiceService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -34,6 +34,7 @@ describe('LineService', () => {
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numers
+        // tslint:disable:max-file-line-count
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
@@ -220,7 +221,7 @@ describe('LineService', () => {
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(redrawCurrentLineSpy).toHaveBeenCalled();
     });
-    it('setShiftIsPressed shouldnt call clearCanvas,redrawCurentLine and drawLine if line is started and shiftAngleCalculator return true', () => {
+    it('setShiftIsPressed shouldnt call clearCanvas, redrawCurrentLine and drawLine if isStarted and shiftAngleCalculator returns true', () => {
         const drawLineSpy = spyOn(service, 'drawLine').and.stub();
         const redrawCurrentLineSpy = spyOn(service, 'redrawCurrentLine').and.stub();
         service.isStarted = true;
@@ -436,12 +437,12 @@ describe('LineService', () => {
 
     it('onDoubleClick should set the endPoint as the starting point of the line if the click is done < 20px from the original point', () => {
         service.isStarted = true;
-        const MOCK_STARTING_POINT = { x: 15, y: 15 };
+        const mockStartingPoint = { x: 15, y: 15 };
         const mockEndingPointSegmentOne = { x: 20, y: 20 };
-        service.currentLine.push([MOCK_STARTING_POINT, mockEndingPointSegmentOne]);
+        service.currentLine.push([mockStartingPoint, mockEndingPointSegmentOne]);
         service.startingPoint = mockEndingPointSegmentOne;
         service.onDoubleClick(mouseEvent);
-        expect(service.endPoint).toEqual(MOCK_STARTING_POINT);
+        expect(service.endPoint).toEqual(mockStartingPoint);
     });
 
     it('onDoubleClick should set endPoint as mouse position if shift isnt pressed', () => {

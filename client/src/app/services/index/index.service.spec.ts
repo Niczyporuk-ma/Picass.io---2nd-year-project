@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Message } from '@common/communication/message';
 import { IndexService } from './index.service';
 
-describe('IndexService', () => {
+fdescribe('IndexService', () => {
     let httpMock: HttpTestingController;
     let service: IndexService;
     let baseUrl: string;

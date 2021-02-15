@@ -118,7 +118,7 @@ fdescribe('DrawingComponent', () => {
         setTimeout(() => {
             expect(onDoubleCLickSpy).toHaveBeenCalled();
             done();
-        }, 1000);
+        }, 5000);
     });
 
     it(' onMouseClick should reset the click count to 0 after processing the event', async (done) => {

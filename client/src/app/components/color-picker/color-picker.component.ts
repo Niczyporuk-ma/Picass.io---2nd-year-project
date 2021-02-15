@@ -1,8 +1,8 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 
 import { Component } from '@angular/core';
+import { MouseButton } from '@app/enums/enums';
 import { ColorService } from '@app/services/tools/color.service';
-import { MouseButton } from '@app/services/tools/pencil-service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({

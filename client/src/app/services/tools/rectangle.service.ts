@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { faSquare } from '@fortawesome/free-regular-svg-icons';
-import { MouseButton } from './pencil-service';
 
 @Injectable({
     providedIn: 'root',

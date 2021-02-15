@@ -1,7 +1,7 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ToolbarComponent } from './toolbar.component';
-
-describe('ToolbarComponent', () => {
+fdescribe('ToolbarComponent', () => {
     // tslint:disable:no-magic-numbers
     let component: ToolbarComponent;
     let fixture: ComponentFixture<ToolbarComponent>;
@@ -9,6 +9,9 @@ describe('ToolbarComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [ToolbarComponent],
+            schemas : [CUSTOM_ELEMENTS_SCHEMA],
+            
+            
         }).compileComponents();
     }));
 
@@ -23,37 +26,37 @@ describe('ToolbarComponent', () => {
     });
 
     it('setRectangleStyle puts fill to true and contour to false when n = 3', () => {
-        component.setRectangleStyle(3);
+        component.setRectangleStyle('1');
         expect(component.toolManager.rectangleService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.rectangleService.contour).toEqual(false);
     });
 
     it('setRectangleStyle puts fill to true and contour to false when n = 4', () => {
-        component.setRectangleStyle(4);
+        component.setRectangleStyle('2');
         expect(component.toolManager.rectangleService.toolStyles.fill).toEqual(false);
         expect(component.toolManager.rectangleService.contour).toEqual(true);
     });
 
     it('setRectangleStyle puts fill to true and contour to true when n = 5', () => {
-        component.setRectangleStyle(5);
+        component.setRectangleStyle('3');
         expect(component.toolManager.rectangleService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.rectangleService.contour).toEqual(true);
     });
 
     it('setEllipseStyle puts fill to true and contour to false when n = 0', () => {
-        component.setEllipseStyle(0);
+        component.setEllipseStyle('1');
         expect(component.toolManager.ellipseService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.ellipseService.border).toEqual(false);
     });
 
     it('setEllipseStyle puts fill to true and contour to false when n = 1', () => {
-        component.setEllipseStyle(1);
+        component.setEllipseStyle('2');
         expect(component.toolManager.ellipseService.toolStyles.fill).toEqual(false);
         expect(component.toolManager.ellipseService.border).toEqual(true);
     });
 
     it('setEllipseStyle puts fill to true and contour to true when anything else than 0 and 1', () => {
-        component.setEllipseStyle(5);
+        component.setEllipseStyle('3');
         expect(component.toolManager.ellipseService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.ellipseService.border).toEqual(true);
     });

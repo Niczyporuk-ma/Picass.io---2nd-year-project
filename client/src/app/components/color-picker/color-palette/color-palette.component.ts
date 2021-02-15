@@ -1,7 +1,7 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { MouseButton } from '@app/enums/enums';
 import { ColorService } from '@app/services/tools/color.service';
-import { MouseButton } from '@app/services/tools/pencil-service';
 const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
 
 @Component({

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from './tool-manager.service';
 
-describe('ToolManagerService', () => {
+fdescribe('ToolManagerService', () => {
     let service: ToolManagerService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 

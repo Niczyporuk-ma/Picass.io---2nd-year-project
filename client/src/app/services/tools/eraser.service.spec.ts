@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from './eraser.service';
 
-describe('EraserService', () => {
+fdescribe('EraserService', () => {
     let service: EraserService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;

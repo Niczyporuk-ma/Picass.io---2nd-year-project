@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ColorService } from './color.service';
 
-describe('ColorService', () => {
+fdescribe('ColorService', () => {
     let service: ColorService;
 
     beforeEach(() => {

@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from './ellipse.service';
 
-describe('EllipseService', () => {
+fdescribe('EllipseService', () => {
     let service: EllipseService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;

@@ -4,6 +4,10 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
 
+const FILL_VALUE  = '1';
+const CONTOUR_VALUE  = '2';
+const BOTH_VALUE  = '3';
+
 @Component({
     selector: 'app-toolbar',
     templateUrl: './toolbar.component.html',
@@ -11,7 +15,6 @@ import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg
 })
 export class ToolbarComponent {
     tools: Tool[];
-    // toolManager: ToolManagerService;
     showAdvanced: boolean = false;
     showPalette: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
@@ -22,20 +25,22 @@ export class ToolbarComponent {
     faCircle = faCircle;
     faPalette = faPalette;
     faPlusSquare = faPlusSquare;
+    
 
     constructor(public toolManager: ToolManagerService) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
     }
 
-    setRectangleStyle(n: number): void {
-        if (n == 3) {
+    setRectangleStyle(n: string): void {
+        
+        if (n  === FILL_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = false;
-        } else if (n == 4) {
+        } else if (n  === CONTOUR_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = false;
             this.toolManager.rectangleService.contour = true;
-        } else if (n == 5) {
+        } else if (n  === BOTH_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = true;
         }
@@ -45,11 +50,11 @@ export class ToolbarComponent {
         this.showPalette = !this.showPalette;
     }
 
-    setEllipseStyle(n: number): void {
-        if (n == 0) {
+    setEllipseStyle(n: string): void {
+        if (n === FILL_VALUE) {
             this.toolManager.ellipseService.toolStyles.fill = true;
             this.toolManager.ellipseService.border = false;
-        } else if (n == 1) {
+        } else if (n === CONTOUR_VALUE) {
             this.toolManager.ellipseService.toolStyles.fill = false;
             this.toolManager.ellipseService.border = true;
         } else {
