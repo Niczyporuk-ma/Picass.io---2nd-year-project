@@ -185,10 +185,8 @@ export class EllipseService extends Tool {
         ctx.setLineDash([]);
 
         if (this.shiftIsPressed) {
-
-            let strt = this.startingPoint;
-            let end = this.squareHelperService.closestSquare([this.startingPoint,this.endPoint]);
-            ctx.arc((strt.x + end.x)/2,(strt.y + end.y)/2,Math.abs((strt.x - end.x)/2), 0, 2*Math.PI);
+            const squareCornerPos = this.squareHelperService.closestSquare([this.startingPoint,this.endPoint]);
+            ctx.arc((this.startingPoint.x + squareCornerPos.x)/2,(this.startingPoint.y + squareCornerPos.y)/2,Math.abs((this.startingPoint.x - squareCornerPos.x)/2), 0, 2*Math.PI);
         } else {
             ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
         }
