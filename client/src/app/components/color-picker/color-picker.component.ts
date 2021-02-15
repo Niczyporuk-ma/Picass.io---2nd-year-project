@@ -146,7 +146,7 @@ export class ColorPickerComponent {
     onLeftClick(evt: MouseEvent, color: string): void {
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = false;
-        let colorTemp: string = color;
+        const colorTemp: string = color;
         if (this.contextmenu === false && this.mousedown === true) {
             if (this.colorService.tenLastUsedColors.length > 1) {
                 this.colorEmitted.emit(color);
@@ -164,7 +164,7 @@ export class ColorPickerComponent {
     onRightClickDown(evt: MouseEvent, color: string): boolean {
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = true;
-        let colorTemp: string = color;
+        const colorTemp: string = color;
         if (this.colorService.tenLastUsedColors.length > 1) {
             this.colorEmitted.emit(color);
             this.colorService.tenLastUsedColors.remove(color);

@@ -7,13 +7,15 @@ import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { ColorService } from './color.service';
 
+const TOOL_INDEX = 4;
+
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
     startingPoint: Vec2;
     endPoint: Vec2;
-    public shiftIsPressed: boolean;
+    shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     border: boolean = true;
     eventTest: boolean;
@@ -22,7 +24,7 @@ export class EllipseService extends Tool {
     constructor(drawingService: DrawingService, public squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '2';
-        this.index = 4;
+        this.index = TOOL_INDEX;
         this.localShortcuts = new Map([['Shift', this.onShift]]);
         this.toolStyles = {
             primaryColor: 'white',
@@ -31,7 +33,6 @@ export class EllipseService extends Tool {
             secondaryColor: 'black',
         };
     }
-
 
     clearArrays(): void {
         this.currentLine = [];
@@ -65,7 +66,7 @@ export class EllipseService extends Tool {
                 );
             }
         }
-    };
+    }
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -80,7 +81,7 @@ export class EllipseService extends Tool {
                 this.shiftIsPressed = false;
             }
         }
-    };
+    }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
@@ -161,7 +162,7 @@ export class EllipseService extends Tool {
     drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         this.setColors(this.colorService);
         this.setStyles();
-        if(ctx === this.drawingService.baseCtx){
+        if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
 
@@ -185,8 +186,14 @@ export class EllipseService extends Tool {
         ctx.setLineDash([]);
 
         if (this.shiftIsPressed) {
-            const squareCornerPos = this.squareHelperService.closestSquare([this.startingPoint,this.endPoint]);
-            ctx.arc((this.startingPoint.x + squareCornerPos.x)/2,(this.startingPoint.y + squareCornerPos.y)/2,Math.abs((this.startingPoint.x - squareCornerPos.x)/2), 0, 2*Math.PI);
+            const squareCornerPos = this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]);
+            ctx.arc(
+                (this.startingPoint.x + squareCornerPos.x) / 2,
+                (this.startingPoint.y + squareCornerPos.y) / 2,
+                Math.abs((this.startingPoint.x - squareCornerPos.x) / 2),
+                0,
+                2 * Math.PI,
+            );
         } else {
             ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
         }

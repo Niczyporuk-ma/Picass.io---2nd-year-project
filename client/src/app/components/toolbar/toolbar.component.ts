@@ -6,7 +6,6 @@ import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
-const BOTH_VALUE = '3';
 
 @Component({
     selector: 'app-toolbar',
@@ -38,7 +37,7 @@ export class ToolbarComponent {
         } else if (n === CONTOUR_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = false;
             this.toolManager.rectangleService.contour = true;
-        } else if (n === BOTH_VALUE) {
+        } else {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = true;
         }
@@ -65,8 +64,8 @@ export class ToolbarComponent {
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
 
-    setLineJunction(n: number): void {
-        if (n == 0) {
+    setLineJunction(n: string): void {
+        if (n === '0') {
             this.toolManager.lineService.hasJunction = false;
         } else {
             this.toolManager.lineService.hasJunction = true;

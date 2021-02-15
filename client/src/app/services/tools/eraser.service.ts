@@ -14,7 +14,7 @@ export class EraserService extends Tool {
     coordinate: Vec2;
     indexValue: number = 3;
     minimumWidth: number = 5;
-    public icon = faEraser;
+    icon = faEraser;
 
     constructor(public drawingService: DrawingService) {
         super(drawingService);

@@ -27,10 +27,10 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     private contextmenu: boolean = false;
     colorService: ColorService;
     isConfirmed: boolean = false;
-    public mouseEvent: MouseEvent;
-    public showConfirmButton: boolean = false;
-    public primaryColorConfirm: boolean = false;
-    public secondaryColorConfirm: boolean = false;
+    mouseEvent: MouseEvent;
+    showConfirmButton: boolean = false;
+    primaryColorConfirm: boolean = false;
+    secondaryColorConfirm: boolean = false;
 
     selectedPosition: { x: number; y: number };
 
@@ -96,7 +96,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     onLeftClickDown(evt: MouseEvent): void {
-        //PROBLEM WITH PREVIEW STILL
+        // PROBLEM WITH PREVIEW STILL
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = false;
         if (this.contextmenu === false && this.mousedown === true) {
@@ -121,7 +121,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
                 this.resetBoolsAfterDecision();
             }
         }
-        //this.mousedown = false;
+        // this.mousedown = false;
     }
 
     resetBoolsAfterDecision(): void {
@@ -133,8 +133,8 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     onRightClickDown(evt: MouseEvent): boolean {
-        //PROBLEM WITH PREVIEW STILL
-        //TODO: PUT getColor... in a variable
+        // PROBLEM WITH PREVIEW STILL
+        // TODO: PUT getColor... in a variable
         this.mousedown = false;
         this.contextmenu = true;
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };

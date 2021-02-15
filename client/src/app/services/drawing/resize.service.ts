@@ -17,7 +17,7 @@ export class ResizeService {
     cornerHandle: Vec2;
     preview: Vec2 = { x: Constant.DEFAULT_WIDTH, y: Constant.DEFAULT_HEIGHT };
 
-    constructor(private drawingService: DrawingService) {}
+    constructor(public drawingService: DrawingService) {}
 
     startResize(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;

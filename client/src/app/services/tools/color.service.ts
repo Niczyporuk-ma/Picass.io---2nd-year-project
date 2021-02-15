@@ -44,12 +44,18 @@ export class ColorService {
     }
 
     contains(color: string): boolean {
-        let array = this.tenLastUsedColors.toArray();
-        for (let i = 0; i < array.length; i++) {
-            if (array[i] == color) {
+        const array = this.tenLastUsedColors.toArray();
+        // for (let i = 0; i < array.length; i++) {
+        //     if (array[i] == color) {
+        //         return true;
+        //     }
+        // }
+        for (const lastUsed of array) {
+            if (lastUsed === color) {
                 return true;
             }
         }
+
         return false;
     }
 }

@@ -87,7 +87,7 @@ export class LineServiceService extends Tool {
         }
         window.removeEventListener('keydown', this.setShiftIsPressed);
         this.blockOnShift = false;
-    };
+    }
 
     setShiftNonPressed = (e?: KeyboardEvent) => {
         if ((e != undefined && e.key === 'Shift') || this.calledFromMouseClick) {
@@ -100,7 +100,7 @@ export class LineServiceService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.mousePosition]);
             }
         }
-    };
+    }
 
     onShift(): void {
         if (!this.blockOnShift) {
@@ -111,7 +111,7 @@ export class LineServiceService extends Tool {
         }
     }
 
-    drawJunction(ctx: CanvasRenderingContext2D, center: Vec2, radius: number) {
+    drawJunction(ctx: CanvasRenderingContext2D, center: Vec2, radius: number): void {
         if (this.hasJunction) {
             ctx.beginPath();
             ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
@@ -138,7 +138,7 @@ export class LineServiceService extends Tool {
                 this.drawJunction(ctx, junction, this.junctionsRadius[index]);
             }
         }
-        if (ctx == this.drawingService.baseCtx) {
+        if (ctx === this.drawingService.baseCtx) {
             this.clearLineAndJunctions();
         }
     }

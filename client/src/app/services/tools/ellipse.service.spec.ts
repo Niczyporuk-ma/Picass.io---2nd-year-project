@@ -146,7 +146,7 @@ describe('EllipseService', () => {
         const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
         service.squareHelperService.checkIfIsSquare = () => {
             return true;
-        }
+        };
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 5, y: 5 };
@@ -159,9 +159,9 @@ describe('EllipseService', () => {
     it('drawEllipse draws a circle when shiftIsPressed is true', () => {
         const arcSpy = spyOn(drawServiceSpy.baseCtx, 'arc').and.stub();
         service.shiftIsPressed = true;
-        service.startingPoint =  { x: 1, y: 1 };
+        service.startingPoint = { x: 1, y: 1 };
         service.endPoint = { x: 2, y: 2 };
-        service.drawEllipse(drawServiceSpy.baseCtx,service.startingPoint, service.endPoint);
+        service.drawEllipse(drawServiceSpy.baseCtx, service.startingPoint, service.endPoint);
         expect(arcSpy).toHaveBeenCalled();
     });
 

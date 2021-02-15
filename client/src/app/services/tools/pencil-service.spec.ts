@@ -130,7 +130,7 @@ describe('PencilService', () => {
     });
 
     it('clearPath should set pathData to []', () => {
-        service['clearPath'];
+        service.clearArrays();
         expect(service['pathData']).toEqual([]);
     });
 

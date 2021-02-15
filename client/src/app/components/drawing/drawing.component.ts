@@ -20,14 +20,14 @@ export class DrawingComponent implements AfterViewInit {
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
-    private backgroundCtx : CanvasRenderingContext2D;
+    private backgroundCtx: CanvasRenderingContext2D;
 
     canvasSize: Vec2 = { x: Constant.DEFAULT_WIDTH, y: Constant.DEFAULT_HEIGHT };
     mouseDown: boolean = false;
     canvas: DOMRect;
     mouse: Vec2;
     resizeService: ResizeService;
-    windowSize : Vec2 = {x : window.innerWidth, y :window.innerHeight};
+    windowSize: Vec2 = { x: window.innerWidth, y: window.innerHeight };
     timeOutDuration: number = 170;
 
     // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
@@ -36,8 +36,8 @@ export class DrawingComponent implements AfterViewInit {
     shortcutKeyboardManager: KeyboardShortcutManagerService;
     toolManager: ToolManagerService;
     clickCount: number = 0;
-    ellipseService : Tool;
-    
+    ellipseService: Tool;
+
     constructor(
         private drawingService: DrawingService,
         toolManager: ToolManagerService,
@@ -83,10 +83,9 @@ export class DrawingComponent implements AfterViewInit {
             this.currentTool.onMouseMove(event);
         }
         this.drawingService.clearCanvas(this.drawingService.backgroundCtx);
-        if(this.toolManager.currentTool === this.toolManager.ellipseService && this.toolManager.ellipseService.mouseDown){
-           this.toolManager.ellipseService.onMouseMoveTest(event);
+        if (this.toolManager.currentTool === this.toolManager.ellipseService && this.toolManager.ellipseService.mouseDown) {
+            this.toolManager.ellipseService.onMouseMoveTest(event);
         }
-        
     }
 
     @HostListener('click', ['$event'])

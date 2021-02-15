@@ -74,12 +74,12 @@ describe('ToolbarComponent', () => {
     });
 
     it(' setLineJunction puts hasJunction of line service to false if n = 0', () => {
-        component.setLineJunction(0);
+        component.setLineJunction('0');
         expect(component.toolManager.lineService.hasJunction).toEqual(false);
     });
 
     it(' setLineJunction puts hasJunction to true if n != 0', () => {
-        component.setLineJunction(1);
+        component.setLineJunction('1');
         expect(component.toolManager.lineService.hasJunction).toEqual(true);
     });
 
@@ -89,7 +89,7 @@ describe('ToolbarComponent', () => {
     });
 
     it(' setLineJunction puts hasJunction to false is n = 0', () => {
-        component.setLineJunction(0);
+        component.setLineJunction('0');
         expect(component.toolManager.lineService.hasJunction).toEqual(false);
     });
 
