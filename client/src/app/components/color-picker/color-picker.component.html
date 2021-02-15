@@ -7,11 +7,11 @@
     <!-- TODO: css for the selected color( the class in css already exists) -->
     <div class="input-wrapper">
         <span class="text">{{ color }}</span>
-        <div class="color-div" (click)="selectPrimaryColor($event)" [ngStyle]="{ 'background-color': colorService.primaryColor || 'white' }"></div>
+        <div class="color-div" (click)="selectPrimaryColor($event)" [ngStyle]="{ 'background-color': colorService.primaryColorPreview || 'white' }"></div>
         <div
             class="color-div"
             (click)="selectSecondaryColor($event)"
-            [ngStyle]="{ 'background-color': colorService.secondaryColor || 'white' }"
+            [ngStyle]="{ 'background-color': colorService.secondaryColorPreview || 'white' }"
         ></div>
 
         <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">Swap</button>
@@ -144,7 +144,8 @@
             {{ secOpacity }}
         </mat-card>
     </div>
-    <!-- <div *ngIf="this.colorService.showConfirmButton">
-        <button class="confirm" (mousedown)="">confirm</button>
-    </div> -->
+    <div>
+        <button class="confirm" (click)="this.colorService.isConfirmed = true">confirm</button>
+        <button class="cancel">cancel</button>
+    </div>
 </div>

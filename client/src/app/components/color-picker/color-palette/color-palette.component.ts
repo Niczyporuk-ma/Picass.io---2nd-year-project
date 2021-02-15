@@ -120,6 +120,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
                 this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.primaryOpacity);
                 this.resetBoolsAfterDecision();
             }
+            this.colorService.primaryColorPreview = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.primaryOpacity);
         }
         // this.mousedown = false;
     }
@@ -158,6 +159,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.resetBoolsAfterDecision();
             return false;
         }
+        this.colorService.secondaryColorPreview = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.secondaryOpacity);
         return false;
     }
 

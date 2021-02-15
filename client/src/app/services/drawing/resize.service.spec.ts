@@ -1,27 +1,33 @@
-// import { ElementRef } from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
 import { Constant } from '@app/constants/general-constants-store';
 import { ResizeService } from './resize.service';
 
-// export class MockElementRef extends ElementRef {}
+@Injectable()
+export class MockElementRef {
+    nativeElement: {};
+}
 
-describe('ResizeService', () => {
+//export class MockElementRef extends ElementRef {}
+
+fdescribe('ResizeService', () => {
     let service: ResizeService;
     let mouseEvent: MouseEvent;
-    const canvas: DOMRect = { left: 500, right: 1500, top: 0, bottom: 500 } as DOMRect;
-    const canvasSize: Vec2 = { x: 500, y: 300 };
-    // let baseCanvas: ElementRef<HTMLCanvasElement>;
+    let canvas: DOMRect = { left: 500, right: 1500, top: 0, bottom: 500 } as DOMRect;
+    let canvasSize: Vec2 = { x: 500, y: 300 };
+    let dummyCanvas: ElementRef<HTMLCanvasElement>;
+    var dummyNativeElement = document.createElement('canvas');
 
     mouseEvent = {
         button: 0,
     } as MouseEvent;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
-        // TestBed.configureTestingModule({ providers: [{ provide: ElementRef, useValue: MockElementRef }] });
+        // TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({ providers: [{ provide: ElementRef, useValue: MockElementRef }] });
         service = TestBed.inject(ResizeService);
-        // baseCanvas = TestBed.get(ElementRef);
+        dummyCanvas = new ElementRef<HTMLCanvasElement>(dummyNativeElement);
     });
 
     it('should be created', () => {
@@ -104,12 +110,16 @@ describe('ResizeService', () => {
         expect(service.preview).toEqual({ x: Constant.MIN_WIDTH, y: Constant.MIN_HEIGH });
     });
 
-    // it('stopResize should set the canvasSize.y to be the same as preview.y when isBottom is true', () => {
-    //     service.isBottom = true;
-    //     service.preview.y = 5500;
-    //     service.stopResize(canvasSize, baseCanvas);
-    //     expect(canvasSize.y).toEqual(service.preview.y);
-    // });
+    // // //TODO
+    it('stopResize should set the canvasSize.y to be the same as preview.y when isBottom is true', () => {
+        service.isBottom = true;
+        service.preview.y = 5500;
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.stopResize(canvasSize, dummyCanvas);
+        expect(canvasSize.y).toEqual(service.preview.y);
+    });
 
     it('relocateHandles should set handles positions based on the current size of the baseCanvas', () => {
         service.sideHandle = { x: 500, y: 500 };

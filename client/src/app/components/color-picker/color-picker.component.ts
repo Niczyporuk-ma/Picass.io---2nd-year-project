@@ -82,12 +82,27 @@ export class ColorPickerComponent {
 
     // TODO: 1. accepting the hashes codes for the colors. 2. Refactoring (lots of code just repeted)
     adjustRed(redIntensity: KeyboardEvent): void {
-        let value = '';
-        value += (redIntensity.target as HTMLInputElement).value;
+        let hexValue = '';
+        if(!redIntensity.ctrlKey){
+            hexValue += (redIntensity.target as HTMLInputElement).value;
+        }
+
+        var regExp = new RegExp('^#[0-9A-Fa-f]{1,2}$');
+         if (!regExp.test('#' + hexValue) && hexValue!='') {
+           alert('invalid'); //TODO change the message to be more user-friendly
+        }
+        // if(hexValue = '') {
+        //     hexValue = '#0';
+        // }
+
+        //TODO: convert HEX to decimal
+         let decimalValue = parseInt(hexValue,16);
+         console.log(decimalValue);
+
         this.green = this.splitColor(this.color)[this.greenIndex];
         this.blue = this.splitColor(this.color)[this.blueIndex];
         const opacity = this.splitColor(this.color)[this.opacityIndex];
-        this.color = 'rgba(' + value + ',' + this.green + ',' + this.blue + ',' + opacity + ')';
+        this.color = 'rgba(' + hexValue + ',' + this.green + ',' + this.blue + ',' + opacity + ')';
         if (this.primary) {
             this.colorService.primaryColor = this.color;
             this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
