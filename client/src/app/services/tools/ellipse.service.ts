@@ -161,6 +161,9 @@ export class EllipseService extends Tool {
     drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         this.setColors(this.colorService);
         this.setStyles();
+        if(ctx === this.drawingService.baseCtx){
+            this.drawingService.drawingStarted = true;
+        }
 
         this.drawingService.previewCtx.fillStyle = this.toolStyles.primaryColor as string;
         this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
