@@ -72,7 +72,7 @@ export class DrawingComponent implements AfterViewInit {
     onMouseMove(event: MouseEvent): void {
         if (this.resizeService.mouseDown) {
             this.resizeService.resize(event, this.canvas);
-        } else {
+        } else if (event.pageX > this.canvas.left + window.scrollY) {
             this.currentTool.onMouseMove(event);
         }
     }
