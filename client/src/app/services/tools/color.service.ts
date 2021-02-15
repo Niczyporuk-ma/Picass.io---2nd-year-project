@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faPalette } from '@fortawesome/free-solid-svg-icons';
 import { Queue } from 'queue-typescript';
 
@@ -12,7 +13,7 @@ export class ColorService {
     secondaryOpacity: number;
     // TODO opactity for each color
     tenLastUsedColors: Queue<string>;
-    public icon = faPalette;
+    public icon: IconDefinition = faPalette;
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';

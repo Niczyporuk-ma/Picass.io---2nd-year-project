@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { ColorService } from './color.service';
 import { MouseButton } from './pencil-service';
@@ -17,7 +18,7 @@ export class EllipseService extends Tool {
     currentLine: Vec2[] = [];
     border: boolean = true;
     eventTest: boolean;
-    public icon = faCircle;
+    public icon: IconDefinition = faCircle;
 
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);

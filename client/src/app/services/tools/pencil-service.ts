@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -22,7 +23,7 @@ export class PencilService extends Tool {
     nexpoint: Vec2;
     private pathData: Vec2[];
     isEraser: boolean = false;
-    public icon = faPen;
+    public icon: IconDefinition = faPen;
 
     constructor(drawingService: DrawingService, public colorService: ColorService) {
         super(drawingService);

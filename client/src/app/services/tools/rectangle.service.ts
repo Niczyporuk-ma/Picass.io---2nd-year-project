@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faSquare } from '@fortawesome/free-regular-svg-icons';
 import { MouseButton } from './pencil-service';
 
@@ -16,7 +17,7 @@ export class RectangleService extends Tool {
     currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;
     contour: boolean = true;
-    public icon = faSquare;
+    public icon: IconDefinition = faSquare;
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '1';
