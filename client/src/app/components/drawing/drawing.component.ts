@@ -84,7 +84,7 @@ export class DrawingComponent implements AfterViewInit {
         }
         this.drawingService.clearCanvas(this.drawingService.backgroundCtx);
         if (this.toolManager.currentTool === this.toolManager.ellipseService && this.toolManager.ellipseService.mouseDown) {
-            this.toolManager.ellipseService.onMouseMoveTest(event);
+            this.toolManager.ellipseService.onMouseMove(event);
         }
     }
 
@@ -116,7 +116,6 @@ export class DrawingComponent implements AfterViewInit {
         } else {
             this.currentTool.onMouseUp(event);
         }
-        this.drawingService.clearBackground();
     }
 
     get width(): number {

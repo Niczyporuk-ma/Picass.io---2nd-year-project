@@ -39,6 +39,10 @@ export class EllipseService extends Tool {
         this.currentLine = [];
     }
 
+    // TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
+    // quand on dessine du bas vers le haut, et de droite vers la gauche
+
+    // TODO: renommer isShiftPressed
     onShift(): void {
         if (!this.isShiftPressed) {
             window.addEventListener('keydown', this.setShiftIfPressed);
@@ -99,9 +103,9 @@ export class EllipseService extends Tool {
         this.mouseDown = false;
     }
 
-    onMouseMoveTest(mouseMoveEvent: MouseEvent): void {
+    onMouseMoveTest(mouseMove: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            const mousePosition = this.getPositionFromMouse(mouseMoveEvent);
+            const mousePosition = this.getPositionFromMouse(mouseMove);
             this.endPoint = mousePosition;
             this.drawingService.clearBackground();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -177,6 +181,7 @@ export class EllipseService extends Tool {
             ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
         }
 
+        // TODO: ecrire les tests pour ca
         if (this.toolStyles.fill) {
             ctx.setLineDash([]);
             ctx.fill();
