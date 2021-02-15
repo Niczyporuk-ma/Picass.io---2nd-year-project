@@ -14,7 +14,7 @@ export class EraserService extends Tool {
     coordinate: Vec2;
     indexValue: number = 3;
     minimumWidth: number = 5;
-    icon = faEraser;
+    public icon = faEraser;
 
     constructor(public drawingService: DrawingService) {
         super(drawingService);
@@ -43,32 +43,27 @@ export class EraserService extends Tool {
 
     // Permet de trouver la bonne prosition pour l'effet du curseur
     findCoordinate(): Vec2 {
-        const coord: Vec2 = {
-            x: this.currentPoint.x - this.toolStyles.lineWidth / 2,
-            y: this.currentPoint.y - this.toolStyles.lineWidth / 2,
-        };
+        const coord: Vec2 = { x: this.currentPoint.x - this.toolStyles.lineWidth / 2, y: this.currentPoint.y - this.toolStyles.lineWidth / 2 };
         return coord;
     }
 
     onMouseMove(event: MouseEvent): void {
+        this.drawingService.previewCtx.strokeStyle = 'black';
+        this.drawingService.previewCtx.fillStyle = 'white';
+
         this.currentPoint = this.getPositionFromMouse(event);
-        if (this.isColoredUnderMouse(this.drawingService.baseCtx, event, this.currentPoint)) {
-            this.drawingService.previewCtx.strokeStyle = 'white';
-        } else {
-            this.drawingService.previewCtx.strokeStyle = 'black';
-        }
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.cursorEffect(this.findCoordinate());
+        this.cursorEffect(this.drawingService.previewCtx, this.findCoordinate());
 
-        if (this.mouseDown && !this.drawingService.resizeActive) {
+        if (this.mouseDown) {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx);
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.cursorEffect(this.findCoordinate());
+            this.cursorEffect(this.drawingService.previewCtx, this.findCoordinate());
         }
     }
 
@@ -87,9 +82,20 @@ export class EraserService extends Tool {
         this.startingPoint.y = this.currentPoint.y;
     }
 
+    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
+        ctx.lineWidth = this.toolStyles.lineWidth;
+        ctx.lineCap = 'round';
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
+        ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
+        ctx.stroke();
+    }
+
     // Permet la previsualisation de notre efface
-    cursorEffect(location: Vec2): void {
-        this.toolStyles.lineWidth = 1;
+    cursorEffect(ctx: CanvasRenderingContext2D, location: Vec2): void {
+        this.drawingService.previewCtx.lineWidth = 1;
+        this.drawingService.previewCtx.fillRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
         this.drawingService.previewCtx.strokeRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
     }
 
@@ -103,11 +109,9 @@ export class EraserService extends Tool {
 
     // permet de verifier la limite de la largeur de l'efface
     isValid(width: number): boolean {
-        return width >= this.minimumWidth;
-    }
-
-    isColoredUnderMouse(ctx: CanvasRenderingContext2D, event: MouseEvent, location: Vec2): boolean {
-        const colorUnderMouse = ctx.getImageData(location.x, location.y, 1, 1).data;
-        return colorUnderMouse[3] > 0;
+        if (width < this.minimumWidth) {
+            return false;
+        }
+        return true;
     }
 }

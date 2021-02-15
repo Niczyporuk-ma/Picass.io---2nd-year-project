@@ -129,6 +129,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.showConfirmButton = false;
         this.primaryColorConfirm = false;
         this.secondaryColorConfirm = false;
+        this.mousedown = false;
     }
 
     onRightClickDown(evt: MouseEvent): boolean {
