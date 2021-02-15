@@ -14,7 +14,7 @@ describe('EllipseService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'clearBackground']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
@@ -96,7 +96,7 @@ describe('EllipseService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
-        service.onMouseMove(mouseEvent);
+        service.onMouseMoveTest(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawEllipseSpy).toHaveBeenCalled();
         expect(drawRectangleSpy).toHaveBeenCalled();
@@ -118,7 +118,7 @@ describe('EllipseService', () => {
         service.shiftIsPressed = true;
         service.startingPoint = { x: 0, y: 0 };
         service.endPoint = { x: 1, y: 1 };
-        service.onMouseMove(mouseEvent);
+        service.onMouseMoveTest(mouseEvent);
         expect(drawRectangleSpy).toHaveBeenCalled();
     });
 
@@ -157,15 +157,12 @@ describe('EllipseService', () => {
     });
 
     it('drawEllipse draws a circle when shiftIsPressed is true', () => {
-        const ellipseSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
-            'ellipse',
-            'beginPath',
-            'setLineDash',
-            'stroke',
-        ]);
+        const arcSpy = spyOn(drawServiceSpy.baseCtx, 'arc').and.stub();
         service.shiftIsPressed = true;
-        service.drawEllipse(ellipseSpyObject, { x: 1, y: 1 }, { x: 2, y: 2 });
-        expect(ellipseSpyObject.ellipse).toHaveBeenCalledWith(1.5, 1.5, 0.5, 0.5, Math.PI / 2, 0, 2 * Math.PI);
+        service.startingPoint =  { x: 1, y: 1 };
+        service.endPoint = { x: 2, y: 2 };
+        service.drawEllipse(drawServiceSpy.baseCtx,service.startingPoint, service.endPoint);
+        expect(arcSpy).toHaveBeenCalled();
     });
 
     it('drawEllipse draws an ellipse when shiftIsPressed is false', () => {
