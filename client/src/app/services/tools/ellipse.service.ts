@@ -67,7 +67,7 @@ export class EllipseService extends Tool {
                 );
             }
         }
-    };
+    }
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -82,7 +82,7 @@ export class EllipseService extends Tool {
                 this.shiftIsPressed = false;
             }
         }
-    };
+    }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
