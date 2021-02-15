@@ -94,7 +94,7 @@ describe('ResizeService', () => {
         expect(service.preview).toEqual({ x: 300, y: 1000 });
     });
 
-    it('resize should set preview.x and preview.y to MIN_WIDTH and MIN_HEIGH when isCorner is true', () => {
+    it('resize should set preview.x and preview.y to MIN_WIDTH and MIN_HEIGH when both are lower than 250x250 when isCorner is true', () => {
         service.isSide = false;
         service.isBottom = false;
         service.isCorner = true;
