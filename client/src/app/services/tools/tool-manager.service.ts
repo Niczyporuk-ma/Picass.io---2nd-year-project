@@ -45,7 +45,7 @@ export class ToolManagerService {
             [this.ellipseService.shortcut, this.tools[this.ellipseService.index]],
         ]);
     }
-    // A TESTER
+
     clearArrays(): void {
         if (this.drawingService.drawingStarted) {
             if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
@@ -58,7 +58,7 @@ export class ToolManagerService {
             }
         }
     }
-    // setters
+
     setTool(tool: Tool): void {
         this.currentToolChange.next(tool);
         this.currentTool.setColors(this.colorService);

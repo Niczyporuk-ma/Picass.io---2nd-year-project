@@ -29,19 +29,19 @@ export class EraserService extends Tool {
         this.drawingService = drawingService;
     }
 
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+    onMouseDown(mouseDownEvent: MouseEvent): void {
+        this.mouseDown = mouseDownEvent.button === MouseButton.Left;
         if (this.mouseDown) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
+            this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
             this.startingPoint = this.mouseDownCoord;
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(mouseUpEvent: MouseEvent): void {
         this.mouseDown = false;
     }
 
-    // Permet de trouver la bonne prosition pour l'effet du curseur
+    
     findCoordinate(): Vec2 {
         const coord: Vec2 = { x: this.currentPoint.x - this.toolStyles.lineWidth / 2, y: this.currentPoint.y - this.toolStyles.lineWidth / 2 };
         return coord;
@@ -52,16 +52,13 @@ export class EraserService extends Tool {
         this.drawingService.previewCtx.fillStyle = 'white';
 
         this.currentPoint = this.getPositionFromMouse(event);
-        // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.cursorEffect(this.findCoordinate());
 
         if (this.mouseDown) {
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx);
 
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.cursorEffect(this.findCoordinate());
         }
@@ -82,7 +79,6 @@ export class EraserService extends Tool {
         this.startingPoint.y = this.currentPoint.y;
     }
 
-    // Permet la previsualisation de notre efface
     cursorEffect(location: Vec2): void {
         this.drawingService.previewCtx.lineWidth = 1;
         this.drawingService.previewCtx.fillRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
@@ -97,7 +93,6 @@ export class EraserService extends Tool {
         }
     }
 
-    // permet de verifier la limite de la largeur de l'efface
     isValid(width: number): boolean {
         if (width < this.minimumWidth) {
             return false;
