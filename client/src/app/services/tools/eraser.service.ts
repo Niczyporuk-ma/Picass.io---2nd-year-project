@@ -3,7 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faEraser } from '@fortawesome/free-solid-svg-icons';
+import { faEraser, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 @Injectable({
     providedIn: 'root',
@@ -14,7 +14,7 @@ export class EraserService extends Tool {
     coordinate: Vec2;
     indexValue: number = 3;
     minimumWidth: number = 5;
-    icon = faEraser;
+    icon : IconDefinition = faEraser;
 
     constructor(public drawingService: DrawingService) {
         super(drawingService);

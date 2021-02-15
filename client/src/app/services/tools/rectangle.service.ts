@@ -5,7 +5,7 @@ import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
-import { faSquare } from '@fortawesome/free-regular-svg-icons';
+import { faSquare, IconDefinition } from '@fortawesome/free-regular-svg-icons';
 
 @Injectable({
     providedIn: 'root',
@@ -16,7 +16,7 @@ export class RectangleService extends Tool {
     currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;
     contour: boolean = true;
-    icon = faSquare;
+    icon : IconDefinition = faSquare;
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '1';
