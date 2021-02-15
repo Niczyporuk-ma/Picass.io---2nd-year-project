@@ -88,8 +88,6 @@ export class EllipseService extends Tool {
         }
     };
 
-
-
     onMouseDown(mouseDownevent: MouseEvent): void {
         this.mouseDown = mouseDownevent.button === MouseButton.Left;
         if (!this.mouseDown) {
@@ -112,7 +110,6 @@ export class EllipseService extends Tool {
             // window.removeEventListener('keydown', this.setShiftIfPressed);
         }
         this.mouseDown = false;
-
     }
 
     onMouseMove(mouseMove: MouseEvent): void {
@@ -132,7 +129,6 @@ export class EllipseService extends Tool {
                 this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
             }
         }
-
     }
 
     drawRectangle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {

@@ -24,7 +24,7 @@ export class RectangleService extends Tool {
         this.currentLine = [];
         this.index = 2;
         this.toolStyles = {
-            primaryColor: 'rgba(255, 0, 0, 1)', 
+            primaryColor: 'rgba(255, 0, 0, 1)',
             lineWidth: 1,
             fill: false,
             secondaryColor: 'black',
@@ -55,7 +55,7 @@ export class RectangleService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
             }
         }
-    }
+    };
 
     setShiftNonPressed = (keyUpShiftEvent: KeyboardEvent) => {
         if (keyUpShiftEvent.key === 'Shift') {
@@ -71,7 +71,7 @@ export class RectangleService extends Tool {
                 this.shiftIsPressed = false;
             }
         }
-    }
+    };
 
     onShift(): void {
         if (!this.eventListenerIsSet) {

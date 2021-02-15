@@ -41,7 +41,6 @@ export class EraserService extends Tool {
         this.mouseDown = false;
     }
 
-    
     findCoordinate(): Vec2 {
         const coord: Vec2 = { x: this.currentPoint.x - this.toolStyles.lineWidth / 2, y: this.currentPoint.y - this.toolStyles.lineWidth / 2 };
         return coord;

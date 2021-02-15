@@ -61,7 +61,7 @@ export class LineHelperService {
         const xLenght = Math.abs(start.x - end.x);
         const yLenght = Math.abs(start.y - end.y);
 
-        return Math.sqrt(xLenght * xLenght + yLenght *yLenght);
+        return Math.sqrt(xLenght * xLenght + yLenght * yLenght);
     }
 
     angleQuadrantConverter(start: Vec2, end: Vec2, angle: number): number {
