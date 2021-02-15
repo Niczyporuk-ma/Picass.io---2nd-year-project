@@ -103,16 +103,11 @@ export class EraserService extends Tool {
 
     // permet de verifier la limite de la largeur de l'efface
     isValid(width: number): boolean {
-        return width > this.minimumWidth;
+        return width >= this.minimumWidth;
     }
 
     isColoredUnderMouse(ctx: CanvasRenderingContext2D, event: MouseEvent, location: Vec2): boolean {
         const colorUnderMouse = ctx.getImageData(location.x, location.y, 1, 1).data;
-        if (colorUnderMouse[3] > 0) {
-            console.log('Black');
-            return true;
-        } else {
-            return false;
-        }
+        return colorUnderMouse[3] > 0;
     }
 }

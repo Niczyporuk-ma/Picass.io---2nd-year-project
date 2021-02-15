@@ -93,6 +93,21 @@ describe('EraserService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
+    it('onMouseMove should set strokeStyle as black if isColoredUnderMouse returns false',()=>{
+        drawServiceSpy.previewCtx.strokeStyle = "blue";
+        service.onMouseMove(mouseEvent);
+        expect(drawServiceSpy.previewCtx.strokeStyle).toEqual('#000000');
+    })
+
+    it('onMouseMove should set strokeStyle as white if isColoredUnderMouse returns true',()=>{
+        service.isColoredUnderMouse = () => {
+            return true;
+        }
+        drawServiceSpy.previewCtx.strokeStyle = "blue";
+        service.onMouseMove(mouseEvent);
+        expect(drawServiceSpy.previewCtx.strokeStyle).toEqual('#ffffff');
+    })
+
     // Erreur bizzare ??
     it('findCoordinate should return the correct position to create the square effect of the eraser', () => {
         service.toolStyles.lineWidth = 20;

@@ -28,12 +28,14 @@ export class KeyboardShortcutManagerService {
         if (!this.toolManager.blockEventListener) {
             this.toolManager.blockEventListener = true;
             window.addEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
-            window.addEventListener('keyup', (event: KeyboardEvent) => {
-                if (event.key == 'Control') {
-                    window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
-                    this.toolManager.blockEventListener = false;
-                }
-            });
+            window.addEventListener('keyup', (event: KeyboardEvent) => this.detectControl(event));
+        }
+    }
+
+    detectControl(event : KeyboardEvent) : void {
+        if (event.key == 'Control') {
+            window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
+            this.toolManager.blockEventListener = false;
         }
     }
 

@@ -1,9 +1,10 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 
-import { Component } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { MouseButton } from '@app/enums/enums';
 import { ColorService } from '@app/services/tools/color.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
 
 @Component({
     selector: 'app-color-picker',
@@ -17,27 +18,35 @@ export class ColorPickerComponent {
     green: string = '';
     blue: string = '';
     colorService: ColorService;
-    opacity: number = 1;
+    primOpacity: number = 1;
+    secOpacity: number = 1;
     primary: boolean = true;
     redIndex: number = 0;
     greenIndex: number = 1;
     blueIndex: number = 2;
     opacityIndex: number = 3;
+    private mousedown: boolean = false;
+    private contextmenu: boolean = false;
 
     constructor(colorService: ColorService, public toolManager: ToolManagerService) {
         this.colorService = colorService;
         this.toolManager = toolManager;
     }
 
+    @Output()
+    colorEmitted: EventEmitter<string> = new EventEmitter(true);
+
     // TODO: Adjust when palette is clicked undefined behaviour
-    // TODO : opacite pour les 2 couleurs (separement)
-    changeOpacity(opacity: number): void {
-        this.colorService.opacity = opacity;
-        if (this.primary) {
-            this.colorService.setPrimaryColorWithOpacity(opacity);
-        } else {
-            this.colorService.setSecondaryColorWithOpacity(opacity);
-        }
+    // NOTE: TEST METHODS: changePrimary/secondary, and methods affected by splitting opacity in 2 variables (primOpacity/secOpacity)
+
+    changePrimaryOpacity(opacity: number): void {
+        this.colorService.primaryOpacity = opacity;
+        this.colorService.setPrimaryColorWithOpacity(opacity);
+    }
+
+    changeSecondaryOpacity(opacity: number): void {
+        this.colorService.secondaryOpacity = opacity;
+        this.colorService.setSecondaryColorWithOpacity(opacity);
     }
 
     splitColor(colorToSplit: string): string[] {
@@ -50,11 +59,12 @@ export class ColorPickerComponent {
             this.color = this.colorService.primaryColor;
             // var copyColor = this.color;
             const split: string[] = this.splitColor(this.color);
+            console.log(this.splitColor(this.color));
             // const split = this.splitColor(this.color);
             this.red = split[this.redIndex];
             this.green = split[this.greenIndex];
             this.blue = split[this.blueIndex];
-            this.opacity = +split[this.opacityIndex];
+            this.primOpacity = +split[this.opacityIndex];
         }
     }
 
@@ -66,7 +76,7 @@ export class ColorPickerComponent {
             this.red = split[this.redIndex];
             this.green = split[this.greenIndex];
             this.blue = split[this.blueIndex];
-            this.opacity = +split[this.opacityIndex];
+            this.secOpacity = +split[this.opacityIndex];
         }
     }
 
@@ -80,10 +90,10 @@ export class ColorPickerComponent {
         this.color = 'rgba(' + value + ',' + this.green + ',' + this.blue + ',' + opacity + ')';
         if (this.primary) {
             this.colorService.primaryColor = this.color;
-            this.colorService.setPrimaryColorWithOpacity(this.colorService.opacity);
+            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
         } else {
             this.colorService.secondaryColor = this.color;
-            this.colorService.setSecondaryColorWithOpacity(this.colorService.opacity);
+            this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
         }
     }
 
@@ -97,10 +107,10 @@ export class ColorPickerComponent {
         this.color = 'rgba(' + this.red + ',' + value + ',' + this.blue + ',' + opacity + ')';
         if (this.primary) {
             this.colorService.primaryColor = this.color;
-            this.colorService.setPrimaryColorWithOpacity(this.colorService.opacity);
+            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
         } else {
             this.colorService.secondaryColor = this.color;
-            this.colorService.setSecondaryColorWithOpacity(this.colorService.opacity);
+            this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
         }
     }
 
@@ -113,10 +123,10 @@ export class ColorPickerComponent {
         this.color = 'rgba(' + this.red + ',' + this.green + ',' + value + ',' + opacity + ')';
         if (this.primary) {
             this.colorService.primaryColor = this.color;
-            this.colorService.setPrimaryColorWithOpacity(this.colorService.opacity);
+            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
         } else {
             this.colorService.secondaryColor = this.color;
-            this.colorService.setSecondaryColorWithOpacity(this.colorService.opacity);
+            this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
         }
     }
 
@@ -126,5 +136,49 @@ export class ColorPickerComponent {
 
     enableShortcut(): void {
         this.toolManager.allowKeyPressEvents = true;
+    }
+
+    @HostListener('window:mouseup', ['$event'])
+    onMouseUp(evt: MouseEvent): void {
+        this.mousedown = false;
+    }
+
+    onLeftClick(evt: MouseEvent, color: string): void {
+        this.mousedown = evt.button === MouseButton.Left;
+        this.contextmenu = false;
+        let colorTemp: string = color;
+        if (this.contextmenu === false && this.mousedown === true) {
+            if (this.colorService.tenLastUsedColors.length > 1) {
+                this.colorEmitted.emit(color);
+                this.colorService.tenLastUsedColors.remove(color);
+                this.colorService.tenLastUsedColors.append(colorTemp);
+            }
+            if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
+                this.colorService.tenLastUsedColors.dequeue();
+            }
+            this.colorService.primaryColor = color;
+            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
+        }
+    }
+
+    onRightClickDown(evt: MouseEvent, color: string): boolean {
+        this.mousedown = evt.button === MouseButton.Left;
+        this.contextmenu = true;
+        let colorTemp: string = color;
+        if (this.colorService.tenLastUsedColors.length > 1) {
+            this.colorEmitted.emit(color);
+            this.colorService.tenLastUsedColors.remove(color);
+            this.colorService.tenLastUsedColors.append(colorTemp);
+        }
+        if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
+            this.colorService.tenLastUsedColors.dequeue();
+        }
+        this.colorService.secondaryColor = color;
+        this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
+        return false;
+    }
+
+    emitColor(color: string): void {
+        this.colorEmitted.emit(color);
     }
 }

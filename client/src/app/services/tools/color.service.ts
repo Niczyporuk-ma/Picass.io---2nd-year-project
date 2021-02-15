@@ -8,7 +8,8 @@ import { Queue } from 'queue-typescript';
 export class ColorService {
     primaryColor: string;
     secondaryColor: string;
-    opacity: number;
+    primaryOpacity: number;
+    secondaryOpacity: number;
     // TODO opactity for each color
     tenLastUsedColors: Queue<string>;
     icon = faPalette;
@@ -16,7 +17,8 @@ export class ColorService {
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
         this.secondaryColor = 'rgba(0,0,0,1)';
-        this.opacity = 1;
+        this.primaryOpacity = 1;
+        this.secondaryOpacity = 1;
         this.tenLastUsedColors = new Queue<string>();
     }
 
@@ -37,10 +39,12 @@ export class ColorService {
         temp = this.primaryColor;
         this.primaryColor = this.secondaryColor;
         this.secondaryColor = temp;
+        this.setPrimaryColorWithOpacity(this.primaryOpacity);
+        this.setSecondaryColorWithOpacity(this.secondaryOpacity);
     }
 
     contains(color: string): boolean {
-        const array = this.tenLastUsedColors.toArray();
+        let array = this.tenLastUsedColors.toArray();
         for (let i = 0; i < array.length; i++) {
             if (array[i] == color) {
                 return true;
@@ -48,6 +52,4 @@ export class ColorService {
         }
         return false;
     }
-
-    // TODO : faire les 10 derniers couleurs (le bouffer)
 }
