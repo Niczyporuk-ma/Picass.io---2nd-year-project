@@ -1,30 +1,60 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 <div class="btns">
-    <button (click)="this.toolManager.clearArrays()" matTooltip="Créer un nouveau dessin" matTooltipPosition = "after" matTooltipShowDelay="600">
-        <fa-icon [icon]="faPlusSquare" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth();" 
-    matTooltip="Outil crayon (C): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options" matTooltipPosition = "after" matTooltipShowDelay="600">
-        <fa-icon [icon]="faPen" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth();"
-    matTooltip="Outil efface (E): Cliquer et glisser pour effacer. Cliquez ici pour voir plus d'options" matTooltipPosition = "after" matTooltipShowDelay="600">
-        <fa-icon [icon]="faEraser" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth();"
-    matTooltip="Outil ligne (L): Cliquer et glisser pour déssiner une ligne. Cliquer à la fin pour enchaîner
-    les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'options" matTooltipPosition = "after" matTooltipShowDelay="600">
-        <fa-icon [icon]="faSlash" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth()"
-    matTooltip="Outil rectangle (1): Cliquer et glisser, et relâcher pour déssiner un rectangle. tenir (Shift) pour dessiner un carré. Cliquez ici pour voir plus d'options" 
-    matTooltipPosition = "after" matTooltipShowDelay="600">
-        <fa-icon [icon]="faSquare" size=lg></fa-icon></button>
-    <button (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth()"
-    matTooltip="Outil ellipse (2): Cliquer et glisser, et relâcher pour déssiner un ellipse. tenir (Shift) pour dessiner un cercle. Cliquez ici pour voir plus d'options" 
-    matTooltipPosition = "after" matTooltipShowDelay="600"><fa-icon [icon]="faCircle" size=lg></fa-icon></button>
-    <button (click)="onPressPalette()"
-    matTooltip="Palette de couleur: Sélectionnez une couleur. CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire 
+    <button (click)="this.toolManager.clearArrays()" matTooltip="Créer un nouveau dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faPlusSquare" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()"
+        matTooltip="Outil crayon (C): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faPen" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth()"
+        matTooltip="Outil efface (E): Cliquer et glisser pour effacer. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faEraser" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth()"
+        matTooltip="Outil ligne (L): Cliquer et glisser pour déssiner une ligne. Cliquer à la fin pour enchaîner
+    les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faSlash" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth()"
+        matTooltip="Outil rectangle (1): Cliquer et glisser, et relâcher pour déssiner un rectangle. tenir (Shift) pour dessiner un carré. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faSquare" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth()"
+        matTooltip="Outil ellipse (2): Cliquer et glisser, et relâcher pour déssiner un ellipse. tenir (Shift) pour dessiner un cercle. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faCircle" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="onPressPalette()"
+        matTooltip="Palette de couleur: Sélectionnez une couleur. CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire 
     (ceci s'applique pour les 10 couleurs utilisés précédemment). 
-    Cliquez ici pour plus d'options." matTooltipPosition = "after" matTooltipShowDelay="600">
-        <fa-icon [icon]="faPalette" size=lg></fa-icon></button>
+    Cliquez ici pour plus d'options."
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faPalette" size="lg"></fa-icon>
+    </button>
     <div *ngIf="showPalette">
         <app-color-picker></app-color-picker>
     </div>

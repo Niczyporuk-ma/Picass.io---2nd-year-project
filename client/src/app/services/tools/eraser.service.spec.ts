@@ -93,20 +93,11 @@ describe('EraserService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
-    it('onMouseMove should set strokeStyle as black if isColoredUnderMouse returns false',()=>{
-        drawServiceSpy.previewCtx.strokeStyle = "blue";
+    it('onMouseMove should set strokeStyle as black if isColoredUnderMouse returns false', () => {
+        drawServiceSpy.previewCtx.strokeStyle = 'blue';
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.previewCtx.strokeStyle).toEqual('#000000');
-    })
-
-    it('onMouseMove should set strokeStyle as white if isColoredUnderMouse returns true',()=>{
-        service.isColoredUnderMouse = () => {
-            return true;
-        }
-        drawServiceSpy.previewCtx.strokeStyle = "blue";
-        service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.previewCtx.strokeStyle).toEqual('#ffffff');
-    })
+    });
 
     // Erreur bizzare ??
     it('findCoordinate should return the correct position to create the square effect of the eraser', () => {
@@ -155,11 +146,11 @@ describe('EraserService', () => {
         expect(moveToSpy).toHaveBeenCalled();
     });
 
-    it('cursorEffect should set lineWidth to 1', () => {
+    it('cursorEffect should set lineWidth to 1 for the preview', () => {
         const mockLocation: Vec2 = { x: 2, y: 2 };
         service.toolStyles.lineWidth = 2;
         service.cursorEffect(mockLocation);
-        expect(service.toolStyles.lineWidth).toEqual(1);
+        expect(service.drawingService.previewCtx.lineWidth).toEqual(1);
     });
 
     it('cursorEffect should call strokeRect', () => {
