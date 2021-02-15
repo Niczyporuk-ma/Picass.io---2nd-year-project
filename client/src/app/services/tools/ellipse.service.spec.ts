@@ -197,14 +197,14 @@ describe('EllipseService', () => {
         expect(fillSpy).toHaveBeenCalled();
     });
 
-    it('onShift sets eventTest true', () => {
-        service.eventTest = false;
+    it('onShift sets isShiftPressed true', () => {
+        service.isShiftPressed = false;
         service.onShift();
-        expect(service.eventTest).toEqual(true);
+        expect(service.isShiftPressed).toEqual(true);
     });
 
-    it('onShift doesnt add event listeners if eventTest is true', () => {
-        service.eventTest = true;
+    it('onShift doesnt add event listeners if isShiftPressed is true', () => {
+        service.isShiftPressed = true;
         const eventListenerSpy = spyOn(window, 'addEventListener').and.stub();
         service.onShift();
         expect(eventListenerSpy).not.toHaveBeenCalled();
@@ -217,7 +217,7 @@ describe('EllipseService', () => {
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.setShiftNonPressed(event);
         expect(service.shiftIsPressed).toEqual(false);
-        expect(service.eventTest).toEqual(false);
+        expect(service.isShiftPressed).toEqual(false);
     });
 
     it('setShiftNonPressed sets shiftIsPressed to false when mouseDown is false', () => {
@@ -241,7 +241,7 @@ describe('EllipseService', () => {
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
-    it('setShiftNonPressed doesnt call clearCanvas, drawEllipse and drawRectangle if mouseDown is false', () => {
+    it('setShiftNonPressed doesnt call drawEllipse and drawRectangle if mouseDown is false', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
@@ -252,7 +252,6 @@ describe('EllipseService', () => {
 
         expect(drawEllipseSpy).not.toHaveBeenCalled();
         expect(drawRectangleSpy).not.toHaveBeenCalled();
-        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
     it('drawRectangle should calls moveTo and lineTo 4 times', () => {
