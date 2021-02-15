@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
 import { ResizeService } from './resize.service';
 
-fdescribe('ResizeService', () => {
+describe('ResizeService', () => {
     let service: ResizeService;
     let mouseEvent: MouseEvent;
     let canvasSize: Vec2 = { x: 500, y: 300 };

@@ -129,7 +129,7 @@ describe('EllipseService', () => {
         expect(service.shiftIsPressed).toBeFalse();
     });
 
-    it('setShiftPressed should have called both drawEllipse and drawRectangle', () => {
+    it('setShiftPressed should have called both drawEllipse and drawRectangle if checkIsSquare returns false', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
 
@@ -140,6 +140,20 @@ describe('EllipseService', () => {
         service.setShiftIfPressed(event);
         expect(drawEllipseSpy).toHaveBeenCalled();
         expect(drawRectangleSpy).toHaveBeenCalled();
+    });
+    it('setShiftPressed shouldnt have called both drawEllipse and drawRectangle if checkIsSquare returns true', () => {
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
+        const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
+        service.squareHelperService.checkIfIsSquare = () => {
+            return true;
+        }
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
+        service['startingPoint'] = { x: 1, y: 5 };
+        service['endPoint'] = { x: 5, y: 5 };
+
+        service.setShiftIfPressed(event);
+        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
     it('drawEllipse draws a circle when shiftIsPressed is true', () => {

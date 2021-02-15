@@ -19,7 +19,7 @@ export class EllipseService extends Tool {
     eventTest: boolean;
     icon = faCircle;
 
-    constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
+    constructor(drawingService: DrawingService, public squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '2';
         this.index = 4;

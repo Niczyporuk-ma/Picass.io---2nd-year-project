@@ -108,11 +108,6 @@ export class EraserService extends Tool {
 
     isColoredUnderMouse(ctx: CanvasRenderingContext2D, event: MouseEvent, location: Vec2): boolean {
         const colorUnderMouse = ctx.getImageData(location.x, location.y, 1, 1).data;
-        if (colorUnderMouse[3] > 0) {
-            console.log('Black');
-            return true;
-        } else {
-            return false;
-        }
+        return colorUnderMouse[3] > 0;
     }
 }

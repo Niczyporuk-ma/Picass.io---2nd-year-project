@@ -58,12 +58,6 @@ export class ToolManagerService {
             }
         }
     }
-
-    // getters
-    getPencilService(): PencilService {
-        return this.pencilService;
-    }
-
     // setters
     setTool(tool: Tool): void {
         this.currentToolChange.next(tool);

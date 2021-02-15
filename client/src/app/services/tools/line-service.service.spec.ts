@@ -405,6 +405,32 @@ describe('LineService', () => {
         expect(drawJunctionSpy).toHaveBeenCalled();
     });
 
+    it('mouseClick should call pushNewJunction, drawLine and drawJunction if it isnt started and resizeActive is false', () => {
+        const pushNewJunctionSpy = spyOn(service, 'pushNewJunction').and.stub();
+        const drawJunctionSpy = spyOn(service, 'drawJunction').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine');
+        service.isStarted = true;
+        service.startingPoint = MOCK_STARTING_POINT;
+        service.endPoint = MOCK_ENDING_POINT;
+        drawingServiceSpy.resizeActive = false;
+        service.onMouseClick(mouseEvent);
+        expect(pushNewJunctionSpy).toHaveBeenCalled();
+        expect(drawJunctionSpy).toHaveBeenCalled();
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('mouseClick shouldnt call pushNewJunction, drawLine and drawJunction if it isnt started and resizeActive is true', () => {
+        const pushNewJunctionSpy = spyOn(service, 'pushNewJunction').and.stub();
+        const drawJunctionSpy = spyOn(service, 'drawJunction').and.stub();
+        const drawLineSpy = spyOn(service, 'drawLine');
+        service.isStarted = true;
+        drawingServiceSpy.resizeActive = true;
+        service.onMouseClick(mouseEvent);
+        expect(pushNewJunctionSpy).not.toHaveBeenCalled();
+        expect(drawJunctionSpy).not.toHaveBeenCalled();
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
     it('mouseMove should do nothing if isStarted is false', () => {
         service.isStarted = false;
         const getPositionSpy = spyOn(service, 'getPositionFromMouse').and.stub();
@@ -464,4 +490,11 @@ describe('LineService', () => {
         service.onDoubleClick(mouseEvent);
         expect(service.endPoint).toEqual(expectedResult);
     });
+
+    it('onDoubleClick should do nothing if isStarted is false', () =>{
+        const getPositionFromMouseSpy = spyOn(service,'getPositionFromMouse').and.stub();
+        service.isStarted = false;
+        service.onDoubleClick(mouseEvent);
+        expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
+    })
 });
