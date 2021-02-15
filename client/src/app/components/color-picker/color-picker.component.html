@@ -13,8 +13,10 @@
             (click)="selectSecondaryColor($event)"
             [ngStyle]="{ 'background-color': colorService.secondaryColor || 'white' }"
         ></div>
+
         <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">Swap</button>
     </div>
+
     <div class="ten-last">
         <div
             class="color-div"
