@@ -227,7 +227,7 @@ describe('EllipseService', () => {
         expect(service.shiftIsPressed).toEqual(false);
     });
 
-    it('setShiftNonPressed calls clearCanvas, drawEllipse and drawRectangle if mouseDown is true', () =>{
+    it('setShiftNonPressed calls clearCanvas, drawEllipse and drawRectangle if mouseDown is true', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
@@ -239,10 +239,9 @@ describe('EllipseService', () => {
         expect(drawEllipseSpy).toHaveBeenCalled();
         expect(drawRectangleSpy).toHaveBeenCalled();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
 
-    })
-
-    it('setShiftNonPressed doesnt call clearCanvas, drawEllipse and drawRectangle if mouseDown is false', () =>{
+    it('setShiftNonPressed doesnt call clearCanvas, drawEllipse and drawRectangle if mouseDown is false', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
@@ -254,8 +253,7 @@ describe('EllipseService', () => {
         expect(drawEllipseSpy).not.toHaveBeenCalled();
         expect(drawRectangleSpy).not.toHaveBeenCalled();
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-
-    })
+    });
 
     it('drawRectangle should calls moveTo and lineTo 4 times', () => {
         const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [

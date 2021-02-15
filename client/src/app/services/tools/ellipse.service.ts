@@ -59,6 +59,7 @@ export class EllipseService extends Tool {
             this.shiftIsPressed = true;
             if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawingService.clearBackground();
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
                 this.drawRectangle(
                     this.drawingService.previewCtx,
@@ -67,22 +68,27 @@ export class EllipseService extends Tool {
                 );
             }
         }
-    }
+    };
 
     setShiftNonPressed = (keyUpShiftEvent: KeyboardEvent) => {
         if (keyUpShiftEvent.key === 'Shift') {
+            this.shiftIsPressed = false;
             if (this.mouseDown) {
-                this.shiftIsPressed = false;
-                window.removeEventListener('keypress', this.setShiftIfPressed);
-                window.removeEventListener('keyup', this.setShiftNonPressed);
-                this.isShiftPressed = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
-            } else {
-                this.shiftIsPressed = false;
+                this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
+            }
+            window.removeEventListener('keydown', this.setShiftIfPressed);
+            window.removeEventListener('keyup', this.setShiftNonPressed);
+            this.isShiftPressed = false;
+            if (!this.mouseDown) {
+                this.drawingService.clearBackground();
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
             }
         }
-    }
+    };
+
+
 
     onMouseDown(mouseDownevent: MouseEvent): void {
         this.mouseDown = mouseDownevent.button === MouseButton.Left;
@@ -99,11 +105,17 @@ export class EllipseService extends Tool {
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            this.drawingService.clearBackground();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            // this.shiftIsPressed = false;
+            // window.removeEventListener('keyup', this.setShiftNonPressed);
+            // window.removeEventListener('keydown', this.setShiftIfPressed);
         }
         this.mouseDown = false;
+
     }
 
-    onMouseMoveTest(mouseMove: MouseEvent): void {
+    onMouseMove(mouseMove: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(mouseMove);
             this.endPoint = mousePosition;
@@ -120,6 +132,7 @@ export class EllipseService extends Tool {
                 this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
             }
         }
+
     }
 
     drawRectangle(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {

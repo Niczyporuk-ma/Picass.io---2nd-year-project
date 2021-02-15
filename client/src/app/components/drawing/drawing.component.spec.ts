@@ -17,6 +17,8 @@ describe('DrawingComponent', () => {
     let toolStub: ToolStub;
     let drawingStub: DrawingService;
 
+    // tslint:disable:no-magic-numbers
+
     beforeEach(async(() => {
         toolStub = new ToolStub({} as DrawingService);
         drawingStub = new DrawingService();
