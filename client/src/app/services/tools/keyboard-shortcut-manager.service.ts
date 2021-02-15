@@ -29,7 +29,7 @@ export class KeyboardShortcutManagerService {
             this.toolManager.blockEventListener = true;
             window.addEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
             window.addEventListener('keyup', (event: KeyboardEvent) => {
-                if (event.key == 'Control') {
+                if (event.key === 'Control') {
                     window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
                     this.toolManager.blockEventListener = false;
                 }
@@ -38,7 +38,7 @@ export class KeyboardShortcutManagerService {
     }
 
     OPressHandler(event: KeyboardEvent): void {
-        if (event.key == 'o') {
+        if (event.key === 'o') {
             this.toolManager.clearArrays();
             window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
             event.preventDefault();

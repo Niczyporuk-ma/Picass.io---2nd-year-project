@@ -220,7 +220,7 @@ describe('LineService', () => {
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(redrawCurrentLineSpy).toHaveBeenCalled();
     });
-    it('setShiftIsPressed shouldnt call clearCanvas, redrawCurrentLine and drawLine if line is started and shiftAngleCalculator returns true ', () => {
+    it('setShiftIsPressed shouldnt call clearCanvas,redrawCurentLine and drawLine if line is started and shiftAngleCalculator return true', () => {
         const drawLineSpy = spyOn(service, 'drawLine').and.stub();
         const redrawCurrentLineSpy = spyOn(service, 'redrawCurrentLine').and.stub();
         service.isStarted = true;
