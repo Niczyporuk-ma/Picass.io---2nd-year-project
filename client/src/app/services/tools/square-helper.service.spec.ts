@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
 import { SquareHelperService } from './square-helper.service';
 
-fdescribe('SquareHelperService', () => {
+describe('SquareHelperService', () => {
     let service: SquareHelperService;
 
     beforeEach(() => {

@@ -2,15 +2,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { MenuCardComponent } from '@app/components/menu-card/menu-card.component';
+import { MenuComponent } from '@app/components/menu/menu.component';
 import { IndexService } from '@app/services/index/index.service';
 import { of } from 'rxjs';
-import { MenuCardComponent } from '../menu-card/menu-card.component';
-import { MenuComponent } from '../menu/menu.component';
 import { MainPageComponent } from './main-page.component';
 
 import SpyObj = jasmine.SpyObj;
 
-fdescribe('MainPageComponent', () => {
+describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
     let indexServiceSpy: SpyObj<IndexService>;
@@ -22,9 +22,9 @@ fdescribe('MainPageComponent', () => {
 
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule],
-            declarations: [MainPageComponent,MenuCardComponent,MenuComponent],
+            declarations: [MainPageComponent, MenuCardComponent, MenuComponent],
             providers: [{ provide: IndexService, useValue: indexServiceSpy }],
-            schemas : [CUSTOM_ELEMENTS_SCHEMA],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 

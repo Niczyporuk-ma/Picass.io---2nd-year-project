@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from './eraser.service';
 
-fdescribe('EraserService', () => {
+describe('EraserService', () => {
     let service: EraserService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -93,6 +93,12 @@ fdescribe('EraserService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
+    it('onMouseMove should set strokeStyle as black if isColoredUnderMouse returns false', () => {
+        drawServiceSpy.previewCtx.strokeStyle = 'blue';
+        service.onMouseMove(mouseEvent);
+        expect(drawServiceSpy.previewCtx.strokeStyle).toEqual('#000000');
+    });
+
     // Erreur bizzare ??
     it('findCoordinate should return the correct position to create the square effect of the eraser', () => {
         service.toolStyles.lineWidth = 20;
@@ -140,11 +146,11 @@ fdescribe('EraserService', () => {
         expect(moveToSpy).toHaveBeenCalled();
     });
 
-    it('cursorEffect should set lineWidth to 1', () => {
+    it('cursorEffect should set lineWidth to 1 for the preview', () => {
         const mockLocation: Vec2 = { x: 2, y: 2 };
         service.toolStyles.lineWidth = 2;
         service.cursorEffect(mockLocation);
-        expect(service.toolStyles.lineWidth).toEqual(1);
+        expect(service.drawingService.previewCtx.lineWidth).toEqual(1);
     });
 
     it('cursorEffect should call strokeRect', () => {

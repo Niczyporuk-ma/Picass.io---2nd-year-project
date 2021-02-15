@@ -1,3 +1,8 @@
+#backgroundLayer {
+    border :none;
+    z-index: 0;
+}
+
 canvas {
     cursor: crosshair;
     border: 2px solid #000000;
@@ -5,6 +10,8 @@ canvas {
     left: 0;
     top: 0;
 }
+
+
 
 #canvas {
     z-index: 0;
@@ -16,4 +23,40 @@ canvas {
 
 #canvas-container {
     position: absolute;
+}
+
+.preview {
+    border: 1px dotted;
+    position: absolute;
+    z-index: 3;
+}
+
+button {
+    width: 10px;
+    height: 15px;
+    border: 2px solid blue;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.7;
+}
+
+#bottomAnchor {
+    cursor: ns-resize;
+    position: absolute;
+    left: 500px;
+    top: 804px;
+}
+
+#sideAnchor {
+    cursor: ew-resize;
+    position: absolute;
+    left: 1003px;
+    top: 400px;
+}
+
+#cornerAnchor {
+    cursor: nwse-resize;
+    position: absolute;
+    left: 1003px;
+    top: 802px;
 }

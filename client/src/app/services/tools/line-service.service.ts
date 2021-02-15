@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool, ToolStyles } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faSlash } from '@fortawesome/free-solid-svg-icons';
+import { faSlash, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { ColorService } from './color.service';
 import { LineHelperService } from './line-helper.service';
 
@@ -27,7 +27,7 @@ export class LineServiceService extends Tool {
     colorService: ColorService;
     angle: number;
     mousePosition: Vec2;
-    icon = faSlash;
+    icon: IconDefinition = faSlash;
     hasJunction: boolean = true;
 
     constructor(public drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
@@ -87,7 +87,7 @@ export class LineServiceService extends Tool {
         }
         window.removeEventListener('keydown', this.setShiftIsPressed);
         this.blockOnShift = false;
-    }
+    };
 
     setShiftNonPressed = (e?: KeyboardEvent) => {
         if ((e != undefined && e.key === 'Shift') || this.calledFromMouseClick) {
@@ -100,7 +100,7 @@ export class LineServiceService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.mousePosition]);
             }
         }
-    }
+    };
 
     onShift(): void {
         if (!this.blockOnShift) {
@@ -111,7 +111,7 @@ export class LineServiceService extends Tool {
         }
     }
 
-    drawJunction(ctx: CanvasRenderingContext2D, center: Vec2, radius: number) {
+    drawJunction(ctx: CanvasRenderingContext2D, center: Vec2, radius: number): void {
         if (this.hasJunction) {
             ctx.beginPath();
             ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
@@ -138,7 +138,7 @@ export class LineServiceService extends Tool {
                 this.drawJunction(ctx, junction, this.junctionsRadius[index]);
             }
         }
-        if (ctx == this.drawingService.baseCtx) {
+        if (ctx === this.drawingService.baseCtx) {
             this.clearLineAndJunctions();
         }
     }
@@ -159,11 +159,13 @@ export class LineServiceService extends Tool {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
             }
-            this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
-            this.pushNewJunction(this.endPoint, this.currentDiameter / 2);
-            this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentDiameter / 2);
-            this.currentLine.push([this.startingPoint, this.endPoint]);
-            this.startingPoint = this.endPoint;
+            if (!this.drawingService.resizeActive) {
+                this.drawLine(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
+                this.pushNewJunction(this.endPoint, this.currentDiameter / 2);
+                this.drawJunction(this.drawingService.previewCtx, this.endPoint, this.currentDiameter / 2);
+                this.currentLine.push([this.startingPoint, this.endPoint]);
+                this.startingPoint = this.endPoint;
+            }
             if (this.shiftIsPressed) {
                 this.calledFromMouseClick = true;
                 this.endPoint = this.getPositionFromMouse(event);

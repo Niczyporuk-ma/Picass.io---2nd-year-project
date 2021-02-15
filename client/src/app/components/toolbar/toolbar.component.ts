@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
 
-const FILL_VALUE  = '1';
-const CONTOUR_VALUE  = '2';
-const BOTH_VALUE  = '3';
+const FILL_VALUE = '1';
+const CONTOUR_VALUE = '2';
 
 @Component({
     selector: 'app-toolbar',
@@ -18,14 +18,13 @@ export class ToolbarComponent {
     showAdvanced: boolean = false;
     showPalette: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
-    faPen = faPen;
-    faSquare = faSquare;
-    faSlash = faSlash;
-    faEraser = faEraser;
-    faCircle = faCircle;
-    faPalette = faPalette;
-    faPlusSquare = faPlusSquare;
-    
+    faPen: IconDefinition = faPen;
+    faSquare: IconDefinition = faSquare;
+    faSlash: IconDefinition = faSlash;
+    faEraser: IconDefinition = faEraser;
+    faCircle: IconDefinition = faCircle;
+    faPalette: IconDefinition = faPalette;
+    faPlusSquare: IconDefinition = faPlusSquare;
 
     constructor(public toolManager: ToolManagerService) {
         this.toolManager = toolManager;
@@ -33,14 +32,13 @@ export class ToolbarComponent {
     }
 
     setRectangleStyle(n: string): void {
-        
-        if (n  === FILL_VALUE) {
+        if (n === FILL_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = false;
-        } else if (n  === CONTOUR_VALUE) {
+        } else if (n === CONTOUR_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = false;
             this.toolManager.rectangleService.contour = true;
-        } else if (n  === BOTH_VALUE) {
+        } else {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = true;
         }
@@ -67,8 +65,8 @@ export class ToolbarComponent {
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
 
-    setLineJunction(n: number): void {
-        if (n == 0) {
+    setLineJunction(n: string): void {
+        if (n === '0') {
             this.toolManager.lineService.hasJunction = false;
         } else {
             this.toolManager.lineService.hasJunction = true;

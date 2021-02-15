@@ -1,17 +1,16 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { CarrouselComponent } from '../carrousel/carrousel.component';
+import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
 import { MenuComponent } from './menu.component';
 
-fdescribe('MenuComponent', () => {
+describe('MenuComponent', () => {
     let component: MenuComponent;
     let fixture: ComponentFixture<MenuComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [MenuComponent,CarrouselComponent],
-            schemas : [CUSTOM_ELEMENTS_SCHEMA],
-
+            declarations: [MenuComponent, CarrouselComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 

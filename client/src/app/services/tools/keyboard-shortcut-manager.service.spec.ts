@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 // import{Tool} from '@app/classes/tool';
 import { KeyboardShortcutManagerService } from './keyboard-shortcut-manager.service';
 
-fdescribe('KeyboardShortcutManagerService', () => {
+describe('KeyboardShortcutManagerService', () => {
     let service: KeyboardShortcutManagerService;
 
     beforeEach(() => {
@@ -44,27 +44,51 @@ fdescribe('KeyboardShortcutManagerService', () => {
         expect(service.toolManager.widthValue).toEqual(14);
     });
 
+    it('onKeyPress should do nothing if allowKeyPressEvents is false', () => {
+        const hasSpy = spyOn(service.toolManager.currentTool.localShortcuts, 'has').and.stub();
+        service.toolManager.allowKeyPressEvents = false;
+        service.toolManager.currentTool = service.toolManager.pencilService;
+        service.onKeyPress('e');
+        expect(hasSpy).not.toHaveBeenCalled();
+    });
+
     it(' OPressHandler should remove the event listener when o is pressed', () => {
         const eventListenerSpy = spyOn(window, 'removeEventListener').and.callThrough();
-        const event = { key: 'o', preventDefault: () => {} } as KeyboardEvent;
+        const preventDefaultSpy = jasmine.createSpyObj('e', ['preventDefault']);
+        const event = { key: 'o', preventDefault: preventDefaultSpy.preventDefault } as KeyboardEvent;
         service.OPressHandler(event);
         expect(eventListenerSpy).toHaveBeenCalled();
     });
 
     it(' OPressHandler should call preventDefaut of the event passed to it', () => {
-        const event = { key: 'o', preventDefault: () => {} } as KeyboardEvent;
-        const preventDefaultSpy = spyOn(event, 'preventDefault');
+        const preventDefaultSpy = jasmine.createSpyObj('e', ['preventDefault']);
+        const event = { key: 'o', preventDefault: preventDefaultSpy.preventDefault } as KeyboardEvent;
         service.OPressHandler(event);
-        expect(preventDefaultSpy).toHaveBeenCalled();
+        expect(preventDefaultSpy.preventDefault).toHaveBeenCalled();
     });
 
-    it(' waitForOpress should add two event listener', () => {
+    it('OPressHandler does nothing if key isnt o', () => {
+        const event = new KeyboardEvent('keydown', { key: 'A' });
+        const removeEventListenerSpy = spyOn(window, 'removeEventListener').and.stub();
+        service.OPressHandler(event);
+        expect(removeEventListenerSpy).not.toHaveBeenCalled();
+    });
+
+    it(' waitForOpress should add three event listener', () => {
         const eventListenerSpy = spyOn(window, 'addEventListener').and.stub();
         service.waitForOPress();
         expect(eventListenerSpy).toHaveBeenCalledTimes(2);
     });
 
-    it(' waitForOpress should set blockEventListener to true', () => {
+    it(' waitForOpress should do nothing if blockEventListener is true', () => {
+        service.toolManager.blockEventListener = true;
+        const eventListenerSpy = spyOn(window, 'addEventListener').and.stub();
+        service.waitForOPress();
+        expect(eventListenerSpy).not.toHaveBeenCalled();
+    });
+
+    it(' waitForOpress should set blockEventListener to true if it was false', () => {
+        service.toolManager.blockEventListener = false;
         service.waitForOPress();
         expect(service.toolManager.blockEventListener).toEqual(true);
     });
@@ -77,6 +101,13 @@ fdescribe('KeyboardShortcutManagerService', () => {
             expect(service.toolManager.blockEventListener).toEqual(false);
             done();
         }, 200);
+    });
+
+    it('detectControl does nothing if key isnt Control', () => {
+        const event = new KeyboardEvent('keydown', { key: 'A' });
+        const removeEventListenerSpy = spyOn(window, 'removeEventListener').and.stub();
+        service.detectControl(event);
+        expect(removeEventListenerSpy).not.toHaveBeenCalled();
     });
 
     it(' waitForOpress removes the event listener when Controlis unpressed', async (done) => {

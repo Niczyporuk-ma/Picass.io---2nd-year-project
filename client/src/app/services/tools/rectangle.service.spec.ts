@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from './rectangle.service';
 
-fdescribe('RectangleService', () => {
+describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -80,6 +80,19 @@ fdescribe('RectangleService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseUp should not call getPositionFromMouse if shiftIsPressed is true', () => {
+        const getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.stub();
+        const mockPath: Vec2[] = [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+        ];
+        service.currentLine = mockPath;
+        service.mouseDown = true;
+        service.shiftIsPressed = true;
+        service.onMouseUp(mouseEvent);
+        expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
+    });
+
     it(' onMouseMove should  call drawLine if shiftIsPresse & moveDown are true and we already have a square', () => {
         service.mouseDown = true;
         service.shiftIsPressed = true;
@@ -120,6 +133,19 @@ fdescribe('RectangleService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseMove should set currentLine as startingPoint and endPoint is shiftIsPressed and it forms a square', () => {
+        service.mouseDown = true;
+        service.shiftIsPressed = true;
+        service.startingPoint = { x: 0, y: 0 };
+        // service.endPoint = {x : 2, y : 2};
+        const expectedResult: Vec2[] = [
+            { x: 0, y: 0 },
+            { x: 25, y: 25 },
+        ];
+        service.onMouseMove(mouseEvent);
+        expect(service.currentLine).toEqual(expectedResult);
+    });
+
     // PROBLEMATIQUE
     /* it(' onMouseMove should not call closestSquare when we already have a square', () => {
         service.mouseDown = true;
@@ -133,15 +159,33 @@ fdescribe('RectangleService', () => {
         //expect(service.currentLine).toEqual([{x:1,y:5},{x:5,y:1}]);
     });*/
 
-    it('setShiftPressed should have called both drawEllipse and drawRectangle', () => {
+    it('setShiftIsPressed should have called drawLine if checkIfSquare returns false', () => {
         const drawLineSpy = spyOn(service, 'drawLine').and.stub();
 
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
-        service['startingPoint'] = { x: 1, y: 5 };
-        service['endPoint'] = { x: 5, y: 5 };
+        service.startingPoint = { x: 1, y: 5 };
+        service.endPoint = { x: 5, y: 5 };
 
-        service.setShiftIfPressed(event);
+        service.setShiftIsPressed(event);
         expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('setShiftIsPressed shouldnt call drawLine if checkIfSquare returns true', () => {
+        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
+
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
+        service.startingPoint = { x: 1, y: 1 };
+        service.endPoint = { x: 5, y: 5 };
+
+        service.setShiftIsPressed(event);
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it('setShiftIsPressed does nothing if the key isnt shift', () => {
+        service.shiftIsPressed = false;
+        const event = new KeyboardEvent('keydown', { key: 'A' });
+        service.setShiftIsPressed(event);
+        expect(service.shiftIsPressed).toBeFalse();
     });
 
     it('setShiftNonPressed sets shifts shiftIsPressed and eventTest to false when mouseDown is true', () => {
@@ -154,17 +198,38 @@ fdescribe('RectangleService', () => {
         expect(service.eventListenerIsSet).toEqual(false);
     });
 
-    it('setShiftNonPressed sets shifts shiftIsPressed to false when mouseDown is false', () => {
+    it('setShiftNonPressed sets shiftIsPressed to false when mouseDown is false', () => {
         service.mouseDown = false;
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.setShiftNonPressed(event);
         expect(service.shiftIsPressed).toEqual(false);
     });
 
+    it('setShiftNonPressed does nothing if key isnt shift', () => {
+        service.shiftIsPressed = true;
+        const event = new KeyboardEvent('keydown', { key: 'A' });
+        service.setShiftNonPressed(event);
+        expect(service.shiftIsPressed).toBeTrue();
+    });
+
     it('onShift returns eventTest true', () => {
         service.eventListenerIsSet = false;
         service.onShift();
         expect(service.eventListenerIsSet).toEqual(true);
+    });
+
+    it('onShift adds 2 eventlisteners if eventListenerIsSet is false', () => {
+        const eventListenerSpy = spyOn(window, 'addEventListener').and.stub();
+        service.eventListenerIsSet = false;
+        service.onShift();
+        expect(eventListenerSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('onShift does nothing if eventListenerIsSet is true', () => {
+        const eventListenerSpy = spyOn(window, 'addEventListener').and.stub();
+        service.eventListenerIsSet = true;
+        service.onShift();
+        expect(eventListenerSpy).not.toHaveBeenCalled();
     });
 
     it('drawLine should calls fillRect when toolStyle.fill is true', () => {
@@ -202,5 +267,27 @@ fdescribe('RectangleService', () => {
         ]);
         expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
         expect(rectangleSpyObject.moveTo).toHaveBeenCalledTimes(4);
+    });
+
+    it('drawLine should set strokeStyle as primaryColor if contour is false', () => {
+        const mockPath: Vec2[] = [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+        ];
+        service.contour = false;
+        drawingServiceSpy.baseCtx.strokeStyle = 'blue';
+        service.drawLine(drawingServiceSpy.baseCtx, mockPath);
+        expect(drawingServiceSpy.baseCtx.strokeStyle).toEqual('#000000');
+    });
+
+    it('drawLine should set drawingStarted to true if ctx is baseCtx', () => {
+        const mockPath: Vec2[] = [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+        ];
+        drawingServiceSpy.drawingStarted = false;
+
+        service.drawLine(drawingServiceSpy.baseCtx, mockPath);
+        expect(drawingServiceSpy.drawingStarted).toBeTrue();
     });
 });

@@ -3,7 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faEraser } from '@fortawesome/free-solid-svg-icons';
+import { faEraser, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 @Injectable({
     providedIn: 'root',
@@ -14,7 +14,7 @@ export class EraserService extends Tool {
     coordinate: Vec2;
     indexValue: number = 3;
     minimumWidth: number = 5;
-    icon = faEraser;
+    icon: IconDefinition = faEraser;
 
     constructor(public drawingService: DrawingService) {
         super(drawingService);
@@ -43,15 +43,13 @@ export class EraserService extends Tool {
 
     // Permet de trouver la bonne prosition pour l'effet du curseur
     findCoordinate(): Vec2 {
-        const coord: Vec2 = {
-            x: this.currentPoint.x - this.toolStyles.lineWidth / 2,
-            y: this.currentPoint.y - this.toolStyles.lineWidth / 2,
-        };
+        const coord: Vec2 = { x: this.currentPoint.x - this.toolStyles.lineWidth / 2, y: this.currentPoint.y - this.toolStyles.lineWidth / 2 };
         return coord;
     }
 
     onMouseMove(event: MouseEvent): void {
         this.drawingService.previewCtx.strokeStyle = 'black';
+        this.drawingService.previewCtx.fillStyle = 'white';
 
         this.currentPoint = this.getPositionFromMouse(event);
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
@@ -86,7 +84,8 @@ export class EraserService extends Tool {
 
     // Permet la previsualisation de notre efface
     cursorEffect(location: Vec2): void {
-        this.toolStyles.lineWidth = 1;
+        this.drawingService.previewCtx.lineWidth = 1;
+        this.drawingService.previewCtx.fillRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
         this.drawingService.previewCtx.strokeRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
     }
 
@@ -100,6 +99,9 @@ export class EraserService extends Tool {
 
     // permet de verifier la limite de la largeur de l'efface
     isValid(width: number): boolean {
-        return width > this.minimumWidth;
+        if (width < this.minimumWidth) {
+            return false;
+        }
+        return true;
     }
 }

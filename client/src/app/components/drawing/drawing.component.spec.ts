@@ -9,8 +9,9 @@ class ToolStub extends Tool {}
 // TODO : Déplacer dans un fichier accessible à tous
 const DEFAULT_WIDTH = 1000;
 const DEFAULT_HEIGHT = 800;
+const TIMEOUT_WAIT = 5000;
 
-fdescribe('DrawingComponent', () => {
+describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let toolStub: ToolStub;
@@ -118,7 +119,7 @@ fdescribe('DrawingComponent', () => {
         setTimeout(() => {
             expect(onDoubleCLickSpy).toHaveBeenCalled();
             done();
-        }, 5000);
+        }, TIMEOUT_WAIT); // ca depend de la vitesse de ton ordi :(
     });
 
     it(' onMouseClick should reset the click count to 0 after processing the event', async (done) => {
