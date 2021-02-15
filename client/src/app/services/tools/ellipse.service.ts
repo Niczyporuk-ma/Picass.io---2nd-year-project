@@ -68,7 +68,7 @@ export class EllipseService extends Tool {
                 );
             }
         }
-    }
+    };
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -86,7 +86,7 @@ export class EllipseService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
             }
         }
-    }
+    };
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;

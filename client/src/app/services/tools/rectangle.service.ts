@@ -55,7 +55,7 @@ export class RectangleService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
             }
         }
-    }
+    };
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
@@ -71,7 +71,7 @@ export class RectangleService extends Tool {
                 this.shiftIsPressed = false;
             }
         }
-    }
+    };
 
     onShift(): void {
         if (!this.eventListenerIsSet) {
