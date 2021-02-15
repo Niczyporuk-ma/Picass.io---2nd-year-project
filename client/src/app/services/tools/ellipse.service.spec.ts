@@ -96,7 +96,7 @@ describe('EllipseService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
-        service.onMouseMoveTest(mouseEvent);
+        service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawEllipseSpy).toHaveBeenCalled();
         expect(drawRectangleSpy).toHaveBeenCalled();
@@ -118,7 +118,7 @@ describe('EllipseService', () => {
         service.shiftIsPressed = true;
         service.startingPoint = { x: 0, y: 0 };
         service.endPoint = { x: 1, y: 1 };
-        service.onMouseMoveTest(mouseEvent);
+        service.onMouseMove(mouseEvent);
         expect(drawRectangleSpy).toHaveBeenCalled();
     });
 
@@ -210,10 +210,10 @@ describe('EllipseService', () => {
         expect(eventListenerSpy).not.toHaveBeenCalled();
     });
 
-    it('setShiftNonPressed sets shiftIsPressed and eventTest to false when mouseDown is true', () => {
+    it('setShiftNonPressed sets shiftIsPressed and eventTest to false', () => {
         service.startingPoint = { x: 0, y: 0 };
         service.endPoint = { x: 1, y: 1 };
-        service.mouseDown = true;
+        service.mouseDown = false;
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.setShiftNonPressed(event);
         expect(service.shiftIsPressed).toEqual(false);
