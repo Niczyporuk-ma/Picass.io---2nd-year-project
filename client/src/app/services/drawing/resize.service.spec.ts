@@ -9,8 +9,6 @@ export class MockElementRef {
     nativeElement: {};
 }
 
-//export class MockElementRef extends ElementRef {}
-
 fdescribe('ResizeService', () => {
     let service: ResizeService;
     let mouseEvent: MouseEvent;
@@ -24,10 +22,13 @@ fdescribe('ResizeService', () => {
     } as MouseEvent;
 
     beforeEach(() => {
-        // TestBed.configureTestingModule({});
         TestBed.configureTestingModule({ providers: [{ provide: ElementRef, useValue: MockElementRef }] });
         service = TestBed.inject(ResizeService);
         dummyCanvas = new ElementRef<HTMLCanvasElement>(dummyNativeElement);
+
+        // Configuration du spy du service
+        // tslint:disable:no-string-literal
+        // tslint:disable:no-magic-numbers
     });
 
     it('should be created', () => {
@@ -121,6 +122,88 @@ fdescribe('ResizeService', () => {
         expect(canvasSize.y).toEqual(service.preview.y);
     });
 
+    it('stopResize should set isBottom back to false when isBottom is true', () => {
+        service.isBottom = true;
+        service.preview.y = 5500;
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.stopResize(canvasSize, dummyCanvas);
+        expect(service.isBottom).toEqual(false);
+    });
+
+    it('stopResize should set the canvasSize.x to be the same as preview.x when isSide is true', () => {
+        service.isSide = true;
+        service.preview.x = 1200;
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.stopResize(canvasSize, dummyCanvas);
+        expect(canvasSize.x).toEqual(service.preview.x);
+    });
+
+    it('stopResize should set isSide back to false when isSide is true', () => {
+        service.isSide = true;
+        service.preview.x = 1234;
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.stopResize(canvasSize, dummyCanvas);
+        expect(service.isSide).toEqual(false);
+    });
+
+    it('stopResize should set the canvasSize.x and canvasSize.y to be the same as preview.x and preview.y when isCorner is true', () => {
+        service.isCorner = true;
+        service.preview = { x: 1234, y: 5677 };
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.stopResize(canvasSize, dummyCanvas);
+        expect(canvasSize.x).toEqual(service.preview.x);
+        expect(canvasSize.y).toEqual(service.preview.y);
+    });
+
+    it('stopResize should set isSide back to false when isSide is true', () => {
+        service.isCorner = true;
+        service.preview.x = 1234;
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.stopResize(canvasSize, dummyCanvas);
+        expect(service.isCorner).toEqual(false);
+    });
+
+    it('stopResize should set mouseDown back to false', () => {
+        service.mouseDown = true;
+        service.preview.x = 1234;
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.stopResize(canvasSize, dummyCanvas);
+        expect(service.mouseDown).toEqual(false);
+    });
+
+    it('stopResize should call relocateHandle once', () => {
+        let stopResizeSpy = spyOn<any>(service, 'stopResize').and.callThrough();
+        service.mouseDown = true;
+        service.preview = { x: 1234, y: 3456 };
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.stopResize(canvasSize, dummyCanvas);
+        expect(stopResizeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('stopResize should set resizeActive back to false', () => {
+        service['drawingService'].resizeActive = true;
+        service.preview.x = 1234;
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.stopResize(canvasSize, dummyCanvas);
+        expect(service['drawingService'].resizeActive).toEqual(false);
+    });
+
     it('relocateHandles should set handles positions based on the current size of the baseCanvas', () => {
         service.sideHandle = { x: 500, y: 500 };
         service.bottomHandle = { x: 300, y: 234 };
@@ -135,4 +218,6 @@ fdescribe('ResizeService', () => {
         expect(service.cornerHandle.y).toEqual(canvasSize.y);
         expect(service.cornerHandle.x).toEqual(canvasSize.x);
     });
+
+    //TODO: test de la methode copyCanvas
 });
