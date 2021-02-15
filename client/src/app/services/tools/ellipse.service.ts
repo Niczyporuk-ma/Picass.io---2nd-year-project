@@ -13,7 +13,7 @@ import { ColorService } from './color.service';
 export class EllipseService extends Tool {
     startingPoint: Vec2;
     endPoint: Vec2;
-    shiftIsPressed: boolean;
+    public shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     border: boolean = true;
     eventTest: boolean;
@@ -31,6 +31,7 @@ export class EllipseService extends Tool {
             secondaryColor: 'black',
         };
     }
+
 
     clearArrays(): void {
         this.currentLine = [];
@@ -100,21 +101,39 @@ export class EllipseService extends Tool {
         this.mouseDown = false;
     }
 
-    onMouseMove(event: MouseEvent): void {
+    // onMouseMove(event: MouseEvent): void {
+    //     if (this.mouseDown && !this.drawingService.resizeActive) {
+    //         const mousePosition = this.getPositionFromMouse(event);
+    //         this.endPoint = mousePosition;
+    //         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    //         this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+    //         if (this.shiftIsPressed) {
+    //             this.drawRectangle(
+    //                 this.drawingService.previewCtx,
+    //                 this.startingPoint,
+    //                 this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
+    //             );
+    //         } else {
+    //             this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+    //         }
+    //     }
+    // }
+
+    onMouseMoveTest(event: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
+            this.drawingService.clearBackground();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            // this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             if (this.shiftIsPressed) {
                 this.drawRectangle(
-                    this.drawingService.previewCtx,
+                    this.drawingService.backgroundCtx,
                     this.startingPoint,
                     this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
                 );
             } else {
-                this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+                this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
             }
         }
     }
@@ -123,6 +142,7 @@ export class EllipseService extends Tool {
         const gapBetweenDash = 5;
         const dashLength = 5;
         ctx.beginPath();
+        ctx.lineWidth = 1;
         ctx.strokeStyle = 'black';
         ctx.globalCompositeOperation = 'source-over';
         ctx.setLineDash([dashLength, gapBetweenDash]);
@@ -162,15 +182,10 @@ export class EllipseService extends Tool {
         ctx.setLineDash([]);
 
         if (this.shiftIsPressed) {
-            ctx.ellipse(
-                start.x + Math.min(Math.abs(radiusX), radiusY),
-                start.y + Math.min(radiusX, Math.abs(radiusY)),
-                Math.abs(Math.min(Math.abs(radiusX), Math.abs(radiusY))),
-                Math.abs(Math.min(Math.abs(radiusX), Math.abs(radiusY))),
-                Math.PI / 2,
-                0,
-                2 * Math.PI,
-            );
+
+            let strt = this.startingPoint;
+            let end = this.squareHelperService.closestSquare([this.startingPoint,this.endPoint]);
+            ctx.arc((strt.x + end.x)/2,(strt.y + end.y)/2,Math.abs((strt.x - end.x)/2), 0, 2*Math.PI);
         } else {
             ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
         }
