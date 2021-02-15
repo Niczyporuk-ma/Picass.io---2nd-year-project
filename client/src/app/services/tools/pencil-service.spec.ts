@@ -30,6 +30,7 @@ describe('PencilService', () => {
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
+        // tslint:disable:no-magic-numbers
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
@@ -129,7 +130,7 @@ describe('PencilService', () => {
     });
 
     it('clearPath should set pathData to []', () => {
-        service['clearPath'];
+        service.clearArrays();
         expect(service['pathData']).toEqual([]);
     });
 

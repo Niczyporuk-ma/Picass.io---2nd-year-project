@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ToolbarComponent } from './toolbar.component';
 
-
 describe('ToolbarComponent', () => {
+    // tslint:disable:no-magic-numbers
     let component: ToolbarComponent;
     let fixture: ComponentFixture<ToolbarComponent>;
 
@@ -22,47 +22,47 @@ describe('ToolbarComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('setRectangleStyle puts fill to true and contour to false when n = 3', () => {
-        component.setRectangleStyle(3);
+    it('setRectangleStyle puts fill to true and contour to false when n = 1', () => {
+        component.setRectangleStyle('1');
         expect(component.toolManager.rectangleService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.rectangleService.contour).toEqual(false);
     });
 
-    it('setRectangleStyle puts fill to true and contour to false when n = 4', () => {
-        component.setRectangleStyle(4);
+    it('setRectangleStyle puts fill to false and contour to true when n = 2', () => {
+        component.setRectangleStyle('2');
         expect(component.toolManager.rectangleService.toolStyles.fill).toEqual(false);
         expect(component.toolManager.rectangleService.contour).toEqual(true);
     });
 
-    it('setRectangleStyle puts fill to true and contour to true when n = 5', () => {
-        component.setRectangleStyle(5);
+    it('setRectangleStyle puts fill to true and contour to true when n = 3', () => {
+        component.setRectangleStyle('3');
         expect(component.toolManager.rectangleService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.rectangleService.contour).toEqual(true);
     });
 
-    it('setEllipseStyle puts fill to true and contour to false when n = 0', () => {
-        component.setEllipseStyle(0);
+    it('setEllipseStyle puts fill to true and contour to false when n = 1', () => {
+        component.setEllipseStyle('1');
         expect(component.toolManager.ellipseService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.ellipseService.border).toEqual(false);
     });
 
-    it('setEllipseStyle puts fill to true and contour to false when n = 1', () => {
-        component.setEllipseStyle(1);
+    it('setEllipseStyle puts fill to false and contour to true when n = 2', () => {
+        component.setEllipseStyle('2');
         expect(component.toolManager.ellipseService.toolStyles.fill).toEqual(false);
         expect(component.toolManager.ellipseService.border).toEqual(true);
     });
 
     it('setEllipseStyle puts fill to true and contour to true when anything else than 0 and 1', () => {
-        component.setEllipseStyle(5);
+        component.setEllipseStyle('3');
         expect(component.toolManager.ellipseService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.ellipseService.border).toEqual(true);
     });
 
     it(' onPress should toggle the showPallet value', () => {
         component.showPalette = false;
-        component.onPress();
+        component.onPressPalette();
         expect(component.showPalette).toEqual(true);
-        component.onPress();
+        component.onPressPalette();
         expect(component.showPalette).toEqual(false);
     });
 
@@ -74,12 +74,12 @@ describe('ToolbarComponent', () => {
     });
 
     it(' setLineJunction puts hasJunction of line service to false if n = 0', () => {
-        component.setLineJunction(0);
+        component.setLineJunction('0');
         expect(component.toolManager.lineService.hasJunction).toEqual(false);
     });
 
     it(' setLineJunction puts hasJunction to true if n != 0', () => {
-        component.setLineJunction(1);
+        component.setLineJunction('1');
         expect(component.toolManager.lineService.hasJunction).toEqual(true);
     });
 
@@ -87,9 +87,9 @@ describe('ToolbarComponent', () => {
         component.changeDiameter(10);
         expect(component.toolManager.lineService.currentDiameter).toEqual(10);
     });
-    
+
     it(' setLineJunction puts hasJunction to false is n = 0', () => {
-        component.setLineJunction(0);
+        component.setLineJunction('0');
         expect(component.toolManager.lineService.hasJunction).toEqual(false);
     });
 
@@ -103,5 +103,4 @@ describe('ToolbarComponent', () => {
         component.changeWidth(25);
         expect(component.toolManager.widthValue).toEqual(25);
     });
-
 });

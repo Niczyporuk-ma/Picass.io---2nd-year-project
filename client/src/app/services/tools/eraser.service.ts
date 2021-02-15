@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faEraser } from '@fortawesome/free-solid-svg-icons';
-import { MouseButton } from './pencil-service';
+import { faEraser, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +14,7 @@ export class EraserService extends Tool {
     coordinate: Vec2;
     indexValue: number = 3;
     minimumWidth: number = 5;
-    public icon: IconDefinition = faEraser;
+    icon: IconDefinition = faEraser;
 
     constructor(public drawingService: DrawingService) {
         super(drawingService);
@@ -50,11 +49,12 @@ export class EraserService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         this.drawingService.previewCtx.strokeStyle = 'black';
+        this.drawingService.previewCtx.fillStyle = 'white';
 
         this.currentPoint = this.getPositionFromMouse(event);
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.cursorEffect(this.drawingService.previewCtx, this.findCoordinate());
+        this.cursorEffect(this.findCoordinate());
 
         if (this.mouseDown) {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
@@ -63,7 +63,7 @@ export class EraserService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.cursorEffect(this.drawingService.previewCtx, this.findCoordinate());
+            this.cursorEffect(this.findCoordinate());
         }
     }
 
@@ -82,19 +82,10 @@ export class EraserService extends Tool {
         this.startingPoint.y = this.currentPoint.y;
     }
 
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-        ctx.lineWidth = this.toolStyles.lineWidth;
-        ctx.lineCap = 'round';
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
-        ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
-        ctx.stroke();
-    }
-
     // Permet la previsualisation de notre efface
-    cursorEffect(ctx: CanvasRenderingContext2D, location: Vec2): void {
+    cursorEffect(location: Vec2): void {
         this.drawingService.previewCtx.lineWidth = 1;
+        this.drawingService.previewCtx.fillRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
         this.drawingService.previewCtx.strokeRect(location.x, location.y, this.toolStyles.lineWidth, this.toolStyles.lineWidth);
     }
 

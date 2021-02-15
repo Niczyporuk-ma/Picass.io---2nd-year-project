@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faSquare } from '@fortawesome/free-regular-svg-icons';
-import { MouseButton } from './pencil-service';
+import { faSquare, IconDefinition } from '@fortawesome/free-regular-svg-icons';
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +16,7 @@ export class RectangleService extends Tool {
     currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;
     contour: boolean = true;
-    public icon: IconDefinition = faSquare;
+    icon: IconDefinition = faSquare;
     constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '1';
@@ -47,10 +46,10 @@ export class RectangleService extends Tool {
         }
     }
 
-    setShiftIfPressed = (e: KeyboardEvent) => {
+    setShiftIsPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
             this.shiftIsPressed = true;
-            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint]) && !this.drawingService.resizeActive) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
                 this.drawLine(this.drawingService.previewCtx, this.currentLine);
@@ -60,9 +59,9 @@ export class RectangleService extends Tool {
 
     setShiftNonPressed = (e: KeyboardEvent) => {
         if (e.key === 'Shift') {
-            if (this.mouseDown) {
+            if (this.mouseDown && !this.drawingService.resizeActive) {
                 this.shiftIsPressed = false;
-                window.removeEventListener('keypress', this.setShiftIfPressed);
+                window.removeEventListener('keypress', this.setShiftIsPressed);
                 window.removeEventListener('keyup', this.setShiftNonPressed);
                 this.eventListenerIsSet = false;
                 this.currentLine = [this.startingPoint, this.endPoint];
@@ -76,46 +75,39 @@ export class RectangleService extends Tool {
 
     onShift(): void {
         if (!this.eventListenerIsSet) {
-            window.addEventListener('keydown', this.setShiftIfPressed);
+            window.addEventListener('keydown', this.setShiftIsPressed);
             window.addEventListener('keyup', this.setShiftNonPressed);
             this.eventListenerIsSet = true;
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             if (!this.shiftIsPressed) {
                 const mousePosition = this.getPositionFromMouse(event);
                 this.endPoint = mousePosition;
                 this.currentLine = [this.startingPoint, this.endPoint];
-                this.drawLine(this.drawingService.baseCtx, this.currentLine);
-            } else {
-                this.drawLine(this.drawingService.baseCtx, this.currentLine);
             }
+            this.drawLine(this.drawingService.baseCtx, this.currentLine);
         }
         this.mouseDown = false;
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             if (this.shiftIsPressed) {
+                this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
                 if (this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
                     this.currentLine = [this.startingPoint, this.endPoint];
-                    this.drawLine(this.drawingService.previewCtx, this.currentLine);
-                } else {
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
-                    this.drawLine(this.drawingService.previewCtx, this.currentLine);
                 }
             } else {
                 // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentLine = [this.startingPoint, this.endPoint];
-                this.drawLine(this.drawingService.previewCtx, this.currentLine);
             }
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawLine(this.drawingService.previewCtx, this.currentLine);
         }
     }
 

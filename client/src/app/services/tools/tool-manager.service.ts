@@ -45,12 +45,11 @@ export class ToolManagerService {
             [this.ellipseService.shortcut, this.tools[this.ellipseService.index]],
         ]);
     }
-    //A TESTER
+    // A TESTER
     clearArrays(): void {
         if (this.drawingService.drawingStarted) {
             if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
                 for (const tool of this.tools) {
-                    console.log(tool);
                     tool.clearArrays();
                 }
                 this.drawingService.drawingStarted = false;
@@ -59,16 +58,6 @@ export class ToolManagerService {
             }
         }
     }
-
-    onPress(): void {
-        this.currentTool.isActive = !this.currentTool.isActive;
-    }
-
-    // getters
-    getPencilService(): PencilService {
-        return this.pencilService;
-    }
-
     // setters
     setTool(tool: Tool): void {
         this.currentToolChange.next(tool);

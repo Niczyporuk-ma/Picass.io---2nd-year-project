@@ -1,29 +1,31 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { IconDefinition } from '@fortawesome/free-brands-svg-icons';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { ColorService } from './color.service';
-import { MouseButton } from './pencil-service';
+
+const TOOL_INDEX = 4;
 
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    private startingPoint: Vec2;
-    private endPoint: Vec2;
+    startingPoint: Vec2;
+    endPoint: Vec2;
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     border: boolean = true;
     eventTest: boolean;
-    public icon: IconDefinition = faCircle;
+    icon: IconDefinition = faCircle;
 
-    constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
+    constructor(drawingService: DrawingService, public squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '2';
-        this.index = 4;
+        this.index = TOOL_INDEX;
         this.localShortcuts = new Map([['Shift', this.onShift]]);
         this.toolStyles = {
             primaryColor: 'white',
@@ -37,8 +39,8 @@ export class EllipseService extends Tool {
         this.currentLine = [];
     }
 
-    //TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
-    //quand on dessine du bas vers le haut, et de droite vers la gauche
+    // TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
+    // quand on dessine du bas vers le haut, et de droite vers la gauche
 
     // TODO: renommer eventTest
     onShift(): void {
@@ -92,7 +94,7 @@ export class EllipseService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -101,21 +103,39 @@ export class EllipseService extends Tool {
         this.mouseDown = false;
     }
 
-    onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+    // onMouseMove(event: MouseEvent): void {
+    //     if (this.mouseDown && !this.drawingService.resizeActive) {
+    //         const mousePosition = this.getPositionFromMouse(event);
+    //         this.endPoint = mousePosition;
+    //         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    //         this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+    //         if (this.shiftIsPressed) {
+    //             this.drawRectangle(
+    //                 this.drawingService.previewCtx,
+    //                 this.startingPoint,
+    //                 this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
+    //             );
+    //         } else {
+    //             this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+    //         }
+    //     }
+    // }
+
+    onMouseMoveTest(event: MouseEvent): void {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(event);
             this.endPoint = mousePosition;
+            this.drawingService.clearBackground();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            // this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             if (this.shiftIsPressed) {
                 this.drawRectangle(
-                    this.drawingService.previewCtx,
+                    this.drawingService.backgroundCtx,
                     this.startingPoint,
                     this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
                 );
             } else {
-                this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+                this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
             }
         }
     }
@@ -124,6 +144,7 @@ export class EllipseService extends Tool {
         const gapBetweenDash = 5;
         const dashLength = 5;
         ctx.beginPath();
+        ctx.lineWidth = 1;
         ctx.strokeStyle = 'black';
         ctx.globalCompositeOperation = 'source-over';
         ctx.setLineDash([dashLength, gapBetweenDash]);
@@ -142,6 +163,9 @@ export class EllipseService extends Tool {
     drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         this.setColors(this.colorService);
         this.setStyles();
+        if (ctx === this.drawingService.baseCtx) {
+            this.drawingService.drawingStarted = true;
+        }
 
         this.drawingService.previewCtx.fillStyle = this.toolStyles.primaryColor as string;
         this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
@@ -163,12 +187,11 @@ export class EllipseService extends Tool {
         ctx.setLineDash([]);
 
         if (this.shiftIsPressed) {
-            ctx.ellipse(
-                start.x + Math.min(Math.abs(radiusX), radiusY),
-                start.y + Math.min(radiusX, Math.abs(radiusY)),
-                Math.abs(Math.min(Math.abs(radiusX), Math.abs(radiusY))),
-                Math.abs(Math.min(Math.abs(radiusX), Math.abs(radiusY))),
-                Math.PI / 2,
+            const squareCornerPos = this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]);
+            ctx.arc(
+                (this.startingPoint.x + squareCornerPos.x) / 2,
+                (this.startingPoint.y + squareCornerPos.y) / 2,
+                Math.abs((this.startingPoint.x - squareCornerPos.x) / 2),
                 0,
                 2 * Math.PI,
             );

@@ -4,12 +4,12 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { DrawingComponent } from './drawing.component';
 
-
 class ToolStub extends Tool {}
 
 // TODO : Déplacer dans un fichier accessible à tous
 const DEFAULT_WIDTH = 1000;
 const DEFAULT_HEIGHT = 800;
+const TIMEOUT_WAIT = 5000;
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
@@ -76,21 +76,58 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
-    /*it(" ngAfterViewInit should add an event listener with keyDown and onKeyPress  ", () => {
-        const enventListenerSpy = spyOn(window,'addEventListener').and.callThrough();
+    it(' ngAfterViewInit should add two event listener', () => {
+        const enventListenerSpy = spyOn(window, 'addEventListener').and.callThrough();
         component.ngAfterViewInit();
-        //????????
-        expect(enventListenerSpy).toHaveBeenCalledWith('keydown',(event: KeyboardEvent) => {
-            component.shortcutKeyboardManager.onKeyPress(event.key);
-        });
-    });*/
-
-    it(" ngAfterViewInit should add an event listener", () => {
-        const enventListenerSpy = spyOn(window,'addEventListener').and.callThrough();
-        component.ngAfterViewInit();
-        expect(enventListenerSpy).toHaveBeenCalled();
-        
+        expect(enventListenerSpy).toHaveBeenCalledTimes(2);
     });
 
+    /*it(" ngAfterViewInit should call onKeyPress & waitForOPress when Control is pressed", async (done) => {
+        const event = new KeyboardEvent('keydown',{key :'Controle'});
+        const onKeyPressSpy = spyOn(component.shortcutKeyboardManager,'onKeyPress').and.callFake(function() 
+        {console.log("TEST");});
+       const oPressSpy = spyOn(component.shortcutKeyboardManager,'waitForOPress').and.returnValue();
+        component.ngAfterViewInit();
+        window.dispatchEvent(event);
+        setTimeout(() => {
+            expect(onKeyPressSpy).toHaveBeenCalled();
+            expect(oPressSpy).toHaveBeenCalled();
+            done();
+        }, 2000);//
+        
+    });*/
 
+    it(' onMouseClick should call onMouseClick of current tool if there is a single click', async (done) => {
+        const event = {} as MouseEvent;
+        const onMouseCLickSpy = spyOn(component.toolManager.currentTool, 'onMouseClick').and.callThrough();
+        component.onMouseClick(event);
+        setTimeout(() => {
+            expect(onMouseCLickSpy).toHaveBeenCalled();
+            done();
+        }, component.timeOutDuration);
+    });
+
+    it(' onMouseClick should call onDoubleClick of current tool if there is a double click', async (done) => {
+        const event = {} as MouseEvent;
+        const onDoubleCLickSpy = spyOn(component.toolManager.currentTool, 'onDoubleClick').and.callThrough();
+        component.onMouseClick(event);
+        setTimeout(() => {
+            component.clickCount++;
+            done();
+        }, component.timeOutDuration / 16);
+
+        setTimeout(() => {
+            expect(onDoubleCLickSpy).toHaveBeenCalled();
+            done();
+        }, TIMEOUT_WAIT); // ca depend de la vitesse de ton ordi :(
+    });
+
+    it(' onMouseClick should reset the click count to 0 after processing the event', async (done) => {
+        const event = {} as MouseEvent;
+        component.onMouseClick(event);
+        setTimeout(() => {
+            expect(component.clickCount).toEqual(0);
+            done();
+        }, component.timeOutDuration);
+    });
 });

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faPalette } from '@fortawesome/free-solid-svg-icons';
+import { faPalette, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { Queue } from 'queue-typescript';
 
 @Injectable({
@@ -13,7 +12,7 @@ export class ColorService {
     secondaryOpacity: number;
     // TODO opactity for each color
     tenLastUsedColors: Queue<string>;
-    public icon: IconDefinition = faPalette;
+    icon: IconDefinition = faPalette;
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
@@ -45,12 +44,18 @@ export class ColorService {
     }
 
     contains(color: string): boolean {
-        let array = this.tenLastUsedColors.toArray();
-        for (let i = 0; i < array.length; i++) {
-            if (array[i] == color) {
+        const array = this.tenLastUsedColors.toArray();
+        // for (let i = 0; i < array.length; i++) {
+        //     if (array[i] == color) {
+        //         return true;
+        //     }
+        // }
+        for (const lastUsed of array) {
+            if (lastUsed === color) {
                 return true;
             }
         }
+
         return false;
     }
 }
