@@ -55,7 +55,7 @@
     >
         <fa-icon [icon]="faPalette" size="lg"></fa-icon>
     </button>
-    <div *ngIf="showPalette">
+    <div *ngIf="this.toolManager.showPalette">
         <app-color-picker></app-color-picker>
     </div>
 
@@ -72,7 +72,7 @@
                 (input)="this.toolManager.widthValue = $event.value"
                 [value]="this.toolManager.widthValue"
             ></mat-slider>
-           <mat-card-subtitle>{{ this.toolManager.widthValue }} </mat-card-subtitle>
+            <mat-card-subtitle>{{ this.toolManager.widthValue }} </mat-card-subtitle>
         </mat-card>
     </div>
 

@@ -19,7 +19,7 @@ export class EllipseService extends Tool {
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     border: boolean = true;
-    eventTest: boolean;
+    isShiftPressed: boolean;
     icon: IconDefinition = faCircle;
 
     constructor(drawingService: DrawingService, public squareHelperService: SquareHelperService, public colorService: ColorService) {
@@ -42,23 +42,24 @@ export class EllipseService extends Tool {
     // TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
     // quand on dessine du bas vers le haut, et de droite vers la gauche
 
-    // TODO: renommer eventTest
+    // TODO: renommer isShiftPressed
     onShift(): void {
-        if (!this.eventTest) {
+        if (!this.isShiftPressed) {
             window.addEventListener('keydown', this.setShiftIfPressed);
             window.addEventListener('keyup', this.setShiftNonPressed);
-            this.eventTest = true;
+            this.isShiftPressed = true;
         }
     }
     changeWidth(newWidth: number): void {
         this.toolStyles.lineWidth = newWidth;
     }
 
-    setShiftIfPressed = (e: KeyboardEvent) => {
-        if (e.key === 'Shift') {
+    setShiftIfPressed = (keyDownShiftEvent: KeyboardEvent) => {
+        if (keyDownShiftEvent.key === 'Shift') {
             this.shiftIsPressed = true;
             if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawingService.clearBackground();
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
                 this.drawRectangle(
                     this.drawingService.previewCtx,
@@ -67,63 +68,53 @@ export class EllipseService extends Tool {
                 );
             }
         }
-    }
+    };
 
-    setShiftNonPressed = (e: KeyboardEvent) => {
-        if (e.key === 'Shift') {
+    setShiftNonPressed = (keyUpShiftEvent: KeyboardEvent) => {
+        if (keyUpShiftEvent.key === 'Shift') {
+            this.shiftIsPressed = false;
             if (this.mouseDown) {
-                this.shiftIsPressed = false;
-                window.removeEventListener('keypress', this.setShiftIfPressed);
-                window.removeEventListener('keyup', this.setShiftNonPressed);
-                this.eventTest = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
-            } else {
-                this.shiftIsPressed = false;
+                this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
+            }
+            window.removeEventListener('keydown', this.setShiftIfPressed);
+            window.removeEventListener('keyup', this.setShiftNonPressed);
+            this.isShiftPressed = false;
+            if (!this.mouseDown) {
+                this.drawingService.clearBackground();
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
             }
         }
-    }
+    };
 
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+    onMouseDown(mouseDownevent: MouseEvent): void {
+        this.mouseDown = mouseDownevent.button === MouseButton.Left;
         if (!this.mouseDown) {
             return;
         }
-        this.mouseDownCoord = this.getPositionFromMouse(event);
+        this.mouseDownCoord = this.getPositionFromMouse(mouseDownevent);
         this.startingPoint = this.mouseDownCoord;
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(mouseUpEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            const mousePosition = this.getPositionFromMouse(event);
+            const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            this.drawingService.clearBackground();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            // this.shiftIsPressed = false;
+            // window.removeEventListener('keyup', this.setShiftNonPressed);
+            // window.removeEventListener('keydown', this.setShiftIfPressed);
         }
         this.mouseDown = false;
     }
 
-    // onMouseMove(event: MouseEvent): void {
-    //     if (this.mouseDown && !this.drawingService.resizeActive) {
-    //         const mousePosition = this.getPositionFromMouse(event);
-    //         this.endPoint = mousePosition;
-    //         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-    //         this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
-    //         if (this.shiftIsPressed) {
-    //             this.drawRectangle(
-    //                 this.drawingService.previewCtx,
-    //                 this.startingPoint,
-    //                 this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
-    //             );
-    //         } else {
-    //             this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
-    //         }
-    //     }
-    // }
-
-    onMouseMoveTest(event: MouseEvent): void {
+    onMouseMove(mouseMove: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            const mousePosition = this.getPositionFromMouse(event);
+            const mousePosition = this.getPositionFromMouse(mouseMove);
             this.endPoint = mousePosition;
             this.drawingService.clearBackground();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);

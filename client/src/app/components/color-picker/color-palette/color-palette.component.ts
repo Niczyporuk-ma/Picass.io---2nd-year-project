@@ -2,7 +2,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MouseButton } from '@app/enums/enums';
 import { ColorService } from '@app/services/tools/color.service';
-const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
 
 @Component({
     selector: 'app-color-palette',
@@ -26,11 +25,8 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     private mousedown: boolean = false;
     private contextmenu: boolean = false;
     colorService: ColorService;
-    isConfirmed: boolean = false;
     mouseEvent: MouseEvent;
     showConfirmButton: boolean = false;
-    primaryColorConfirm: boolean = false;
-    secondaryColorConfirm: boolean = false;
 
     selectedPosition: { x: number; y: number };
 
@@ -99,25 +95,13 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         // PROBLEM WITH PREVIEW STILL
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = false;
+        console.log(this.colorService.isConfirmed);
+
         if (this.contextmenu === false && this.mousedown === true) {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.emitColor(evt.offsetX, evt.offsetY);
-            if (this.isConfirmed) {
-                console.log(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-                if (!this.colorService.contains(this.getColorAtPosition(evt.offsetX, evt.offsetY))) {
-                    this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-                    if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
-                        this.colorService.tenLastUsedColors.dequeue();
-                    }
-                } else {
-                    this.colorService.tenLastUsedColors.remove(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-                    this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-                    if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
-                        this.colorService.tenLastUsedColors.dequeue();
-                    }
-                }
-                this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.primaryOpacity);
+            if (this.colorService.isConfirmed) {
                 this.resetBoolsAfterDecision();
             }
             this.colorService.primaryColorPreview = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.primaryOpacity);
@@ -126,10 +110,8 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     resetBoolsAfterDecision(): void {
-        this.isConfirmed = false;
+        this.colorService.isConfirmed = false;
         this.showConfirmButton = false;
-        this.primaryColorConfirm = false;
-        this.secondaryColorConfirm = false;
         this.mousedown = false;
     }
 
@@ -141,21 +123,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
         this.emitColor(evt.offsetX, evt.offsetY);
-        if (this.isConfirmed) {
-            console.log(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-            if (!this.colorService.contains(this.getColorAtPosition(evt.offsetX, evt.offsetY))) {
-                this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-                if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
-                    this.colorService.tenLastUsedColors.dequeue();
-                }
-            } else {
-                this.colorService.tenLastUsedColors.remove(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-                this.colorService.tenLastUsedColors.append(this.getColorAtPosition(evt.offsetX, evt.offsetY));
-                if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
-                    this.colorService.tenLastUsedColors.dequeue();
-                }
-            }
-            this.colorService.secondaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.secondaryOpacity);
+        if (this.colorService.isConfirmed) {
             this.resetBoolsAfterDecision();
             return false;
         }
@@ -168,7 +136,10 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.emitColor(evt.offsetX, evt.offsetY);
-            this.colorService.primaryColor = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.primaryOpacity);
+            this.colorService.primaryColorPreview = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.primaryOpacity);
+            if (this.colorService.isConfirmed) {
+                this.colorService.primaryColor = this.colorService.primaryColorPreview;
+            }
         }
     }
 
@@ -187,9 +158,10 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + opacity + ')';
     }
 
-    paletteClickHandler(evt: MouseEvent): void {
+    paletteClickHandler(evt: MouseEvent): boolean {
         this.mouseEvent = evt;
-        this.showConfirmButton = true;
-        console.log(this.showConfirmButton);
+        this.colorService.showConfirmButton = true;
+        return false;
+        //console.log(this.showConfirmButton);
     }
 }

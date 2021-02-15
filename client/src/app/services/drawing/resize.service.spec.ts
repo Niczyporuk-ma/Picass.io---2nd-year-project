@@ -41,17 +41,17 @@ fdescribe('ResizeService', () => {
 
     it('startResize should sets resizeActive to true', () => {
         service.startResize(mouseEvent);
-        expect(service.drawingService.resizeActive).toEqual(true);
+        expect(service['drawingService'].resizeActive).toEqual(true);
     });
 
     it('startResize shouldnt set resizeActive to false on right click', () => {
-        const rightClickMouseEvent: MouseEvent = { button: 2 } as MouseEvent;
+        let rightClickMouseEvent: MouseEvent = { button: 2 } as MouseEvent;
         service.startResize(rightClickMouseEvent);
-        expect(service.drawingService.resizeActive).toEqual(true);
+        expect(service['drawingService'].resizeActive).toEqual(true);
     });
 
     it('startResize should set mouseDown to false on right click', () => {
-        const rightClickMouseEvent: MouseEvent = { button: 2 } as MouseEvent;
+        let rightClickMouseEvent: MouseEvent = { button: 2 } as MouseEvent;
         service.startResize(rightClickMouseEvent);
         expect(service.mouseDown).toEqual(false);
     });
@@ -59,7 +59,7 @@ fdescribe('ResizeService', () => {
     it('resize should set preview.y to MIN_HEIGH when the mouse position is lower MIN_HEIGH when isBottom is true', () => {
         service.isBottom = true;
         service.mouseDown = true;
-        const event: MouseEvent = { pageY: 100 } as MouseEvent;
+        let event: MouseEvent = { pageY: 100 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview.y).toEqual(Constant.MIN_HEIGH);
     });
@@ -67,7 +67,7 @@ fdescribe('ResizeService', () => {
     it('resize should set preview.y to the good value when isBottom is true', () => {
         service.isBottom = true;
         service.mouseDown = true;
-        const event: MouseEvent = { pageY: 800 } as MouseEvent;
+        let event: MouseEvent = { pageY: 800 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview.y).toEqual(event.pageY);
     });
@@ -75,7 +75,7 @@ fdescribe('ResizeService', () => {
     it('resize should set preview.x to MIN_HEIGH when the mouse position is lower MIN_HEIGH when isSide is true', () => {
         service.isSide = true;
         service.mouseDown = true;
-        const event: MouseEvent = { pageX: 100 } as MouseEvent;
+        let event: MouseEvent = { pageX: 100 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview.x).toEqual(Constant.MIN_HEIGH);
     });
@@ -85,7 +85,7 @@ fdescribe('ResizeService', () => {
         service.isBottom = false;
         service.isCorner = false;
         service.mouseDown = true;
-        const event: MouseEvent = { pageX: 800 } as MouseEvent;
+        let event: MouseEvent = { pageX: 800 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview.x).toEqual(300);
     });
@@ -95,7 +95,7 @@ fdescribe('ResizeService', () => {
         service.isBottom = false;
         service.isCorner = true;
         service.mouseDown = true;
-        const event: MouseEvent = { pageX: 800, pageY: 1000 } as MouseEvent;
+        let event: MouseEvent = { pageX: 800, pageY: 1000 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview).toEqual({ x: 300, y: 1000 });
     });
@@ -105,7 +105,7 @@ fdescribe('ResizeService', () => {
         service.isBottom = false;
         service.isCorner = true;
         service.mouseDown = true;
-        const event: MouseEvent = { pageX: 150, pageY: 50 } as MouseEvent;
+        let event: MouseEvent = { pageX: 150, pageY: 50 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview).toEqual({ x: Constant.MIN_WIDTH, y: Constant.MIN_HEIGH });
     });

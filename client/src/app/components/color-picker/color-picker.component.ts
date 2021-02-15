@@ -1,9 +1,10 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
 import { MouseButton } from '@app/enums/enums';
 import { ColorService } from '@app/services/tools/color.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { ColorPaletteComponent } from './color-palette/color-palette.component';
 const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
 
 @Component({
@@ -13,6 +14,7 @@ const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
 })
 export class ColorPickerComponent {
     hue: string;
+    hexColor: string = '#FFF';
     color: string = 'rgba(0,0,0,1)';
     red: string = '';
     green: string = '';
@@ -27,11 +29,16 @@ export class ColorPickerComponent {
     opacityIndex: number = 3;
     private mousedown: boolean = false;
     private contextmenu: boolean = false;
-
+    isRed: boolean = false;
+    isGreen: boolean = false;
+    isBlue: boolean = false;
     constructor(colorService: ColorService, public toolManager: ToolManagerService) {
         this.colorService = colorService;
         this.toolManager = toolManager;
     }
+
+    @ViewChild(ColorPaletteComponent)
+    colorPalette: ColorPaletteComponent;
 
     @Output()
     colorEmitted: EventEmitter<string> = new EventEmitter(true);
@@ -80,47 +87,44 @@ export class ColorPickerComponent {
         }
     }
 
-    // TODO: 1. accepting the hashes codes for the colors. 2. Refactoring (lots of code just repeted)
-    adjustRed(redIntensity: KeyboardEvent): void {
+    adjustColor(colorIntensity: KeyboardEvent) {
         let hexValue = '';
-        if(!redIntensity.ctrlKey){
-            hexValue += (redIntensity.target as HTMLInputElement).value;
+        if (!colorIntensity.ctrlKey) {
+            hexValue += (colorIntensity.target as HTMLInputElement).value;
         }
 
         var regExp = new RegExp('^#[0-9A-Fa-f]{1,2}$');
-         if (!regExp.test('#' + hexValue) && hexValue!='') {
-           alert('invalid'); //TODO change the message to be more user-friendly
+        if (!regExp.test('#' + hexValue) && hexValue != '') {
+            alert('Entrez une valeur en hexadécimal!');
         }
-        // if(hexValue = '') {
-        //     hexValue = '#0';
-        // }
 
-        //TODO: convert HEX to decimal
-         let decimalValue = parseInt(hexValue,16);
-         console.log(decimalValue);
+        let decimalValue = parseInt(hexValue, 16);
 
-        this.green = this.splitColor(this.color)[this.greenIndex];
-        this.blue = this.splitColor(this.color)[this.blueIndex];
-        const opacity = this.splitColor(this.color)[this.opacityIndex];
-        this.color = 'rgba(' + hexValue + ',' + this.green + ',' + this.blue + ',' + opacity + ')';
-        if (this.primary) {
-            this.colorService.primaryColor = this.color;
-            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
-        } else {
-            this.colorService.secondaryColor = this.color;
-            this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
-        }
-    }
-
-    adjustGreen(greenIntensity: KeyboardEvent): void {
-        // change the any type
-        let value = '';
-        value += (greenIntensity.target as HTMLInputElement).value;
         this.red = this.splitColor(this.color)[this.redIndex];
         this.blue = this.splitColor(this.color)[this.blueIndex];
+        this.green = this.splitColor(this.color)[this.greenIndex];
         const opacity = this.splitColor(this.color)[this.opacityIndex];
-        this.color = 'rgba(' + this.red + ',' + value + ',' + this.blue + ',' + opacity + ')';
-        if (this.primary) {
+
+        if (this.isRed) {
+            if (this.isNumber(decimalValue)) {
+                this.color = 'rgba(' + decimalValue + ',' + this.green + ',' + this.blue + ',' + opacity + ')';
+            }
+        } else if (this.isGreen) {
+            if (this.isNumber(decimalValue)) {
+                this.color = 'rgba(' + this.red + ',' + decimalValue + ',' + this.blue + ',' + opacity + ')';
+            }
+        } else if (this.isBlue) {
+            if (this.isNumber(decimalValue)) {
+                this.color = 'rgba(' + this.red + ',' + this.green + ',' + decimalValue + ',' + opacity + ')';
+            }
+        }
+
+        this.setColorPreview(this.primary);
+        this.resetSelectedColors();
+    }
+
+    setColor(primary: boolean) {
+        if (primary) {
             this.colorService.primaryColor = this.color;
             this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
         } else {
@@ -129,21 +133,27 @@ export class ColorPickerComponent {
         }
     }
 
-    adjustBlue(blueIntensity: KeyboardEvent): void {
-        let value = '';
-        value += (blueIntensity.target as HTMLInputElement).value;
-        this.red = this.splitColor(this.color)[this.redIndex];
-        this.green = this.splitColor(this.color)[this.greenIndex];
-        const opacity = this.splitColor(this.color)[this.opacityIndex];
-        this.color = 'rgba(' + this.red + ',' + this.green + ',' + value + ',' + opacity + ')';
-        if (this.primary) {
-            this.colorService.primaryColor = this.color;
-            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
+    setColorPreview(primary: boolean) {
+        if (primary) {
+            this.colorService.primaryColorPreview = this.color;
+            //this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
         } else {
-            this.colorService.secondaryColor = this.color;
-            this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
+            this.colorService.secondaryColorPreview = this.color;
+            //this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
         }
     }
+
+    resetSelectedColors() {
+        this.isRed = false;
+        this.isGreen = false;
+        this.isBlue = false;
+    }
+
+    isNumber(num: number): boolean {
+        return !Number.isNaN(num);
+    }
+
+    colorToHex() {}
 
     disableShortcut(): void {
         this.toolManager.allowKeyPressEvents = false;
@@ -161,16 +171,8 @@ export class ColorPickerComponent {
     onLeftClick(evt: MouseEvent, color: string): void {
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = false;
-        const colorTemp: string = color;
         if (this.contextmenu === false && this.mousedown === true) {
-            if (this.colorService.tenLastUsedColors.length > 1) {
-                this.colorEmitted.emit(color);
-                this.colorService.tenLastUsedColors.remove(color);
-                this.colorService.tenLastUsedColors.append(colorTemp);
-            }
-            if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
-                this.colorService.tenLastUsedColors.dequeue();
-            }
+            this.adjustQueueWhenSelectingPrevious(color);
             this.colorService.primaryColor = color;
             this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
         }
@@ -179,6 +181,17 @@ export class ColorPickerComponent {
     onRightClickDown(evt: MouseEvent, color: string): boolean {
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = true;
+        this.adjustQueueWhenSelectingPrevious(color);
+        this.colorService.secondaryColor = color;
+        this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
+        return false;
+    }
+
+    emitColor(color: string): void {
+        this.colorEmitted.emit(color);
+    }
+
+    adjustQueueWhenSelectingPrevious(color: string) {
         const colorTemp: string = color;
         if (this.colorService.tenLastUsedColors.length > 1) {
             this.colorEmitted.emit(color);
@@ -188,12 +201,11 @@ export class ColorPickerComponent {
         if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
             this.colorService.tenLastUsedColors.dequeue();
         }
-        this.colorService.secondaryColor = color;
-        this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
-        return false;
     }
 
-    emitColor(color: string): void {
-        this.colorEmitted.emit(color);
-    }
+    // pickerClickHandler(evt: MouseEvent): void {
+    //     this.mouseEvent = evt;
+    //     this.colorService.showConfirmButton = true;
+    //     //console.log(this.showConfirmButton);
+    // }
 }

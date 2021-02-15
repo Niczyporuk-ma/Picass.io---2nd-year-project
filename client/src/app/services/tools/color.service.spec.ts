@@ -31,7 +31,7 @@ describe('ColorService', () => {
         service.primaryColor = 'rgba(0,0,0,1)';
         service.secondaryColor = 'rgba(255,255,255,0.5)';
         service.swapPrimaryAndSecondary();
-        expect(service.primaryColor).toEqual('rgba(255,255,255,0.5)');
-        expect(service.secondaryColor).toEqual('rgba(0,0,0,1)');
+        expect(service.primaryColor).toEqual('rgba(255,255,255,1)');
+        expect(service.secondaryColor).toEqual('rgba(0,0,0,0.5)');
     });
 });

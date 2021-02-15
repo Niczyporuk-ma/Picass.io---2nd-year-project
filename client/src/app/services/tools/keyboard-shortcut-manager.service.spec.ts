@@ -55,14 +55,14 @@ describe('KeyboardShortcutManagerService', () => {
     it(' OPressHandler should remove the event listener when o is pressed', () => {
         const eventListenerSpy = spyOn(window, 'removeEventListener').and.callThrough();
         const preventDefaultSpy = jasmine.createSpyObj('e', ['preventDefault']);
-        const event = { key: 'o', preventDefault : preventDefaultSpy.preventDefault} as KeyboardEvent;
+        const event = { key: 'o', preventDefault: preventDefaultSpy.preventDefault } as KeyboardEvent;
         service.OPressHandler(event);
         expect(eventListenerSpy).toHaveBeenCalled();
     });
 
     it(' OPressHandler should call preventDefaut of the event passed to it', () => {
         const preventDefaultSpy = jasmine.createSpyObj('e', ['preventDefault']);
-        const event = { key: 'o', preventDefault : preventDefaultSpy.preventDefault } as KeyboardEvent;
+        const event = { key: 'o', preventDefault: preventDefaultSpy.preventDefault } as KeyboardEvent;
         service.OPressHandler(event);
         expect(preventDefaultSpy.preventDefault).toHaveBeenCalled();
     });
@@ -74,7 +74,7 @@ describe('KeyboardShortcutManagerService', () => {
         expect(removeEventListenerSpy).not.toHaveBeenCalled();
     });
 
-    it(' waitForOpress should add two event listener', () => {
+    it(' waitForOpress should add three event listener', () => {
         const eventListenerSpy = spyOn(window, 'addEventListener').and.stub();
         service.waitForOPress();
         expect(eventListenerSpy).toHaveBeenCalledTimes(2);

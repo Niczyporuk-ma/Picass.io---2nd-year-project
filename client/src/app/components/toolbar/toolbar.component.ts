@@ -16,7 +16,6 @@ const CONTOUR_VALUE = '2';
 export class ToolbarComponent {
     tools: Tool[];
     showAdvanced: boolean = false;
-    showPalette: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
     faPen: IconDefinition = faPen;
     faSquare: IconDefinition = faSquare;
@@ -45,7 +44,7 @@ export class ToolbarComponent {
     }
 
     onPressPalette(): void {
-        this.showPalette = !this.showPalette;
+        this.toolManager.showPalette = !this.toolManager.showPalette;
     }
 
     setEllipseStyle(n: string): void {
