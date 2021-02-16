@@ -87,18 +87,18 @@ export class ColorPickerComponent {
         }
     }
 
-    adjustColor(colorIntensity: KeyboardEvent) {
+    adjustColor(colorIntensity: KeyboardEvent): void {
         let hexValue = '';
         if (!colorIntensity.ctrlKey) {
             hexValue += (colorIntensity.target as HTMLInputElement).value;
         }
 
-        var regExp = new RegExp('^#[0-9A-Fa-f]{1,2}$');
-        if (!regExp.test('#' + hexValue) && hexValue != '') {
+        const regExp = new RegExp('^#[0-9A-Fa-f]{1,2}$');
+        if (!regExp.test('#' + hexValue) && hexValue !== '') {
             alert('Entrez une valeur en hexadécimal!');
         }
 
-        let decimalValue = parseInt(hexValue, 16);
+        const decimalValue = parseInt(hexValue, 16);
 
         this.red = this.splitColor(this.color)[this.redIndex];
         this.blue = this.splitColor(this.color)[this.blueIndex];
@@ -123,7 +123,7 @@ export class ColorPickerComponent {
         this.resetSelectedColors();
     }
 
-    setColor(primary: boolean) {
+    setColor(primary: boolean): void {
         if (primary) {
             this.colorService.primaryColor = this.color;
             this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
@@ -133,41 +133,42 @@ export class ColorPickerComponent {
         }
     }
 
-    setColorPreview(primary: boolean) {
+    setColorPreview(primary: boolean): void {
         if (primary) {
             this.colorService.primaryColorPreview = this.color;
-            //this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
+            // this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
         } else {
             this.colorService.secondaryColorPreview = this.color;
-            //this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);
+            // this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);
         }
     }
 
     rgbaToHex(colorInRgba: string): string {
-        let rgbaValues: string[] = this.splitColor(colorInRgba);
-        let red: number = +rgbaValues[0];
-        let green: number = +rgbaValues[1];
-        let blue: number = +rgbaValues[2];
+        const rgbaValues: string[] = this.splitColor(colorInRgba);
+        const red: number = +rgbaValues[0];
+        const green: number = +rgbaValues[1];
+        const blue: number = +rgbaValues[2];
         let opacity: number;
+        const inPercent = 100;
         if (this.primary) {
-            opacity = +(this.primOpacity * 100);
+            opacity = +(this.primOpacity * inPercent);
         } else {
-            opacity = +(this.secOpacity * 100);
+            opacity = +(this.secOpacity * inPercent);
         }
         let redToString: string = red.toString(16);
         let greenToString: string = green.toString(16);
         let blueToString: string = blue.toString(16);
         let opacityToString: string = opacity.toString(16);
 
-        if (redToString.length == 1) redToString = '0' + redToString;
-        if (greenToString.length == 1) greenToString = '0' + greenToString;
-        if (blueToString.length == 1) blueToString = '0' + blueToString;
-        if (opacityToString.length == 1) opacityToString = '0' + opacityToString;
+        if (redToString.length === 1) redToString = '0' + redToString;
+        if (greenToString.length === 1) greenToString = '0' + greenToString;
+        if (blueToString.length === 1) blueToString = '0' + blueToString;
+        if (opacityToString.length === 1) opacityToString = '0' + opacityToString;
 
         return '#' + redToString + greenToString + blueToString + opacityToString;
     }
 
-    resetSelectedColors() {
+    resetSelectedColors(): void {
         this.isRed = false;
         this.isGreen = false;
         this.isBlue = false;
@@ -219,7 +220,7 @@ export class ColorPickerComponent {
         this.colorEmitted.emit(color);
     }
 
-    adjustQueueWhenSelectingPrevious(color: string) {
+    adjustQueueWhenSelectingPrevious(color: string): void {
         const colorTemp: string = color;
         if (this.colorService.tenLastUsedColors.length > 1) {
             this.colorEmitted.emit(color);
