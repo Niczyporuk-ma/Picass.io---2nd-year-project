@@ -1,5 +1,6 @@
 {
-    "extends": "../common/tslint.json",
+    "extends": ["../common/tslint.json",
+                "tslint-config-prettier"],
     "rulesDirectory": ["codelyzer", "tslint-microsoft-contrib"],
     "rules": {
         "deprecation": {
