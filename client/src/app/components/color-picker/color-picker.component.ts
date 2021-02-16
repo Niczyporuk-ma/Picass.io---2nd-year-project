@@ -27,7 +27,7 @@ export class ColorPickerComponent {
     greenIndex: number = 1;
     blueIndex: number = 2;
     opacityIndex: number = 3;
-    private mousedown: boolean = false;
+    private mouseDown: boolean = false;
     private contextmenu: boolean = false;
     isRed: boolean = false;
     isGreen: boolean = false;
@@ -187,13 +187,13 @@ export class ColorPickerComponent {
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(evt: MouseEvent): void {
-        this.mousedown = false;
+        this.mouseDown = false;
     }
 
     onLeftClickPreviousColor(evt: MouseEvent, color: string): void {
-        this.mousedown = evt.button === MouseButton.Left;
+        this.mouseDown = evt.button === MouseButton.Left;
         this.contextmenu = false;
-        if (this.contextmenu === false && this.mousedown === true) {
+        if (this.contextmenu === false && this.mouseDown === true) {
             this.colorService.primaryColorPreview = color;
             this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
             this.adjustQueueWhenSelectingPrevious(color);
@@ -204,7 +204,7 @@ export class ColorPickerComponent {
     }
 
     onRightClickPreviousColor(evt: MouseEvent, color: string): boolean {
-        this.mousedown = evt.button === MouseButton.Left;
+        this.mouseDown = evt.button === MouseButton.Left;
         this.contextmenu = true;
         this.colorService.secondaryColorPreview = color;
         this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);

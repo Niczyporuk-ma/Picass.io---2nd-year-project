@@ -22,7 +22,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     private ctx: CanvasRenderingContext2D;
     // as CanvasRenderingContext2D;
 
-    private mousedown: boolean = false;
+    private mouseDown: boolean = false;
     private contextmenu: boolean = false;
     colorService: ColorService;
     mouseEvent: MouseEvent;
@@ -39,6 +39,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     draw(): void {
+        //unchanged from source
         const radius = 10;
         const startAngle = 0;
         const baseWidth = 5;
@@ -77,6 +78,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        //unchanged from source
         if (changes.hue) {
             this.draw();
             const pos = this.selectedPosition;
@@ -88,16 +90,15 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(evt: MouseEvent): void {
-        this.mousedown = false;
+        this.mouseDown = false;
     }
 
     onLeftClickDown(evt: MouseEvent): void {
-        // PROBLEM WITH PREVIEW STILL
-        this.mousedown = evt.button === MouseButton.Left;
+        this.mouseDown = evt.button === MouseButton.Left;
         this.contextmenu = false;
         console.log(this.colorService.isConfirmed);
 
-        if (this.contextmenu === false && this.mousedown === true) {
+        if (this.contextmenu === false && this.mouseDown === true) {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.emitColor(evt.offsetX, evt.offsetY);
@@ -110,17 +111,17 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
                 this.colorService.primaryOpacityPreview,
             );
         }
-        // this.mousedown = false;
+        // this.mouseDown = false;
     }
 
     resetBoolsAfterDecision(): void {
         this.colorService.isConfirmed = false;
         this.showConfirmButton = false;
-        this.mousedown = false;
+        this.mouseDown = false;
     }
 
     onRightClickDown(evt: MouseEvent): boolean {
-        this.mousedown = false;
+        this.mouseDown = false;
         this.contextmenu = true;
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
@@ -138,7 +139,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     onMouseMove(evt: MouseEvent): void {
-        if (this.mousedown) {
+        if (this.mouseDown) {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.emitColor(evt.offsetX, evt.offsetY);
