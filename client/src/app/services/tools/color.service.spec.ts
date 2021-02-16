@@ -28,11 +28,11 @@ fdescribe('ColorService', () => {
     });
 
     it('swapPrimaryAndSecondary inverts the primary and the secondary colors', () => {
-        service.primaryColor = 'rgba(0,0,0,1)';
-        service.secondaryColor = 'rgba(255,255,255,1)';
+        service.primaryColorPreview = 'rgba(0,0,0,1)';
+        service.secondaryColorPreview = 'rgba(255,255,255,1)';
         service.swapPrimaryAndSecondary();
-        expect(service.primaryColor).toEqual('rgba(255,255,255,1)');
-        expect(service.secondaryColor).toEqual('rgba(0,0,0,1)');
+        expect(service.primaryColorPreview).toEqual('rgba(255,255,255,1)');
+        expect(service.secondaryColorPreview).toEqual('rgba(0,0,0,1)');
     });
 
     it('setColorWithOpacity should return the right string with color and opacity', () =>{
