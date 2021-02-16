@@ -243,6 +243,13 @@ describe('EllipseService', () => {
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
+    it('setShiftNonPressed does nothing if key isnt Shift',() =>{
+        const event = new KeyboardEvent('keydown', { key: 'A' });
+        service.shiftIsPressed = true;
+        service.setShiftNonPressed(event);
+        expect(service.shiftIsPressed).toBeTrue();
+    })
+
     it('drawRectangle should calls moveTo and lineTo 4 times', () => {
         const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
             'strokeStyle',
