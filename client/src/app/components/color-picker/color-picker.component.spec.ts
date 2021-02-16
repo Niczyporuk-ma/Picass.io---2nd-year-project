@@ -151,34 +151,34 @@ describe('ColorPickerComponent', () => {
     it(' adjustColor should affect color if ctrlKey is false and isRed is true', () => {
         const keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
         // Solution ci-dessous tirée de https://stackoverflow.com/questions/27108094/how-to-set-target-property-when-simulating-mouseclick-in-javascript
-        Object.defineProperty(keyboardEvent, 'target', { value: { value: '255' } });
+        Object.defineProperty(keyboardEvent, 'target', { value: { value: 'ff' } });
         const isNumberSpy = spyOn(component, 'isNumber').and.callThrough();
         component.isRed = true;
         component.adjustColor(keyboardEvent);
-        expect(isNumberSpy).toHaveBeenCalledWith(597);
-        expect(component.color).toEqual('rgba(597,0,0,1)');
+        expect(isNumberSpy).toHaveBeenCalledWith(255);
+        expect(component.color).toEqual('rgba(255,0,0,1)');
     });
 
     it(' adjustColor should affect color if ctrlKey is false and isGreen is true', () => {
         const keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
         // Solution ci-dessous tirée de https://stackoverflow.com/questions/27108094/how-to-set-target-property-when-simulating-mouseclick-in-javascript
-        Object.defineProperty(keyboardEvent, 'target', { value: { value: '255' } });
+        Object.defineProperty(keyboardEvent, 'target', { value: { value: 'ff' } });
         const isNumberSpy = spyOn(component, 'isNumber').and.callThrough();
         component.isGreen = true;
         component.adjustColor(keyboardEvent);
-        expect(isNumberSpy).toHaveBeenCalledWith(597);
-        expect(component.color).toEqual('rgba(0,597,0,1)');
+        expect(isNumberSpy).toHaveBeenCalledWith(255);
+        expect(component.color).toEqual('rgba(0,255,0,1)');
     });
 
     it(' adjustColor should affect color if ctrlKey is false and isBlue is true', () => {
         const keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
         // Solution ci-dessous tirée de https://stackoverflow.com/questions/27108094/how-to-set-target-property-when-simulating-mouseclick-in-javascript
-        Object.defineProperty(keyboardEvent, 'target', { value: { value: '255' } });
+        Object.defineProperty(keyboardEvent, 'target', { value: { value: 'ff' } });
         const isNumberSpy = spyOn(component, 'isNumber').and.callThrough();
         component.isBlue = true;
         component.adjustColor(keyboardEvent);
-        expect(isNumberSpy).toHaveBeenCalledWith(597);
-        expect(component.color).toEqual('rgba(0,0,597,1)');
+        expect(isNumberSpy).toHaveBeenCalledWith(255);
+        expect(component.color).toEqual('rgba(0,0,255,1)');
     });
 
     it(' adjustColor should call setColorPreview and resetSelectedColors', () => {

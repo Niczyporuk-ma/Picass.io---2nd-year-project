@@ -4,7 +4,6 @@
         <app-color-palette [hue]="hue" (color)="color = $event"></app-color-palette>
         <app-color-slider (color)="hue = $event" style="margin-left: 16px"></app-color-slider>
     </div>
-    <!-- TODO: css for the selected color( the class in css already exists) -->
     <div class="input-wrapper">
         <span class="text">{{ this.rgbaToHex(color) }}</span>
         <div
@@ -98,7 +97,6 @@
             <input type="text" (keyup)="this.isBlue = true; adjustColor($event)" (focus)="disableShortcut()" (blur)="enableShortcut()" />
         </label>
 
-        <!--  <label>Width: <input [(ngModel)]="widthValue" (change)="changeWidth(widthValue)" /></label> -->
     </div>
 
     <div>
