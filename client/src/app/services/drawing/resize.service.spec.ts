@@ -9,11 +9,6 @@ export class MockElementRef {
     nativeElement: {};
 }
 
-<<<<<<< HEAD
-//export class MockElementRef extends ElementRef {}
-
-=======
->>>>>>> 9e20214e58c296d91061653a670de04d23463d98
 describe('ResizeService', () => {
     let service: ResizeService;
     let mouseEvent: MouseEvent;
