@@ -13,9 +13,9 @@ export class ColorSliderComponent implements AfterViewInit {
     @Output()
     color: EventEmitter<string> = new EventEmitter();
 
-    public ctx: CanvasRenderingContext2D;
-    public mouseDown: boolean = false;
-    public selectedHeight: number;
+    ctx: CanvasRenderingContext2D;
+    mouseDown: boolean = false;
+    selectedHeight: number;
 
     ngAfterViewInit(): void {
         this.draw();
