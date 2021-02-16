@@ -89,6 +89,7 @@ export class ColorPickerComponent {
         const regExp = new RegExp('^#[0-9A-Fa-f]{1,2}$');
         if (!regExp.test('#' + hexValue) && hexValue !== '') {
             alert('Entrez une valeur en hexadécimal!');
+            hexValue = '';
         }
 
         const decimalValue = parseInt(hexValue, 16);
