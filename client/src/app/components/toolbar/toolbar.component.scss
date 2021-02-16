@@ -22,7 +22,7 @@ button {
     border: none;
     background-color: rgb(53, 64, 75);
     color: white;
-    width: 51%;
+    width: 216px;
     height: 50px;
     border-radius: 0%;
     transition: 0.3s;
@@ -33,7 +33,7 @@ button:hover {
     border: none;
     background-color: rgb(197, 243, 231);
     color: black;
-    width: 60%;
+    width: 216px;
     height: 50px;
     border-radius: 0%;
 
@@ -72,9 +72,41 @@ mat-button-toggle{
 mat-card {
     z-index: 3;
     position: relative;
-    width: 216px;
+    width: auto;
     height: 30px;
     color: white;
     background-color: rgba(83, 101, 119);
+    bottom : 15px;
+    padding: auto;
+    margin-top : 10px; 
 }
 
+mat-button-toggle-group{
+    width: 216px;
+}
+
+.junctionRadiusSlider mat-card{
+    width: 216px;
+    padding: 0;
+    padding-left: 2px;
+}
+
+mat-card-subtitle{
+    position: relative;
+    left: 150px;
+    bottom : 45px;
+    font-weight: bold;
+    color: white;
+}
+
+
+
+
+.widthSlider{
+    padding: 0;
+    width: 216px;
+}
+
+mat-slider{
+    bottom : 15px;
+}

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool, ToolStyles } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { faSlash } from '@fortawesome/free-solid-svg-icons';
+import { faSlash, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { ColorService } from './color.service';
 import { LineHelperService } from './line-helper.service';
 
@@ -27,12 +27,11 @@ export class LineServiceService extends Tool {
     colorService: ColorService;
     angle: number;
     mousePosition: Vec2;
-    icon = faSlash;
+    icon: IconDefinition = faSlash;
     hasJunction: boolean = true;
 
     constructor(public drawingService: DrawingService, lineHelper: LineHelperService, colorService: ColorService) {
         super(drawingService);
-        // this.test = Function;
         this.isStarted = false;
         this.shortcut = 'l';
         this.localShortcuts = new Map([
@@ -89,8 +88,8 @@ export class LineServiceService extends Tool {
         this.blockOnShift = false;
     };
 
-    setShiftNonPressed = (e?: KeyboardEvent) => {
-        if ((e != undefined && e.key === 'Shift') || this.calledFromMouseClick) {
+    setShiftNonPressed = (keyUpShiftEvent?: KeyboardEvent) => {
+        if ((keyUpShiftEvent != undefined && keyUpShiftEvent.key === 'Shift') || this.calledFromMouseClick) {
             this.shiftIsPressed = false;
             window.removeEventListener('keyup', this.setShiftNonPressed);
             this.blockOnShift = false;
@@ -104,14 +103,13 @@ export class LineServiceService extends Tool {
 
     onShift(): void {
         if (!this.blockOnShift) {
-            // window.addEventListener('keydown', this.setShiftIsPressed);
             this.setShiftIsPressed();
             window.addEventListener('keyup', this.setShiftNonPressed);
             this.blockOnShift = true;
         }
     }
 
-    drawJunction(ctx: CanvasRenderingContext2D, center: Vec2, radius: number) {
+    drawJunction(ctx: CanvasRenderingContext2D, center: Vec2, radius: number): void {
         if (this.hasJunction) {
             ctx.beginPath();
             ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
@@ -120,9 +118,9 @@ export class LineServiceService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(mouseUpEvent: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
+            const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.endPoint = mousePosition;
             this.drawLine(this.drawingService.baseCtx, [this.startingPoint, this.endPoint]);
         }
@@ -138,7 +136,7 @@ export class LineServiceService extends Tool {
                 this.drawJunction(ctx, junction, this.junctionsRadius[index]);
             }
         }
-        if (ctx == this.drawingService.baseCtx) {
+        if (ctx === this.drawingService.baseCtx) {
             this.clearLineAndJunctions();
         }
     }
@@ -148,15 +146,15 @@ export class LineServiceService extends Tool {
         this.junctionsRadius.push(radius);
     }
 
-    onMouseClick(event: MouseEvent): void {
+    onMouseClick(mouseClickEvent: MouseEvent): void {
         if (!this.isStarted) {
             this.isStarted = true;
-            this.startingPoint = this.getPositionFromMouse(event);
+            this.startingPoint = this.getPositionFromMouse(mouseClickEvent);
             this.pushNewJunction(this.startingPoint, this.currentDiameter / 2);
             this.drawJunction(this.drawingService.previewCtx, this.startingPoint, this.currentDiameter / 2);
         } else {
             if (!this.shiftIsPressed) {
-                const mousePosition = this.getPositionFromMouse(event);
+                const mousePosition = this.getPositionFromMouse(mouseClickEvent);
                 this.endPoint = mousePosition;
             }
             if (!this.drawingService.resizeActive) {
@@ -168,16 +166,16 @@ export class LineServiceService extends Tool {
             }
             if (this.shiftIsPressed) {
                 this.calledFromMouseClick = true;
-                this.endPoint = this.getPositionFromMouse(event);
+                this.endPoint = this.getPositionFromMouse(mouseClickEvent);
                 this.setShiftNonPressed();
                 this.calledFromMouseClick = false;
             }
         }
     }
 
-    onDoubleClick(event: MouseEvent): void {
+    onDoubleClick(doubleMouseClickEvent: MouseEvent): void {
         if (this.isStarted) {
-            const mousePosition = this.getPositionFromMouse(event);
+            const mousePosition = this.getPositionFromMouse(doubleMouseClickEvent);
             if (this.currentLine.length > 0 && this.lineHelper.pixelDistanceUtil(this.currentLine[0][0], mousePosition)) {
                 this.endPoint = this.currentLine[0][0];
                 this.currentLine.push([this.startingPoint, this.endPoint]);
@@ -199,11 +197,10 @@ export class LineServiceService extends Tool {
         }
     }
 
-    onMouseMove(event: MouseEvent): void {
+    onMouseMove(mouseMoveEvent: MouseEvent): void {
         if (this.isStarted) {
-            this.mousePosition = this.getPositionFromMouse(event);
+            this.mousePosition = this.getPositionFromMouse(mouseMoveEvent);
             this.endPoint = this.mousePosition;
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             if (this.shiftIsPressed) {
                 this.endPoint = this.lineHelper.closestAngledPoint(this.startingPoint, this.endPoint);
                 this.angledEndPoint = this.endPoint;

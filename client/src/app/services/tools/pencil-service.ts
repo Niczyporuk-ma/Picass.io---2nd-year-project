@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faPen, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 
@@ -16,7 +16,7 @@ export class PencilService extends Tool {
     nexpoint: Vec2;
     private pathData: Vec2[];
     isEraser: boolean = false;
-    icon = faPen;
+    icon: IconDefinition = faPen;
 
     constructor(drawingService: DrawingService, public colorService: ColorService) {
         super(drawingService);
@@ -34,19 +34,19 @@ export class PencilService extends Tool {
         this.pathData = [];
     }
 
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+    onMouseDown(mouseDownEvent: MouseEvent): void {
+        this.mouseDown = mouseDownEvent.button === MouseButton.Left;
         if (this.mouseDown && !this.drawingService.resizeActive) {
             this.clearPath();
-            this.mouseDownCoord = this.getPositionFromMouse(event);
+            this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
             this.pathData.push(this.mouseDownCoord);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(mouseUpEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            const mousePosition = this.getPositionFromMouse(event);
+            const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
@@ -54,12 +54,10 @@ export class PencilService extends Tool {
         this.clearPath();
     }
 
-    onMouseMove(event: MouseEvent): void {
+    onMouseMove(mouseMoveEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            const mousePosition = this.getPositionFromMouse(event);
+            const mousePosition = this.getPositionFromMouse(mouseMoveEvent);
             this.pathData.push(mousePosition);
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
         }

@@ -491,10 +491,10 @@ describe('LineService', () => {
         expect(service.endPoint).toEqual(expectedResult);
     });
 
-    it('onDoubleClick should do nothing if isStarted is false', () =>{
-        const getPositionFromMouseSpy = spyOn(service,'getPositionFromMouse').and.stub();
+    it('onDoubleClick should do nothing if isStarted is false', () => {
+        const getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.stub();
         service.isStarted = false;
         service.onDoubleClick(mouseEvent);
         expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
-    })
+    });
 });

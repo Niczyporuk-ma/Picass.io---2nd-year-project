@@ -1,6 +1,6 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ToolbarComponent } from './toolbar.component';
-
 describe('ToolbarComponent', () => {
     // tslint:disable:no-magic-numbers
     let component: ToolbarComponent;
@@ -9,6 +9,7 @@ describe('ToolbarComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [ToolbarComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
@@ -74,12 +75,12 @@ describe('ToolbarComponent', () => {
     });
 
     it(' setLineJunction puts hasJunction of line service to false if n = 0', () => {
-        component.setLineJunction(0);
+        component.setLineJunction('0');
         expect(component.toolManager.lineService.hasJunction).toEqual(false);
     });
 
     it(' setLineJunction puts hasJunction to true if n != 0', () => {
-        component.setLineJunction(1);
+        component.setLineJunction('1');
         expect(component.toolManager.lineService.hasJunction).toEqual(true);
     });
 
@@ -89,7 +90,7 @@ describe('ToolbarComponent', () => {
     });
 
     it(' setLineJunction puts hasJunction to false is n = 0', () => {
-        component.setLineJunction(0);
+        component.setLineJunction('0');
         expect(component.toolManager.lineService.hasJunction).toEqual(false);
     });
 

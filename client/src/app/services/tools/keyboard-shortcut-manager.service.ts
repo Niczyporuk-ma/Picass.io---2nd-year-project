@@ -32,17 +32,17 @@ export class KeyboardShortcutManagerService {
         }
     }
 
-    detectControl(event : KeyboardEvent) : void {
-        if (event.key == 'Control') {
-            window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
+    detectControl(event: KeyboardEvent): void {
+        if (event.key === 'Control') {
+            window.removeEventListener('keydown', (e: KeyboardEvent) => this.OPressHandler(e));
             this.toolManager.blockEventListener = false;
         }
     }
 
     OPressHandler(event: KeyboardEvent): void {
-        if (event.key == 'o') {
+        if (event.key === 'o') {
             this.toolManager.clearArrays();
-            window.removeEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
+            window.removeEventListener('keydown', (ev: KeyboardEvent) => this.OPressHandler(ev));
             event.preventDefault();
         }
     }

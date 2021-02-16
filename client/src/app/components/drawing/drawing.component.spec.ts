@@ -9,12 +9,15 @@ class ToolStub extends Tool {}
 // TODO : Déplacer dans un fichier accessible à tous
 const DEFAULT_WIDTH = 1000;
 const DEFAULT_HEIGHT = 800;
+const TIMEOUT_WAIT = 5000;
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let toolStub: ToolStub;
     let drawingStub: DrawingService;
+
+    // tslint:disable:no-magic-numbers
 
     beforeEach(async(() => {
         toolStub = new ToolStub({} as DrawingService);
@@ -126,7 +129,7 @@ describe('DrawingComponent', () => {
         setTimeout(() => {
             expect(onDoubleCLickSpy).toHaveBeenCalled();
             done();
-        }, 5000); // ca depend de la vitesse de ton ordi :(
+        }, TIMEOUT_WAIT); // ca depend de la vitesse de ton ordi :(
     });
 
     it(' onMouseClick should reset the click count to 0 after processing the event', async (done) => {

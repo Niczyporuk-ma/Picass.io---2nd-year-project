@@ -4,8 +4,11 @@ import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { IconDefinition } from '@fortawesome/free-brands-svg-icons';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { ColorService } from './color.service';
+
+const TOOL_INDEX = 4;
 
 @Injectable({
     providedIn: 'root',
@@ -16,13 +19,13 @@ export class EllipseService extends Tool {
     shiftIsPressed: boolean;
     currentLine: Vec2[] = [];
     border: boolean = true;
-    eventTest: boolean;
-    icon = faCircle;
+    isShiftPressed: boolean;
+    icon: IconDefinition = faCircle;
 
     constructor(drawingService: DrawingService, public squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
         this.shortcut = '2';
-        this.index = 4;
+        this.index = TOOL_INDEX;
         this.localShortcuts = new Map([['Shift', this.onShift]]);
         this.toolStyles = {
             primaryColor: 'white',
@@ -39,26 +42,27 @@ export class EllipseService extends Tool {
     // TODO: (BUG) circle est dessinee hors du carre (lorsquon appuie sur le shift) mais seulement
     // quand on dessine du bas vers le haut, et de droite vers la gauche
 
-    // TODO: renommer eventTest
+    // TODO: renommer isShiftPressed
     onShift(): void {
-        if (!this.eventTest) {
+        if (!this.isShiftPressed) {
             window.addEventListener('keydown', this.setShiftIfPressed);
             window.addEventListener('keyup', this.setShiftNonPressed);
-            this.eventTest = true;
+            this.isShiftPressed = true;
         }
     }
     changeWidth(newWidth: number): void {
         this.toolStyles.lineWidth = newWidth;
     }
 
-    setShiftIfPressed = (e: KeyboardEvent) => {
-        if (e.key === 'Shift') {
+    setShiftIfPressed = (keyDownShiftEvent: KeyboardEvent) => {
+        if (keyDownShiftEvent.key === 'Shift') {
             this.shiftIsPressed = true;
-            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint]) && this.mouseDown) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawingService.clearBackground();
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
                 this.drawRectangle(
-                    this.drawingService.previewCtx,
+                    this.drawingService.backgroundCtx,
                     this.startingPoint,
                     this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
                 );
@@ -66,55 +70,63 @@ export class EllipseService extends Tool {
         }
     };
 
-    setShiftNonPressed = (e: KeyboardEvent) => {
-        if (e.key === 'Shift') {
+    setShiftNonPressed = (keyUpShiftEvent: KeyboardEvent) => {
+        if (keyUpShiftEvent.key === 'Shift') {
+            this.shiftIsPressed = false;
             if (this.mouseDown) {
-                this.shiftIsPressed = false;
-                window.removeEventListener('keypress', this.setShiftIfPressed);
-                window.removeEventListener('keyup', this.setShiftNonPressed);
-                this.eventTest = false;
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
-            } else {
-                this.shiftIsPressed = false;
+                this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
+            }
+            window.removeEventListener('keydown', this.setShiftIfPressed);
+            window.removeEventListener('keyup', this.setShiftNonPressed);
+            this.isShiftPressed = false;
+            if (!this.mouseDown) {
+                this.drawingService.clearBackground();
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
             }
         }
     };
 
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+    onMouseDown(mouseDownevent: MouseEvent): void {
+        this.mouseDown = mouseDownevent.button === MouseButton.Left;
         if (!this.mouseDown) {
             return;
         }
-        this.mouseDownCoord = this.getPositionFromMouse(event);
+        this.mouseDownCoord = this.getPositionFromMouse(mouseDownevent);
         this.startingPoint = this.mouseDownCoord;
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(mouseUpEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            const mousePosition = this.getPositionFromMouse(event);
+            const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            this.drawingService.clearBackground();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            // this.shiftIsPressed = false;
+            // window.removeEventListener('keyup', this.setShiftNonPressed);
+            // window.removeEventListener('keydown', this.setShiftIfPressed);
         }
         this.mouseDown = false;
     }
 
-    onMouseMove(event: MouseEvent): void {
+    onMouseMove(mouseMove: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            const mousePosition = this.getPositionFromMouse(event);
+            const mousePosition = this.getPositionFromMouse(mouseMove);
             this.endPoint = mousePosition;
+            this.drawingService.clearBackground();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            // this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
             if (this.shiftIsPressed) {
                 this.drawRectangle(
-                    this.drawingService.previewCtx,
+                    this.drawingService.backgroundCtx,
                     this.startingPoint,
                     this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
                 );
             } else {
-                this.drawRectangle(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+                this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
             }
         }
     }
@@ -123,6 +135,7 @@ export class EllipseService extends Tool {
         const gapBetweenDash = 5;
         const dashLength = 5;
         ctx.beginPath();
+        ctx.lineWidth = 1;
         ctx.strokeStyle = 'black';
         ctx.globalCompositeOperation = 'source-over';
         ctx.setLineDash([dashLength, gapBetweenDash]);
@@ -141,6 +154,9 @@ export class EllipseService extends Tool {
     drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
         this.setColors(this.colorService);
         this.setStyles();
+        if (ctx === this.drawingService.baseCtx) {
+            this.drawingService.drawingStarted = true;
+        }
 
         this.drawingService.previewCtx.fillStyle = this.toolStyles.primaryColor as string;
         this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
@@ -162,12 +178,11 @@ export class EllipseService extends Tool {
         ctx.setLineDash([]);
 
         if (this.shiftIsPressed) {
-            ctx.ellipse(
-                start.x + Math.min(Math.abs(radiusX), radiusY),
-                start.y + Math.min(radiusX, Math.abs(radiusY)),
-                Math.abs(Math.min(Math.abs(radiusX), Math.abs(radiusY))),
-                Math.abs(Math.min(Math.abs(radiusX), Math.abs(radiusY))),
-                Math.PI / 2,
+            const squareCornerPos = this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]);
+            ctx.arc(
+                (this.startingPoint.x + squareCornerPos.x) / 2,
+                (this.startingPoint.y + squareCornerPos.y) / 2,
+                Math.abs((this.startingPoint.x - squareCornerPos.x) / 2),
                 0,
                 2 * Math.PI,
             );
