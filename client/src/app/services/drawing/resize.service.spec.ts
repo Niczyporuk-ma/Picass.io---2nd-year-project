@@ -11,7 +11,7 @@ export class MockElementRef {
 
 //export class MockElementRef extends ElementRef {}
 
-fdescribe('ResizeService', () => {
+describe('ResizeService', () => {
     let service: ResizeService;
     let mouseEvent: MouseEvent;
     let canvas: DOMRect = { left: 500, right: 1500, top: 0, bottom: 500 } as DOMRect;

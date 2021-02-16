@@ -59,13 +59,13 @@ describe('ToolbarComponent', () => {
         expect(component.toolManager.ellipseService.border).toEqual(true);
     });
 
-    it(' onPress should toggle the showPallet value', () => {
-        component.showPalette = false;
-        component.onPressPalette();
-        expect(component.showPalette).toEqual(true);
-        component.onPressPalette();
-        expect(component.showPalette).toEqual(false);
-    });
+    // it(' onPress should toggle the showPallet value', () => {
+    //     component.showPalette = false;
+    //     component.onPressPalette();
+    //     expect(component.showPalette).toEqual(true);
+    //     component.onPressPalette();
+    //     expect(component.showPalette).toEqual(false);
+    // });
 
     it('uptadeSliderWidth should uptade the widthValue of the toolManager with the width of the current tool', () => {
         component.toolManager.setTool(component.toolManager.pencilService);

@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ColorService } from '@app/services/tools/color.service';
 import { ColorPickerComponent } from './color-picker.component';
 
-fdescribe('ColorPickerComponent', () => {
+describe('ColorPickerComponent', () => {
     let component: ColorPickerComponent;
     let fixture: ComponentFixture<ColorPickerComponent>;
     let colorService: ColorService;
@@ -66,15 +66,15 @@ fdescribe('ColorPickerComponent', () => {
         expect(component.color).toEqual(colorService.secondaryColor);
     });
 
-    it(' changeOpacity should set colorService opacity with a given opacity and setPrimaryColorWithOpacity along with setSecondaryColorwithOpacity will both be called', () => {
-        const setPrimaryColorWithOpacity = spyOn<any>(colorService, 'setPrimaryColorWithOpacity').and.stub();
-        const setSecondarColorWithOpacity = spyOn<any>(colorService, 'setSecondaryColorWithOpacity').and.stub();
-        const opacity: number = 1;
-        component.changeOpacity(opacity);
-        expect(colorService.opacity).toEqual(opacity);
-        expect(setPrimaryColorWithOpacity).toHaveBeenCalledWith(opacity);
-        expect(setSecondarColorWithOpacity).toHaveBeenCalledWith(opacity);
-    });
+    // it(' changeOpacity should set colorService opacity with a given opacity and setPrimaryColorWithOpacity along with setSecondaryColorwithOpacity will both be called', () => {
+    //     const setPrimaryColorWithOpacity = spyOn<any>(colorService, 'setPrimaryColorWithOpacity').and.stub();
+    //     const setSecondarColorWithOpacity = spyOn<any>(colorService, 'setSecondaryColorWithOpacity').and.stub();
+    //     const opacity: number = 1;
+    //     component.changeOpacity(opacity);
+    //     expect(colorService.opacity).toEqual(opacity);
+    //     expect(setPrimaryColorWithOpacity).toHaveBeenCalledWith(opacity);
+    //     expect(setSecondarColorWithOpacity).toHaveBeenCalledWith(opacity);
+    // });
 
     it(' splitColor should return replaced colorToSplit', () => {
         const colorToSplit: string = 'rgba(255,250,66,0)';
@@ -94,42 +94,42 @@ fdescribe('ColorPickerComponent', () => {
     });
     */
 
-    it(' adjustRed should expect green and blue to be 0 by splitting the default color by index', () => {
-        component.primary = true;
-        const event = new KeyboardEvent('keydown', { key: '255' });
-        component.adjustRed(event);
-        component.color = 'rgba(' + '255' + ',' + component.green + ',' + component.blue + ',' + component.opacity;
-        expect(colorService.primaryColor).toEqual(component.color);
-        //expect(component.green).toEqual(component.splitColor(component.color)[component.blueIndex]);
-    });
+    // it(' adjustRed should expect green and blue to be 0 by splitting the default color by index', () => {
+    //     component.primary = true;
+    //     const event = new KeyboardEvent('keydown', { key: '255' });
+    //     component.adjustRed(event);
+    //     component.color = 'rgba(' + '255' + ',' + component.green + ',' + component.blue + ',' + component.opacity;
+    //     expect(colorService.primaryColor).toEqual(component.color);
+    //     //expect(component.green).toEqual(component.splitColor(component.color)[component.blueIndex]);
+    // });
 
-    fit(' adjustRed should expect green and blue to be 0 by splitting the default color by index', () => {
-        component.primary = false;
-        const event = new KeyboardEvent('keydown', { key: '255' });
-        Object.defineProperty(event, 'target', { value: { value: '255' } }); // tiré de https://stackoverflow.com/questions/27108094/how-to-set-target-property-when-simulating-mouseclick-in-javascript
-        component.adjustRed(event);
-        // component.color = 'rgba(' + '255' + ',' + component.green + ',' + component.blue + ',' + component.opacity;
-        expect(colorService.secondaryColor).toEqual(component.color);
-        //expect(component.green).toEqual(component.splitColor(component.color)[component.blueIndex]);
-    });
+    // fit(' adjustRed should expect green and blue to be 0 by splitting the default color by index', () => {
+    //     component.primary = false;
+    //     const event = new KeyboardEvent('keydown', { key: '255' });
+    //     Object.defineProperty(event, 'target', { value: { value: '255' } }); // tiré de https://stackoverflow.com/questions/27108094/how-to-set-target-property-when-simulating-mouseclick-in-javascript
+    //     component.adjustRed(event);
+    //     // component.color = 'rgba(' + '255' + ',' + component.green + ',' + component.blue + ',' + component.opacity;
+    //     expect(colorService.secondaryColor).toEqual(component.color);
+    //     //expect(component.green).toEqual(component.splitColor(component.color)[component.blueIndex]);
+    // });
 
-    it(' adjustGreen should expect green and blue to be 0 by splitting the default color by index', () => {
-        component.primary = true;
-        const event = new KeyboardEvent('keydown', { key: '255' });
-        component.adjustGreen(event);
-        component.color = 'rgba(' + '255' + ',' + component.green + ',' + component.blue + ',' + component.opacity;
-        expect(colorService.primaryColor).toEqual(component.color);
-        //expect(component.green).toEqual(component.splitColor(component.color)[component.blueIndex]);
-    });
+    // it(' adjustGreen should expect green and blue to be 0 by splitting the default color by index', () => {
+    //     component.primary = true;
+    //     const event = new KeyboardEvent('keydown', { key: '255' });
+    //     component.adjustGreen(event);
+    //     component.color = 'rgba(' + '255' + ',' + component.green + ',' + component.blue + ',' + component.opacity;
+    //     expect(colorService.primaryColor).toEqual(component.color);
+    //     //expect(component.green).toEqual(component.splitColor(component.color)[component.blueIndex]);
+    // });
 
-    it(' adjustBlue should expect green and blue to be 0 by splitting the default color by index', () => {
-        component.primary = true;
-        const event = new KeyboardEvent('keydown', { key: '255' });
-        component.adjustBlue(event);
-        component.color = 'rgba(' + '255' + ',' + component.green + ',' + component.blue + ',' + component.opacity;
-        expect(colorService.primaryColor).toEqual(component.color);
-        //expect(component.green).toEqual(component.splitColor(component.color)[component.blueIndex]);
-    });
+    // it(' adjustBlue should expect green and blue to be 0 by splitting the default color by index', () => {
+    //     component.primary = true;
+    //     const event = new KeyboardEvent('keydown', { key: '255' });
+    //     component.adjustBlue(event);
+    //     component.color = 'rgba(' + '255' + ',' + component.green + ',' + component.blue + ',' + component.opacity;
+    //     expect(colorService.primaryColor).toEqual(component.color);
+    //     //expect(component.green).toEqual(component.splitColor(component.color)[component.blueIndex]);
+    // });
     /*
     adjustRed(redIntensity: KeyboardEvent): void {
         let value = '';

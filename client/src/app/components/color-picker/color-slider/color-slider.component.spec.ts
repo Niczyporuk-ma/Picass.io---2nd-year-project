@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 //import { ColorService } from '@app/services/tools/color.service';
 import { ColorSliderComponent } from './color-slider.component';
 
-fdescribe('ColorSliderComponent', () => {
+describe('ColorSliderComponent', () => {
     let component: ColorSliderComponent;
     let fixture: ComponentFixture<ColorSliderComponent>;
     //let service: ColorService;
