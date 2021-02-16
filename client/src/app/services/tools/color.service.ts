@@ -44,6 +44,12 @@ export class ColorService {
         this.secondaryColorPreview = colors[0] + ',' + colors[1] + ',' + colors[2] + ',' + opacity + ')';
     }
 
+    setColorWithOpacity(color: string, opacity: number): string {
+        const colors: string[] = color.split(',');
+        color = colors[0] + ',' + colors[1] + ',' + colors[2] + ',' + opacity + ')';
+        return color;
+    }
+
     swapPrimaryAndSecondary(): void {
         let tempPreview: string;
         tempPreview = this.primaryColorPreview;
@@ -74,11 +80,16 @@ export class ColorService {
     }
 
     setValuesOnConfirm(): void {
-        if (this.primaryColorPreview != this.primaryColor) {
-            this.pushToQueueOnConfirm(this.primaryColorPreview);
+        const maxOpacity: number = 1;
+        let primaryColorPreviewMaxOpacity = this.setColorWithOpacity(this.primaryColorPreview, maxOpacity);
+        let primaryColorMaxOpacity = this.setColorWithOpacity(this.primaryColor, maxOpacity);
+        if (primaryColorPreviewMaxOpacity != primaryColorMaxOpacity) {
+            this.pushToQueueOnConfirm(primaryColorPreviewMaxOpacity);
         }
-        if (this.secondaryColorPreview != this.secondaryColor) {
-            this.pushToQueueOnConfirm(this.secondaryColorPreview);
+        let secondaryColorPreviewMaxOpacity = this.setColorWithOpacity(this.secondaryColorPreview, maxOpacity);
+        let secondaryColorMaxOpacity = this.setColorWithOpacity(this.secondaryColor, maxOpacity);
+        if (secondaryColorPreviewMaxOpacity != secondaryColorMaxOpacity) {
+            this.pushToQueueOnConfirm(secondaryColorPreviewMaxOpacity);
         }
         this.primaryColor = this.primaryColorPreview;
         this.secondaryColor = this.secondaryColorPreview;
@@ -93,8 +104,10 @@ export class ColorService {
                 this.tenLastUsedColors.dequeue();
             }
         } else {
-            this.tenLastUsedColors.remove(color);
-            this.tenLastUsedColors.append(color);
+            if (this.tenLastUsedColors.length > 1) {
+                this.tenLastUsedColors.remove(color);
+                this.tenLastUsedColors.append(color);
+            }
             if (this.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
                 this.tenLastUsedColors.dequeue();
             }
