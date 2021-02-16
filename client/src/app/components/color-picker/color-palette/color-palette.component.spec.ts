@@ -77,6 +77,15 @@ describe('ColorPaletteComponent', () => {
         expect(emitSpy).toHaveBeenCalled();
     });
 
+    it('ngOnChanges does nothing if changes.hue returns false', () => {
+        const drawSpy = spyOn(component, 'draw').and.stub();
+        component.ngOnChanges({
+            // inspired by https://medium.com/@christophkrautz/testing-ngonchanges-in-angular-components-bbb3b4650ee8
+        });
+
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
     it('onMouseUp should set mouseDown to false', () => {
         const mouseEvent: MouseEvent = {} as MouseEvent;
         component.onMouseUp(mouseEvent);
@@ -107,6 +116,13 @@ describe('ColorPaletteComponent', () => {
         component.selectedPosition = { x: 0, y: 0 };
         component.onLeftClickDown(mouseEvent);
         expect(component.colorService.primaryColorPreview).toEqual('rgba(224,224,224,1)');
+    });
+
+    it('onLeftClickDown doesnt call draw if mouseDown is false', () => {
+        const mouseEvent: MouseEvent = { button: 1, offsetX: 30, offsetY: 30 } as MouseEvent;
+        const drawSpy = spyOn(component, 'draw').and.stub();
+        component.onLeftClickDown(mouseEvent);
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('resetBoolsAfterDecision should set isConfirmed, mouseDown to false when called', () => {
@@ -181,6 +197,14 @@ describe('ColorPaletteComponent', () => {
         component['mouseDown'] = true;
         component.onMouseMove(mouseEvent);
         expect(component.colorService.primaryColorPreview).toEqual(component.colorService.primaryColor);
+    });
+
+    it('onMouseMove does nothing if mouseDown is false', () => {
+        const mouseEvent: MouseEvent = { offsetX: 30, offsetY: 30 } as MouseEvent;
+        component['mouseDown'] = false;
+        const drawSpy = spyOn(component, 'draw').and.stub();
+        component.onMouseMove(mouseEvent);
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('emitColor should call color.emit', () => {

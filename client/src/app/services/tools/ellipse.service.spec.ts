@@ -29,7 +29,7 @@ describe('EllipseService', () => {
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
 
-        service['drawingService'].baseCtx = baseCtxStub; 
+        service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
@@ -58,7 +58,7 @@ describe('EllipseService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, 
+            button: 1,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -74,7 +74,7 @@ describe('EllipseService', () => {
     });
 
     it(' onMouseUp should not call drawEllipse if mouse was not already down', () => {
-        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub(); 
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);
@@ -243,12 +243,12 @@ describe('EllipseService', () => {
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
-    it('setShiftNonPressed does nothing if key isnt Shift',() =>{
+    it('setShiftNonPressed does nothing if key isnt Shift', () => {
         const event = new KeyboardEvent('keydown', { key: 'A' });
         service.shiftIsPressed = true;
         service.setShiftNonPressed(event);
         expect(service.shiftIsPressed).toBeTrue();
-    })
+    });
 
     it('drawRectangle should calls moveTo and lineTo 4 times', () => {
         const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [

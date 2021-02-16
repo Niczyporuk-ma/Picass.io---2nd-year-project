@@ -1,4 +1,5 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ColorPickerComponent } from './color-picker.component';
 
@@ -9,6 +10,7 @@ describe('ColorPickerComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [ColorPickerComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
@@ -20,6 +22,7 @@ describe('ColorPickerComponent', () => {
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
+        // tslint:disable:max-file-line-count
     });
 
     it('should create', () => {
@@ -57,7 +60,7 @@ describe('ColorPickerComponent', () => {
         expect(splitColorSpy).toHaveBeenCalledWith(component.color);
     });
 
-    it('selectPrimaryColor should do nothing if click isnt left click', () =>{
+    it('selectPrimaryColor should do nothing if click isnt left click', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
@@ -66,7 +69,7 @@ describe('ColorPickerComponent', () => {
         component.primary = false;
         component.selectPrimaryColor(mouseEventRClick);
         expect(component.primary).toBeFalse();
-    })
+    });
 
     it(' selectSecondaryColor should set primary to false on left click', () => {
         const mouseEventLClick = {
@@ -99,7 +102,7 @@ describe('ColorPickerComponent', () => {
         expect(splitColorSpy).toHaveBeenCalledWith(component.color);
     });
 
-    it('selectSecondaryColor should do nothing if click isnt left click', () =>{
+    it('selectSecondaryColor should do nothing if click isnt left click', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
@@ -108,9 +111,7 @@ describe('ColorPickerComponent', () => {
         component.primary = true;
         component.selectSecondaryColor(mouseEventRClick);
         expect(component.primary).toBeTrue();
-    })
-
-    
+    });
 
     it(' splitColor should return replaced colorToSplit', () => {
         const colorToSplit = 'rgba(255,250,66,0)';
@@ -191,15 +192,14 @@ describe('ColorPickerComponent', () => {
         expect(resetSelectedColorsSpy).toHaveBeenCalledWith();
     });
 
-    it('adjustColor shouldnt modify hexValue if colorIntensity is ctrlKey', () =>{
-        const parseIntSpy = spyOn(window,'parseInt').and.stub();
+    it('adjustColor shouldnt modify hexValue if colorIntensity is ctrlKey', () => {
+        const parseIntSpy = spyOn(window, 'parseInt').and.stub();
         const keyboardEvent: KeyboardEvent = { ctrlKey: true } as KeyboardEvent;
         component.adjustColor(keyboardEvent);
-        expect(parseIntSpy).toHaveBeenCalledWith('',16);
+        expect(parseIntSpy).toHaveBeenCalledWith('', 16);
+    });
 
-    })
-
-    it('adjustColor should call isNumber if isRed, isGreen or isBlue is true',()=>{
+    it('adjustColor should call isNumber if isRed, isGreen or isBlue is true', () => {
         const isNumberSpy = spyOn(component, 'isNumber').and.stub();
         component.isBlue = true;
         component.isGreen = false;
@@ -217,8 +217,7 @@ describe('ColorPickerComponent', () => {
         component.isRed = true;
         component.adjustColor(keyboardEvent);
         expect(isNumberSpy).toHaveBeenCalled();
-
-    })
+    });
 
     it(' setColor should affect primaryColor with color and call setPrimaryColorWithOpacity if primary is true', () => {
         const primary = true;
@@ -272,7 +271,7 @@ describe('ColorPickerComponent', () => {
 
     it(' isNumber should return true if given a number', () => {
         const num = 10;
-        expect(component.isNumber(num)).toEqual(true); 
+        expect(component.isNumber(num)).toEqual(true);
     });
 
     it(' disableShortcut should make allowKeyPressEvents false ', () => {
@@ -329,16 +328,16 @@ describe('ColorPickerComponent', () => {
         expect(component.colorService.isConfirmed).toEqual(false);
     });
 
-    it('onLeftClickPreviousColor shouldnt set primaryColorPreview as color if mouseDown is false', () =>{
+    it('onLeftClickPreviousColor shouldnt set primaryColorPreview as color if mouseDown is false', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
             button: 1,
-        } as MouseEvent
-        component.colorService.primaryColorPreview = "expectedResult";
-        component.onLeftClickPreviousColor(mouseEventRClick, "nonExpectedResult");
-        expect(component.colorService.primaryColorPreview).toEqual("expectedResult");
-    })
+        } as MouseEvent;
+        component.colorService.primaryColorPreview = 'expectedResult';
+        component.onLeftClickPreviousColor(mouseEventRClick, 'nonExpectedResult');
+        expect(component.colorService.primaryColorPreview).toEqual('expectedResult');
+    });
 
     it(' onRightClickPreviousColor should affect secondaryColorPreview with color and call both setSecondaryColorWithOpacity and adjustQueueWhenSelectingPrevious', () => {
         const mouseEventLClick = {

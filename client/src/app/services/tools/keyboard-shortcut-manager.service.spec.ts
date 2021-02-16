@@ -16,7 +16,7 @@ describe('KeyboardShortcutManagerService', () => {
 
     it(' onKeyPress should call localShortcutHandler when the shortcut exists within the current tool', () => {
         service.toolManager.setTool(service.toolManager.rectangleService);
-        const currentToolSpy = spyOn(service.toolManager.currentTool, 'localShortCutHandler');
+        const currentToolSpy = spyOn(service.toolManager.currentTool, 'localShortCutHandler').and.callThrough();
         service.onKeyPress('Shift');
         expect(currentToolSpy).toHaveBeenCalled();
     });

@@ -42,7 +42,6 @@ export class ColorPickerComponent {
     @Output()
     colorEmitted: EventEmitter<string> = new EventEmitter(true);
 
-
     changePrimaryOpacity(opacity: number): void {
         this.colorService.primaryOpacityPreview = opacity;
         this.colorService.setPrimaryColorWithOpacity(opacity);
@@ -62,7 +61,6 @@ export class ColorPickerComponent {
             this.primary = true;
             this.color = this.colorService.primaryColor;
             const split: string[] = this.splitColor(this.color);
-            console.log(this.splitColor(this.color));
             this.red = split[this.redIndex];
             this.green = split[this.greenIndex];
             this.blue = split[this.blueIndex];
@@ -151,7 +149,7 @@ export class ColorPickerComponent {
         let redToString: string = red.toString(16);
         let greenToString: string = green.toString(16);
         let blueToString: string = blue.toString(16);
-        let opacityToString: string = opacity.toString(16);
+        const opacityToString: string = opacity.toString(16);
 
         if (redToString.length === 1) redToString = '0' + redToString;
         if (greenToString.length === 1) greenToString = '0' + greenToString;

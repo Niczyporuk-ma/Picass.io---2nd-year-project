@@ -111,6 +111,29 @@ describe('ResizeService', () => {
         expect(service.preview).toEqual({ x: Constant.MIN_WIDTH, y: Constant.MIN_HEIGH });
     });
 
+    it('resize does nothing if mouseDown is false', () => {
+        service.mouseDown = false;
+        service.preview.x = 1000;
+        service.preview.y = 1000;
+        const event: MouseEvent = { pageX: 150, pageY: 50 } as MouseEvent;
+        service.resize(event, canvas);
+        expect(service.preview.x).toEqual(1000);
+        expect(service.preview.y).toEqual(1000);
+    });
+
+    it('resize does nothing if mouseDown is true and isBottom, isSide and isCorner are false', () => {
+        service.mouseDown = true;
+        service.isBottom = false;
+        service.isSide = false;
+        service.isCorner = false;
+        service.preview.x = 1000;
+        service.preview.y = 1000;
+        const event: MouseEvent = { pageX: 150, pageY: 50 } as MouseEvent;
+        service.resize(event, canvas);
+        expect(service.preview.x).toEqual(1000);
+        expect(service.preview.y).toEqual(1000);
+    });
+
     it('stopResize should set the canvasSize.y to be the same as preview.y when isBottom is true', () => {
         service.isBottom = true;
         service.preview.y = 5500;

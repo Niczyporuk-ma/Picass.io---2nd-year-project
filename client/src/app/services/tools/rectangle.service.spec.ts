@@ -14,7 +14,7 @@ describe('RectangleService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); 
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
@@ -28,7 +28,7 @@ describe('RectangleService', () => {
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
-        service['drawingService'].baseCtx = baseCtxStub; 
+        service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
@@ -57,7 +57,7 @@ describe('RectangleService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, 
+            button: 1,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -144,7 +144,6 @@ describe('RectangleService', () => {
         service.onMouseMove(mouseEvent);
         expect(service.currentLine).toEqual(expectedResult);
     });
-
 
     it('setShiftIsPressed should have called drawLine if checkIfSquare returns false', () => {
         const drawLineSpy = spyOn(service, 'drawLine').and.stub();

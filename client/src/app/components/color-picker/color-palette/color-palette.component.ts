@@ -72,6 +72,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        console.log(changes.hue);
         if (changes.hue) {
             this.draw();
             const pos = this.selectedPosition;

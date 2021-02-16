@@ -6,7 +6,6 @@ import { DrawingComponent } from './drawing.component';
 
 class ToolStub extends Tool {}
 
-
 const DEFAULT_WIDTH = 1000;
 const DEFAULT_HEIGHT = 800;
 const TIMEOUT_WAIT = 5000;
@@ -70,6 +69,15 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
+    it('onMouseMove should call ellipse onMouseMove if its the current tool and mouse is down', () => {
+        const event = {} as MouseEvent;
+        const ellipseMouseMoveSpy = spyOn(component.toolManager.ellipseService, 'onMouseMove').and.stub();
+        component.toolManager.setTool(component.toolManager.ellipseService);
+        component.toolManager.ellipseService.mouseDown = true;
+        component.onMouseMove(event);
+        expect(ellipseMouseMoveSpy).toHaveBeenCalled();
+    });
+
     it(" should call the tool's mouse down when receiving a mouse down event", () => {
         const event = {} as MouseEvent;
         const mouseEventSpy = spyOn(toolStub, 'onMouseDown').and.callThrough();
@@ -86,26 +94,35 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
+    it('onMouseUp should call stopResize if mouseDown is true', () => {
+        component.resizeService.mouseDown = true;
+        const stopResizeSpy = spyOn(component.resizeService, 'stopResize').and.stub();
+        const event = {} as MouseEvent;
+        component.onMouseUp(event);
+        expect(stopResizeSpy).toHaveBeenCalled();
+    });
+
     it(' ngAfterViewInit should add two event listener', () => {
         const enventListenerSpy = spyOn(window, 'addEventListener').and.callThrough();
         component.ngAfterViewInit();
         expect(enventListenerSpy).toHaveBeenCalledTimes(2);
     });
 
-    /*it(" ngAfterViewInit should call onKeyPress & waitForOPress when Control is pressed", async (done) => {
-        const event = new KeyboardEvent('keydown',{key :'Controle'});
-        const onKeyPressSpy = spyOn(component.shortcutKeyboardManager,'onKeyPress').and.callFake(function() 
-        {console.log("TEST");});
-       const oPressSpy = spyOn(component.shortcutKeyboardManager,'waitForOPress').and.returnValue();
-        component.ngAfterViewInit();
-        window.dispatchEvent(event);
-        setTimeout(() => {
-            expect(onKeyPressSpy).toHaveBeenCalled();
-            expect(oPressSpy).toHaveBeenCalled();
-            done();
-        }, 2000);//
-        
-    });*/
+    // On a enlever ce test car il est trop instable par rapport au setTimeout
+
+    // it(" ngAfterViewInit should call onKeyPress & waitForOPress when Control is pressed", async (done) => {
+    //     const event = new KeyboardEvent('keydown',{key :'Control'});
+    //     const onKeyPressSpy = spyOn(component.shortcutKeyboardManager,'onKeyPress').and.stub();
+    //    const oPressSpy = spyOn(component.shortcutKeyboardManager,'waitForOPress').and.stub();
+    //     component.ngAfterViewInit();
+    //     window.dispatchEvent(event);
+    //     setTimeout(() => {
+    //         expect(onKeyPressSpy).toHaveBeenCalled();
+    //         expect(oPressSpy).toHaveBeenCalled();
+    //         done();
+    //     }, 500);
+
+    //  });
 
     it(' onMouseClick should call onMouseClick of current tool if there is a single click', async (done) => {
         const event = {} as MouseEvent;
@@ -115,6 +132,14 @@ describe('DrawingComponent', () => {
             expect(onMouseCLickSpy).toHaveBeenCalled();
             done();
         }, component.timeOutDuration);
+    });
+
+    it('onMouseClick does nothing if clickCount != 1', () => {
+        component.clickCount = -1;
+        const event = {} as MouseEvent;
+        const onMouseCLickSpy = spyOn(component.toolManager.currentTool, 'onMouseClick').and.stub();
+        component.onMouseClick(event);
+        expect(onMouseCLickSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseClick should call onDoubleClick of current tool if there is a double click', async (done) => {
