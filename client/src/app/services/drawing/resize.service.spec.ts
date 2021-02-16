@@ -9,13 +9,13 @@ export class MockElementRef {
     nativeElement: {};
 }
 
-fdescribe('ResizeService', () => {
+describe('ResizeService', () => {
     let service: ResizeService;
     let mouseEvent: MouseEvent;
     let canvas: DOMRect = { left: 500, right: 1500, top: 0, bottom: 500 } as DOMRect;
     let canvasSize: Vec2 = { x: 500, y: 300 };
     let dummyCanvas: ElementRef<HTMLCanvasElement>;
-    var dummyNativeElement = document.createElement('canvas');
+    let dummyNativeElement = document.createElement('canvas');
 
     mouseEvent = {
         button: 0,
@@ -111,7 +111,6 @@ fdescribe('ResizeService', () => {
         expect(service.preview).toEqual({ x: Constant.MIN_WIDTH, y: Constant.MIN_HEIGH });
     });
 
-    // // //TODO
     it('stopResize should set the canvasSize.y to be the same as preview.y when isBottom is true', () => {
         service.isBottom = true;
         service.preview.y = 5500;
@@ -219,5 +218,11 @@ fdescribe('ResizeService', () => {
         expect(service.cornerHandle.x).toEqual(canvasSize.x);
     });
 
-    //TODO: test de la methode copyCanvas
+    it('copyCanvas calls toDataURL() from the canvas', () => {
+        const copyCanvasSpy = spyOn<any>(service, 'copyCanvas').and.callThrough();
+        const toDataURLSpy = spyOn<any>(dummyCanvas.nativeElement, 'toDataURL').and.stub();
+        service.copyCanvas(dummyCanvas);
+        expect(copyCanvasSpy).toHaveBeenCalled();
+        expect(toDataURLSpy).toHaveBeenCalled();
+    });
 });

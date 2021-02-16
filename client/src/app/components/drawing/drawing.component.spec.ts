@@ -51,9 +51,17 @@ describe('DrawingComponent', () => {
         expect(currentTool).toEqual(toolStub);
     });
 
-    it(" should call the tool's mouse move when receiving a mouse move event", () => {
+    it("should call the resizeService's resize method called", () => {
+        component.resizeService.mouseDown = true;
         const event = {} as MouseEvent;
-        const mouseEventSpy = spyOn(toolStub, 'onMouseMove').and.callThrough();
+        const resizeSpy = spyOn(component.resizeService, 'resize').and.stub();
+        component.onMouseMove(event);
+        expect(resizeSpy).toHaveBeenCalled();
+    });
+
+    it(" should call the tool's mouse move when receiving a mouse move event", () => {
+        const event = { pageX: 10000000 } as MouseEvent;
+        const mouseEventSpy = spyOn(component.currentTool, 'onMouseMove').and.callThrough();
         component.onMouseMove(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
