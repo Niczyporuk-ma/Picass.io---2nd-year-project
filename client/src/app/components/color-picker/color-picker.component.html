@@ -109,10 +109,10 @@
                 max="1"
                 step="0.01"
                 (change)="changePrimaryOpacity($event.value)"
-                (input)="primOpacity = $event.value"
-                [value]="primOpacity"
+                (input)="this.colorService.primaryOpacityPreview = $event.value"
+                [value]="this.colorService.primaryOpacityPreview"
             ></mat-slider>
-            {{ primOpacity }}
+            {{ this.colorService.primaryOpacityPreview }}
         </mat-card>
     </div>
 
@@ -124,10 +124,10 @@
                 max="1"
                 step="0.01"
                 (change)="changeSecondaryOpacity($event.value)"
-                (input)="secOpacity = $event.value"
-                [value]="secOpacity"
+                (input)="this.colorService.secondaryOpacityPreview = $event.value"
+                [value]="this.colorService.secondaryOpacityPreview"
             ></mat-slider>
-            {{ secOpacity }}
+            {{ this.colorService.secondaryOpacityPreview }}
         </mat-card>
     </div>
     <div>
