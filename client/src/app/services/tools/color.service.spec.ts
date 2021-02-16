@@ -34,4 +34,12 @@ describe('ColorService', () => {
         expect(service.primaryColor).toEqual('rgba(255,255,255,1)');
         expect(service.secondaryColor).toEqual('rgba(0,0,0,1)');
     });
+
+    it('setColorWithOpacity should return the right string with color and opacity', () =>{
+        const mockColor : string = 'rgba(1,2,3,4)';
+        const mockOpacity : number = 1;
+        const expectedResult : string = 'rgba(1,2,3,1)'
+        const result = service.setColorWithOpacity(mockColor,mockOpacity);
+        expect(result).toEqual(expectedResult);
+    })
 });
