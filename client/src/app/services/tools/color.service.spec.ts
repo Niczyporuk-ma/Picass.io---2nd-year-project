@@ -36,9 +36,9 @@ describe('ColorService', () => {
     });
 
     it('setColorWithOpacity should return the right string with color and opacity', () => {
-        const mockColor: string = 'rgba(1,2,3,4)';
-        const mockOpacity: number = 1;
-        const expectedResult: string = 'rgba(1,2,3,1)';
+        const mockColor = 'rgba(1,2,3,4)';
+        const mockOpacity = 1;
+        const expectedResult = 'rgba(1,2,3,1)';
         const result = service.setColorWithOpacity(mockColor, mockOpacity);
         expect(result).toEqual(expectedResult);
     });
@@ -102,19 +102,19 @@ describe('ColorService', () => {
     });
 
     it('contains should call toArray once', () => {
-        let toArraySpy = spyOn<any>(service.tenLastUsedColors, 'toArray').and.callThrough();
-        let color = 'black' as string;
+        const toArraySpy = spyOn(service.tenLastUsedColors, 'toArray').and.callThrough();
+        const color = 'black' as string;
         service.contains(color);
         expect(toArraySpy).toHaveBeenCalledTimes(1);
     });
 
     it('contains should return false if there is nothing in tenLastUsedColors', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
         expect(service.contains(color)).toEqual(false);
     });
 
     it('contains should return true when the last color in the queue of string is blue', () => {
-        let color = 'blue' as string;
+        const color = 'blue' as string;
         service.tenLastUsedColors.append('black');
         service.tenLastUsedColors.append('grey');
         service.tenLastUsedColors.append('red');
@@ -123,7 +123,7 @@ describe('ColorService', () => {
     });
 
     it('contains should return true when the color grey is in the middle of the queue of string', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
         service.tenLastUsedColors.append('yellow');
         service.tenLastUsedColors.append('grey');
         service.tenLastUsedColors.append('blue');
@@ -132,7 +132,7 @@ describe('ColorService', () => {
     });
 
     it('contains should return true when the color yellow is at the start of the queue of string', () => {
-        let color = 'yellow' as string;
+        const color = 'yellow' as string;
         service.tenLastUsedColors.append('yellow');
         service.tenLastUsedColors.append('grey');
         service.tenLastUsedColors.append('blue');
@@ -141,33 +141,33 @@ describe('ColorService', () => {
     });
 
     it('pushToQueueOnConfirm should call append once when tenLastUsedColors does not have the color grey', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
 
         service.tenLastUsedColors.append('yellow');
         service.tenLastUsedColors.append('black');
         service.tenLastUsedColors.append('blue');
         service.tenLastUsedColors.append('red');
 
-        let appendSpy = spyOn<any>(service.tenLastUsedColors, 'append').and.callThrough();
+        const appendSpy = spyOn(service.tenLastUsedColors, 'append').and.callThrough();
 
         service.pushToQueueOnConfirm(color);
         expect(appendSpy).toHaveBeenCalledTimes(1);
     });
 
     it('pushToQueueOnConfirm should not call dequeue when tenLastUsedColors does not contains the color grey and the queue of string have only 3 color initially', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
 
         service.tenLastUsedColors.append('yellow');
         service.tenLastUsedColors.append('black');
         service.tenLastUsedColors.append('blue');
 
-        let dequeueSpy = spyOn<any>(service.tenLastUsedColors, 'dequeue').and.callThrough();
+        const dequeueSpy = spyOn(service.tenLastUsedColors, 'dequeue').and.callThrough();
         service.pushToQueueOnConfirm(color);
         expect(dequeueSpy).not.toHaveBeenCalled();
     });
 
     it('pushToQueueOnConfirm should call dequeue once when tenLastUsedColors does not contains the color purple and the queue lenght is equal than MAX_NUMBER_IN_LIST_OF_LAST_USED', () => {
-        let color = 'purple' as string;
+        const color = 'purple' as string;
 
         service.tenLastUsedColors.append('yellow');
         service.tenLastUsedColors.append('black');
@@ -180,19 +180,19 @@ describe('ColorService', () => {
         service.tenLastUsedColors.append('gold');
         service.tenLastUsedColors.append('navy');
 
-        let dequeueSpy = spyOn<any>(service.tenLastUsedColors, 'dequeue').and.callThrough();
+        const dequeueSpy = spyOn(service.tenLastUsedColors, 'dequeue').and.callThrough();
         service.pushToQueueOnConfirm(color);
         expect(dequeueSpy).toHaveBeenCalledTimes(1);
     });
 
     it('pushToQueueOnConfirm should not call remove, append and dequeue when tenLastUsedColors have the color grey and the queue of string only have the color grey initially', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
 
         service.tenLastUsedColors.append('grey');
 
-        let removeSpy = spyOn<any>(service.tenLastUsedColors, 'remove').and.callThrough();
-        let appendSpy = spyOn<any>(service.tenLastUsedColors, 'append').and.callThrough();
-        let dequeueSpy = spyOn<any>(service.tenLastUsedColors, 'dequeue').and.callThrough();
+        const removeSpy = spyOn(service.tenLastUsedColors, 'remove').and.callThrough();
+        const appendSpy = spyOn(service.tenLastUsedColors, 'append').and.callThrough();
+        const dequeueSpy = spyOn(service.tenLastUsedColors, 'dequeue').and.callThrough();
         service.pushToQueueOnConfirm(color);
         expect(removeSpy).not.toHaveBeenCalled();
         expect(appendSpy).not.toHaveBeenCalled();
@@ -200,20 +200,20 @@ describe('ColorService', () => {
     });
 
     it('pushToQueueOnConfirm should not call remove, append and dequeue when tenLastUsedColors have the color grey and the queue of string only have the color grey initially', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
 
         service.tenLastUsedColors.append('grey');
         service.tenLastUsedColors.append('white');
 
-        let removeSpy = spyOn<any>(service.tenLastUsedColors, 'remove').and.callThrough();
-        let appendSpy = spyOn<any>(service.tenLastUsedColors, 'append').and.callThrough();
+        const removeSpy = spyOn(service.tenLastUsedColors, 'remove').and.callThrough();
+        const appendSpy = spyOn(service.tenLastUsedColors, 'append').and.callThrough();
         service.pushToQueueOnConfirm(color);
         expect(removeSpy).toHaveBeenCalledTimes(1);
         expect(appendSpy).toHaveBeenCalledTimes(1);
     });
 
     it('pushToQueueOnConfirm should call remove, append and dequeue once when tenLastUsedColors contains grey and the queue length is equal to MAX_NUMBER_IN_LIST_OF_LAST_USED', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
 
         service.tenLastUsedColors.append('yellow');
         service.tenLastUsedColors.append('black');
@@ -227,9 +227,9 @@ describe('ColorService', () => {
         service.tenLastUsedColors.append('navy');
         service.tenLastUsedColors.append('silver');
 
-        let removeSpy = spyOn<any>(service.tenLastUsedColors, 'remove').and.callThrough();
-        let appendSpy = spyOn<any>(service.tenLastUsedColors, 'append').and.callThrough();
-        let dequeueSpy = spyOn<any>(service.tenLastUsedColors, 'dequeue').and.callThrough();
+        const removeSpy = spyOn(service.tenLastUsedColors, 'remove').and.callThrough();
+        const appendSpy = spyOn(service.tenLastUsedColors, 'append').and.callThrough();
+        const dequeueSpy = spyOn(service.tenLastUsedColors, 'dequeue').and.callThrough();
 
         service.pushToQueueOnConfirm(color);
 
@@ -239,15 +239,15 @@ describe('ColorService', () => {
     });
 
     it('pushToQueueOnConfirm should call remove and append once when tenLastUsedColors contains grey and the queue length is lower to MAX_NUMBER_IN_LIST_OF_LAST_USED but greater than 1', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
 
         service.tenLastUsedColors.append('yellow');
         service.tenLastUsedColors.append('black');
         service.tenLastUsedColors.append('blue');
         service.tenLastUsedColors.append('grey');
 
-        let removeSpy = spyOn<any>(service.tenLastUsedColors, 'remove').and.callThrough();
-        let appendSpy = spyOn<any>(service.tenLastUsedColors, 'append').and.callThrough();
+        const removeSpy = spyOn(service.tenLastUsedColors, 'remove').and.callThrough();
+        const appendSpy = spyOn(service.tenLastUsedColors, 'append').and.callThrough();
 
         service.pushToQueueOnConfirm(color);
 
@@ -256,7 +256,7 @@ describe('ColorService', () => {
     });
 
     it('pushToQueueOnConfirm should not call dequeue when tenLastUsedColors contains grey and the queue length is lower to MAX_NUMBER_IN_LIST_OF_LAST_USED but greater than 1', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
 
         service.tenLastUsedColors.append('yellow');
         service.tenLastUsedColors.append('black');
@@ -269,7 +269,7 @@ describe('ColorService', () => {
         service.tenLastUsedColors.append('gold');
         service.tenLastUsedColors.append('navy');
 
-        let dequeueSpy = spyOn<any>(service.tenLastUsedColors, 'dequeue').and.callThrough();
+        const dequeueSpy = spyOn(service.tenLastUsedColors, 'dequeue').and.callThrough();
 
         service.pushToQueueOnConfirm(color);
 
@@ -277,16 +277,16 @@ describe('ColorService', () => {
     });
 
     it('pushToQueueOnConfirm should not call dequeue but should call remove and append once when tenLastUsedColors contains grey and the queue length is equal to MAX_NUMBER_IN_LIST_OF_LAST_USED', () => {
-        let color = 'grey' as string;
+        const color = 'grey' as string;
 
         service.tenLastUsedColors.append('yellow');
         service.tenLastUsedColors.append('black');
         service.tenLastUsedColors.append('blue');
         service.tenLastUsedColors.append('grey');
 
-        let dequeueSpy = spyOn<any>(service.tenLastUsedColors, 'dequeue').and.callThrough();
-        let removeSpy = spyOn<any>(service.tenLastUsedColors, 'remove').and.callThrough();
-        let appendSpy = spyOn<any>(service.tenLastUsedColors, 'append').and.callThrough();
+        const dequeueSpy = spyOn(service.tenLastUsedColors, 'dequeue').and.callThrough();
+        const removeSpy = spyOn(service.tenLastUsedColors, 'remove').and.callThrough();
+        const appendSpy = spyOn(service.tenLastUsedColors, 'append').and.callThrough();
 
         service.pushToQueueOnConfirm(color);
 
