@@ -57,12 +57,12 @@ export class EllipseService extends Tool {
     setShiftIfPressed = (keyDownShiftEvent: KeyboardEvent) => {
         if (keyDownShiftEvent.key === 'Shift') {
             this.shiftIsPressed = true;
-            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint]) && this.mouseDown) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawingService.clearBackground();
                 this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
                 this.drawRectangle(
-                    this.drawingService.previewCtx,
+                    this.drawingService.backgroundCtx,
                     this.startingPoint,
                     this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
                 );
