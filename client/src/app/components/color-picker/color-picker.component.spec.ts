@@ -1,12 +1,12 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-//import { ColorService } from '@app/services/tools/color.service';
+// import { ColorService } from '@app/services/tools/color.service';
 import { ColorPickerComponent } from './color-picker.component';
 
-fdescribe('ColorPickerComponent', () => {
+describe('ColorPickerComponent', () => {
     let component: ColorPickerComponent;
     let fixture: ComponentFixture<ColorPickerComponent>;
-    //let colorService: ColorService;
+    // let colorService: ColorService;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -19,7 +19,7 @@ fdescribe('ColorPickerComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
 
-        //colorService = TestBed.inject(ColorService);
+        // colorService = TestBed.inject(ColorService);
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
@@ -92,7 +92,7 @@ fdescribe('ColorPickerComponent', () => {
     });
 
     it(' splitColor should return replaced colorToSplit', () => {
-        const colorToSplit: string = 'rgba(255,250,66,0)';
+        const colorToSplit = 'rgba(255,250,66,0)';
         const colorToSplitStringArray: string[] = component.splitColor(colorToSplit);
         expect(colorToSplitStringArray[0]).toEqual('255');
         expect(colorToSplitStringArray[1]).toEqual('250');
@@ -101,33 +101,33 @@ fdescribe('ColorPickerComponent', () => {
     });
 
     it(' changePrimaryOpacity should affect primaryOpacityPreview with opacity', () => {
-        const opacity: number = 50;
+        const opacity = 50;
         component.changePrimaryOpacity(opacity);
         expect(component.colorService.primaryOpacityPreview).toEqual(50);
     });
 
     it(' changePrimaryOpacity should call changePrimaryOpacity with opacity', () => {
-        const opacity: number = 50;
+        const opacity = 50;
         const setPrimaryColorWithOpacitySpy = spyOn(component.colorService, 'setPrimaryColorWithOpacity').and.callThrough();
         component.changePrimaryOpacity(opacity);
         expect(setPrimaryColorWithOpacitySpy).toHaveBeenCalledWith(opacity);
     });
 
     it(' changeSecondaryOpacity should affect secondaryOpacityPreview with opacity', () => {
-        const opacity: number = 75;
+        const opacity = 75;
         component.changeSecondaryOpacity(opacity);
         expect(component.colorService.secondaryOpacityPreview).toEqual(75);
     });
 
     it(' changeSecondaryOpacity should call setSecondaryColorWithOpacity with opacity', () => {
-        const opacity: number = 50;
+        const opacity = 50;
         const setSecondaryColorWithOpacitySpy = spyOn(component.colorService, 'setSecondaryColorWithOpacity').and.callThrough();
         component.changeSecondaryOpacity(opacity);
         expect(setSecondaryColorWithOpacitySpy).toHaveBeenCalledWith(opacity);
     });
 
     it(' adjustColor should affect color if ctrlKey is false and isRed is true', () => {
-        let keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
+        const keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
         // Solution ci-dessous tirée de https://stackoverflow.com/questions/27108094/how-to-set-target-property-when-simulating-mouseclick-in-javascript
         Object.defineProperty(keyboardEvent, 'target', { value: { value: '255' } });
         const isNumberSpy = spyOn(component, 'isNumber').and.callThrough();
@@ -138,7 +138,7 @@ fdescribe('ColorPickerComponent', () => {
     });
 
     it(' adjustColor should affect color if ctrlKey is false and isGreen is true', () => {
-        let keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
+        const keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
         // Solution ci-dessous tirée de https://stackoverflow.com/questions/27108094/how-to-set-target-property-when-simulating-mouseclick-in-javascript
         Object.defineProperty(keyboardEvent, 'target', { value: { value: '255' } });
         const isNumberSpy = spyOn(component, 'isNumber').and.callThrough();
@@ -149,7 +149,7 @@ fdescribe('ColorPickerComponent', () => {
     });
 
     it(' adjustColor should affect color if ctrlKey is false and isBlue is true', () => {
-        let keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
+        const keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
         // Solution ci-dessous tirée de https://stackoverflow.com/questions/27108094/how-to-set-target-property-when-simulating-mouseclick-in-javascript
         Object.defineProperty(keyboardEvent, 'target', { value: { value: '255' } });
         const isNumberSpy = spyOn(component, 'isNumber').and.callThrough();
@@ -162,7 +162,7 @@ fdescribe('ColorPickerComponent', () => {
     it(' adjustColor should call setColorPreview and resetSelectedColors', () => {
         const setColorPreviewSpy = spyOn(component, 'setColorPreview').and.callThrough();
         const resetSelectedColorsSpy = spyOn(component, 'resetSelectedColors').and.callThrough();
-        let keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
+        const keyboardEvent: KeyboardEvent = { ctrlKey: false } as KeyboardEvent;
         // Solution ci-dessous tirée de https://stackoverflow.com/questions/27108094/how-to-set-target-property-when-simulating-mouseclick-in-javascript
         Object.defineProperty(keyboardEvent, 'target', { value: { value: '255' } });
         component.adjustColor(keyboardEvent);
@@ -171,7 +171,7 @@ fdescribe('ColorPickerComponent', () => {
     });
 
     it(' setColor should affect primaryColor with color and call setPrimaryColorWithOpacity if primary is true', () => {
-        const primary: boolean = true;
+        const primary = true;
         component.color = 'rgba(0,0,0,1)';
         const setPrimaryColorWithOpacitySpy = spyOn(component.colorService, 'setPrimaryColorWithOpacity').and.callThrough();
         component.setColor(primary);
@@ -180,7 +180,7 @@ fdescribe('ColorPickerComponent', () => {
     });
 
     it(' setColor should affect secondaryColor with color and call setSecondaryColorWithOpacity if primary is false', () => {
-        const primary: boolean = false;
+        const primary = false;
         component.color = 'rgba(0,0,0,1)';
         const setSecondaryColorWithOpacitySpy = spyOn(component.colorService, 'setSecondaryColorWithOpacity').and.callThrough();
         component.setColor(primary);
@@ -189,14 +189,14 @@ fdescribe('ColorPickerComponent', () => {
     });
 
     it(' setColorPreview should affect primaryColorPreview with color and call setPrimaryColorWithOpacity if primary is true', () => {
-        const primary: boolean = true;
+        const primary = true;
         component.color = 'rgba(0,0,0,1)';
         component.setColorPreview(primary);
         expect(component.colorService.primaryColorPreview).toEqual(component.color);
     });
 
     it(' setColorPreview should affect secondaryColorPreview with color and call setSecondaryColorWithOpacity if primary is false', () => {
-        const primary: boolean = false;
+        const primary = false;
         component.color = 'rgba(0,0,0,1)';
         component.setColorPreview(primary);
         expect(component.colorService.secondaryColorPreview).toEqual(component.color);
@@ -204,13 +204,13 @@ fdescribe('ColorPickerComponent', () => {
 
     it(' rgbaToHex should expect #ff7b5764 if given rgba(255,123,87,1) while primary is true', () => {
         component.primary = true;
-        const colorInRgba: string = 'rgba(255,123,87,1)';
+        const colorInRgba = 'rgba(255,123,87,1)';
         expect(component.rgbaToHex(colorInRgba)).toEqual('#ff7b5764');
     });
 
     it(' rgbaToHex should expect #ff7b5764 if given rgba(255,123,87,1) while primary is false', () => {
         component.primary = false;
-        const colorInRgba: string = 'rgba(0,0,0,1)';
+        const colorInRgba = 'rgba(0,0,0,1)';
         expect(component.rgbaToHex(colorInRgba)).toEqual('#00000064');
     });
 
@@ -221,8 +221,8 @@ fdescribe('ColorPickerComponent', () => {
     });
 
     it(' isNumber should return true if given a number', () => {
-        const num: number = 10;
-        expect(component.isNumber(num)).toEqual(true); //isNumber always takes number therefore shall always be true
+        const num = 10;
+        expect(component.isNumber(num)).toEqual(true); // isNumber always takes number therefore shall always be true
     });
 
     it(' disableShortcut should make allowKeyPressEvents false ', () => {
@@ -310,7 +310,7 @@ fdescribe('ColorPickerComponent', () => {
         const emitSpy = spyOn(component.colorEmitted, 'emit').and.callThrough();
         const removeSpy = spyOn(component.colorService.tenLastUsedColors, 'remove').and.callThrough();
         const appendSpy = spyOn(component.colorService.tenLastUsedColors, 'append').and.callThrough();
-        //component.colorService.tenLastUsedColors['length'] = 3;
+        // component.colorService.tenLastUsedColors['length'] = 3;
         Object.defineProperty(component.colorService.tenLastUsedColors, 'length', { value: 3 });
         component.adjustQueueWhenSelectingPrevious('rgba(100,0,42,1)');
         expect(emitSpy).toHaveBeenCalledWith('rgba(100,0,42,1)');
@@ -320,7 +320,7 @@ fdescribe('ColorPickerComponent', () => {
 
     it(' adjustQueueWhenSelectingPrevious should call dequeue if the length of tenLastUsedColors is strictly larger than 10', () => {
         const dequeueSpy = spyOn(component.colorService.tenLastUsedColors, 'dequeue').and.callThrough();
-        //component.colorService.tenLastUsedColors['length'] = 25;
+        // component.colorService.tenLastUsedColors['length'] = 25;
         Object.defineProperty(component.colorService.tenLastUsedColors, 'length', { value: 25 });
         component.adjustQueueWhenSelectingPrevious('rgba(100,0,42,1)');
         expect(dequeueSpy).toHaveBeenCalled();

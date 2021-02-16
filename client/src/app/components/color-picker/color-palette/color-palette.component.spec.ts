@@ -15,7 +15,7 @@ describe('ColorPaletteComponent', () => {
 
     beforeEach(() => {
         // tslint:disable:no-string-literal
-        // tslint:disable:no-magic-numers
+        // tslint:disable:no-magic-numbers
         // tslint:disable:max-file-line-count
         fixture = TestBed.createComponent(ColorPaletteComponent);
         component = fixture.componentInstance;
