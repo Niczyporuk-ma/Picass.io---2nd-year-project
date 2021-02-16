@@ -18,7 +18,6 @@ export class ColorService {
     tenLastUsedColors: Queue<string>;
     icon: IconDefinition = faPalette;
     isConfirmed: boolean = false;
-    showConfirmButton = false;
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
@@ -80,15 +79,15 @@ export class ColorService {
     }
 
     setValuesOnConfirm(): void {
-        const maxOpacity: number = 1;
-        let primaryColorPreviewMaxOpacity = this.setColorWithOpacity(this.primaryColorPreview, maxOpacity);
-        let primaryColorMaxOpacity = this.setColorWithOpacity(this.primaryColor, maxOpacity);
-        if (primaryColorPreviewMaxOpacity != primaryColorMaxOpacity) {
+        const maxOpacity = 1;
+        const primaryColorPreviewMaxOpacity = this.setColorWithOpacity(this.primaryColorPreview, maxOpacity);
+        const primaryColorMaxOpacity = this.setColorWithOpacity(this.primaryColor, maxOpacity);
+        if (primaryColorPreviewMaxOpacity !== primaryColorMaxOpacity) {
             this.pushToQueueOnConfirm(primaryColorPreviewMaxOpacity);
         }
-        let secondaryColorPreviewMaxOpacity = this.setColorWithOpacity(this.secondaryColorPreview, maxOpacity);
-        let secondaryColorMaxOpacity = this.setColorWithOpacity(this.secondaryColor, maxOpacity);
-        if (secondaryColorPreviewMaxOpacity != secondaryColorMaxOpacity) {
+        const secondaryColorPreviewMaxOpacity = this.setColorWithOpacity(this.secondaryColorPreview, maxOpacity);
+        const secondaryColorMaxOpacity = this.setColorWithOpacity(this.secondaryColor, maxOpacity);
+        if (secondaryColorPreviewMaxOpacity !== secondaryColorMaxOpacity) {
             this.pushToQueueOnConfirm(secondaryColorPreviewMaxOpacity);
         }
         this.primaryColor = this.primaryColorPreview;

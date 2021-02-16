@@ -26,7 +26,6 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     private contextmenu: boolean = false;
     colorService: ColorService;
     mouseEvent: MouseEvent;
-    showConfirmButton: boolean = false;
 
     selectedPosition: { x: number; y: number };
 
@@ -39,7 +38,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     draw(): void {
-        //unchanged from source
+        // unchanged from source
         const radius = 10;
         const startAngle = 0;
         const baseWidth = 5;
@@ -78,7 +77,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        //unchanged from source
+        // unchanged from source
         if (changes.hue) {
             this.draw();
             const pos = this.selectedPosition;
@@ -96,8 +95,6 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     onLeftClickDown(evt: MouseEvent): void {
         this.mouseDown = evt.button === MouseButton.Left;
         this.contextmenu = false;
-        console.log(this.colorService.isConfirmed);
-
         if (this.contextmenu === false && this.mouseDown === true) {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
@@ -111,12 +108,10 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
                 this.colorService.primaryOpacityPreview,
             );
         }
-        // this.mouseDown = false;
     }
 
     resetBoolsAfterDecision(): void {
         this.colorService.isConfirmed = false;
-        this.showConfirmButton = false;
         this.mouseDown = false;
     }
 
@@ -167,11 +162,5 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     getColorAtPositionWithOpacity(x: number, y: number, opacity: number): string {
         const imageData = this.ctx.getImageData(x, y, 1, 1).data;
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + opacity + ')';
-    }
-
-    paletteClickHandler(evt: MouseEvent): boolean {
-        this.mouseEvent = evt;
-        this.colorService.showConfirmButton = true;
-        return false;
     }
 }

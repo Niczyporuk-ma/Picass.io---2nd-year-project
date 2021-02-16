@@ -1,12 +1,12 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-//import { ColorService } from '@app/services/tools/color.service';
+// import { ColorService } from '@app/services/tools/color.service';
 import { ColorPickerComponent } from './color-picker.component';
 
 describe('ColorPickerComponent', () => {
     let component: ColorPickerComponent;
     let fixture: ComponentFixture<ColorPickerComponent>;
-    //let colorService: ColorService;
+    // let colorService: ColorService;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -19,7 +19,7 @@ describe('ColorPickerComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
 
-        //colorService = TestBed.inject(ColorService);
+        // colorService = TestBed.inject(ColorService);
     });
 
     it('should create', () => {
@@ -43,7 +43,7 @@ describe('ColorPickerComponent', () => {
             button: 0,
         } as MouseEvent;
         component.selectPrimaryColor(mouseEventLClick);
-        //expect(component.color).toEqual(colorService.primaryColor);
+        // expect(component.color).toEqual(colorService.primaryColor);
     });
 
     it(' selectSecondaryColor should set primary to false on left click', () => {
@@ -63,7 +63,7 @@ describe('ColorPickerComponent', () => {
             button: 0,
         } as MouseEvent;
         component.selectSecondaryColor(mouseEventLClick);
-        //expect(component.color).toEqual(colorService.secondaryColor);
+        // expect(component.color).toEqual(colorService.secondaryColor);
     });
 
     // it(' changeOpacity should set colorService opacity with a given opacity and setPrimaryColorWithOpacity along with setSecondaryColorwithOpacity will both be called', () => {
@@ -77,7 +77,7 @@ describe('ColorPickerComponent', () => {
     // });
 
     it(' splitColor should return replaced colorToSplit', () => {
-        const colorToSplit: string = 'rgba(255,250,66,0)';
+        const colorToSplit = 'rgba(255,250,66,0)';
         const colorToSplitStringArray: string[] = component.splitColor(colorToSplit);
         expect(colorToSplitStringArray[0]).toEqual('255');
         expect(colorToSplitStringArray[1]).toEqual('250');

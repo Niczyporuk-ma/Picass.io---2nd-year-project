@@ -12,10 +12,10 @@ export class MockElementRef {
 describe('ResizeService', () => {
     let service: ResizeService;
     let mouseEvent: MouseEvent;
-    let canvas: DOMRect = { left: 500, right: 1500, top: 0, bottom: 500 } as DOMRect;
-    let canvasSize: Vec2 = { x: 500, y: 300 };
+    const canvas: DOMRect = { left: 500, right: 1500, top: 0, bottom: 500 } as DOMRect;
+    const canvasSize: Vec2 = { x: 500, y: 300 };
     let dummyCanvas: ElementRef<HTMLCanvasElement>;
-    let dummyNativeElement = document.createElement('canvas');
+    const dummyNativeElement = document.createElement('canvas');
 
     mouseEvent = {
         button: 0,
@@ -46,13 +46,13 @@ describe('ResizeService', () => {
     });
 
     it('startResize shouldnt set resizeActive to false on right click', () => {
-        let rightClickMouseEvent: MouseEvent = { button: 2 } as MouseEvent;
+        const rightClickMouseEvent: MouseEvent = { button: 2 } as MouseEvent;
         service.startResize(rightClickMouseEvent);
         expect(service['drawingService'].resizeActive).toEqual(true);
     });
 
     it('startResize should set mouseDown to false on right click', () => {
-        let rightClickMouseEvent: MouseEvent = { button: 2 } as MouseEvent;
+        const rightClickMouseEvent: MouseEvent = { button: 2 } as MouseEvent;
         service.startResize(rightClickMouseEvent);
         expect(service.mouseDown).toEqual(false);
     });
@@ -60,7 +60,7 @@ describe('ResizeService', () => {
     it('resize should set preview.y to MIN_HEIGH when the mouse position is lower MIN_HEIGH when isBottom is true', () => {
         service.isBottom = true;
         service.mouseDown = true;
-        let event: MouseEvent = { pageY: 100 } as MouseEvent;
+        const event: MouseEvent = { pageY: 100 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview.y).toEqual(Constant.MIN_HEIGH);
     });
@@ -68,7 +68,7 @@ describe('ResizeService', () => {
     it('resize should set preview.y to the good value when isBottom is true', () => {
         service.isBottom = true;
         service.mouseDown = true;
-        let event: MouseEvent = { pageY: 800 } as MouseEvent;
+        const event: MouseEvent = { pageY: 800 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview.y).toEqual(event.pageY);
     });
@@ -76,7 +76,7 @@ describe('ResizeService', () => {
     it('resize should set preview.x to MIN_HEIGH when the mouse position is lower MIN_HEIGH when isSide is true', () => {
         service.isSide = true;
         service.mouseDown = true;
-        let event: MouseEvent = { pageX: 100 } as MouseEvent;
+        const event: MouseEvent = { pageX: 100 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview.x).toEqual(Constant.MIN_HEIGH);
     });
@@ -86,7 +86,7 @@ describe('ResizeService', () => {
         service.isBottom = false;
         service.isCorner = false;
         service.mouseDown = true;
-        let event: MouseEvent = { pageX: 800 } as MouseEvent;
+        const event: MouseEvent = { pageX: 800 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview.x).toEqual(300);
     });
@@ -96,7 +96,7 @@ describe('ResizeService', () => {
         service.isBottom = false;
         service.isCorner = true;
         service.mouseDown = true;
-        let event: MouseEvent = { pageX: 800, pageY: 1000 } as MouseEvent;
+        const event: MouseEvent = { pageX: 800, pageY: 1000 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview).toEqual({ x: 300, y: 1000 });
     });
@@ -106,7 +106,7 @@ describe('ResizeService', () => {
         service.isBottom = false;
         service.isCorner = true;
         service.mouseDown = true;
-        let event: MouseEvent = { pageX: 150, pageY: 50 } as MouseEvent;
+        const event: MouseEvent = { pageX: 150, pageY: 50 } as MouseEvent;
         service.resize(event, canvas);
         expect(service.preview).toEqual({ x: Constant.MIN_WIDTH, y: Constant.MIN_HEIGH });
     });
@@ -183,7 +183,7 @@ describe('ResizeService', () => {
     });
 
     it('stopResize should call relocateHandle once', () => {
-        let stopResizeSpy = spyOn<any>(service, 'stopResize').and.callThrough();
+        const stopResizeSpy = spyOn(service, 'stopResize').and.callThrough();
         service.mouseDown = true;
         service.preview = { x: 1234, y: 3456 };
         service.sideHandle = { x: 0, y: 0 };
@@ -219,8 +219,8 @@ describe('ResizeService', () => {
     });
 
     it('copyCanvas calls toDataURL() from the canvas', () => {
-        const copyCanvasSpy = spyOn<any>(service, 'copyCanvas').and.callThrough();
-        const toDataURLSpy = spyOn<any>(dummyCanvas.nativeElement, 'toDataURL').and.stub();
+        const copyCanvasSpy = spyOn(service, 'copyCanvas').and.callThrough();
+        const toDataURLSpy = spyOn(dummyCanvas.nativeElement, 'toDataURL').and.stub();
         service.copyCanvas(dummyCanvas);
         expect(copyCanvasSpy).toHaveBeenCalled();
         expect(toDataURLSpy).toHaveBeenCalled();

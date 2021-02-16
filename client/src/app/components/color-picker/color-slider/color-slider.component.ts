@@ -98,11 +98,11 @@ export class ColorSliderComponent implements AfterViewInit {
     }
 
     getColorAtPosition(x: number, y: number): string {
-        const rectangleWidth: number = 1;
-        const rectangleHeight: number = 1;
-        const firstIndex: number = 0;
-        const secondIndex: number = 1;
-        const lastIndex: number = 2;
+        const rectangleWidth = 1;
+        const rectangleHeight = 1;
+        const firstIndex = 0;
+        const secondIndex = 1;
+        const lastIndex = 2;
         const imageData = this.ctx.getImageData(x, y, rectangleWidth, rectangleHeight).data;
         return 'rgba(' + imageData[firstIndex] + ',' + imageData[secondIndex] + ',' + imageData[lastIndex] + ',1)';
     }

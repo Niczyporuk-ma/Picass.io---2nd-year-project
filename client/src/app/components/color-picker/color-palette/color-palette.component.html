@@ -5,18 +5,9 @@
         class="color-palette"
         width="250"
         height="250"
-        (mousedown)="onLeftClickDown($event); paletteClickHandler($event)"
+        (mousedown)="onLeftClickDown($event)"
         (mousemove)="onMouseMove($event)"
-        (contextmenu)="onRightClickDown($event); paletteClickHandler($event)"
+        (contextmenu)="onRightClickDown($event)"
     >
     </canvas>
-    <!-- <div *ngIf="this.showConfirmButton">
-        <div *ngIf="this.primaryColorConfirm">
-            <button class="confirm" (click)="this.isConfirmed = true; onLeftClickDown(this.mouseEvent)">confirm</button>
-        </div>
-        <div *ngIf="this.secondaryColorConfirm">
-            <button class="confirm" (click)="this.isConfirmed = true; onRightClickDown(this.mouseEvent)">confirm</button>
-        </div>
-        <button class="cancel" (click)="resetBoolsAfterDecision()">annuler</button>
-    </div> -->
 </div>
