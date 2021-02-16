@@ -104,7 +104,11 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             if (this.colorService.isConfirmed) {
                 this.resetBoolsAfterDecision();
             }
-            this.colorService.primaryColorPreview = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.primaryOpacity);
+            this.colorService.primaryColorPreview = this.getColorAtPositionWithOpacity(
+                evt.offsetX,
+                evt.offsetY,
+                this.colorService.primaryOpacityPreview,
+            );
         }
         // this.mousedown = false;
     }
@@ -116,8 +120,6 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     onRightClickDown(evt: MouseEvent): boolean {
-        // PROBLEM WITH PREVIEW STILL
-        // TODO: PUT getColor... in a variable
         this.mousedown = false;
         this.contextmenu = true;
         this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
@@ -127,7 +129,11 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.resetBoolsAfterDecision();
             return false;
         }
-        this.colorService.secondaryColorPreview = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.secondaryOpacity);
+        this.colorService.secondaryColorPreview = this.getColorAtPositionWithOpacity(
+            evt.offsetX,
+            evt.offsetY,
+            this.colorService.secondaryOpacityPreview,
+        );
         return false;
     }
 
@@ -136,7 +142,11 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.selectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
             this.emitColor(evt.offsetX, evt.offsetY);
-            this.colorService.primaryColorPreview = this.getColorAtPositionWithOpacity(evt.offsetX, evt.offsetY, this.colorService.primaryOpacity);
+            this.colorService.primaryColorPreview = this.getColorAtPositionWithOpacity(
+                evt.offsetX,
+                evt.offsetY,
+                this.colorService.primaryOpacityPreview,
+            );
             if (this.colorService.isConfirmed) {
                 this.colorService.primaryColor = this.colorService.primaryColorPreview;
             }
@@ -162,6 +172,5 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.mouseEvent = evt;
         this.colorService.showConfirmButton = true;
         return false;
-        //console.log(this.showConfirmButton);
     }
 }

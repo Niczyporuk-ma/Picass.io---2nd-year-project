@@ -47,12 +47,12 @@ export class ColorPickerComponent {
     // NOTE: TEST METHODS: changePrimary/secondary, and methods affected by splitting opacity in 2 variables (primOpacity/secOpacity)
 
     changePrimaryOpacity(opacity: number): void {
-        this.colorService.primaryOpacity = opacity;
+        this.colorService.primaryOpacityPreview = opacity;
         this.colorService.setPrimaryColorWithOpacity(opacity);
     }
 
     changeSecondaryOpacity(opacity: number): void {
-        this.colorService.secondaryOpacity = opacity;
+        this.colorService.secondaryOpacityPreview = opacity;
         this.colorService.setSecondaryColorWithOpacity(opacity);
     }
 
@@ -126,21 +126,45 @@ export class ColorPickerComponent {
     setColor(primary: boolean) {
         if (primary) {
             this.colorService.primaryColor = this.color;
-            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
+            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
         } else {
             this.colorService.secondaryColor = this.color;
-            this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
+            this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);
         }
     }
 
     setColorPreview(primary: boolean) {
         if (primary) {
             this.colorService.primaryColorPreview = this.color;
-            //this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
+            //this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
         } else {
             this.colorService.secondaryColorPreview = this.color;
-            //this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
+            //this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);
         }
+    }
+
+    rgbaToHex(colorInRgba: string): string {
+        let rgbaValues: string[] = this.splitColor(colorInRgba);
+        let red: number = +rgbaValues[0];
+        let green: number = +rgbaValues[1];
+        let blue: number = +rgbaValues[2];
+        let opacity: number;
+        if (this.primary) {
+            opacity = +(this.primOpacity * 100);
+        } else {
+            opacity = +(this.secOpacity * 100);
+        }
+        let redToString: string = red.toString(16);
+        let greenToString: string = green.toString(16);
+        let blueToString: string = blue.toString(16);
+        let opacityToString: string = opacity.toString(16);
+
+        if (redToString.length == 1) redToString = '0' + redToString;
+        if (greenToString.length == 1) greenToString = '0' + greenToString;
+        if (blueToString.length == 1) blueToString = '0' + blueToString;
+        if (opacityToString.length == 1) opacityToString = '0' + opacityToString;
+
+        return '#' + redToString + greenToString + blueToString + opacityToString;
     }
 
     resetSelectedColors() {
@@ -152,8 +176,6 @@ export class ColorPickerComponent {
     isNumber(num: number): boolean {
         return !Number.isNaN(num);
     }
-
-    colorToHex() {}
 
     disableShortcut(): void {
         this.toolManager.allowKeyPressEvents = false;
@@ -168,22 +190,28 @@ export class ColorPickerComponent {
         this.mousedown = false;
     }
 
-    onLeftClick(evt: MouseEvent, color: string): void {
+    onLeftClickPreviousColor(evt: MouseEvent, color: string): void {
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = false;
         if (this.contextmenu === false && this.mousedown === true) {
+            this.colorService.primaryColorPreview = color;
+            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
             this.adjustQueueWhenSelectingPrevious(color);
-            this.colorService.primaryColor = color;
-            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacity);
+            if (this.colorService.isConfirmed) {
+                this.colorService.isConfirmed = false;
+            }
         }
     }
 
-    onRightClickDown(evt: MouseEvent, color: string): boolean {
+    onRightClickPreviousColor(evt: MouseEvent, color: string): boolean {
         this.mousedown = evt.button === MouseButton.Left;
         this.contextmenu = true;
+        this.colorService.secondaryColorPreview = color;
+        this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);
         this.adjustQueueWhenSelectingPrevious(color);
-        this.colorService.secondaryColor = color;
-        this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacity);
+        if (this.colorService.isConfirmed) {
+            this.colorService.isConfirmed = false;
+        }
         return false;
     }
 
@@ -202,10 +230,4 @@ export class ColorPickerComponent {
             this.colorService.tenLastUsedColors.dequeue();
         }
     }
-
-    // pickerClickHandler(evt: MouseEvent): void {
-    //     this.mouseEvent = evt;
-    //     this.colorService.showConfirmButton = true;
-    //     //console.log(this.showConfirmButton);
-    // }
 }
