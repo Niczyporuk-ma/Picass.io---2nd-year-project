@@ -14,7 +14,6 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 })
 export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: true }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('backgroundCanvas', { static: true }) backgroundLayer: ElementRef<HTMLCanvasElement>;
 
@@ -30,7 +29,6 @@ export class DrawingComponent implements AfterViewInit {
     windowSize: Vec2 = { x: window.innerWidth, y: window.innerHeight };
     timeOutDuration: number = 170;
 
-    // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
     tools: Tool[];
     currentTool: Tool;
     shortcutKeyboardManager: KeyboardShortcutManagerService;
@@ -82,7 +80,7 @@ export class DrawingComponent implements AfterViewInit {
         } else if (event.pageX > this.canvas.left + window.scrollY) {
             this.currentTool.onMouseMove(event);
         }
-        this.drawingService.clearCanvas(this.drawingService.backgroundCtx);
+        //this.drawingService.clearCanvas(this.drawingService.backgroundCtx);
         if (this.toolManager.currentTool === this.toolManager.ellipseService && this.toolManager.ellipseService.mouseDown) {
             this.toolManager.ellipseService.onMouseMove(event);
         }

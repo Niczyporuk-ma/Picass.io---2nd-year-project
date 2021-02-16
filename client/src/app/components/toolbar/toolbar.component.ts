@@ -30,11 +30,11 @@ export class ToolbarComponent {
         this.tools = toolManager.tools;
     }
 
-    setRectangleStyle(n: string): void {
-        if (n === FILL_VALUE) {
+    setRectangleStyle(recStyleCode: string): void {
+        if (recStyleCode === FILL_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = true;
             this.toolManager.rectangleService.contour = false;
-        } else if (n === CONTOUR_VALUE) {
+        } else if (recStyleCode === CONTOUR_VALUE) {
             this.toolManager.rectangleService.toolStyles.fill = false;
             this.toolManager.rectangleService.contour = true;
         } else {
@@ -47,11 +47,11 @@ export class ToolbarComponent {
         this.toolManager.showPalette = !this.toolManager.showPalette;
     }
 
-    setEllipseStyle(n: string): void {
-        if (n === FILL_VALUE) {
+    setEllipseStyle(ellipseStyleCode: string): void {
+        if (ellipseStyleCode === FILL_VALUE) {
             this.toolManager.ellipseService.toolStyles.fill = true;
             this.toolManager.ellipseService.border = false;
-        } else if (n === CONTOUR_VALUE) {
+        } else if (ellipseStyleCode === CONTOUR_VALUE) {
             this.toolManager.ellipseService.toolStyles.fill = false;
             this.toolManager.ellipseService.border = true;
         } else {
@@ -72,8 +72,8 @@ export class ToolbarComponent {
         }
     }
 
-    changeDiameter(n: number): void {
-        this.toolManager.lineService.currentDiameter = n;
+    changeDiameter(newDiameter: number): void {
+        this.toolManager.lineService.currentDiameter = newDiameter;
     }
 
     changeWidth(width: number): void {

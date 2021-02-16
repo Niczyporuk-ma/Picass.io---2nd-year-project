@@ -75,27 +75,17 @@ describe('EllipseService', () => {
 
     it(' onMouseUp should not call drawEllipse if mouse was not already down', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub(); // appeller la fonction original
-        // precious ass shit:
-        // service[''] : pour
-        // const ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', ['fill']);
-        // service['drawEllipse'](ctxSpyObject, { x: 1, y: 1 }, { x: 1, y: 1 });
-        // expect(ctxSpyObject.fill).toHaveBeenCalled();
-
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
-
         service.onMouseUp(mouseEvent);
         expect(drawEllipseSpy).not.toHaveBeenCalled();
-        // expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawEllipse if mouse was already down', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
-
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
-
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawEllipseSpy).toHaveBeenCalled();
@@ -106,7 +96,6 @@ describe('EllipseService', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
-
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(drawEllipseSpy).not.toHaveBeenCalled();
@@ -129,11 +118,11 @@ describe('EllipseService', () => {
         expect(service.shiftIsPressed).toBeFalse();
     });
 
-    it('setShiftPressed should have called both drawEllipse and drawRectangle if checkIsSquare returns false', () => {
+    it('setShiftPressed should have called both drawEllipse and drawRectangle if checkIsSquare returns false and mouseDown is true', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
-
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
+        service.mouseDown = true;
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 5, y: 5 };
 
