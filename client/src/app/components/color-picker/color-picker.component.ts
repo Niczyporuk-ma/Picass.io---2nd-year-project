@@ -28,7 +28,6 @@ export class ColorPickerComponent {
     blueIndex: number = 2;
     opacityIndex: number = 3;
     private mouseDown: boolean = false;
-    private contextmenu: boolean = false;
     isRed: boolean = false;
     isGreen: boolean = false;
     isBlue: boolean = false;
@@ -43,8 +42,6 @@ export class ColorPickerComponent {
     @Output()
     colorEmitted: EventEmitter<string> = new EventEmitter(true);
 
-    // TODO: Adjust when palette is clicked undefined behaviour
-    // NOTE: TEST METHODS: changePrimary/secondary, and methods affected by splitting opacity in 2 variables (primOpacity/secOpacity)
 
     changePrimaryOpacity(opacity: number): void {
         this.colorService.primaryOpacityPreview = opacity;
@@ -64,10 +61,8 @@ export class ColorPickerComponent {
         if (evt.button === MouseButton.Left) {
             this.primary = true;
             this.color = this.colorService.primaryColor;
-            // var copyColor = this.color;
             const split: string[] = this.splitColor(this.color);
             console.log(this.splitColor(this.color));
-            // const split = this.splitColor(this.color);
             this.red = split[this.redIndex];
             this.green = split[this.greenIndex];
             this.blue = split[this.blueIndex];
@@ -136,10 +131,8 @@ export class ColorPickerComponent {
     setColorPreview(primary: boolean): void {
         if (primary) {
             this.colorService.primaryColorPreview = this.color;
-            // this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
         } else {
             this.colorService.secondaryColorPreview = this.color;
-            // this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);
         }
     }
 
@@ -163,7 +156,6 @@ export class ColorPickerComponent {
         if (redToString.length === 1) redToString = '0' + redToString;
         if (greenToString.length === 1) greenToString = '0' + greenToString;
         if (blueToString.length === 1) blueToString = '0' + blueToString;
-        if (opacityToString.length === 1) opacityToString = '0' + opacityToString;
 
         return '#' + redToString + greenToString + blueToString + opacityToString;
     }
@@ -193,8 +185,7 @@ export class ColorPickerComponent {
 
     onLeftClickPreviousColor(evt: MouseEvent, color: string): void {
         this.mouseDown = evt.button === MouseButton.Left;
-        this.contextmenu = false;
-        if (this.contextmenu === false && this.mouseDown === true) {
+        if (this.mouseDown === true) {
             this.colorService.primaryColorPreview = color;
             this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
             this.adjustQueueWhenSelectingPrevious(color);
@@ -206,7 +197,6 @@ export class ColorPickerComponent {
 
     onRightClickPreviousColor(evt: MouseEvent, color: string): boolean {
         this.mouseDown = evt.button === MouseButton.Left;
-        this.contextmenu = true;
         this.colorService.secondaryColorPreview = color;
         this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);
         this.adjustQueueWhenSelectingPrevious(color);

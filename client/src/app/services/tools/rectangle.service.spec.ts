@@ -14,7 +14,7 @@ describe('RectangleService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); 
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
@@ -28,7 +28,7 @@ describe('RectangleService', () => {
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
-        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        service['drawingService'].baseCtx = baseCtxStub; 
         service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
@@ -57,7 +57,7 @@ describe('RectangleService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
+            button: 1, 
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -137,7 +137,6 @@ describe('RectangleService', () => {
         service.mouseDown = true;
         service.shiftIsPressed = true;
         service.startingPoint = { x: 0, y: 0 };
-        // service.endPoint = {x : 2, y : 2};
         const expectedResult: Vec2[] = [
             { x: 0, y: 0 },
             { x: 25, y: 25 },
@@ -146,18 +145,6 @@ describe('RectangleService', () => {
         expect(service.currentLine).toEqual(expectedResult);
     });
 
-    // PROBLEMATIQUE
-    /* it(' onMouseMove should not call closestSquare when we already have a square', () => {
-        service.mouseDown = true;
-        service.shiftIsPressed = true;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service['startingPoint'] = { x: 1, y: 5 };
-        service['endPoint'] = { x: 5, y: 5 };
-        const closestSquareSpy = spyOn(service['squareHelperService'], 'closestSquare').and.stub();
-        service.onMouseMove(mouseEvent);
-        expect(closestSquareSpy).not.toHaveBeenCalled();
-        //expect(service.currentLine).toEqual([{x:1,y:5},{x:5,y:1}]);
-    });*/
 
     it('setShiftIsPressed should have called drawLine if checkIfSquare returns false', () => {
         const drawLineSpy = spyOn(service, 'drawLine').and.stub();

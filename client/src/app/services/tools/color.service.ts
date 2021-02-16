@@ -31,13 +31,13 @@ export class ColorService {
         this.tenLastUsedColors = new Queue<string>();
     }
 
-    // TODO concatenate color and opacity
+    
     setPrimaryColorWithOpacity(opacity: number): void {
         const colors: string[] = this.primaryColorPreview.split(',');
         this.primaryColorPreview = colors[0] + ',' + colors[1] + ',' + colors[2] + ',' + opacity + ')';
     }
 
-    // TODO concatenate color and opacity
+    
     setSecondaryColorWithOpacity(opacity: number): void {
         const colors: string[] = this.secondaryColorPreview.split(',');
         this.secondaryColorPreview = colors[0] + ',' + colors[1] + ',' + colors[2] + ',' + opacity + ')';

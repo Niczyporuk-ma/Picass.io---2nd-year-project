@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-// import{Tool} from '@app/classes/tool';
 import { KeyboardShortcutManagerService } from './keyboard-shortcut-manager.service';
 
 describe('KeyboardShortcutManagerService', () => {

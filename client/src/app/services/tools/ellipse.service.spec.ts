@@ -29,7 +29,7 @@ describe('EllipseService', () => {
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
 
-        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        service['drawingService'].baseCtx = baseCtxStub; 
         service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
@@ -58,7 +58,7 @@ describe('EllipseService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
+            button: 1, 
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -74,7 +74,7 @@ describe('EllipseService', () => {
     });
 
     it(' onMouseUp should not call drawEllipse if mouse was not already down', () => {
-        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub(); // appeller la fonction original
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub(); 
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);

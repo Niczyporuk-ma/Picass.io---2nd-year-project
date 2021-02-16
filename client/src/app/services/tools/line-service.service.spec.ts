@@ -20,7 +20,7 @@ describe('LineService', () => {
     const MOCK_ENDING_POINT: Vec2 = { x: 1, y: 1 };
 
     beforeEach(() => {
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); 
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
@@ -35,7 +35,7 @@ describe('LineService', () => {
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numers
         // tslint:disable:max-file-line-count
-        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        service['drawingService'].baseCtx = baseCtxStub; 
         service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {

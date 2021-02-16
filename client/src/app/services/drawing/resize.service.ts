@@ -59,7 +59,6 @@ export class ResizeService {
     // inspired by the answer dating from Nov 10 '10 at 14:31
     // https://stackoverflow.com/questions/4137372/display-canvas-image-from-one-canvas-to-another-canvas-using-base64
     copyCanvas(baseCanvas: ElementRef<HTMLCanvasElement>): void {
-        // save the old canvas temporarly as an image and then redrow it
         const imageTemp = new Image();
         imageTemp.src = baseCanvas.nativeElement.toDataURL();
         const newCtx = baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;

@@ -6,7 +6,7 @@ import { DrawingComponent } from './drawing.component';
 
 class ToolStub extends Tool {}
 
-// TODO : Déplacer dans un fichier accessible à tous
+
 const DEFAULT_WIDTH = 1000;
 const DEFAULT_HEIGHT = 800;
 const TIMEOUT_WAIT = 5000;
@@ -129,7 +129,7 @@ describe('DrawingComponent', () => {
         setTimeout(() => {
             expect(onDoubleCLickSpy).toHaveBeenCalled();
             done();
-        }, TIMEOUT_WAIT); // ca depend de la vitesse de ton ordi :(
+        }, TIMEOUT_WAIT);
     });
 
     it(' onMouseClick should reset the click count to 0 after processing the event', async (done) => {

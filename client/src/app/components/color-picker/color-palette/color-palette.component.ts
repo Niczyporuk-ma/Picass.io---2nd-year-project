@@ -15,13 +15,9 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     @Output()
     color: EventEmitter<string> = new EventEmitter(true);
 
-    // @ViewChild('canvas') canvasEl : ElementRef;
     @ViewChild('canvas', { read: ElementRef, static: true }) canvas: ElementRef<HTMLCanvasElement>;
-    // canvas: ElementRef<HTMLCanvasElement>;
 
     private ctx: CanvasRenderingContext2D;
-    // as CanvasRenderingContext2D;
-
     private mouseDown: boolean = false;
     private contextmenu: boolean = false;
     colorService: ColorService;
@@ -38,7 +34,6 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     draw(): void {
-        // unchanged from source
         const radius = 10;
         const startAngle = 0;
         const baseWidth = 5;
@@ -77,7 +72,6 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        // unchanged from source
         if (changes.hue) {
             this.draw();
             const pos = this.selectedPosition;

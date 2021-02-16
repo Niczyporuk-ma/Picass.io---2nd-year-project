@@ -80,7 +80,6 @@ export class DrawingComponent implements AfterViewInit {
         } else if (event.pageX > this.canvas.left + window.scrollY) {
             this.currentTool.onMouseMove(event);
         }
-        // this.drawingService.clearCanvas(this.drawingService.backgroundCtx);
         if (this.toolManager.currentTool === this.toolManager.ellipseService && this.toolManager.ellipseService.mouseDown) {
             this.toolManager.ellipseService.onMouseMove(event);
         }
@@ -89,7 +88,6 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
         this.clickCount++;
-        // changement
         if (this.clickCount === 1) {
             setTimeout(() => {
                 if (this.clickCount === 1) {

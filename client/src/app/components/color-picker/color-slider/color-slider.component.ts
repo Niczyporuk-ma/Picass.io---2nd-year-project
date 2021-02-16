@@ -13,9 +13,6 @@ export class ColorSliderComponent implements AfterViewInit {
     @Output()
     color: EventEmitter<string> = new EventEmitter();
 
-    // @Input()
-    // input: number[];
-
     private ctx: CanvasRenderingContext2D;
     private mouseDown: boolean = false;
     private selectedHeight: number;
@@ -106,9 +103,4 @@ export class ColorSliderComponent implements AfterViewInit {
         const imageData = this.ctx.getImageData(x, y, rectangleWidth, rectangleHeight).data;
         return 'rgba(' + imageData[firstIndex] + ',' + imageData[secondIndex] + ',' + imageData[lastIndex] + ',1)';
     }
-
-    // emitInputtedColor(){
-    //     const rgbaColor = this.getColorAtPosition();
-    //     this.color.emit(rgbaColor);
-    // }
 }

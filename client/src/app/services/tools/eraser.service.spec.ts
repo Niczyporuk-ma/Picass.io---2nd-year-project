@@ -24,10 +24,6 @@ describe('EraserService', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        // drawLineSpy = spyOn(service, 'drawLine').and.stub();
-        // findCoordinateSpy = spyOn(service, 'findCoordinate').and.callThrough();
-        // cursorEffectSpy = spyOn(service, 'cursorEffect').and.stub();
-
         service.drawingService.baseCtx = baseCtxStub;
         service.drawingService.previewCtx = previewCtxStub;
 
@@ -99,7 +95,7 @@ describe('EraserService', () => {
         expect(drawServiceSpy.previewCtx.strokeStyle).toEqual('#000000');
     });
 
-    // Erreur bizzare ??
+
     it('findCoordinate should return the correct position to create the square effect of the eraser', () => {
         service.toolStyles.lineWidth = 20;
         service.currentPoint = { x: 30, y: 30 };
@@ -122,7 +118,7 @@ describe('EraserService', () => {
         service.currentPoint = { x: 30, y: 10 };
         const cursorEffectSpy = spyOn(service, 'cursorEffect').and.stub();
         service.mouseDown = true;
-        // service.mouseDownCoord = { x: 25, y: 25 };
+        
         service.onMouseMove(mouseEvent);
         expect(cursorEffectSpy).toHaveBeenCalledTimes(2);
     });
@@ -135,7 +131,7 @@ describe('EraserService', () => {
         expect(cursorEffectSpy).toHaveBeenCalledTimes(1);
     });
 
-    // Fonctionne pas ->????
+    
     it('drawLine should call moveTo and lineTo one time each', () => {
         service.startingPoint = { x: 10, y: 30 };
         service.currentPoint = { x: 30, y: 10 };
