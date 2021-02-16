@@ -31,13 +31,13 @@ describe('ColorSliderComponent', () => {
         expect(drawSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp should make mousedown false', () => {
-        component['mousedown'] = true;
+    it('onMouseUp should make mouseDown false', () => {
+        component['mouseDown'] = true;
         component.onMouseUp();
-        expect(component['mousedown']).toEqual(false);
+        expect(component['mouseDown']).toEqual(false);
     });
 
-    it('onMouseDown should make mousedown true, set selectedHeight to evt.offsetY, call draw and call emitColor with evt.offsetX and evt.offsetY', () => {
+    it('onMouseDown should make mouseDown true, set selectedHeight to evt.offsetY, call draw and call emitColor with evt.offsetX and evt.offsetY', () => {
         const mouseEventLClick = {
             offsetX: 25,
             offsetY: 25,
@@ -46,14 +46,14 @@ describe('ColorSliderComponent', () => {
         const drawSpy = spyOn(component, 'draw').and.stub();
         const emitColorSpy = spyOn(component, 'emitColor').and.stub();
         component.onMouseDown(mouseEventLClick);
-        expect(component['mousedown']).toEqual(true);
+        expect(component['mouseDown']).toEqual(true);
         expect(component['selectedHeight']).toEqual(mouseEventLClick.offsetY);
         expect(drawSpy).toHaveBeenCalled();
         expect(emitColorSpy).toHaveBeenCalledWith(mouseEventLClick.offsetX, mouseEventLClick.offsetY);
     });
 
     it('onMouseMove should set selectedHeight to evt.offsetY, call draw and call emitColor with evt.offsetX and evt.offsetY if mousedown is true', () => {
-        component['mousedown'] = true;
+        component['mouseDown'] = true;
         const mouseEventLClick = {
             offsetX: 25,
             offsetY: 25,
