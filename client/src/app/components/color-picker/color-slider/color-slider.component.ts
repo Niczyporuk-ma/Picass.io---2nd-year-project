@@ -17,7 +17,7 @@ export class ColorSliderComponent implements AfterViewInit {
     // input: number[];
 
     private ctx: CanvasRenderingContext2D;
-    private mousedown: boolean = false;
+    private mouseDown: boolean = false;
     private selectedHeight: number;
 
     ngAfterViewInit(): void {
@@ -74,18 +74,18 @@ export class ColorSliderComponent implements AfterViewInit {
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(): void {
-        this.mousedown = false;
+        this.mouseDown = false;
     }
 
     onMouseDown(evt: MouseEvent): void {
-        this.mousedown = true;
+        this.mouseDown = true;
         this.selectedHeight = evt.offsetY;
         this.draw();
         this.emitColor(evt.offsetX, evt.offsetY);
     }
 
     onMouseMove(evt: MouseEvent): void {
-        if (this.mousedown) {
+        if (this.mouseDown) {
             this.selectedHeight = evt.offsetY;
             this.draw();
             this.emitColor(evt.offsetX, evt.offsetY);
