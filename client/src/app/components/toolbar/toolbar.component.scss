@@ -1,1 +1,108 @@
+#witdhInput {
+    margin-top: 15px;
+    opacity: 0.7;
+    font: black;
+}
 
+.slideContainer {
+    width: 70%;
+    margin-top: 250px;
+}
+
+.slider:hover {
+    opacity: 2;
+}
+
+.btns{
+    width: 355px;
+}
+
+button {
+    display: block;
+    border: none;
+    background-color: rgb(53, 64, 75);
+    color: white;
+    width: 216px;
+    height: 50px;
+    border-radius: 0%;
+    transition: 0.3s;
+}
+
+button:hover {
+    display: block;
+    border: none;
+    background-color: rgb(197, 243, 231);
+    color: black;
+    width: 216px;
+    height: 50px;
+    border-radius: 0%;
+
+}
+
+button:focus{
+    outline: none;
+    background-color: rgb(107, 240, 206);
+    color:black;
+}
+
+::ng-deep .mat-tooltip { //tooltip
+    background-color: rgb(53, 64, 75, 0.9);
+}
+
+
+mat-button-toggle-group {
+    z-index: 3;
+    position: relative;
+}
+
+mat-button-toggle{
+    background-color: rgba(83, 101, 119);
+    color: white;
+    width: 81.5px;
+}
+
+#jonc {
+    width: 122.5px;
+}
+
+mat-card {
+    z-index: 3;
+    position: relative;
+    width: auto;
+    height: 30px;
+    color: white;
+    background-color: rgba(83, 101, 119);
+    bottom : 15px;
+    padding: auto;
+    margin-top : 10px; 
+}
+
+mat-button-toggle-group{
+    width: 216px;
+}
+
+.junctionRadiusSlider mat-card{
+    width: 216px;
+    padding: 0;
+    padding-left: 2px;
+}
+
+mat-card-subtitle{
+    position: relative;
+    left: 150px;
+    bottom : 45px;
+    font-weight: bold;
+    color: white;
+}
+
+
+
+
+.widthSlider{
+    padding: 0;
+    width: 216px;
+}
+
+mat-slider{
+    bottom : 15px;
+}

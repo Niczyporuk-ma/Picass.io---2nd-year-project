@@ -1,98 +1,139 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from './pencil-service';
+import { ColorService } from '@app/services/tools/color.service';
+import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { faSquare, IconDefinition } from '@fortawesome/free-regular-svg-icons';
 
 @Injectable({
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
-    constructor(drawingService: DrawingService) {
+    currentCommand: () => void;
+    shiftIsPressed: boolean;
+    currentLine: Vec2[] = [];
+    eventListenerIsSet: boolean;
+    contour: boolean = true;
+    icon: IconDefinition = faSquare;
+    constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
         super(drawingService);
-        this.shortcut = 'r';
-        this.localShortcuts = new Map();
+        this.shortcut = '1';
+        this.localShortcuts = new Map([['Shift', this.onShift]]);
+        this.currentLine = [];
         this.index = 2;
+        this.toolStyles = {
+            primaryColor: 'rgba(255, 0, 0, 1)',
+            lineWidth: 1,
+            fill: false,
+            secondaryColor: 'black',
+        };
     }
 
-    private startingPoint: Vec2;
-    private endPoint: Vec2;
-    private lineWidth: number;
+    startingPoint: Vec2;
+    endPoint: Vec2;
 
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+    clearArrays(): void {
+        this.currentLine = [];
+    }
+
+    onMouseDown(mouseDownEvent: MouseEvent): void {
+        this.mouseDown = mouseDownEvent.button === MouseButton.Left;
         if (this.mouseDown) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
+            this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
             this.startingPoint = this.mouseDownCoord;
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.endPoint = mousePosition;
-            const line: Vec2[] = [this.startingPoint, this.endPoint];
-            this.drawLine(this.drawingService.baseCtx, line);
+    setShiftIsPressed = (keyDownShiftEvent: KeyboardEvent) => {
+        if (keyDownShiftEvent.key === 'Shift') {
+            this.shiftIsPressed = true;
+            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint]) && !this.drawingService.resizeActive) {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
+                this.drawLine(this.drawingService.previewCtx, this.currentLine);
+            }
+        }
+    };
+
+    setShiftNonPressed = (keyUpShiftEvent: KeyboardEvent) => {
+        if (keyUpShiftEvent.key === 'Shift') {
+            if (this.mouseDown && !this.drawingService.resizeActive) {
+                this.shiftIsPressed = false;
+                window.removeEventListener('keypress', this.setShiftIsPressed);
+                window.removeEventListener('keyup', this.setShiftNonPressed);
+                this.eventListenerIsSet = false;
+                this.currentLine = [this.startingPoint, this.endPoint];
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawLine(this.drawingService.previewCtx, this.currentLine);
+            } else {
+                this.shiftIsPressed = false;
+            }
+        }
+    };
+
+    onShift(): void {
+        if (!this.eventListenerIsSet) {
+            window.addEventListener('keydown', this.setShiftIsPressed);
+            window.addEventListener('keyup', this.setShiftNonPressed);
+            this.eventListenerIsSet = true;
+        }
+    }
+
+    onMouseUp(mouseUpEvent: MouseEvent): void {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
+            if (!this.shiftIsPressed) {
+                const mousePosition = this.getPositionFromMouse(mouseUpEvent);
+                this.endPoint = mousePosition;
+                this.currentLine = [this.startingPoint, this.endPoint];
+            }
+            this.drawLine(this.drawingService.baseCtx, this.currentLine);
         }
         this.mouseDown = false;
     }
 
-    onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
+    onMouseMove(mouseMoveEvent: MouseEvent): void {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
+            const mousePosition = this.getPositionFromMouse(mouseMoveEvent);
             this.endPoint = mousePosition;
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+            if (this.shiftIsPressed) {
+                this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
+                if (this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
+                    this.currentLine = [this.startingPoint, this.endPoint];
+                }
+            } else {
+                this.currentLine = [this.startingPoint, this.endPoint];
+            }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            const line: Vec2[] = [this.startingPoint, this.endPoint];
-            this.drawLine(this.drawingService.previewCtx, line);
+            this.drawLine(this.drawingService.previewCtx, this.currentLine);
         }
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        this.setColors(this.colorService);
+        this.setStyles();
+
+        this.drawingService.previewCtx.fillStyle = this.toolStyles.primaryColor as string;
+        this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
+
+        this.drawingService.previewCtx.strokeStyle = this.toolStyles.secondaryColor as string;
+        this.drawingService.baseCtx.strokeStyle = this.toolStyles.secondaryColor as string;
+
+        if (!this.contour) {
+            ctx.strokeStyle = this.colorService.primaryColor;
+        }
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.lineWidth;
-        // ctx.lineCap = 'round';
+        ctx.lineWidth = this.toolStyles.lineWidth;
+        ctx.lineCap = 'square';
 
         if (ctx === this.drawingService.baseCtx) {
-            this.drawingService.drawings.set(path, this);
             this.drawingService.drawingStarted = true;
         }
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[0].y);
-        // let line: Vec2[] = [path[0], { x: path[1].x, y: path[0].y }];
-        // this.drawingService.drawings.set(line, this);
-
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[0].x, path[1].y);
-        // line = [path[0], { x: path[0].x, y: path[1].y }];
-        // this.drawingService.drawings.set(line, this);
-
-        ctx.moveTo(path[0].x, path[1].y);
-        ctx.lineTo(path[1].x, path[1].y);
-        // line = [
-        //     { x: path[0].x, y: path[1].y },
-        //     { x: path[1].x, y: path[1].y },
-        // ];
-        // this.drawingService.drawings.set(line, this);
-
-        ctx.moveTo(path[1].x, path[0].y);
-        ctx.lineTo(path[1].x, path[1].y);
-        // line = [{ x: path[1].x, y: path[0].y }, path[1]];
-        // this.drawingService.drawings.set(line, this);
-        ctx.stroke();
-    }
-
-    redrawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.lineWidth;
-        // ctx.lineCap = 'round';
-
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[1].x, path[0].y);
 
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[0].x, path[1].y);
@@ -102,7 +143,9 @@ export class RectangleService extends Tool {
 
         ctx.moveTo(path[1].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
-
         ctx.stroke();
+        if (this.toolStyles.fill) {
+            ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
+        }
     }
 }

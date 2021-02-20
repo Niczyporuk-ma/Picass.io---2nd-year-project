@@ -1,8 +1,114 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 <div class="btns">
-    <button (click)="this.toolManager.setPencilService()">Pen</button>
-    <button (click)="this.toolManager.setLineService()">Line</button>
-    <button (click)="this.toolManager.setRectangleService()">Rec</button>
-    <button (click)="this.toolManager.setEraserService()">Eraser</button>
+    <button (click)="this.toolManager.clearArrays()" matTooltip="Créer un nouveau dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faPlusSquare" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()"
+        matTooltip="Outil crayon (C): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faPen" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth()"
+        matTooltip="Outil efface (E): Cliquer et glisser pour effacer. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faEraser" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth()"
+        matTooltip="Outil ligne (L): Cliquer et glisser pour déssiner une ligne. Cliquer à la fin pour enchaîner
+    les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faSlash" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth()"
+        matTooltip="Outil rectangle (1): Cliquer et glisser, et relâcher pour déssiner un rectangle. tenir (Shift) pour dessiner un carré. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faSquare" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth()"
+        matTooltip="Outil ellipse (2): Cliquer et glisser, et relâcher pour déssiner un ellipse. tenir (Shift) pour dessiner un cercle. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faCircle" size="lg"></fa-icon>
+    </button>
+    <button
+        (click)="onPressPalette()"
+        matTooltip="Palette de couleur: Sélectionnez une couleur. CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire 
+    (ceci s'applique pour les 10 couleurs utilisés précédemment). 
+    Cliquez ici pour plus d'options."
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faPalette" size="lg"></fa-icon>
+    </button>
+    <div *ngIf="this.toolManager.showPalette">
+        <app-color-picker></app-color-picker>
+    </div>
+
+    <div class="widthSlider">
+        <mat-card>
+            Épaisseur:
+            <mat-slider
+                min="1"
+                max="50"
+                step="1"
+                value="1"
+                class="slider"
+                (change)="changeWidth($event.value)"
+                (input)="this.toolManager.widthValue = $event.value"
+                [value]="this.toolManager.widthValue"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.widthValue }} </mat-card-subtitle>
+        </mat-card>
+    </div>
+
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService">
+        <mat-button-toggle value="1" (change)="setEllipseStyle($event.value)">Remplir</mat-button-toggle>
+        <mat-button-toggle value="2" (change)="setEllipseStyle($event.value)">Contour</mat-button-toggle>
+        <mat-button-toggle value="3" (change)="setEllipseStyle($event.value)">Les Deux</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService">
+        <mat-button-toggle value="1" (change)="setRectangleStyle($event.value)">Remplir</mat-button-toggle>
+        <mat-button-toggle value="2" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
+        <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
+        <mat-button-toggle id="jonc" value="0" (change)="setLineJunction($event.value)">Sans jonction</mat-button-toggle>
+        <mat-button-toggle id="jonc" value="1" (change)="setLineJunction($event.value)">Avec jonction</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <br />
+    <div class="junctionRadiusSlider" *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
+        <mat-card
+            >Diamètre:
+            <mat-slider
+                min="2"
+                max="50"
+                step="1"
+                value="this.toolManager.lineService.currentDiameter"
+                class="slider"
+                (change)="changeDiameter($event.value)"
+                (input)="this.toolManager.lineService.currentDiameter = $event.value"
+                [value]="this.toolManager.lineService.currentDiameter"
+            ></mat-slider>
+            {{ this.toolManager.lineService.currentDiameter }}
+            <br />
+        </mat-card>
+    </div>
 </div>

@@ -12,6 +12,7 @@ describe('DrawingService', () => {
         service.canvas = canvasTestHelper.canvas;
         service.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         service.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        service.backgroundCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
     });
 
     it('should be created', () => {
@@ -23,5 +24,11 @@ describe('DrawingService', () => {
         const pixelBuffer = new Uint32Array(service.baseCtx.getImageData(0, 0, service.canvas.width, service.canvas.height).data.buffer);
         const hasColoredPixels = pixelBuffer.some((color) => color !== 0);
         expect(hasColoredPixels).toEqual(false);
+    });
+
+    it('clearBackground calls clearRect', () => {
+        const clearRectSpy = spyOn(service.backgroundCtx, 'clearRect').and.stub();
+        service.clearBackground();
+        expect(clearRectSpy).toHaveBeenCalled();
     });
 });

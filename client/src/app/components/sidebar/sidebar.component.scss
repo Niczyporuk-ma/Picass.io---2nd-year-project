@@ -2,13 +2,19 @@
     height: auto;
     min-height: 98vh;
     border: 1px solid black;
-    padding: 0;
+    padding: 0px;
     margin-right: 0px;
-    width: 50%;
+    width: 216px;
+    background-color: rgb(53, 64, 75);
 }
 
 .sidebar-container {
-    display: flex;
+    display:flex;
     flex-direction: column;
     width: auto;
+    padding: 0;
+
 }
+
+
+

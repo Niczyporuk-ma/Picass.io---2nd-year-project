@@ -1,5 +1,6 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
 import { MenuComponent } from './menu.component';
 
 describe('MenuComponent', () => {
@@ -8,7 +9,8 @@ describe('MenuComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [MenuComponent],
+            declarations: [MenuComponent, CarrouselComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
@@ -20,5 +22,10 @@ describe('MenuComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it(' isStarted should return the right boolean value ', () => {
+        const drawingState: boolean = component.isStarted();
+        expect(drawingState).toEqual(component.drawingService.drawingStarted);
     });
 });

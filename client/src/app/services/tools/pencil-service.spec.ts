@@ -30,7 +30,8 @@ describe('PencilService', () => {
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
-        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        // tslint:disable:no-magic-numbers
+        service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
@@ -59,7 +60,7 @@ describe('PencilService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
+            button: 1,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -97,6 +98,40 @@ describe('PencilService', () => {
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it('drawLine should calls moveTo and lineTo 4 times', () => {
+        const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'stroke',
+            'lineTo',
+        ]);
+        service.drawLine(rectangleSpyObject, [
+            { x: 1, y: 1 },
+            { x: 1, y: 2 },
+            { x: 2, y: 1 },
+            { x: 2, y: 2 },
+        ]);
+        expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
+    });
+
+    it('drawLine should calls moveTo and lineTo 0 times (no line drawn)', () => {
+        const rectangleSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'stroke',
+            'lineTo',
+        ]);
+        service.drawLine(rectangleSpyObject, []);
+        expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(0);
+    });
+
+    it('clearPath should set pathData to []', () => {
+        service.clearArrays();
+        expect(service['pathData']).toEqual([]);
     });
 
     // Exemple de test d'intégration qui est quand même utile
