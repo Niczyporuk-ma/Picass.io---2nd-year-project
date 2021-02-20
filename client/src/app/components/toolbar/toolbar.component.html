@@ -13,6 +13,14 @@
         <fa-icon [icon]="faPen" size="lg"></fa-icon>
     </button>
     <button
+        (click)="this.toolManager.setTool(this.toolManager.airbrushService); updateSliderWidth()"
+        matTooltip="Outil aérosol (A): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faSprayCan" size="lg"></fa-icon>
+    </button>
+    <button
         (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth()"
         matTooltip="Outil efface (E): Cliquer et glisser pour effacer. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"

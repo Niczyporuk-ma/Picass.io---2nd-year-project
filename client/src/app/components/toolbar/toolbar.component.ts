@@ -3,7 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
-import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
+import { faEraser, faPalette, faPen, faSlash, faSprayCan } from '@fortawesome/free-solid-svg-icons';
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
@@ -24,6 +24,7 @@ export class ToolbarComponent {
     faCircle: IconDefinition = faCircle;
     faPalette: IconDefinition = faPalette;
     faPlusSquare: IconDefinition = faPlusSquare;
+    faSprayCan: IconDefinition = faSprayCan;
 
     constructor(public toolManager: ToolManagerService) {
         this.toolManager = toolManager;
