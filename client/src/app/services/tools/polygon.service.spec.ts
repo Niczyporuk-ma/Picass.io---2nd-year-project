@@ -107,26 +107,71 @@ fdescribe('PolygonService', () => {
 
   });
 
- /* it('drawLine should set the strokeStyle and fillStyle of both preview and base canvas', () => {
-    const canvasSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
-        'moveTo',
-        'beginPath',
-        'lineTo',
-        'stroke',
-        'fillStyle',
-        'strokeStyle'
-    ]);
-
-    service.drawLine(canvasSpyObject,[{x:120,y:40},{x:0,y:0}]);
-    
-   
-});*/
-
-
   it('clearArray should empty currentLine', () => {
     service.clearArrays();
     expect(service.currentLine).toEqual([]);
   });
 
+  it('onButtonPress should toggle the value of showNumberOfSidesInput', () => {
+    service.showNumberOfSidesInput = false;
+    service.onButtonPress();
+    expect(service.showNumberOfSidesInput).toEqual(true);
+    service.showNumberOfSidesInput = true;
+    service.onButtonPress();
+    expect(service.showNumberOfSidesInput).toEqual(false);
+  });
+
+  it(' SetPreliminaryNumberOfsides should set premNumberOfSides when the input is a number', () => {
+    const keyboardEvent: KeyboardEvent = {} as KeyboardEvent;
+    Object.defineProperty(keyboardEvent, 'target', { value: { value: '6' } });
+    service.setPreliminaryNumberOfSides(keyboardEvent);
+    expect(service.premNumberOfSides).toEqual(6);
+  });
+
+  it(' SetPreliminaryNumberOfsides should set premNumberOfSides to NaN when the input is not a number', () => {
+    const keyboardEvent: KeyboardEvent = {} as KeyboardEvent;
+    Object.defineProperty(keyboardEvent, 'target', { value: { value: 'xyz' } });
+    service.setPreliminaryNumberOfSides(keyboardEvent);
+    expect(service.premNumberOfSides).toEqual(NaN);
+  });
+
+  it('setNumberOfSides should set sides to premNumberOfSides if it is between 3 and 12', () => {
+    for(var i = 3; i <= 12;i++) {
+      service.premNumberOfSides = i;
+      service.setNumberOfSides();
+      expect(service.sides).toEqual(i);
+    }
+  });
+
+  it('setNumberOfSides should send an alert if premNumberOfSides is bellow 3', () => {
+    
+      service.premNumberOfSides = -10456;
+      const alertSpy = spyOn(window,'alert');
+      service.setNumberOfSides();
+      expect(service.sides).toEqual(3);
+      expect(alertSpy).toHaveBeenCalled();
+    
+  });
+
+  it('setNumberOfSides should send an alert if premNumberOfSides is over 12', () => {
+    
+    service.premNumberOfSides = 12485;
+    const alertSpy = spyOn(window,'alert');
+    service.setNumberOfSides();
+    expect(service.sides).toEqual(3);
+    expect(alertSpy).toHaveBeenCalled();
+  
+  });
+
+  it('setNumberOfSides should send an alert if premNumberOfSides is not a number', () => {
+    
+    service.premNumberOfSides = NaN;
+    const alertSpy = spyOn(window,'alert');
+    service.setNumberOfSides();
+    expect(service.sides).toEqual(3);
+    expect(alertSpy).toHaveBeenCalled();
+  
+  });
+  
 
 });
