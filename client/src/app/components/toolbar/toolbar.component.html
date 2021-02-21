@@ -45,6 +45,19 @@
     >
         <fa-icon [icon]="faCircle" size="lg"></fa-icon>
     </button>
+
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth();this.toolManager.polygonService.onButtonPress()"
+    >
+        Poly
+    </button>
+    <div *ngIf="this.toolManager.polygonService.showNumberOfSidesInput">
+        <label> Nb côté
+             <input (keyup) ="this.toolManager.polygonService.setPreliminaryNumberOfSides($event)" (focus)="disableShortcut()" (blur)="enableShortcut()">
+        </label>
+        <button (click) = "this.toolManager.polygonService.setNumberOfSides()" >Confirmer</button>
+    </div>
+
     <button
         (click)="onPressPalette()"
         matTooltip="Palette de couleur: Sélectionnez une couleur. CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire 

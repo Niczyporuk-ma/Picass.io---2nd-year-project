@@ -80,4 +80,14 @@ export class ToolbarComponent {
         this.toolManager.currentTool.changeWidth(width);
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
+
+    disableShortcut(): void 
+    {
+        this.toolManager.allowKeyPressEvents = false;
+    }
+
+    enableShortcut() : void 
+    {
+        this.toolManager.allowKeyPressEvents = true;
+    }
 }
