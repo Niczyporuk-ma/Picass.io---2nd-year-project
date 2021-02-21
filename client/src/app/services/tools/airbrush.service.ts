@@ -6,20 +6,26 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 
 const TOOL_INDEX = 5;
+const INITIAL_JET_DIAMETER = 10;
+const INITIAL_DROPLET_DIAMETER = 1;
+const RATE = 10; //number of droplets shooting per a unit of time
 
 @Injectable({
     providedIn: 'root',
 })
 export class AirbrushService extends Tool {
     private pathData: Vec2[];
+    jetDiameter: number = INITIAL_JET_DIAMETER;
+    dropletDiameter: number = INITIAL_DROPLET_DIAMETER;
 
     constructor(drawingService: DrawingService, public colorService: ColorService) {
         super(drawingService);
         this.index = TOOL_INDEX;
-        this.shortcut = 'A';
+        this.shortcut = 'a';
+        this.localShortcuts = new Map();
         this.toolStyles = {
             primaryColor: 'black',
-            lineWidth: 5,
+            lineWidth: this.jetDiameter,
         };
     }
     private clearPath(): void {
@@ -31,17 +37,16 @@ export class AirbrushService extends Tool {
         if (this.mouseDown && !this.drawingService.resizeActive) {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
-            this.pathData.push(this.mouseDownCoord);
-            this.spray(this.drawingService.baseCtx, this.pathData);
+            this.spray(this.drawingService.baseCtx, this.mouseDownCoord);
         }
     }
 
     onMouseMove(mouseMoveEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            const mousePosition = this.getPositionFromMouse(mouseMoveEvent);
-            this.pathData.push(mousePosition);
+            this.clearPath();
+            this.mouseDownCoord = this.getPositionFromMouse(mouseMoveEvent);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.spray(this.drawingService.previewCtx, this.pathData);
+            this.spray(this.drawingService.baseCtx, this.mouseDownCoord);
         }
     }
 
@@ -49,13 +54,13 @@ export class AirbrushService extends Tool {
         if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.pathData.push(mousePosition);
-            this.spray(this.drawingService.baseCtx, this.pathData);
+            // this.spray(this.drawingService.baseCtx, this.mouseDownCoord);
         }
         this.mouseDown = false;
         this.clearPath();
     }
 
-    spray(ctx: CanvasRenderingContext2D, path: Vec2[]) {
+    spray(ctx: CanvasRenderingContext2D, point: Vec2) {
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
@@ -67,17 +72,31 @@ export class AirbrushService extends Tool {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round'; //try other options
         ctx.globalCompositeOperation = 'source-over';
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
+        const clientX = point.x;
+        const clientY = point.y;
+        const dropletRadius = this.dropletDiameter / 2;
+
+        for (const point of this.pathData) {
+            ctx.beginPath();
+            this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
+            ctx.arc(point.x, point.y, dropletRadius / 2, 0, 2 * Math.PI);
+            ctx.fill();
         }
-        ctx.stroke();
-        //useful stuff
-        //   ctx.arc(
-        //     (this.startingPoint.x + squareCornerPos.x) / 2,
-        //     (this.startingPoint.y + squareCornerPos.y) / 2,
-        //     Math.abs((this.startingPoint.x - squareCornerPos.x) / 2),
-        //     0,
-        //     2 * Math.PI,
-        // );
+
+        // Creating
+        for (let i = RATE; i--; ) {
+            const randomAngle = this.getRandomNumber(0, Math.PI * 2);
+            const randomRadius = this.getRandomNumber(0, this.jetDiameter / 2);
+            const dropletCenter: Vec2 = { x: clientX + randomRadius * Math.cos(randomAngle), y: clientY + randomRadius * Math.sin(randomAngle) };
+            this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
+            ctx.beginPath();
+            ctx.arc(dropletCenter.x, dropletCenter.y, dropletRadius, randomAngle, randomAngle + 2 * Math.PI);
+            ctx.fill();
+            this.pathData.push(dropletCenter);
+        }
+    }
+
+    private getRandomNumber(min: number, max: number): number {
+        return Math.random() * (max - min) + min;
     }
 }
