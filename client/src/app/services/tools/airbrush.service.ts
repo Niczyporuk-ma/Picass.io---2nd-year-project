@@ -17,6 +17,7 @@ export class AirbrushService extends Tool {
     private pathData: Vec2[];
     jetDiameter: number = INITIAL_JET_DIAMETER;
     dropletDiameter: number = INITIAL_DROPLET_DIAMETER;
+    timerID: number;
 
     constructor(drawingService: DrawingService, public colorService: ColorService) {
         super(drawingService);
@@ -37,7 +38,10 @@ export class AirbrushService extends Tool {
         if (this.mouseDown && !this.drawingService.resizeActive) {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
-            this.spray(this.drawingService.baseCtx, this.mouseDownCoord);
+            //To imitate the effect of spraying constantly as long as the mouse button is down... Spraying every 100ms!
+            this.timerID = window.setInterval(() => {
+                this.spray(this.drawingService.baseCtx, this.mouseDownCoord);
+            }, 100);
         }
     }
 
@@ -54,13 +58,13 @@ export class AirbrushService extends Tool {
         if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.pathData.push(mousePosition);
-            // this.spray(this.drawingService.baseCtx, this.mouseDownCoord);
+            window.clearInterval(this.timerID);
         }
         this.mouseDown = false;
         this.clearPath();
     }
 
-    spray(ctx: CanvasRenderingContext2D, point: Vec2) {
+    spray(ctx: CanvasRenderingContext2D, point: Vec2): void {
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
