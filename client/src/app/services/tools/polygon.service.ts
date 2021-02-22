@@ -19,6 +19,11 @@ export class PolygonService extends Tool{
       sides : number = 3;
       premNumberOfSides : number = 3;
       showNumberOfSidesInput : boolean = false;
+      centerX : number;
+      centerY : number;
+      angle : number;
+      radius : number;
+      squareCornerPos : Vec2;
 
       constructor(drawingService: DrawingService, public colorService: ColorService, private squareHelper : SquareHelperService) 
       {
@@ -79,7 +84,9 @@ export class PolygonService extends Tool{
             this.endPoint = mousePosition;
             this.currentLine = [this.startingPoint, this.endPoint];
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.computeCircleValues(this.currentLine);
             this.drawLine(this.drawingService.previewCtx, this.currentLine);
+            this.drawCircle(this.drawingService.previewCtx,this.currentLine);
         }
       }
 
@@ -115,30 +122,48 @@ export class PolygonService extends Tool{
             this.drawingService.drawingStarted = true;
         }
 
-        const squareCornerPos : Vec2 = this.squareHelper.closestSquare([path[0], path[1]]);
-        let centerX : number = (path[0].x + squareCornerPos.x)/2;
-        let centerY: number = (path[0].y + squareCornerPos.y)/2;
-        let angle : number = ((Math.PI*2)/this.sides);
-        let radius :number = Math.abs((path[0].x - squareCornerPos.x) / 2);
+       //this.computeCircleValues(path);
 
         ctx.beginPath();
+        ctx.setLineDash([]);
 
-        ctx.moveTo (centerX +  radius * Math.cos(0), centerY);  // pour le mettre sur l'extremité du cercle
+        ctx.moveTo (this.centerX +  this.radius * Math.cos(0), this.centerY);  // pour le mettre sur l'extremité du cercle
 
         for(let i = 1; i <= this.sides;i++ )
         {
-          ctx.lineTo (centerX + radius * Math.cos(i * angle), centerY + radius * Math.sin(i * angle));
+          ctx.lineTo (this.centerX + this.radius * Math.cos(i * this.angle), this.centerY + this.radius * Math.sin(i * this.angle));
         }
        
         ctx.stroke();
         
-        
         if (this.toolStyles.fill) {
+           ctx.setLineDash([]);
             ctx.fill();
         }
+      }
 
-        
-    }
+      drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[])
+      {
+        const gapBetweenDash = 5;
+        const dashLength = 5;
+        ctx.beginPath();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'black';
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.setLineDash([dashLength, gapBetweenDash]);
+        ctx.arc(this.centerX,this.centerY,this.radius,0,2 * Math.PI,);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      
+      computeCircleValues(path: Vec2[]):void
+      {
+        this.squareCornerPos = this.squareHelper.closestSquare([path[0], path[1]]);
+        this.centerX  = (path[0].x + this.squareCornerPos.x)/2;
+        this.centerY = (path[0].y + this.squareCornerPos.y)/2;
+        this.angle = ((Math.PI*2)/this.sides);
+        this.radius  = Math.abs((path[0].x - this.squareCornerPos.x) / 2);
+      }
 
 }
  
