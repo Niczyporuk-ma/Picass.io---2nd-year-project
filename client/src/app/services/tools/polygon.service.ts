@@ -95,8 +95,6 @@ export class PolygonService extends Tool{
         this.showNumberOfSidesInput = !(this.showNumberOfSidesInput);
       }
 
-
-
       drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         //partie couleur
         this.setColors(this.colorService);
