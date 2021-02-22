@@ -46,16 +46,19 @@
         <fa-icon [icon]="faCircle" size="lg"></fa-icon>
     </button>
 
-    <button
-        (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth();this.toolManager.polygonService.onButtonPress()"
-    >
+    <button (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth(); this.toolManager.polygonService.onButtonPress()">
         Poly
     </button>
     <div *ngIf="this.toolManager.polygonService.showNumberOfSidesInput">
-        <label> Nb côté
-             <input (keyup) ="this.toolManager.polygonService.setPreliminaryNumberOfSides($event)" (focus)="disableShortcut()" (blur)="enableShortcut()">
+        <label>
+            Nb côté
+            <input
+                (keyup)="this.toolManager.polygonService.setPreliminaryNumberOfSides($event)"
+                (focus)="disableShortcut()"
+                (blur)="enableShortcut()"
+            />
         </label>
-        <button (click) = "this.toolManager.polygonService.setNumberOfSides()" >Confirmer</button>
+        <button (click)="this.toolManager.polygonService.setNumberOfSides();this.toolManager.polygonService.showNumberOfSidesInput=false">Confirmer</button>
     </div>
 
     <button
@@ -99,6 +102,12 @@
         <mat-button-toggle value="1" (change)="setRectangleStyle($event.value)">Remplir</mat-button-toggle>
         <mat-button-toggle value="2" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
         <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.polygonService">
+        <mat-button-toggle value="1" (change)="setPolygonStyle($event.value)">Remplir</mat-button-toggle>
+        <mat-button-toggle value="2" (change)="setPolygonStyle($event.value)">Contour</mat-button-toggle>
+        <mat-button-toggle value="3" (change)="setPolygonStyle($event.value)">Les Deux</mat-button-toggle>
     </mat-button-toggle-group>
 
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
