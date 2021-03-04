@@ -13,7 +13,7 @@
         <fa-icon [icon]="faPen" size="lg"></fa-icon>
     </button>
     <button
-        (click)="this.toolManager.setTool(this.toolManager.airbrushService); updateSliderWidth()"
+        (click)="this.toolManager.setTool(this.toolManager.airbrushService)"
         matTooltip="Outil aérosol (A): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
         matTooltipShowDelay="600"
@@ -67,7 +67,7 @@
         <app-color-picker></app-color-picker>
     </div>
 
-    <div class="widthSlider">
+    <div class="widthSlider" *ngIf="this.toolManager.currentTool != this.toolManager.airbrushService">
         <mat-card>
             Épaisseur:
             <mat-slider
@@ -119,4 +119,51 @@
             <br />
         </mat-card>
     </div>
+
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.airbrushService">
+        <div class="widthSlider">
+            <mat-card>
+                Nombre d'émissions:
+                <mat-slider
+                    min="1"
+                    max="200"
+                    step="1"
+                    value="1"
+                    class="slider"
+                    (change)="changeEmissionRate($event.value)"
+                    (input)="this.toolManager.airbrushService.emissionRate = $event.value"
+                    [value]="this.toolManager.airbrushService.emissionRate"
+                ></mat-slider>
+                <mat-card-subtitle>{{ this.toolManager.airbrushService.emissionRate }} </mat-card-subtitle>
+            </mat-card>
+            <mat-card>
+                Diamètre du jet:
+                <mat-slider
+                    min="10"
+                    max="100"
+                    step="1"
+                    value="1"
+                    class="slider"
+                    (change)="changeJetDiameter($event.value)"
+                    (input)="this.toolManager.airbrushService.jetDiameter = $event.value"
+                    [value]="this.toolManager.airbrushService.jetDiameter"
+                ></mat-slider>
+                <mat-card-subtitle>{{ this.toolManager.airbrushService.jetDiameter }} </mat-card-subtitle>
+            </mat-card>
+            <mat-card>
+                Diamètre des gouttelettes:
+                <mat-slider
+                    min="0.1"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                    class="slider"
+                    (change)="changeDropletDiameter($event.value)"
+                    (input)="this.toolManager.airbrushService.dropletDiameter = $event.value"
+                    [value]="this.toolManager.airbrushService.dropletDiameter"
+                ></mat-slider>
+                <mat-card-subtitle>{{ this.toolManager.airbrushService.dropletDiameter }} </mat-card-subtitle>
+            </mat-card>
+        </div>
+    </mat-button-toggle-group>
 </div>

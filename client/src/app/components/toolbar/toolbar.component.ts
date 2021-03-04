@@ -81,4 +81,16 @@ export class ToolbarComponent {
         this.toolManager.currentTool.changeWidth(width);
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
+
+    changeEmissionRate(rate: number): void {
+        this.toolManager.airbrushService.emissionRate = rate;
+    }
+
+    changeJetDiameter(diameter: number): void {
+        this.toolManager.airbrushService.jetDiameter = diameter;
+    }
+
+    changeDropletDiameter(diameter: number): void {
+        this.toolManager.airbrushService.dropletDiameter = diameter;
+    }
 }
