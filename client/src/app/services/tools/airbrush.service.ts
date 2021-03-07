@@ -8,7 +8,8 @@ import { ColorService } from '@app/services/tools/color.service';
 const TOOL_INDEX = 5;
 const INITIAL_JET_DIAMETER = 20;
 const INITIAL_DROPLET_DIAMETER = 1;
-const INITIAL_EMISSION_RATE = 30; //number of droplets shooting per a unit of time
+const INITIAL_EMISSION_RATE = 30; // number of droplets shooting per a unit of time
+const EMISSION_TIME = 100; // ms
 
 @Injectable({
     providedIn: 'root',
@@ -28,6 +29,7 @@ export class AirbrushService extends Tool {
         this.toolStyles = {
             primaryColor: 'black',
             lineWidth: this.jetDiameter,
+            fill: true,
         };
     }
     private clearPath(): void {
@@ -39,10 +41,10 @@ export class AirbrushService extends Tool {
         if (this.mouseDown && !this.drawingService.resizeActive) {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
-            //To imitate the effect of spraying constantly as long as the mouse button is down... Spraying every 100ms!
+            // To imitate the effect of spraying constantly as long as the mouse button is down... Spraying every 100ms!
             this.timerID = window.setInterval(() => {
                 this.spray(this.drawingService.baseCtx, this.mouseDownCoord);
-            }, 100);
+            }, EMISSION_TIME);
         }
     }
 
@@ -73,35 +75,36 @@ export class AirbrushService extends Tool {
         this.setStyles();
 
         ctx.beginPath();
-        ctx.lineWidth = this.toolStyles.lineWidth;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round'; //try other options
         ctx.globalCompositeOperation = 'source-over';
+
         const clientX = point.x;
         const clientY = point.y;
+
         const dropletRadius = this.dropletDiameter / 2;
 
-        for (const point of this.pathData) {
+        // the spray path
+        for (const coord of this.pathData) {
             ctx.beginPath();
             this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
-            ctx.arc(point.x, point.y, dropletRadius / 2, 0, 2 * Math.PI);
+            ctx.arc(coord.x, coord.y, dropletRadius / 2, 0, 2 * Math.PI);
             ctx.fill();
         }
 
-        // Creating
+        // the spray jet emission
         for (let i = this.emissionRate; i--; ) {
+            // random position of each droplet
             const randomAngle = this.getRandomNumber(0, Math.PI * 2);
             const randomRadius = this.getRandomNumber(0, this.jetDiameter / 2);
-            const dropletCenter: Vec2 = { x: clientX + randomRadius * Math.cos(randomAngle), y: clientY + randomRadius * Math.sin(randomAngle) };
+            const dropletCoord: Vec2 = { x: clientX + randomRadius * Math.cos(randomAngle), y: clientY + randomRadius * Math.sin(randomAngle) };
             this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
             ctx.beginPath();
-            ctx.arc(dropletCenter.x, dropletCenter.y, dropletRadius, randomAngle, randomAngle + 2 * Math.PI);
+            ctx.arc(dropletCoord.x, dropletCoord.y, dropletRadius, randomAngle, randomAngle + 2 * Math.PI);
             ctx.fill();
-            this.pathData.push(dropletCenter);
+            this.pathData.push(dropletCoord);
         }
     }
 
-    private getRandomNumber(min: number, max: number): number {
+    getRandomNumber(min: number, max: number): number {
         return Math.random() * (max - min) + min;
     }
 }
