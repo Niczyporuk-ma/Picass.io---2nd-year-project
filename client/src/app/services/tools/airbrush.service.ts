@@ -19,7 +19,7 @@ export class AirbrushService extends Tool {
     jetDiameter: number = INITIAL_JET_DIAMETER;
     dropletDiameter: number = INITIAL_DROPLET_DIAMETER;
     emissionRate: number = INITIAL_EMISSION_RATE;
-    timerID: number;
+    timerID: ReturnType<typeof setInterval>;
 
     constructor(drawingService: DrawingService, public colorService: ColorService) {
         super(drawingService);
@@ -32,7 +32,8 @@ export class AirbrushService extends Tool {
             fill: true,
         };
     }
-    private clearPath(): void {
+
+    clearPath(): void {
         this.pathData = [];
     }
 
@@ -42,7 +43,8 @@ export class AirbrushService extends Tool {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
             // To imitate the effect of spraying constantly as long as the mouse button is down... Spraying every 100ms!
-            this.timerID = window.setInterval(() => {
+            // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval
+            this.timerID = setInterval(() => {
                 this.spray(this.drawingService.baseCtx, this.mouseDownCoord);
             }, EMISSION_TIME);
         }
@@ -61,7 +63,7 @@ export class AirbrushService extends Tool {
         if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.pathData.push(mousePosition);
-            window.clearInterval(this.timerID);
+            clearInterval(this.timerID);
         }
         this.mouseDown = false;
         this.clearPath();
