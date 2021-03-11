@@ -187,7 +187,7 @@ fdescribe('AirbrushService', () => {
         expect(randomNumberGenerated).toBeLessThanOrEqual(num2);
     });
 
-    it('spray should iterage over pathData and call arc() everytime ', () => {
+    it('spray should iterate over pathData and call arc() should be called at each iteration ', () => {
         const mockPosition: Vec2 = { x: 55, y: 55 };
 
         const ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
@@ -204,7 +204,7 @@ fdescribe('AirbrushService', () => {
             { x: 4, y: 2 },
             { x: 7, y: 100 },
         ];
-        service.emissionRate = 0; // in order to ignore other calls of ctx.arc
+        service.emissionsNb = 0; // in order to ignore other calls of ctx.arc
 
         service.spray(ctxSpyObject, mockPosition);
 
@@ -212,28 +212,22 @@ fdescribe('AirbrushService', () => {
         expect(ctxSpyObject.arc).toHaveBeenCalledTimes(5);
     });
 
-    //not sure whats the issue here
-    // it(' onMouseUp should reset call timer', () => {
-    //     service.mouseDown = true;
-    //     service['pathData'] = [
-    //         { x: 1, y: 1 },
-    //         { x: 2, y: 2 },
-    //     ];
-    //     service.timerID = setTimeout(() => {
-    //         service.spray;
-    //     }, 100);
-    //     //jasmine.clock().tick(101);
-    //     const clearIntervalSpy = spyOn(window, 'clearInterval');
-    //     service.onMouseUp(mouseEvent);
-    //     expect(clearIntervalSpy).toHaveBeenCalledWith(service.timerID);
-    // });
+    it('spray should iterate over emissionsNb and call arc() every time', () => {
+        const mockPosition: Vec2 = { x: 50, y: 65 };
 
-    ///weird??
-    // it(' mouseMove should call clearPath', () => {
-    //     service.mouseDown = true;
-    //     const clearPathSpy = spyOn(service, 'clearPath').and.stub();
-    //     service.onMouseMove(mouseEvent);
-    //     expect(clearPathSpy).toHaveBeenCalled();
-    //     expect(service['pathData']).toEqual([]);
-    // });
+        const ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'fill',
+            'arc',
+        ]);
+        service['pathData'] = []; // 0 elements in order to ignore other calls of ctx.arc
+        service.emissionsNb = 10;
+
+        service.spray(ctxSpyObject, mockPosition);
+
+        // we  add  the element from pathData (arc will be called there 1 time)
+        expect(ctxSpyObject.arc).toHaveBeenCalledTimes(10);
+    });
 });

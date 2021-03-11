@@ -131,10 +131,10 @@
                     value="1"
                     class="slider"
                     (change)="changeEmissionRate($event.value)"
-                    (input)="this.toolManager.airbrushService.emissionRate = $event.value"
-                    [value]="this.toolManager.airbrushService.emissionRate"
+                    (input)="this.toolManager.airbrushService.emissionsNb = $event.value"
+                    [value]="this.toolManager.airbrushService.emissionsNb"
                 ></mat-slider>
-                <mat-card-subtitle>{{ this.toolManager.airbrushService.emissionRate }} </mat-card-subtitle>
+                <mat-card-subtitle>{{ this.toolManager.airbrushService.emissionsNb }} </mat-card-subtitle>
             </mat-card>
             <mat-card>
                 Diamètre du jet:
