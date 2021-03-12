@@ -83,7 +83,7 @@ export class ToolbarComponent {
     }
 
     changeEmissionRate(rate: number): void {
-        this.toolManager.airbrushService.emissionsNb = rate;
+        this.toolManager.airbrushService.emissionRate = rate;
     }
 
     changeJetDiameter(diameter: number): void {

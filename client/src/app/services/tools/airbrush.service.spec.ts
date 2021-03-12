@@ -9,7 +9,7 @@ fdescribe('AirbrushService', () => {
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-    //let timerCallback: jasmine.SpyObj<number>;
+    // let timerCallback: jasmine.SpyObj<number>;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
@@ -30,6 +30,7 @@ fdescribe('AirbrushService', () => {
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
+        // tslint:disable: no-unused-expression
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
 
@@ -181,8 +182,8 @@ fdescribe('AirbrushService', () => {
     });
 
     it(' randomNumber should return a random number between num1 and num2', () => {
-        let num1 = 1;
-        let num2 = 50;
+        const num1 = 1;
+        const num2 = 50;
         const randomNumberGenerated = service.getRandomNumber(num1, num2);
         expect(randomNumberGenerated).toBeLessThanOrEqual(num2);
     });
@@ -204,7 +205,7 @@ fdescribe('AirbrushService', () => {
             { x: 4, y: 2 },
             { x: 7, y: 100 },
         ];
-        service.emissionsNb = 0; // in order to ignore other calls of ctx.arc
+        service.emissionRate = 0; // in order to ignore other calls of ctx.arc
 
         service.spray(ctxSpyObject, mockPosition);
 
@@ -223,11 +224,11 @@ fdescribe('AirbrushService', () => {
             'arc',
         ]);
         service['pathData'] = []; // 0 elements in order to ignore other calls of ctx.arc
-        service.emissionsNb = 10;
+        service.emissionRate = 100; // 100 emissions / sec
 
         service.spray(ctxSpyObject, mockPosition);
 
-        // we  add  the element from pathData (arc will be called there 1 time)
+        // spray() is called every 0.1 sec, so we expect 10 emissions
         expect(ctxSpyObject.arc).toHaveBeenCalledTimes(10);
     });
 });

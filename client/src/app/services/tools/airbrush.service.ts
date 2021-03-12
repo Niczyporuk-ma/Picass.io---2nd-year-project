@@ -8,8 +8,9 @@ import { ColorService } from '@app/services/tools/color.service';
 const TOOL_INDEX = 5;
 const INITIAL_JET_DIAMETER = 20;
 const INITIAL_DROPLET_DIAMETER = 1;
-const INITIAL_EMISSIONS = 30; // number of droplets shooting per a unit of time
+const INITIAL_EMISSION_RATE = 300; // number of droplets shooting per second
 const EMISSION_TIME = 100; // ms
+const CONVERSION_MS_TO_S = 1000;
 
 @Injectable({
     providedIn: 'root',
@@ -18,7 +19,9 @@ export class AirbrushService extends Tool {
     private pathData: Vec2[];
     jetDiameter: number = INITIAL_JET_DIAMETER;
     dropletDiameter: number = INITIAL_DROPLET_DIAMETER;
-    emissionsNb: number = INITIAL_EMISSIONS;
+    emissionRate: number = INITIAL_EMISSION_RATE;
+    emissionsNb: number = 0;
+
     timerID: ReturnType<typeof setInterval>;
 
     constructor(drawingService: DrawingService, public colorService: ColorService) {
@@ -91,6 +94,8 @@ export class AirbrushService extends Tool {
             ctx.arc(coord.x, coord.y, dropletRadius / 2, 0, 2 * Math.PI);
             ctx.fill();
         }
+
+        this.emissionsNb = (this.emissionRate * EMISSION_TIME) / CONVERSION_MS_TO_S;
 
         // the spray jet emission
         for (let i = this.emissionsNb; i--; ) {
