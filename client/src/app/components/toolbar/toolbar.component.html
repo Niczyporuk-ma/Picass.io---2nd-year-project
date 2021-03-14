@@ -50,15 +50,21 @@
         Poly
     </button>
     <div *ngIf="this.toolManager.polygonService.showNumberOfSidesInput">
-        <label>
-            Nb côté
-            <input
-                (keyup)="this.toolManager.polygonService.setPreliminaryNumberOfSides($event)"
-                (focus)="disableShortcut()"
-                (blur)="enableShortcut()"
-            />
-        </label>
-        <button (click)="this.toolManager.polygonService.setNumberOfSides();this.toolManager.polygonService.showNumberOfSidesInput=false">Confirmer</button>
+        
+            
+            <mat-card>
+                Nb côté
+                <mat-slider
+                    min="3"
+                    max="12"
+                    step="1"
+                    (change)="this.toolManager.polygonService.setNumberOfSides($event)"
+                    (input)="this.toolManager.polygonService.sides = $event.value"
+                    [value]="this.toolManager.polygonService.sides"
+                ></mat-slider>
+                {{ this.toolManager.polygonService.sides }}
+            </mat-card>    
+        
     </div>
 
     <button

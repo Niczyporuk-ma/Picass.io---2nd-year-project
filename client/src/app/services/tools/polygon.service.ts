@@ -41,16 +41,9 @@ export class PolygonService extends Tool {
         this.currentLine = [];
     }
 
-    setPreliminaryNumberOfSides(event: KeyboardEvent): void {
-        this.premNumberOfSides = parseInt((event.target as HTMLInputElement).value);
-    }
 
-    setNumberOfSides(): void {
-        if (this.premNumberOfSides >= 3 && this.premNumberOfSides <= 12) {
-            this.sides = this.premNumberOfSides;
-        } else {
-            alert('Veuillez inserer un nombre entre 3 et 12');
-        }
+    setNumberOfSides(event:KeyboardEvent): void {
+        this.sides = parseInt((event.target as HTMLInputElement).value);
     }
 
     onMouseDown(mouseDownEvent: MouseEvent): void {

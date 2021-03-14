@@ -126,50 +126,23 @@ fdescribe('PolygonService', () => {
     });
 
     it(' SetPreliminaryNumberOfsides should set premNumberOfSides when the input is a number', () => {
-        const keyboardEvent: KeyboardEvent = {} as KeyboardEvent;
-        Object.defineProperty(keyboardEvent, 'target', { value: { value: '6' } });
-        service.setPreliminaryNumberOfSides(keyboardEvent);
-        expect(service.premNumberOfSides).toEqual(6);
+        for(let i = 3; i<=12; i++)
+        {
+             const keyboardEvent: KeyboardEvent = {} as KeyboardEvent;
+             Object.defineProperty(keyboardEvent, 'target', { value: { value: i } });
+            service.setNumberOfSides(keyboardEvent);
+            expect(service.sides).toEqual(i);
+        }
+       
     });
 
     it(' SetPreliminaryNumberOfsides should set premNumberOfSides to NaN when the input is not a number', () => {
         const keyboardEvent: KeyboardEvent = {} as KeyboardEvent;
         Object.defineProperty(keyboardEvent, 'target', { value: { value: 'xyz' } });
-        service.setPreliminaryNumberOfSides(keyboardEvent);
-        expect(service.premNumberOfSides).toEqual(NaN);
+        service.setNumberOfSides(keyboardEvent);
+        expect(service.sides).toEqual(NaN);
     });
 
-    it('setNumberOfSides should set sides to premNumberOfSides if it is between 3 and 12', () => {
-        for (var i = 3; i <= 12; i++) {
-            service.premNumberOfSides = i;
-            service.setNumberOfSides();
-            expect(service.sides).toEqual(i);
-        }
-    });
-
-    it('setNumberOfSides should send an alert if premNumberOfSides is bellow 3', () => {
-        service.premNumberOfSides = -10456;
-        const alertSpy = spyOn(window, 'alert');
-        service.setNumberOfSides();
-        expect(service.sides).toEqual(3);
-        expect(alertSpy).toHaveBeenCalled();
-    });
-
-    it('setNumberOfSides should send an alert if premNumberOfSides is over 12', () => {
-        service.premNumberOfSides = 12485;
-        const alertSpy = spyOn(window, 'alert');
-        service.setNumberOfSides();
-        expect(service.sides).toEqual(3);
-        expect(alertSpy).toHaveBeenCalled();
-    });
-
-    it('setNumberOfSides should send an alert if premNumberOfSides is not a number', () => {
-        service.premNumberOfSides = NaN;
-        const alertSpy = spyOn(window, 'alert');
-        service.setNumberOfSides();
-        expect(service.sides).toEqual(3);
-        expect(alertSpy).toHaveBeenCalled();
-    });
 
     // A check avec le charge
     // it('drawLine should call fill once when fill property of the polygon is true', () => {
