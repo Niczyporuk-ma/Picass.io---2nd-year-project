@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
+import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
-import { faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
@@ -24,8 +26,9 @@ export class ToolbarComponent {
     faCircle: IconDefinition = faCircle;
     faPalette: IconDefinition = faPalette;
     faPlusSquare: IconDefinition = faPlusSquare;
+    faDownload: IconDefinition = faDownload;
 
-    constructor(public toolManager: ToolManagerService) {
+    constructor(public toolManager: ToolManagerService, public modal: MatDialog) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
     }
@@ -79,5 +82,9 @@ export class ToolbarComponent {
     changeWidth(width: number): void {
         this.toolManager.currentTool.changeWidth(width);
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+    }
+
+    upload(): void {
+        this.modal.open(ExportDrawingComponent);
     }
 }

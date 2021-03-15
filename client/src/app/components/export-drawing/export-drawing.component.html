@@ -1,0 +1,21 @@
+<form [formGroup]="exportForm">
+    <mat-form-field MatFormFieldControl="drawingNameControl">
+        <mat-label>Nommez votre creation </mat-label>
+        <input matInput name="drawingTitle" [formControl]="drawingNameControl" />
+        <!-- TODO: COMPLETE INPUT VALIDATION -->
+        <mat-error *ngIf="drawingNameControl.invalid && drawingNameControl.touched">Nom invalide!</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Format de fichier</mat-label>
+        <mat-select [formControl]="extentionControl">
+            <mat-option value="jpg">JPG</mat-option>
+            <mat-option value="png">PNG</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <canvas #filterPreviewCanvas [width]="600" [height]="480"></canvas>
+    <a #drawingLink href="" download=""> </a>
+
+    <button (click)="ExportDrawing()">Exporter votre dessin</button>
+</form>
