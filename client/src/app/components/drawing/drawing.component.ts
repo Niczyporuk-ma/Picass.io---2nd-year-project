@@ -66,9 +66,15 @@ export class DrawingComponent implements AfterViewInit {
             this.shortcutKeyboardManager.onKeyPress(event.key);
         });
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
+
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (event.key === 'Control') {
                 this.shortcutKeyboardManager.waitForOPress();
+            }
+        });
+        window.addEventListener('keydown', (event: KeyboardEvent) => {
+            if (event.key === 'Control') {
+                this.shortcutKeyboardManager.waitForEPress();
             }
         });
     }

@@ -28,7 +28,7 @@ export class KeyboardShortcutManagerService {
         if (!this.toolManager.blockEventListener) {
             this.toolManager.blockEventListener = true;
             window.addEventListener('keydown', (event: KeyboardEvent) => this.OPressHandler(event));
-            window.addEventListener('keyup', (event: KeyboardEvent) => this.detectControl(event));
+            window.addEventListener('keyup', (event: KeyboardEvent) => this.detectControlO(event));
         }
     }
 
@@ -36,13 +36,19 @@ export class KeyboardShortcutManagerService {
         if (!this.toolManager.blockEventListener) {
             this.toolManager.blockEventListener = true;
             window.addEventListener('keydown', (event: KeyboardEvent) => this.EPressHandler(event));
-            window.addEventListener('keyup', (event: KeyboardEvent) => this.detectControl(event));
+            window.addEventListener('keyup', (event: KeyboardEvent) => this.detectControlE(event));
         }
     }
 
-    detectControl(event: KeyboardEvent): void {
+    detectControlO(event: KeyboardEvent): void {
         if (event.key === 'Control') {
             window.removeEventListener('keydown', (e: KeyboardEvent) => this.OPressHandler(e));
+            this.toolManager.blockEventListener = false;
+        }
+    }
+    detectControlE(event: KeyboardEvent): void {
+        if (event.key === 'Control') {
+            window.removeEventListener('keydown', (e: KeyboardEvent) => this.EPressHandler(e));
             this.toolManager.blockEventListener = false;
         }
     }

@@ -13,6 +13,9 @@
         <mat-error *ngIf="fileNameControl.invalid && fileNameControl.touched">Nom invalide!</mat-error>
     </mat-form-field>
 
+    <h3>Choisissez le format qui vous convient le plus</h3>
+    <h4>Note: le format JPG laisse la partie transparente noire!</h4>
+
     <mat-form-field>
         <mat-label>Format de fichier</mat-label>
         <mat-select [formControl]="fileExtentionControl">
@@ -20,10 +23,21 @@
             <mat-option value="png">PNG</mat-option>
         </mat-select>
     </mat-form-field>
+    <div>
+        <h3>Embellissez votre création un des nos filtres!</h3>
+        <mat-radio-group (change)="applyFilter()" [formControl]="filterControl">
+            <mat-radio-button value="none"> aucun filtre </mat-radio-button>
+            <mat-radio-button value="blur(4px)"> embrouilllage </mat-radio-button>
+            <mat-radio-button value="grayscale(100)"> gris </mat-radio-button>
+            <mat-radio-button value="sepia(100%)"> sepia </mat-radio-button>
+            <mat-radio-button value="hue-rotate(90deg)">inversion des couleurs </mat-radio-button>
+            <mat-radio-button value="opacity(50%)">opacité</mat-radio-button>
+        </mat-radio-group>
+    </div>
 
     <canvas #filterPreviewCanvas [width]="600" [height]="480"></canvas>
+
     <a #downloadLink href="" download=""> </a>
-    <button (click)="ApplyFilter()">Essayez ce filtre!</button>
 
     <button (click)="ExportDrawing()">Exporter votre dessin</button>
 </form>

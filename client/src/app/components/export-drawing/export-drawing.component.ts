@@ -12,7 +12,7 @@ export class ExportDrawingComponent {
     exportForm: FormGroup;
     fileNameControl: FormControl = new FormControl('', [Validators.pattern('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
     fileExtentionControl: FormControl = new FormControl('', [Validators.required]);
-    filterControl: FormControl = new FormControl('', [Validators.required]);
+    filterControl: FormControl = new FormControl('none', [Validators.required]);
 
     @ViewChild('filterPreviewCanvas', { static: false }) filterPreviewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('downloadLink') downloadLink: ElementRef;
@@ -34,6 +34,7 @@ export class ExportDrawingComponent {
     }
 
     drawImageOnCanvas(): void {
+        this.drawingService.clearCanvas(this.filterPreviewCtx);
         this.filterPreviewCtx.drawImage(
             this.drawingService.canvas,
             0,
@@ -55,8 +56,9 @@ export class ExportDrawingComponent {
         this.downloadLink.nativeElement.click();
     }
 
-    ApplyFilter() {
-        this.filterPreviewCtx.filter = 'sepia(100%)';
+    applyFilter() {
+        this.filterPreviewCtx.filter = this.filterControl.value;
+        console.log(this.filterControl.value);
         this.drawImageOnCanvas();
     }
 
