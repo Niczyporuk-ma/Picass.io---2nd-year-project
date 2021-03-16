@@ -32,6 +32,14 @@ export class KeyboardShortcutManagerService {
         }
     }
 
+    waitForEPress(): void {
+        if (!this.toolManager.blockEventListener) {
+            this.toolManager.blockEventListener = true;
+            window.addEventListener('keydown', (event: KeyboardEvent) => this.EPressHandler(event));
+            window.addEventListener('keyup', (event: KeyboardEvent) => this.detectControl(event));
+        }
+    }
+
     detectControl(event: KeyboardEvent): void {
         if (event.key === 'Control') {
             window.removeEventListener('keydown', (e: KeyboardEvent) => this.OPressHandler(e));
@@ -44,6 +52,15 @@ export class KeyboardShortcutManagerService {
             this.toolManager.clearArrays();
             window.removeEventListener('keydown', (ev: KeyboardEvent) => this.OPressHandler(ev));
             event.preventDefault();
+        }
+    }
+
+    EPressHandler(event: KeyboardEvent): void {
+        if (event.key === 'e') {
+            window.removeEventListener('keydown', (ev: KeyboardEvent) => this.EPressHandler(ev));
+            event.preventDefault();
+            console.log('ctr+e pressed!');
+            // TODO: add the right function
         }
     }
 }
