@@ -62,21 +62,25 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.backgroundCtx = this.backgroundCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             this.shortcutKeyboardManager.onKeyPress(event.key);
         });
+
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
 
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (event.key === 'Control') {
-                this.shortcutKeyboardManager.waitForOPress();
+                this.shortcutKeyboardManager.waitForKeyPress();
+                event.stopPropagation();
             }
         });
-        window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (event.key === 'Control') {
-                this.shortcutKeyboardManager.waitForEPress();
-            }
-        });
+
+        // window.addEventListener('keydown', (event: KeyboardEvent) => {
+        //     if (event.key === 'Control') {
+        //         this.shortcutKeyboardManager.waitForEPress();
+        //     }
+        // });
     }
 
     @HostListener('window:mousemove', ['$event'])

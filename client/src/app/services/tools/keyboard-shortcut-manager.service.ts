@@ -40,6 +40,14 @@ export class KeyboardShortcutManagerService {
         }
     }
 
+    waitForKeyPress(): void {
+        if (!this.toolManager.blockEventListener) {
+            this.toolManager.blockEventListener = true;
+            window.addEventListener('keydown', (event: KeyboardEvent) => this.EPressHandler(event));
+            window.addEventListener('keyup', (event: KeyboardEvent) => this.detectControlE(event));
+        }
+    }
+
     detectControlO(event: KeyboardEvent): void {
         if (event.key === 'Control') {
             window.removeEventListener('keydown', (e: KeyboardEvent) => this.OPressHandler(e));
