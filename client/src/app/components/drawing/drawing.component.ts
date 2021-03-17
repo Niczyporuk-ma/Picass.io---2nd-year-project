@@ -68,17 +68,9 @@ export class DrawingComponent implements AfterViewInit {
         });
 
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
-
-        window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (event.key === 'Control') {
-                this.shortcutKeyboardManager.waitForKeyPress();
-                event.stopPropagation();
-            }
-        });
-
         // window.addEventListener('keydown', (event: KeyboardEvent) => {
         //     if (event.key === 'Control') {
-        //         this.shortcutKeyboardManager.waitForEPress();
+        //         this.shortcutKeyboardManager.waitForOPress();
         //     }
         // });
     }

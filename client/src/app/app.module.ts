@@ -16,6 +16,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { HotkeyModule } from 'angular2-hotkeys';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { CarrouselComponent } from './components/carrousel/carrousel.component';
@@ -65,6 +66,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         ReactiveFormsModule,
         MatInputModule,
         MatSelectModule,
+        HotkeyModule.forRoot(),
     ],
     providers: [],
     bootstrap: [AppComponent],
