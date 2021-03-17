@@ -39,5 +39,6 @@
 
     <a #downloadLink href="" download=""> </a>
 
-    <button (click)="ExportDrawing()">Exporter votre dessin</button>
+    <button #cancel mat-raised-button color="accent" mat-dialog-close>Annuler</button>
+    <button (click)="ExportDrawing()" mat-raised-button color="primary" mat-dialog-close>Exporter votre dessin</button>
 </form>

@@ -5,7 +5,9 @@
         <fa-icon [icon]="faPlusSquare" size="lg"></fa-icon>
     </button>
 
-    <button (click)="export()"><fa-icon [icon]="faDownload" size="lg"></fa-icon></button>
+    <button (click)="export()" matTooltip="Créer un nouveau dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faDownload" size="lg"></fa-icon>
+    </button>
 
     <button
         (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()"

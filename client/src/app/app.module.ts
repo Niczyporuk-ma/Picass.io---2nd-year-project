@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
+import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -67,6 +68,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         MatInputModule,
         MatSelectModule,
         HotkeyModule.forRoot(),
+        MatButtonModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
