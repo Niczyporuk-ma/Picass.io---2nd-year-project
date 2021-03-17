@@ -15,6 +15,7 @@ export class PolygonService extends Tool {
     currentLine: Vec2[] = [];
     contour: boolean = true;
     sides: number = 3;
+    indexNumber: number = 5;
     premNumberOfSides: number = 3;
     showNumberOfSidesInput: boolean = false;
     centerX: number;
@@ -28,7 +29,7 @@ export class PolygonService extends Tool {
         this.shortcut = '3';
         this.localShortcuts = new Map();
         this.currentLine = [];
-        this.index = 5;
+        this.index = this.indexNumber;
         this.toolStyles = {
             primaryColor: 'rgba(255, 0, 0, 1)',
             lineWidth: 1,
@@ -41,9 +42,8 @@ export class PolygonService extends Tool {
         this.currentLine = [];
     }
 
-
-    setNumberOfSides(event:KeyboardEvent): void {
-        this.sides = parseInt((event.target as HTMLInputElement).value);
+    setNumberOfSides(event: KeyboardEvent): void {
+        this.sides = parseInt((event.target as HTMLInputElement).value, 10);
     }
 
     onMouseDown(mouseDownEvent: MouseEvent): void {
@@ -81,7 +81,7 @@ export class PolygonService extends Tool {
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        //partie couleur
+        // partie couleur
         this.setColors(this.colorService);
         this.setStyles();
 
@@ -95,7 +95,6 @@ export class PolygonService extends Tool {
             ctx.strokeStyle = this.colorService.primaryColor;
         }
 
-        //partie dessin
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
         ctx.lineWidth = this.toolStyles.lineWidth;
@@ -105,12 +104,10 @@ export class PolygonService extends Tool {
             this.drawingService.drawingStarted = true;
         }
 
-        //this.computeCircleValues(path);
-
         ctx.beginPath();
         ctx.setLineDash([]);
 
-        ctx.moveTo(this.centerX + this.radius * Math.cos(0), this.centerY); // pour le mettre sur l'extremité du cercle
+        ctx.moveTo(this.centerX + this.radius * Math.cos(0), this.centerY);
 
         for (let i = 1; i <= this.sides; i++) {
             ctx.lineTo(this.centerX + this.radius * Math.cos(i * this.angle), this.centerY + this.radius * Math.sin(i * this.angle));
@@ -123,7 +120,7 @@ export class PolygonService extends Tool {
         }
     }
 
-    drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]) {
+    drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         const gapBetweenDash = 5;
         const dashLength = 5;
         ctx.beginPath();

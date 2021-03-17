@@ -49,20 +49,20 @@
     <button (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth(); this.toolManager.polygonService.onButtonPress()">
         Poly
     </button>
-    <div *ngIf="this.toolManager.polygonService.showNumberOfSidesInput">
+    <div *ngIf="this.toolManager.polygonService.showNumberOfSidesInput" class="Slider">
         
-            
             <mat-card>
-                Nb côté
+                <div>Nb côté:</div>
                 <mat-slider
                     min="3"
                     max="12"
                     step="1"
+                    class="slider"
                     (change)="this.toolManager.polygonService.setNumberOfSides($event)"
                     (input)="this.toolManager.polygonService.sides = $event.value"
                     [value]="this.toolManager.polygonService.sides"
                 ></mat-slider>
-                {{ this.toolManager.polygonService.sides }}
+                <mat-card-subtitle>{{ this.toolManager.polygonService.sides }}</mat-card-subtitle>
             </mat-card>    
         
     </div>
@@ -81,7 +81,7 @@
         <app-color-picker></app-color-picker>
     </div>
 
-    <div class="widthSlider">
+    <div class="Slider">
         <mat-card>
             Épaisseur:
             <mat-slider

@@ -17,7 +17,7 @@ import { RectangleService } from './rectangle.service';
 export class ToolManagerService {
     currentToolChange: Subject<Tool> = new Subject<Tool>();
     currentTool: Tool;
-    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService, this.ellipseService,this.polygonService];
+    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService, this.ellipseService, this.polygonService];
     toolBoxShortcuts: Map<string, Tool>;
     lineHistory: Vec2[][] = [];
     pencilHistory: Vec2[][] = [];
@@ -35,7 +35,7 @@ export class ToolManagerService {
         public ellipseService: EllipseService,
         public colorService: ColorService,
         public drawingService: DrawingService,
-        public polygonService: PolygonService
+        public polygonService: PolygonService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
@@ -46,12 +46,8 @@ export class ToolManagerService {
             [this.pencilService.shortcut, this.tools[this.pencilService.index]],
             [this.ellipseService.shortcut, this.tools[this.ellipseService.index]],
             [this.polygonService.shortcut, this.tools[this.polygonService.index]],
-
-
         ]);
     }
-
-    
 
     clearArrays(): void {
         if (this.drawingService.drawingStarted) {
