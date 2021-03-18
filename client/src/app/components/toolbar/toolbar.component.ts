@@ -60,6 +60,19 @@ export class ToolbarComponent {
         }
     }
 
+    setPolygonStyle(polyStyleCode: string): void {
+        if (polyStyleCode === FILL_VALUE) {
+            this.toolManager.polygonService.toolStyles.fill = true;
+            this.toolManager.polygonService.contour = false;
+        } else if (polyStyleCode === CONTOUR_VALUE) {
+            this.toolManager.polygonService.toolStyles.fill = false;
+            this.toolManager.polygonService.contour = true;
+        } else {
+            this.toolManager.polygonService.toolStyles.fill = true;
+            this.toolManager.polygonService.contour = true;
+        }
+    }
+
     updateSliderWidth(): void {
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
@@ -79,5 +92,13 @@ export class ToolbarComponent {
     changeWidth(width: number): void {
         this.toolManager.currentTool.changeWidth(width);
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+    }
+
+    disableShortcut(): void {
+        this.toolManager.allowKeyPressEvents = false;
+    }
+
+    enableShortcut(): void {
+        this.toolManager.allowKeyPressEvents = true;
     }
 }

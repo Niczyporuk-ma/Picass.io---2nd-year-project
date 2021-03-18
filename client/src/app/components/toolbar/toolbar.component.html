@@ -45,6 +45,28 @@
     >
         <fa-icon [icon]="faCircle" size="lg"></fa-icon>
     </button>
+
+    <button (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth(); this.toolManager.polygonService.onButtonPress()">
+        Poly
+    </button>
+    <div *ngIf="this.toolManager.polygonService.showNumberOfSidesInput" class="Slider">
+        
+            <mat-card>
+                <div>Nb côté:</div>
+                <mat-slider
+                    min="3"
+                    max="12"
+                    step="1"
+                    class="slider"
+                    (change)="this.toolManager.polygonService.setNumberOfSides($event)"
+                    (input)="this.toolManager.polygonService.sides = $event.value"
+                    [value]="this.toolManager.polygonService.sides"
+                ></mat-slider>
+                <mat-card-subtitle>{{ this.toolManager.polygonService.sides }}</mat-card-subtitle>
+            </mat-card>    
+        
+    </div>
+
     <button
         (click)="onPressPalette()"
         matTooltip="Palette de couleur: Sélectionnez une couleur. CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire 
@@ -59,7 +81,7 @@
         <app-color-picker></app-color-picker>
     </div>
 
-    <div class="widthSlider">
+    <div class="Slider">
         <mat-card>
             Épaisseur:
             <mat-slider
@@ -86,6 +108,12 @@
         <mat-button-toggle value="1" (change)="setRectangleStyle($event.value)">Remplir</mat-button-toggle>
         <mat-button-toggle value="2" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
         <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.polygonService">
+        <mat-button-toggle value="1" (change)="setPolygonStyle($event.value)">Remplir</mat-button-toggle>
+        <mat-button-toggle value="2" (change)="setPolygonStyle($event.value)">Contour</mat-button-toggle>
+        <mat-button-toggle value="3" (change)="setPolygonStyle($event.value)">Les Deux</mat-button-toggle>
     </mat-button-toggle-group>
 
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.lineService">

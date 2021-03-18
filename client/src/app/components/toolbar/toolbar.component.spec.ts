@@ -104,4 +104,34 @@ describe('ToolbarComponent', () => {
         component.changeWidth(25);
         expect(component.toolManager.widthValue).toEqual(25);
     });
+
+    it(' disableShortcut shouls set allowKeyPressEvent to false', () => {
+        component.toolManager.allowKeyPressEvents = true;
+        component.disableShortcut();
+        expect(component.toolManager.allowKeyPressEvents).toEqual(false);
+    });
+
+    it(' enableShortcut shouls set allowKeyPressEvent to true', () => {
+        component.toolManager.allowKeyPressEvents = false;
+        component.enableShortcut();
+        expect(component.toolManager.allowKeyPressEvents).toEqual(true);
+    });
+
+    it('setPolygonStyle puts fill to true and contour to false when n = 1', () => {
+        component.setPolygonStyle('1');
+        expect(component.toolManager.polygonService.toolStyles.fill).toEqual(true);
+        expect(component.toolManager.polygonService.contour).toEqual(false);
+    });
+
+    it('setPolygonStyle puts fill to false and contour to true when n = 2', () => {
+        component.setPolygonStyle('2');
+        expect(component.toolManager.polygonService.toolStyles.fill).toEqual(false);
+        expect(component.toolManager.polygonService.contour).toEqual(true);
+    });
+
+    it('setPolygonStyle puts fill to true and contour to true when n = 3', () => {
+        component.setPolygonStyle('3');
+        expect(component.toolManager.polygonService.toolStyles.fill).toEqual(true);
+        expect(component.toolManager.polygonService.contour).toEqual(true);
+    });
 });
