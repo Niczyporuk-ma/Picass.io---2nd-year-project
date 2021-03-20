@@ -6,7 +6,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faDownload, faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
-import { ShortcutEventOutput, ShortcutInput } from "ng-keyboard-shortcuts";
+import { ShortcutInput } from "ng-keyboard-shortcuts";
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
@@ -33,16 +33,17 @@ export class ToolbarComponent {
     constructor(public toolManager: ToolManagerService, public modal: MatDialog) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
+        // source: https://www.npmjs.com/package/ng-keyboard-shortcuts
         this.shortcuts.push(  
             {  
                 key: "ctrl + e",  
                 preventDefault: true,  
-                command: (output: ShortcutEventOutput) => this.export(),
+                command: () => this.export(),
             },
             {  
                 key: "ctrl + o",  
                 preventDefault: true,  
-                command: (output: ShortcutEventOutput) => this.toolManager.clearArrays(),
+                command: () => this.toolManager.clearArrays(),
             },
         
         )
