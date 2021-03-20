@@ -6,7 +6,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faDownload, faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
-import { Hotkey, HotkeysService } from 'angular2-hotkeys';
+import { ShortcutEventOutput, ShortcutInput } from "ng-keyboard-shortcuts";
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
@@ -17,6 +17,7 @@ const CONTOUR_VALUE = '2';
     styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent {
+    shortcuts: ShortcutInput[] = [];  
     tools: Tool[];
     showAdvanced: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
@@ -29,24 +30,23 @@ export class ToolbarComponent {
     faPlusSquare: IconDefinition = faPlusSquare;
     faDownload: IconDefinition = faDownload;
 
-    constructor(public toolManager: ToolManagerService, public modal: MatDialog, private _hotkeysService: HotkeysService) {
+    constructor(public toolManager: ToolManagerService, public modal: MatDialog) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
-        //  Source: https://www.npmjs.com/package/angular2-hotkeys
-        this._hotkeysService.add(
-            new Hotkey('ctrl+e', (event: KeyboardEvent): boolean => {
-                console.log('ctrl+e hotkey');
-                this.export();
-                return false; // Prevent bubbling
-            }),
-        );
-        this._hotkeysService.add(
-            new Hotkey('ctrl+o', (event: KeyboardEvent): boolean => {
-                console.log('ctrl+o hotkey');
-                this.toolManager.clearArrays();
-                return false; // Prevent bubbling
-            }),
-        );
+        this.shortcuts.push(  
+            {  
+                key: "ctrl + e",  
+                preventDefault: true,  
+                command: (output: ShortcutEventOutput) => this.export(),
+            },
+            {  
+                key: "ctrl + o",  
+                preventDefault: true,  
+                command: (output: ShortcutEventOutput) => this.toolManager.clearArrays(),
+            },
+        
+        )
+        
     }
 
     setRectangleStyle(recStyleCode: string): void {

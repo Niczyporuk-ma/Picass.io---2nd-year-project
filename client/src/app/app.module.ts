@@ -17,7 +17,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { HotkeyModule } from 'angular2-hotkeys';
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { CarrouselComponent } from './components/carrousel/carrousel.component';
@@ -31,6 +31,7 @@ import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
+
 
 @NgModule({
     declarations: [
@@ -67,8 +68,8 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         ReactiveFormsModule,
         MatInputModule,
         MatSelectModule,
-        HotkeyModule.forRoot(),
         MatButtonModule,
+        KeyboardShortcutsModule.forRoot(),
     ],
     providers: [],
     bootstrap: [AppComponent],
