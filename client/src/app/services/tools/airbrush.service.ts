@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 
 const TOOL_INDEX = 5;
-const INITIAL_JET_DIAMETER = 20;
+const INITIAL_JET_DIAMETER = 30;
 const INITIAL_DROPLET_DIAMETER = 1;
 const INITIAL_EMISSION_RATE = 300; // number of droplets shooting per second
 const EMISSION_TIME = 100; // ms
@@ -36,14 +36,14 @@ export class AirbrushService extends Tool {
         };
     }
 
-    clearPath(): void {
+    clearArrays(): void {
         this.pathData = [];
     }
 
     onMouseDown(mouseDownEvent: MouseEvent): void {
         this.mouseDown = mouseDownEvent.button === MouseButton.Left;
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            this.clearPath();
+            this.clearArrays();
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
             // To imitate the effect of spraying constantly as long as the mouse button is down... Spraying every 100ms!
             // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval
@@ -55,7 +55,7 @@ export class AirbrushService extends Tool {
 
     onMouseMove(mouseMoveEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
-            this.clearPath();
+            this.clearArrays();
             this.mouseDownCoord = this.getPositionFromMouse(mouseMoveEvent);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.spray(this.drawingService.baseCtx, this.mouseDownCoord);
@@ -69,7 +69,7 @@ export class AirbrushService extends Tool {
             clearInterval(this.timerID);
         }
         this.mouseDown = false;
-        this.clearPath();
+        this.clearArrays();
     }
 
     spray(ctx: CanvasRenderingContext2D, point: Vec2): void {
@@ -78,36 +78,35 @@ export class AirbrushService extends Tool {
         }
         this.setColors(this.colorService);
         this.setStyles();
-
         ctx.beginPath();
         ctx.globalCompositeOperation = 'source-over';
+        this.emitDroplets(ctx, point);
+        this.createSprayPath(ctx);
+    }
 
-        const clientX = point.x;
-        const clientY = point.y;
-
+    emitDroplets(ctx: CanvasRenderingContext2D, point: Vec2): void {
         const dropletRadius = this.dropletDiameter / 2;
-
-        // the spray path
-        for (const coord of this.pathData) {
-            ctx.beginPath();
-            this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
-            ctx.arc(coord.x, coord.y, dropletRadius / 2, 0, 2 * Math.PI);
-            ctx.fill();
-        }
-
         this.emissionsNb = (this.emissionRate * EMISSION_TIME) / CONVERSION_MS_TO_S;
-
-        // the spray jet emission
         for (let i = this.emissionsNb; i--; ) {
             // random position of each droplet
             const randomAngle = this.getRandomNumber(0, Math.PI * 2);
             const randomRadius = this.getRandomNumber(0, this.jetDiameter / 2);
-            const dropletCoord: Vec2 = { x: clientX + randomRadius * Math.cos(randomAngle), y: clientY + randomRadius * Math.sin(randomAngle) };
+            const dropletCoord: Vec2 = { x: point.x + randomRadius * Math.cos(randomAngle), y: point.y + randomRadius * Math.sin(randomAngle) };
             this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
             ctx.beginPath();
             ctx.arc(dropletCoord.x, dropletCoord.y, dropletRadius, randomAngle, randomAngle + 2 * Math.PI);
             ctx.fill();
             this.pathData.push(dropletCoord);
+        }
+    }
+
+    createSprayPath(ctx: CanvasRenderingContext2D): void {
+        const dropletRadius = this.dropletDiameter / 2;
+        for (const coord of this.pathData) {
+            ctx.beginPath();
+            this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
+            ctx.arc(coord.x, coord.y, dropletRadius / 2, 0, 2 * Math.PI);
+            ctx.fill();
         }
     }
 

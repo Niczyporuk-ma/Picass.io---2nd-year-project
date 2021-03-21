@@ -126,8 +126,8 @@
                 Nombre d'émissions / sec:
                 <mat-slider
                     min="100"
-                    max="2000"
-                    step="10"
+                    max="900"
+                    step="200"
                     value="1"
                     class="slider"
                     (change)="changeEmissionRate($event.value)"
@@ -141,14 +141,14 @@
                 <mat-slider
                     min="10"
                     max="100"
-                    step="1"
+                    step="10"
                     value="1"
                     class="slider"
                     (change)="changeJetDiameter($event.value)"
                     (input)="this.toolManager.airbrushService.jetDiameter = $event.value"
                     [value]="this.toolManager.airbrushService.jetDiameter"
                 ></mat-slider>
-                <mat-card-subtitle>{{ this.toolManager.airbrushService.jetDiameter }} </mat-card-subtitle>
+                <mat-card-subtitle>{{ this.toolManager.airbrushService.jetDiameter }} px</mat-card-subtitle>
             </mat-card>
             <mat-card>
                 Diamètre des gouttelettes:
@@ -162,7 +162,7 @@
                     (input)="this.toolManager.airbrushService.dropletDiameter = $event.value"
                     [value]="this.toolManager.airbrushService.dropletDiameter"
                 ></mat-slider>
-                <mat-card-subtitle>{{ this.toolManager.airbrushService.dropletDiameter }} </mat-card-subtitle>
+                <mat-card-subtitle>{{ this.toolManager.airbrushService.dropletDiameter }} px</mat-card-subtitle>
             </mat-card>
         </div>
     </mat-button-toggle-group>

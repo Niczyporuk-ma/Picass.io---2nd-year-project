@@ -4,13 +4,11 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { AirbrushService } from './airbrush.service';
 
-fdescribe('AirbrushService', () => {
+describe('AirbrushService', () => {
     let service: AirbrushService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-    // let timerCallback: jasmine.SpyObj<number>;
-
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
 
@@ -61,13 +59,13 @@ fdescribe('AirbrushService', () => {
     });
 
     it(' mouseDown should call clearPath() method', () => {
-        const clearPathSpy = spyOn(service, 'clearPath').and.stub();
+        const clearArraysSpy = spyOn(service, 'clearArrays').and.stub();
         service.onMouseDown(mouseEvent);
-        expect(clearPathSpy).toHaveBeenCalled();
+        expect(clearArraysSpy).toHaveBeenCalled();
     });
 
     it('clearPath should set pathData to []', () => {
-        service.clearPath();
+        service.clearArrays();
         expect(service['pathData']).toEqual([]);
     });
 
@@ -108,30 +106,30 @@ fdescribe('AirbrushService', () => {
         service.mouseDown = false;
         drawingServiceSpy.resizeActive = true;
         service.onMouseDown(mouseEvent);
-        const clearPathSpy = spyOn(service, 'clearPath').and.stub();
+        const clearArraysSpy = spyOn(service, 'clearArrays').and.stub();
         const spraySpy = spyOn(service, 'spray').and.stub();
         expect(spraySpy).not.toHaveBeenCalled();
-        expect(clearPathSpy).not.toHaveBeenCalled();
+        expect(clearArraysSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should do nothing if mouseDown is false', () => {
         service.mouseDown = false;
         service.onMouseMove(mouseEvent);
-        const clearPathSpy = spyOn(service, 'clearPath').and.stub();
+        const clearArraysSpy = spyOn(service, 'clearArrays').and.stub();
         const spraySpy = spyOn(service, 'spray').and.stub();
 
         expect(spraySpy).not.toHaveBeenCalled();
-        expect(clearPathSpy).not.toHaveBeenCalled();
+        expect(clearArraysSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should do nothing if resizeActive is true false', () => {
         service.mouseDown = true;
         drawingServiceSpy.resizeActive = true;
         service.onMouseMove(mouseEvent);
-        const clearPathSpy = spyOn(service, 'clearPath').and.stub();
+        const clearArraysSpy = spyOn(service, 'clearArrays').and.stub();
         const spraySpy = spyOn(service, 'spray').and.stub();
         expect(spraySpy).not.toHaveBeenCalled();
-        expect(clearPathSpy).not.toHaveBeenCalled();
+        expect(clearArraysSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should set mouseDownCoord to correct position', () => {
@@ -188,9 +186,7 @@ fdescribe('AirbrushService', () => {
         expect(randomNumberGenerated).toBeLessThanOrEqual(num2);
     });
 
-    it('spray should iterate over pathData and call arc() should be called at each iteration ', () => {
-        const mockPosition: Vec2 = { x: 55, y: 55 };
-
+    it('createSprayPath should iterate over pathData and call arc() should be called at each iteration ', () => {
         const ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
             'strokeStyle',
             'beginPath',
@@ -207,13 +203,13 @@ fdescribe('AirbrushService', () => {
         ];
         service.emissionRate = 0; // in order to ignore other calls of ctx.arc
 
-        service.spray(ctxSpyObject, mockPosition);
+        service.createSprayPath(ctxSpyObject);
 
         // pathData holds 5 elements and thefore spray() will iterate through it 2 times
         expect(ctxSpyObject.arc).toHaveBeenCalledTimes(5);
     });
 
-    it('spray should iterate over emissionsNb and call arc() every time', () => {
+    it('emitDroplets should iterate over emissionsNb and call arc() every time', () => {
         const mockPosition: Vec2 = { x: 50, y: 65 };
 
         const ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
@@ -226,9 +222,24 @@ fdescribe('AirbrushService', () => {
         service['pathData'] = []; // 0 elements in order to ignore other calls of ctx.arc
         service.emissionRate = 100; // 100 emissions / sec
 
-        service.spray(ctxSpyObject, mockPosition);
+        service.emitDroplets(ctxSpyObject, mockPosition);
 
         // spray() is called every 0.1 sec, so we expect 10 emissions
         expect(ctxSpyObject.arc).toHaveBeenCalledTimes(10);
+    });
+
+    it('spray should not spray elsewhere than on the basectx', () => {
+        const ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'globalCompositeOperation',
+            'fill',
+            'arc',
+        ]);
+        const mockPosition: Vec2 = { x: 2000, y: 2000 }; // a position way off the basectx
+        drawingServiceSpy.drawingStarted = false;
+        service['pathData'] = [];
+        service.spray(ctxSpyObject, mockPosition);
+        expect(drawingServiceSpy.drawingStarted).toBe(false);
     });
 });
