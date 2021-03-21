@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { ColorService } from './color.service';
 import { EllipseService } from './ellipse.service';
 import { EraserService } from './eraser.service';
+import { PolygonService } from './polygon.service';
 import { RectangleService } from './rectangle.service';
 
 @Injectable({
@@ -17,7 +18,15 @@ import { RectangleService } from './rectangle.service';
 export class ToolManagerService {
     currentToolChange: Subject<Tool> = new Subject<Tool>();
     currentTool: Tool;
-    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService, this.ellipseService, this.airbrushService];
+    tools: Tool[] = [
+        this.pencilService,
+        this.lineService,
+        this.rectangleService,
+        this.eraserService,
+        this.ellipseService,
+        this.polygonService,
+        this.airbrushService,
+    ];
     toolBoxShortcuts: Map<string, Tool>;
     lineHistory: Vec2[][] = [];
     pencilHistory: Vec2[][] = [];
@@ -35,6 +44,7 @@ export class ToolManagerService {
         public ellipseService: EllipseService,
         public colorService: ColorService,
         public drawingService: DrawingService,
+        public polygonService: PolygonService,
         public airbrushService: AirbrushService,
     ) {
         this.currentTool = this.pencilService;
@@ -45,6 +55,7 @@ export class ToolManagerService {
             [this.eraserService.shortcut, this.tools[this.eraserService.index]],
             [this.pencilService.shortcut, this.tools[this.pencilService.index]],
             [this.ellipseService.shortcut, this.tools[this.ellipseService.index]],
+            [this.polygonService.shortcut, this.tools[this.polygonService.index]],
             [this.airbrushService.shortcut, this.tools[this.airbrushService.index]],
         ]);
     }

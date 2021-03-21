@@ -5,7 +5,7 @@ import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 
-const TOOL_INDEX = 5;
+const TOOL_INDEX = 6;
 const INITIAL_JET_DIAMETER = 30;
 const INITIAL_DROPLET_DIAMETER = 1;
 const INITIAL_EMISSION_RATE = 300; // number of droplets shooting per second
