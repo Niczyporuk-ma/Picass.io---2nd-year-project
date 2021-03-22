@@ -53,7 +53,7 @@ export class ExportDrawingComponent {
         );
     }
 
-    ExportDrawing() {
+    exportDrawing() {
         const imageUrl = this.filterPreviewCanvas.nativeElement.toDataURL('image/' + this.fileExtentionControl.value);
         this.downloadLink.nativeElement.href = imageUrl;
         this.downloadLink.nativeElement.download = this.fileNameControl.value + '.' + this.fileExtentionControl.value;

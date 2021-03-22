@@ -6,7 +6,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faDownload, faEraser, faPalette, faPen, faSlash } from '@fortawesome/free-solid-svg-icons';
-import { ShortcutInput } from "ng-keyboard-shortcuts";
+import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
@@ -17,7 +17,7 @@ const CONTOUR_VALUE = '2';
     styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent {
-    shortcuts: ShortcutInput[] = [];  
+    shortcuts: ShortcutInput[] = [];
     tools: Tool[];
     showAdvanced: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
@@ -34,20 +34,11 @@ export class ToolbarComponent {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
         // source: https://www.npmjs.com/package/ng-keyboard-shortcuts
-        this.shortcuts.push(  
-            {  
-                key: "ctrl + e",  
-                preventDefault: true,  
-                command: () => this.export(),
-            },
-            {  
-                key: "ctrl + o",  
-                preventDefault: true,  
-                command: () => this.toolManager.clearArrays(),
-            },
-        
-        )
-        
+        this.shortcuts.push({
+            key: 'ctrl + e',
+            preventDefault: true,
+            command: () => this.export(),
+        });
     }
 
     setRectangleStyle(recStyleCode: string): void {

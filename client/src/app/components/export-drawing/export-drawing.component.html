@@ -27,7 +27,7 @@
         <mat-radio-group (change)="applyFilter()" [formControl]="filterControl">
             <mat-radio-button value="none"> aucun filtre </mat-radio-button>
             <mat-radio-button value="invert(100%)"> inversion complète des couleurs </mat-radio-button>
-            <mat-radio-button value="grayscale(100)"> gris </mat-radio-button>
+            <mat-radio-button value="grayscale(100%)"> gris </mat-radio-button>
             <mat-radio-button value="sepia(100%)"> sepia </mat-radio-button>
             <mat-radio-button value="hue-rotate(90deg)">rotation 90 degrés des couleurs </mat-radio-button>
             <mat-radio-button value="brightness(160%)">Luminosite</mat-radio-button>
@@ -39,5 +39,5 @@
     <a #downloadLink href="" download=""> </a>
 
     <button #cancel mat-raised-button color="accent" mat-dialog-close>Annuler</button>
-    <button (click)="ExportDrawing()" mat-raised-button color="primary" mat-dialog-close>Exporter votre dessin</button>
+    <button (click)="exportDrawing()" mat-raised-button color="primary" mat-dialog-close>Exporter votre dessin</button>
 </form>
