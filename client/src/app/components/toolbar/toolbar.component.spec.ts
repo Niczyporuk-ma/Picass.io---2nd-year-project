@@ -1,6 +1,9 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { ToolbarComponent } from './toolbar.component';
+// import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
+
 describe('ToolbarComponent', () => {
     // tslint:disable:no-magic-numbers
     let component: ToolbarComponent;
@@ -10,6 +13,7 @@ describe('ToolbarComponent', () => {
         TestBed.configureTestingModule({
             declarations: [ToolbarComponent],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
+            providers: [{ provide: MatDialog, useValue: {} }],
         }).compileComponents();
     }));
 

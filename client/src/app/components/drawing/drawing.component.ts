@@ -62,6 +62,8 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.backgroundCtx = this.backgroundCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.baseCtx.fillStyle = 'white';
+        this.baseCtx.fillRect(0, 0, this.baseCanvas.nativeElement.width, this.baseCanvas.nativeElement.height);
 
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             this.shortcutKeyboardManager.onKeyPress(event.key);

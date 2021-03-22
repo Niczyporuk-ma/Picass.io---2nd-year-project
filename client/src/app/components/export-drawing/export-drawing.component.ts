@@ -25,6 +25,7 @@ export class ExportDrawingComponent {
             fileExtension: this.fileExtentionControl,
             filter: this.filterControl,
         });
+        this.drawingService = drawingService;
         //this.exportForm.markAsDirty(); ///saves a lot of trouble?? - no needed anymore
     }
 
@@ -34,6 +35,8 @@ export class ExportDrawingComponent {
     }
 
     drawImageOnFilterPreviewCanvas(): void {
+        console.log(this.drawingService);
+
         this.drawingService.clearCanvas(this.filterPreviewCtx);
         this.filterPreviewCtx.fillStyle = 'white';
         this.filterPreviewCtx.fillRect(0, 0, this.filterPreviewCtx.canvas.width, this.filterPreviewCtx.canvas.height);

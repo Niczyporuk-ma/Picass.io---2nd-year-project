@@ -1,25 +1,43 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportDrawingComponent } from './export-drawing.component';
 
-describe('ExportDrawingComponent', () => {
-  let component: ExportDrawingComponent;
-  let fixture: ComponentFixture<ExportDrawingComponent>;
+fdescribe('ExportDrawingComponent', () => {
+    let component: ExportDrawingComponent;
+    let fixture: ComponentFixture<ExportDrawingComponent>;
+    let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+    // let baseCtxStub: CanvasRenderingContext2D;
+    // let drawingStub: DrawingService;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ExportDrawingComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawingServiceSpy.clearCanvas.and.returnValue();
+        drawingServiceSpy.canvas = document.createElement('canvas');
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ExportDrawingComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+        TestBed.configureTestingModule({
+            declarations: [ExportDrawingComponent],
+            providers: [FormBuilder, { provide: DrawingService, useValue: drawingServiceSpy }, { provide: MatDialog, useValue: {} }],
+        }).compileComponents();
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+        // Configuration du spy du service
+        // tslint:disable:no-string-literal
+        // tslint:disable:no-magic-numbers
+        // component.drawingService.baseCtx = baseCtxStub;
+    }));
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(ExportDrawingComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    fit('should create', () => {
+        // console.log('TEST', component.drawingService);
+        // component.drawingService.canvas = document.createElement('canvas');
+        // console.log(component.drawingService.canvas);
+
+        expect(component).toBeTruthy();
+    });
 });
