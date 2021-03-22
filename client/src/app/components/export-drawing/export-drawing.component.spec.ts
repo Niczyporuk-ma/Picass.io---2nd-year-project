@@ -1,4 +1,4 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ElementRef, Injectable, NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,6 +25,7 @@ describe('ExportDrawingComponent', () => {
 
         TestBed.configureTestingModule({
             declarations: [ExportDrawingComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
             providers: [FormBuilder, { provide: DrawingService, useValue: drawingServiceSpy }, { provide: MatDialog, useValue: {} }],
         }).compileComponents();
 
