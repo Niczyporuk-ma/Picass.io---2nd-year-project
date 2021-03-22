@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
@@ -8,7 +8,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
     templateUrl: './export-drawing.component.html',
     styleUrls: ['./export-drawing.component.scss'],
 })
-export class ExportDrawingComponent {
+export class ExportDrawingComponent implements AfterViewInit {
     exportForm: FormGroup;
     fileNameControl: FormControl = new FormControl('', [Validators.pattern('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
     fileExtentionControl: FormControl = new FormControl('', [Validators.required]);
@@ -26,7 +26,6 @@ export class ExportDrawingComponent {
             filter: this.filterControl,
         });
         this.drawingService = drawingService;
-        //this.exportForm.markAsDirty(); ///saves a lot of trouble?? - no needed anymore
     }
 
     ngAfterViewInit(): void {
@@ -35,8 +34,6 @@ export class ExportDrawingComponent {
     }
 
     drawImageOnFilterPreviewCanvas(): void {
-        console.log(this.drawingService);
-
         this.drawingService.clearCanvas(this.filterPreviewCtx);
         this.filterPreviewCtx.fillStyle = 'white';
         this.filterPreviewCtx.fillRect(0, 0, this.filterPreviewCtx.canvas.width, this.filterPreviewCtx.canvas.height);
@@ -53,16 +50,15 @@ export class ExportDrawingComponent {
         );
     }
 
-    exportDrawing() {
+    exportDrawing(): void {
         const imageUrl = this.filterPreviewCanvas.nativeElement.toDataURL('image/' + this.fileExtentionControl.value);
         this.downloadLink.nativeElement.href = imageUrl;
         this.downloadLink.nativeElement.download = this.fileNameControl.value + '.' + this.fileExtentionControl.value;
         this.downloadLink.nativeElement.click();
     }
 
-    applyFilter() {
+    applyFilter(): void {
         this.filterPreviewCtx.filter = this.filterControl.value;
-        console.log(this.filterControl.value);
         this.drawImageOnFilterPreviewCanvas();
     }
 
