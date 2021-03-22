@@ -30,11 +30,13 @@ export class ExportDrawingComponent {
 
     ngAfterViewInit(): void {
         this.filterPreviewCtx = this.filterPreviewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawImageOnCanvas();
+        this.drawImageOnFilterPreviewCanvas();
     }
 
-    drawImageOnCanvas(): void {
+    drawImageOnFilterPreviewCanvas(): void {
         this.drawingService.clearCanvas(this.filterPreviewCtx);
+        this.filterPreviewCtx.fillStyle = 'white';
+        this.filterPreviewCtx.fillRect(0, 0, this.filterPreviewCtx.canvas.width, this.filterPreviewCtx.canvas.height);
         this.filterPreviewCtx.drawImage(
             this.drawingService.canvas,
             0,
@@ -51,7 +53,6 @@ export class ExportDrawingComponent {
     ExportDrawing() {
         const imageUrl = this.filterPreviewCanvas.nativeElement.toDataURL('image/' + this.fileExtentionControl.value);
         this.downloadLink.nativeElement.href = imageUrl;
-        console.log(this.fileExtentionControl.value);
         this.downloadLink.nativeElement.download = this.fileNameControl.value + '.' + this.fileExtentionControl.value;
         this.downloadLink.nativeElement.click();
     }
@@ -59,10 +60,8 @@ export class ExportDrawingComponent {
     applyFilter() {
         this.filterPreviewCtx.filter = this.filterControl.value;
         console.log(this.filterControl.value);
-        this.drawImageOnCanvas();
+        this.drawImageOnFilterPreviewCanvas();
     }
-
-    // TODO : find a way to disable ctrl+O
 
     disableShortcut(): void {
         this.toolManager.allowKeyPressEvents = false;
