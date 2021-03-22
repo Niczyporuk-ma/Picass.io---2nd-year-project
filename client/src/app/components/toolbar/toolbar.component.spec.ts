@@ -105,6 +105,20 @@ describe('ToolbarComponent', () => {
         expect(component.toolManager.widthValue).toEqual(25);
     });
 
+    it(' changeEmissionRate should call the emissionRate of the airbrushService', () => {
+        component.changeEmissionRate(25);
+        expect(component.toolManager.airbrushService.emissionRate).toEqual(25);
+    });
+
+    it(' changeJetDiameter should change the diameter of the spray jet', () => {
+        component.changeJetDiameter(1.5);
+        expect(component.toolManager.airbrushService.jetDiameter).toEqual(1.5);
+    });
+
+    it(' changeDropletDiameter should the droplet diameter of the spray in airbushService', () => {
+        component.changeDropletDiameter(0.2);
+        expect(component.toolManager.airbrushService.dropletDiameter).toEqual(0.2);
+    });
     it(' disableShortcut shouls set allowKeyPressEvent to false', () => {
         component.toolManager.allowKeyPressEvents = true;
         component.disableShortcut();

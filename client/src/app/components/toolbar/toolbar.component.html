@@ -13,6 +13,14 @@
         <fa-icon [icon]="faPen" size="lg"></fa-icon>
     </button>
     <button
+        (click)="this.toolManager.setTool(this.toolManager.airbrushService)"
+        matTooltip="Outil aérosol (A): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faSprayCan" size="lg"></fa-icon>
+    </button>
+    <button
         (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth()"
         matTooltip="Outil efface (E): Cliquer et glisser pour effacer. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
@@ -50,21 +58,19 @@
         Poly
     </button>
     <div *ngIf="this.toolManager.polygonService.showNumberOfSidesInput" class="Slider">
-        
-            <mat-card>
-                <div>Nb côté:</div>
-                <mat-slider
-                    min="3"
-                    max="12"
-                    step="1"
-                    class="slider"
-                    (change)="this.toolManager.polygonService.setNumberOfSides($event)"
-                    (input)="this.toolManager.polygonService.sides = $event.value"
-                    [value]="this.toolManager.polygonService.sides"
-                ></mat-slider>
-                <mat-card-subtitle>{{ this.toolManager.polygonService.sides }}</mat-card-subtitle>
-            </mat-card>    
-        
+        <mat-card>
+            <div>Nb côté:</div>
+            <mat-slider
+                min="3"
+                max="12"
+                step="1"
+                class="slider"
+                (change)="this.toolManager.polygonService.setNumberOfSides($event)"
+                (input)="this.toolManager.polygonService.sides = $event.value"
+                [value]="this.toolManager.polygonService.sides"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.polygonService.sides }}</mat-card-subtitle>
+        </mat-card>
     </div>
 
     <button
@@ -81,7 +87,7 @@
         <app-color-picker></app-color-picker>
     </div>
 
-    <div class="Slider">
+    <div class="Slider" *ngIf="this.toolManager.currentTool != this.toolManager.airbrushService">
         <mat-card>
             Épaisseur:
             <mat-slider
@@ -137,6 +143,51 @@
             ></mat-slider>
             {{ this.toolManager.lineService.currentDiameter }}
             <br />
+        </mat-card>
+    </div>
+
+    <div class="Slider" *ngIf="this.toolManager.currentTool == this.toolManager.airbrushService">
+        <mat-card>
+            Nombre d'émissions / sec:
+            <mat-slider
+                min="100"
+                max="900"
+                step="200"
+                value="1"
+                class="slider"
+                (change)="changeEmissionRate($event.value)"
+                (input)="this.toolManager.airbrushService.emissionRate = $event.value"
+                [value]="this.toolManager.airbrushService.emissionRate"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.airbrushService.emissionRate }} </mat-card-subtitle>
+        </mat-card>
+        <mat-card>
+            Diamètre du jet:
+            <mat-slider
+                min="10"
+                max="100"
+                step="10"
+                value="1"
+                class="slider"
+                (change)="changeJetDiameter($event.value)"
+                (input)="this.toolManager.airbrushService.jetDiameter = $event.value"
+                [value]="this.toolManager.airbrushService.jetDiameter"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.airbrushService.jetDiameter }} px</mat-card-subtitle>
+        </mat-card>
+        <mat-card>
+            Diamètre des gouttelettes:
+            <mat-slider
+                min="0.1"
+                max="3"
+                step="0.1"
+                value="1"
+                class="slider"
+                (change)="changeDropletDiameter($event.value)"
+                (input)="this.toolManager.airbrushService.dropletDiameter = $event.value"
+                [value]="this.toolManager.airbrushService.dropletDiameter"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.airbrushService.dropletDiameter }} px</mat-card-subtitle>
         </mat-card>
     </div>
 </div>

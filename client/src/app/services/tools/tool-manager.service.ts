@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { AirbrushService } from '@app/services/tools/airbrush.service';
 import { LineServiceService } from '@app/services/tools/line-service.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { Subject } from 'rxjs';
@@ -17,7 +18,15 @@ import { RectangleService } from './rectangle.service';
 export class ToolManagerService {
     currentToolChange: Subject<Tool> = new Subject<Tool>();
     currentTool: Tool;
-    tools: Tool[] = [this.pencilService, this.lineService, this.rectangleService, this.eraserService, this.ellipseService, this.polygonService];
+    tools: Tool[] = [
+        this.pencilService,
+        this.lineService,
+        this.rectangleService,
+        this.eraserService,
+        this.ellipseService,
+        this.polygonService,
+        this.airbrushService,
+    ];
     toolBoxShortcuts: Map<string, Tool>;
     lineHistory: Vec2[][] = [];
     pencilHistory: Vec2[][] = [];
@@ -36,6 +45,7 @@ export class ToolManagerService {
         public colorService: ColorService,
         public drawingService: DrawingService,
         public polygonService: PolygonService,
+        public airbrushService: AirbrushService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
@@ -46,6 +56,7 @@ export class ToolManagerService {
             [this.pencilService.shortcut, this.tools[this.pencilService.index]],
             [this.ellipseService.shortcut, this.tools[this.ellipseService.index]],
             [this.polygonService.shortcut, this.tools[this.polygonService.index]],
+            [this.airbrushService.shortcut, this.tools[this.airbrushService.index]],
         ]);
     }
 
