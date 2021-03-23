@@ -1,3 +1,4 @@
+import { HttpClient, HttpHandler } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
@@ -11,6 +12,7 @@ describe('MenuComponent', () => {
         TestBed.configureTestingModule({
             declarations: [MenuComponent, CarrouselComponent],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
+            providers: [HttpClient, HttpHandler],
         }).compileComponents();
     }));
 

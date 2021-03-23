@@ -5,6 +5,25 @@
 <mat-card class="card" *ngIf="visible">
     Le carrousel n'est pas encore disponible !
 
+    <br />
+
+    <input placeholder="tag" (keyup)="this.filterService.extractInput($event)" />
+    <button (click)="getDrawings()">Trouver un dessin</button>
+    <div *ngIf="this.isErrorGetting">Aucun dessin trouve.</div>
+    <div *ngIf="!this.isErrorGetting">
+        <div *ngFor="let drawing of this.dataFiltered">
+            Nom du dessin trouve: {{ drawing.name }}
+            <div>Id du dessin: {{ drawing._id.toString() }}</div>
+            <div *ngFor="let tags of drawing.tags">{{ tags.tag }}</div>
+        </div>
+    </div>
+
+    <div *ngIf="this.isPossibleToDelete">
+        <input placeholder="id" (keyup)="this.filterService.extractID($event)" />
+        <button (click)="deleteDrawings()">Supprimer un dessin</button>
+        <div *ngIf="this.isErrorRemoving">Aucun dessin supprime, veuiller rentre un id existant</div>
+    </div>
+
     <mat-card-actions>
         <button (click)="toggleCarrousel()">Fermer</button>
     </mat-card-actions>

@@ -35,6 +35,7 @@ export class ToolManagerService {
     blockEventListener: boolean = false;
     allowKeyPressEvents: boolean = true;
     showPalette: boolean = false;
+    showSaveMenu: boolean = false;
 
     constructor(
         public pencilService: PencilService,

@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { IndexService } from '@app/services/index/index.service';
-import { Message } from '@common/communication/message';
+import { Drawing } from '@common/drawing.interface';
 import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-main-page',
@@ -15,24 +14,38 @@ export class MainPageComponent {
 
     constructor(private basicService: IndexService) {}
 
-    sendTimeToServer(): void {
-        const newTimeMessage: Message = {
-            title: 'Hello from the client',
-            body: 'Time is : ' + new Date().toString(),
-        };
+    sendTimeToServer(drawing: Drawing): void {
+        // const newTimeMessage: Message = {
+        //     title: 'Hello from the client',
+        //     body: 'Time is : ' + new Date().toString(),
+        // };
+
         // Important de ne pas oublier "subscribe" ou l'appel ne sera jamais lancé puisque personne l'observe
-        this.basicService.basicPost(newTimeMessage).subscribe();
+        // this.basicService.basicPost(newTimeMessage).subscribe();
+        this.basicService.basicPost(drawing).subscribe();
     }
 
-    getMessagesFromServer(): void {
-        this.basicService
-            .basicGet()
-            // Cette étape transforme le Message en un seul string
-            .pipe(
-                map((message: Message) => {
-                    return `${message.title} ${message.body}`;
-                }),
-            )
-            .subscribe(this.message);
-    }
+    /*deleteElement(): void {
+        this.basicService.basicDelete().subscribe();
+    }*/
+
+    // modifyElement(): void {
+    //     const drawing: Drawing = {
+    //         name: 'test',
+    //         tags: ['test1', 'test2'],
+    //     };
+
+    //     this.basicService.basicPatch(drawing).subscribe();
+    // }
+
+    // getDrawingsFromServer(): void {
+    //     this.basicService.basicGet();
+    //     // Cette étape transforme le Message en un seul string
+    //     // .pipe(
+    //     //     map((message: Drawing) => {
+    //     //         return `${message.name} ${message.tags}`;
+    //     //     }),
+    //     // )
+    //     // .subscribe(this.message);
+    // }
 }

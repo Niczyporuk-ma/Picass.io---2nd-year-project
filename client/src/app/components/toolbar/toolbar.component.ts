@@ -48,6 +48,10 @@ export class ToolbarComponent {
         this.toolManager.showPalette = !this.toolManager.showPalette;
     }
 
+    showSaveDrawing(): void {
+        this.toolManager.showSaveMenu = !this.toolManager.showSaveMenu;
+    }
+
     setEllipseStyle(ellipseStyleCode: string): void {
         if (ellipseStyleCode === FILL_VALUE) {
             this.toolManager.ellipseService.toolStyles.fill = true;

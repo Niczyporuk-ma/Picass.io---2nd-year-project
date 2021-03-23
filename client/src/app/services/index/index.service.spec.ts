@@ -1,6 +1,6 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Message } from '@common/communication/message';
+import { Drawing } from '@common/drawing.interface';
 import { IndexService } from './index.service';
 
 describe('IndexService', () => {
@@ -16,7 +16,9 @@ describe('IndexService', () => {
         httpMock = TestBed.inject(HttpTestingController);
         // BASE_URL is private so we need to access it with its name as a key
         // Try to avoid this syntax which violates encapsulation
-        // tslint:disable: no-string-literal
+        // tslint:disable*
+        // tslint:disable:no-string-literal
+        // tslint:disable:no-empty
         baseUrl = service['BASE_URL'];
     });
 
@@ -24,39 +26,45 @@ describe('IndexService', () => {
         httpMock.verify();
     });
 
-    it('should return expected message (HttpClient called once)', () => {
-        const expectedMessage: Message = { body: 'Hello', title: 'World' };
-
+    it('should return expected Drawing (HttpClient called once)', () => {
+        const expectedDrawing: Drawing = { _id: 'id', name: 'name', tags: [] };
         // check the content of the mocked call
-        service.basicGet().subscribe((response: Message) => {
-            expect(response.title).toEqual(expectedMessage.title, 'Title check');
-            expect(response.body).toEqual(expectedMessage.body, 'body check');
-        }, fail);
+        service.basicGet().subscribe((response: Drawing[]) => {}, fail);
 
-        const req = httpMock.expectOne(baseUrl);
+        const req = httpMock.expectOne(baseUrl + '/drawing');
         expect(req.request.method).toBe('GET');
         // actually send the request
-        req.flush(expectedMessage);
+        req.flush(expectedDrawing);
     });
 
-    it('should not return any message when sending a POST request (HttpClient called once)', () => {
-        const sentMessage: Message = { body: 'Hello', title: 'World' };
+    it('should not return any Drawing when sending a POST request (HttpClient called once)', () => {
+        const sentDrawing: Drawing = { _id: 'id', name: 'name', tags: [] };
         // subscribe to the mocked call
         // tslint:disable-next-line: no-empty
-        service.basicPost(sentMessage).subscribe(() => {}, fail);
+        service.basicPost(sentDrawing).subscribe(() => {}, fail);
 
         const req = httpMock.expectOne(baseUrl + '/send');
         expect(req.request.method).toBe('POST');
         // actually send the request
-        req.flush(sentMessage);
+        req.flush(sentDrawing);
+    });
+
+    it('should not return any Drawing when sending a DELETE request (HttpClient called once)', () => {
+        // subscribe to the mocked call
+        // tslint:disable-next-line: no-empty
+        service.basicDelete('MyID').subscribe(() => {}, fail);
+
+        const req = httpMock.expectOne(baseUrl + '/drawing/MyID');
+        expect(req.request.method).toBe('DELETE');
+        // actually send the request
     });
 
     it('should handle http error safely', () => {
-        service.basicGet().subscribe((response: Message) => {
+        service.basicGet().subscribe((response: Drawing[]) => {
             expect(response).toBeUndefined();
         }, fail);
 
-        const req = httpMock.expectOne(baseUrl);
+        const req = httpMock.expectOne(baseUrl + '/drawing');
         expect(req.request.method).toBe('GET');
         req.error(new ErrorEvent('Random error occured'));
     });

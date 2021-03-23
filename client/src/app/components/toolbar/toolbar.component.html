@@ -4,6 +4,12 @@
     <button (click)="this.toolManager.clearArrays()" matTooltip="Créer un nouveau dessin" matTooltipPosition="after" matTooltipShowDelay="600">
         <fa-icon [icon]="faPlusSquare" size="lg"></fa-icon>
     </button>
+
+    <button (click)="showSaveDrawing()">Save</button>
+    <div *ngIf="this.toolManager.showSaveMenu">
+        <app-form></app-form>
+    </div>
+
     <button
         (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()"
         matTooltip="Outil crayon (C): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"

@@ -31,6 +31,7 @@ export class ColorPickerComponent {
     isRed: boolean = false;
     isGreen: boolean = false;
     isBlue: boolean = false;
+
     constructor(colorService: ColorService, public toolManager: ToolManagerService) {
         this.colorService = colorService;
         this.toolManager = toolManager;
