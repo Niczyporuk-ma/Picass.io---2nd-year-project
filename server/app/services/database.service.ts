@@ -19,7 +19,6 @@ export class DatabaseService {
         try {
             this.client = await MongoClient.connect(url, this.options);
             this.database = this.client.db(DATABASE_NAME);
-            console.log('construit');
         } catch {
             throw new Error('Database not connected');
         }

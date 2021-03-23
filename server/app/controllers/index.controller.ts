@@ -128,11 +128,5 @@ export class IndexController {
         this.router.delete('/drawing/:id', async (req: Request, res: Response, next: NextFunction) => {
             this.indexService.deleteDoc(req.params.id).then(() => res.sendStatus(HTTP_STATUS_OK));
         });
-
-        // this.router.patch('/modify', async (req: Request, res: Response, next: NextFunction) => {
-        //     console.log(req.params.name);
-        //     //this.indexService.modifyDoc(req.body);
-        //     res.sendStatus(HTTP_STATUS_CREATED);
-        // });
     }
 }

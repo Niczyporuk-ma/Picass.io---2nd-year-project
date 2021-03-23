@@ -53,7 +53,6 @@ export class FormComponent implements OnInit {
         const generatedID = new ObjectID();
         const temp: Drawing = { _id: generatedID.toString(), name: this.drawingForm.get('name')?.value, tags: [] };
 
-        console.log(this.tagsForms.length);
         for (let i = 0; i < this.tagsForms.length; i++) {
             temp.tags.push(this.tagsForms.at(i).value as string);
         }
