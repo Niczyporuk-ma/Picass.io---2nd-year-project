@@ -1,10 +1,10 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 
 import { Component, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
+import { ColorPaletteComponent } from '@app/components/color-picker/color-palette/color-palette.component';
 import { MouseButton } from '@app/enums/enums';
 import { ColorService } from '@app/services/tools/color.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { ColorPaletteComponent } from './color-palette/color-palette.component';
 const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
 
 @Component({

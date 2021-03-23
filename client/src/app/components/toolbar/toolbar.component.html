@@ -100,8 +100,19 @@
     >
         <fa-icon [icon]="faPalette" size="lg"></fa-icon>
     </button>
+    <button
+        class=""
+        (click)="this.toolManager.setTool(this.toolManager.pipetteService)"
+        matTooltip="Outil pipette (I): CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faEyeDropper" size="lg"></fa-icon>
+    </button>
+
     <div *ngIf="this.toolManager.showPalette">
         <app-color-picker></app-color-picker>
+        <!-- calls color picker component html -->
     </div>
 
     <div class="Slider" *ngIf="this.toolManager.currentTool != this.toolManager.airbrushService">
@@ -143,6 +154,9 @@
         <mat-button-toggle id="jonc" value="0" (change)="setLineJunction($event.value)">Sans jonction</mat-button-toggle>
         <mat-button-toggle id="jonc" value="1" (change)="setLineJunction($event.value)">Avec jonction</mat-button-toggle>
     </mat-button-toggle-group>
+
+    <app-pipette *ngIf="this.toolManager.currentTool == this.toolManager.pipetteService"></app-pipette>
+    <!-- calls pipette component html -->
 
     <br />
     <div class="junctionRadiusSlider" *ngIf="this.toolManager.currentTool == this.toolManager.lineService">

@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
+import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
-import { DrawingComponent } from './drawing.component';
 
 class ToolStub extends Tool {}
 
@@ -16,7 +16,10 @@ describe('DrawingComponent', () => {
     let toolStub: ToolStub;
     let drawingStub: DrawingService;
 
+    // Configuration du spy
+    // tslint:disable:no-string-literal
     // tslint:disable:no-magic-numbers
+    // tslint:disable:max-file-line-count
 
     beforeEach(async(() => {
         toolStub = new ToolStub({} as DrawingService);
@@ -105,24 +108,22 @@ describe('DrawingComponent', () => {
     it(' ngAfterViewInit should add two event listener', () => {
         const enventListenerSpy = spyOn(window, 'addEventListener').and.callThrough();
         component.ngAfterViewInit();
-        expect(enventListenerSpy).toHaveBeenCalledTimes(2);
+        expect(enventListenerSpy).toHaveBeenCalledTimes(3);
     });
 
     // On a enlever ces test car il est trop instable par rapport au setTimeout
-
     // it(" ngAfterViewInit should call onKeyPress & waitForOPress when Control is pressed", async (done) => {
     //     const event = new KeyboardEvent('keydown',{key :'Control'});
     //     const onKeyPressSpy = spyOn(component.shortcutKeyboardManager,'onKeyPress').and.stub();
-    //    const oPressSpy = spyOn(component.shortcutKeyboardManager,'waitForOPress').and.stub();
+    //     const oPressSpy = spyOn(component.shortcutKeyboardManager,'waitForOPress').and.stub();
     //     component.ngAfterViewInit();
     //     window.dispatchEvent(event);
     //     setTimeout(() => {
-    //         expect(onKeyPressSpy).toHaveBeenCalled();
-    //         expect(oPressSpy).toHaveBeenCalled();
-    //         done();
+    //     expect(onKeyPressSpy).toHaveBeenCalled();
+    //     expect(oPressSpy).toHaveBeenCalled();
+    //     done();
     //     }, 500);
-
-    //  });
+    // });
 
     // it(`component should call move functions and correctly set values on arrow keydown
     //      if currentTool is for selection`, () => {
@@ -267,5 +268,25 @@ describe('DrawingComponent', () => {
             expect(component.clickCount).toEqual(0);
             done();
         }, component.timeOutDuration);
+    });
+
+    it(' ngAfterViewInit should call preventDefault', async (done) => {
+        const event = new MouseEvent('contextmenu');
+        const preventDefaultSpy = spyOn(event, 'preventDefault').and.callThrough();
+        component.ngAfterViewInit();
+        window.dispatchEvent(event);
+        setTimeout(() => {
+            expect(preventDefaultSpy).toHaveBeenCalled();
+            done();
+        }, 50);
+    });
+
+    it(' ngAfterViewInit should make baseCtx white and call fillRect', () => {
+        component.baseCanvas.nativeElement.width = 5;
+        component.baseCanvas.nativeElement.height = 1555;
+        const fillRectSpy = spyOn(component['baseCtx'], 'fillRect').and.callThrough();
+        component.ngAfterViewInit();
+        expect(component['baseCtx'].fillStyle).toEqual('#ffffff');
+        expect(fillRectSpy).toHaveBeenCalledWith(0, 0, 5, 1555);
     });
 });
