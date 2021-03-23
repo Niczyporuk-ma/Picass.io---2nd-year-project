@@ -65,7 +65,6 @@ export class ColorService {
                 return true;
             }
         }
-
         return false;
     }
 

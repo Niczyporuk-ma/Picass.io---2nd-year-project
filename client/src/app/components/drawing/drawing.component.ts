@@ -65,6 +65,8 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.backgroundCtx = this.backgroundCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.baseCtx.fillStyle = 'white';
+        this.baseCtx.fillRect(0, 0, this.baseCanvas.nativeElement.width, this.baseCanvas.nativeElement.height);
         this.shortcuts.push(
             {
                 key: 'ctrl + a',
@@ -93,6 +95,9 @@ export class DrawingComponent implements AfterViewInit {
             } else if (this.toolManager.currentTool === this.toolManager.rectangleSelection) {
                 this.toolManager.rectangleSelection.keyupHandler(e);
             }
+        });
+        window.addEventListener('contextmenu', (event: MouseEvent) => {
+            event.preventDefault();
         });
     }
 
