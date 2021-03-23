@@ -108,7 +108,7 @@ describe('DrawingComponent', () => {
         expect(enventListenerSpy).toHaveBeenCalledTimes(2);
     });
 
-    // On a enlever ce test car il est trop instable par rapport au setTimeout
+    // On a enlever ces test car il est trop instable par rapport au setTimeout
 
     // it(" ngAfterViewInit should call onKeyPress & waitForOPress when Control is pressed", async (done) => {
     //     const event = new KeyboardEvent('keydown',{key :'Control'});
@@ -123,6 +123,109 @@ describe('DrawingComponent', () => {
     //     }, 500);
 
     //  });
+
+    // it(`component should call move functions and correctly set values on arrow keydown
+    //      if currentTool is for selection`, () => {
+    //     const mockArrowUp = new KeyboardEvent('keydown',{key : 'ArrowUp'});
+    //     const mockArrowDown = new KeyboardEvent('keydown',{key : 'ArrowDown'});
+    //     const mockArrowLeft = new KeyboardEvent('keydown',{key : 'ArrowLeft'});
+    //     const mockArrowRight = new KeyboardEvent('keydown',{key : 'ArrowRight'});
+    //     component.toolManager.currentTool = component.toolManager.ellipseSelection;
+    //     component.toolManager.ellipseSelection.lastPos = {x:0, y:0};
+    //     component.toolManager.ellipseSelection.currentLine = [{x:0, y:0},{x:1,y:1}];
+    //     component.toolManager.ellipseSelection.offsetYModifier = 0;
+    //     component.toolManager.ellipseSelection.offsetXModifier = 0;
+    //     const waitTimerSpy = spyOn(component.toolManager.ellipseSelection,'waitTimer').and.stub();
+
+    //     window.dispatchEvent(mockArrowUp);
+    //     setTimeout(() => {},200);
+    //     expect(component.toolManager.ellipseSelection.offsetYModifier).toEqual(-3);
+
+    //     window.dispatchEvent(mockArrowDown);
+    //     setTimeout(() => {},200);
+    //     expect(component.toolManager.ellipseSelection.offsetYModifier).toEqual(0);
+
+    //     window.dispatchEvent(mockArrowLeft);
+    //     setTimeout(() => {},200);
+    //     expect(component.toolManager.ellipseSelection.offsetXModifier).toEqual(-3);
+
+    //     window.dispatchEvent(mockArrowRight);
+    //     setTimeout(() => {},200);
+    //     expect(component.toolManager.ellipseSelection.offsetXModifier).toEqual(0);
+
+    //     expect(waitTimerSpy).toHaveBeenCalledTimes(4);
+
+    // })
+
+    // it('arrow keys detection shouldnt be executed twice if there wasnt a keyup event',() => {
+    //     const mockArrowUp = new KeyboardEvent('keydown',{key : 'ArrowUp'});
+    //     const mockArrowDown = new KeyboardEvent('keydown',{key : 'ArrowDown'});
+    //     const mockArrowLeft = new KeyboardEvent('keydown',{key : 'ArrowLeft'});
+    //     const mockArrowRight = new KeyboardEvent('keydown',{key : 'ArrowRight'});
+    //     component.toolManager.currentTool = component.toolManager.ellipseSelection;
+    //     component.toolManager.ellipseSelection.lastPos = {x:0, y:0};
+    //     component.toolManager.ellipseSelection.currentLine = [{x:0, y:0},{x:1,y:1}];
+    //     component.toolManager.ellipseSelection.offsetYModifier = 0;
+    //     component.toolManager.ellipseSelection.offsetXModifier = 0;
+    //     window.dispatchEvent(mockArrowUp);
+    //     // setTimeout(() => {},200);
+    //     window.dispatchEvent(mockArrowUp);
+    //     setTimeout(() => {},200);
+    //     expect(component.toolManager.ellipseSelection.offsetYModifier).toEqual(-3);
+
+    //     window.dispatchEvent(mockArrowDown);
+    //     // setTimeout(() => {},200);
+    //     window.dispatchEvent(mockArrowDown);
+    //     setTimeout(() => {},200);
+    //     expect(component.toolManager.ellipseSelection.offsetYModifier).toEqual(0);
+
+    //     window.dispatchEvent(mockArrowLeft);
+    //     // setTimeout(() => {},200);
+    //     window.dispatchEvent(mockArrowLeft);
+    //     setTimeout(() => {},200);
+    //     expect(component.toolManager.ellipseSelection.offsetXModifier).toEqual(-3);
+
+    //     window.dispatchEvent(mockArrowRight);
+    //     // setTimeout(() => {},200);
+    //     window.dispatchEvent(mockArrowRight);
+    //     setTimeout(() => {},200);
+    //     expect(component.toolManager.ellipseSelection.offsetXModifier).toEqual(0);
+    // })
+
+    it('component should call keyupHandler on keyup if currentTool is ellipseSelection or rectangleSelection', () => {
+        const mockArrowUp = new KeyboardEvent('keyup', { key: 'ArrowUp' });
+        const mockArrowDown = new KeyboardEvent('keyup', { key: 'ArrowDown' });
+        const mockArrowLeft = new KeyboardEvent('keyup', { key: 'ArrowLeft' });
+        const mockArrowRight = new KeyboardEvent('keyup', { key: 'ArrowRight' });
+        component.toolManager.currentTool = component.toolManager.ellipseSelection;
+        const keyupHandlerSpy = spyOn(component.toolManager.ellipseSelection, 'keyupHandler').and.callThrough();
+        component.toolManager.ellipseSelection.offsetYModifier = 0;
+        component.toolManager.ellipseSelection.offsetXModifier = 0;
+
+        window.dispatchEvent(mockArrowUp);
+        setTimeout(() => {
+            return;
+        }, 200);
+
+        window.dispatchEvent(mockArrowDown);
+        setTimeout(() => {
+            return;
+        }, 200);
+
+        window.dispatchEvent(mockArrowLeft);
+        setTimeout(() => {
+            return;
+        }, 200);
+
+        window.dispatchEvent(mockArrowRight);
+        setTimeout(() => {
+            return;
+        }, 200);
+
+        expect(keyupHandlerSpy).toHaveBeenCalledTimes(4);
+        expect(component.toolManager.ellipseSelection.offsetYModifier).toEqual(0);
+        expect(component.toolManager.ellipseSelection.offsetXModifier).toEqual(0);
+    });
 
     it(' onMouseClick should call onMouseClick of current tool if there is a single click', async (done) => {
         const event = {} as MouseEvent;

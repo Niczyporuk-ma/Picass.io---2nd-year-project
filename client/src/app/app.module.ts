@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { CarrouselComponent } from './components/carrousel/carrousel.component';
@@ -61,6 +62,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
+        KeyboardShortcutsModule.forRoot(),
     ],
     providers: [],
     bootstrap: [AppComponent],
