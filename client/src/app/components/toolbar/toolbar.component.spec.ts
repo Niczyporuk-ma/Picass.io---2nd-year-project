@@ -1,15 +1,28 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { ToolbarComponent } from './toolbar.component';
+
+class MatDialogMock {
+    // tslint:disable-next-line:no-any
+    openDialogs: MatDialogRef<any>[] = [];
+    open(): {} {
+        return {};
+    }
+}
+
 describe('ToolbarComponent', () => {
     // tslint:disable:no-magic-numbers
     let component: ToolbarComponent;
     let fixture: ComponentFixture<ToolbarComponent>;
+    let modal: MatDialog;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [ToolbarComponent],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
+            providers: [{ provide: MatDialog, useClass: MatDialogMock }],
         }).compileComponents();
     }));
 
@@ -17,6 +30,7 @@ describe('ToolbarComponent', () => {
         fixture = TestBed.createComponent(ToolbarComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        modal = TestBed.inject(MatDialog);
     });
 
     it('should create', () => {
@@ -147,5 +161,11 @@ describe('ToolbarComponent', () => {
         component.setPolygonStyle('3');
         expect(component.toolManager.polygonService.toolStyles.fill).toEqual(true);
         expect(component.toolManager.polygonService.contour).toEqual(true);
+    });
+
+    it('export should open a modal window', () => {
+        spyOn(modal, 'open').and.callThrough();
+        component.export();
+        expect(modal.open).toHaveBeenCalledWith(ExportDrawingComponent);
     });
 });

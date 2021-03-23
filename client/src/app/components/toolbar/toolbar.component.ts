@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
+import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
-import { faEraser, faEyeDropper, faPalette, faPen, faSlash, faSprayCan } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faEraser, faEyeDropper, faPalette, faPen, faSlash, faSprayCan } from '@fortawesome/free-solid-svg-icons';
+import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
@@ -14,6 +17,7 @@ const CONTOUR_VALUE = '2';
     styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent {
+    shortcuts: ShortcutInput[] = [];
     tools: Tool[];
     showAdvanced: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
@@ -24,12 +28,19 @@ export class ToolbarComponent {
     faCircle: IconDefinition = faCircle;
     faPalette: IconDefinition = faPalette;
     faPlusSquare: IconDefinition = faPlusSquare;
+    faDownload: IconDefinition = faDownload;
     faEyeDropper: IconDefinition = faEyeDropper;
     faSprayCan: IconDefinition = faSprayCan;
 
-    constructor(public toolManager: ToolManagerService) {
+    constructor(public toolManager: ToolManagerService, public modal: MatDialog) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
+        // source: https://www.npmjs.com/package/ng-keyboard-shortcuts
+        this.shortcuts.push({
+            key: 'ctrl + e',
+            preventDefault: true,
+            command: () => this.export(),
+        });
     }
 
     setRectangleStyle(recStyleCode: string): void {
@@ -100,6 +111,9 @@ export class ToolbarComponent {
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
     }
 
+    export(): void {
+        this.modal.open(ExportDrawingComponent);
+    }
     changeEmissionRate(rate: number): void {
         this.toolManager.airbrushService.emissionRate = rate;
     }

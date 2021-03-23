@@ -24,7 +24,6 @@ export class Server {
         // Permet la connection a la base de donne
         try {
             await this.db.start();
-            console.log('base de donne connectee');
         } catch {
             console.error('erreur de connection avec la base de donne');
             process.exit(1);

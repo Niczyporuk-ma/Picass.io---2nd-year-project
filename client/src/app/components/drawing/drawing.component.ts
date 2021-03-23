@@ -85,9 +85,12 @@ export class DrawingComponent implements AfterViewInit {
             },
         );
         window.addEventListener('keydown', (event: KeyboardEvent) => {
-            event.preventDefault();
-            this.shortcutKeyboardManager.onKeyPress(event.key);
+            if (this.toolManager.allowKeyPressEvents) {
+                event.preventDefault();
+                this.shortcutKeyboardManager.onKeyPress(event.key);
+            }
         });
+
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
         window.addEventListener('keyup', (e) => {
             if (this.toolManager.currentTool === this.toolManager.ellipseSelection) {
