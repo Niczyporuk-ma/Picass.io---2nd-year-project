@@ -5,7 +5,7 @@ import { ExportDrawingComponent } from '@app/components/export-drawing/export-dr
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
-import { faDownload, faEraser, faPalette, faPen, faSlash, faSprayCan } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faEraser, faEyeDropper, faPalette, faPen, faSlash, faSprayCan } from '@fortawesome/free-solid-svg-icons';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
@@ -29,6 +29,7 @@ export class ToolbarComponent {
     faPalette: IconDefinition = faPalette;
     faPlusSquare: IconDefinition = faPlusSquare;
     faDownload: IconDefinition = faDownload;
+    faEyeDropper: IconDefinition = faEyeDropper;
     faSprayCan: IconDefinition = faSprayCan;
 
     constructor(public toolManager: ToolManagerService, public modal: MatDialog) {

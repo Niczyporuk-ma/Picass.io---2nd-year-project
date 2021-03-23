@@ -30,6 +30,7 @@ import { FormComponent } from './components/form/form.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { PipetteComponent } from './components/pipette/pipette.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 
@@ -48,6 +49,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         ColorPaletteComponent,
         ColorPickerComponent,
         ExportDrawingComponent,
+        PipetteComponent,
         FormComponent,
     ],
     imports: [

@@ -46,6 +46,16 @@ describe('ToolManagerService', () => {
         expect(service.currentTool).toEqual(service.rectangleService);
     });
 
+    it(' setTool should set current tool to ellipse', () => {
+        service.setTool(service.ellipseService);
+        expect(service.currentTool).toEqual(service.ellipseService);
+    });
+
+    it(' setTool should set current tool to rectangle', () => {
+        service.setTool(service.pipetteService);
+        expect(service.currentTool).toEqual(service.pipetteService);
+    });
+
     it(' setTool should call setColors', () => {
         const setColorSpy = spyOn(service.eraserService, 'setColors');
         service.setTool(service.eraserService);

@@ -1,7 +1,7 @@
 // inspired by : https://malcoded.com/posts/angular-color-picker/
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ColorPickerComponent } from './color-picker.component';
+import { ColorPickerComponent } from '@app/components/color-picker/color-picker.component';
 
 describe('ColorPickerComponent', () => {
     let component: ColorPickerComponent;
@@ -65,7 +65,7 @@ describe('ColorPickerComponent', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1,
+            button: 2,
         } as MouseEvent;
         component.primary = false;
         component.selectPrimaryColor(mouseEventRClick);
@@ -107,7 +107,7 @@ describe('ColorPickerComponent', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1,
+            button: 2,
         } as MouseEvent;
         component.primary = true;
         component.selectSecondaryColor(mouseEventRClick);
@@ -333,7 +333,7 @@ describe('ColorPickerComponent', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1,
+            button: 2,
         } as MouseEvent;
         component.colorService.primaryColorPreview = 'expectedResult';
         component.onLeftClickPreviousColor(mouseEventRClick, 'nonExpectedResult');
