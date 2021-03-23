@@ -108,4 +108,48 @@ describe('ToolbarComponent', () => {
         component.changeWidth(25);
         expect(component.toolManager.widthValue).toEqual(25);
     });
+
+    it(' changeEmissionRate should call the emissionRate of the airbrushService', () => {
+        component.changeEmissionRate(25);
+        expect(component.toolManager.airbrushService.emissionRate).toEqual(25);
+    });
+
+    it(' changeJetDiameter should change the diameter of the spray jet', () => {
+        component.changeJetDiameter(1.5);
+        expect(component.toolManager.airbrushService.jetDiameter).toEqual(1.5);
+    });
+
+    it(' changeDropletDiameter should the droplet diameter of the spray in airbushService', () => {
+        component.changeDropletDiameter(0.2);
+        expect(component.toolManager.airbrushService.dropletDiameter).toEqual(0.2);
+    });
+    it(' disableShortcut shouls set allowKeyPressEvent to false', () => {
+        component.toolManager.allowKeyPressEvents = true;
+        component.disableShortcut();
+        expect(component.toolManager.allowKeyPressEvents).toEqual(false);
+    });
+
+    it(' enableShortcut shouls set allowKeyPressEvent to true', () => {
+        component.toolManager.allowKeyPressEvents = false;
+        component.enableShortcut();
+        expect(component.toolManager.allowKeyPressEvents).toEqual(true);
+    });
+
+    it('setPolygonStyle puts fill to true and contour to false when n = 1', () => {
+        component.setPolygonStyle('1');
+        expect(component.toolManager.polygonService.toolStyles.fill).toEqual(true);
+        expect(component.toolManager.polygonService.contour).toEqual(false);
+    });
+
+    it('setPolygonStyle puts fill to false and contour to true when n = 2', () => {
+        component.setPolygonStyle('2');
+        expect(component.toolManager.polygonService.toolStyles.fill).toEqual(false);
+        expect(component.toolManager.polygonService.contour).toEqual(true);
+    });
+
+    it('setPolygonStyle puts fill to true and contour to true when n = 3', () => {
+        component.setPolygonStyle('3');
+        expect(component.toolManager.polygonService.toolStyles.fill).toEqual(true);
+        expect(component.toolManager.polygonService.contour).toEqual(true);
+    });
 });

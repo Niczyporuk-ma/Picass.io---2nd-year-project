@@ -7,6 +7,10 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent {
+    // @Input() vertical: true;
+
+    options: string[] = ['Nouveau dessin', 'Continuer un dessin', 'Ouvrir le caroussel de dessins'];
+
     drawingService: DrawingService;
 
     constructor(drawingService: DrawingService) {

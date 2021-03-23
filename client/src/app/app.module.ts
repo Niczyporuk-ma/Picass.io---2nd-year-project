@@ -26,6 +26,7 @@ import { ColorPickerComponent } from './components/color-picker/color-picker.com
 import { ColorSliderComponent } from './components/color-picker/color-slider/color-slider.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { FormComponent } from './components/form/form.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -47,6 +48,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         ColorPaletteComponent,
         ColorPickerComponent,
         ExportDrawingComponent,
+        FormComponent,
     ],
     imports: [
         BrowserModule,
@@ -68,6 +70,9 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         MatInputModule,
         MatSelectModule,
         MatButtonModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatInputModule,
         KeyboardShortcutsModule.forRoot(),
     ],
     providers: [],

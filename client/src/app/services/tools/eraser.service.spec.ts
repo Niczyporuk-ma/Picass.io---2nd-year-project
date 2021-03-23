@@ -39,12 +39,16 @@ describe('EraserService', () => {
     });
 
     it('mouseDown should set mouseDownCoord to the correct position', () => {
+        service.startingPoint = { x: 1, y: 1 };
+        service.currentPoint = { x: 35, y: 35 };
         const expectedResult: Vec2 = { x: 35, y: 35 };
         service.onMouseDown(mouseEvent);
         expect(service.mouseDownCoord).toEqual(expectedResult);
     });
 
     it('mouseDown should set mouseDown property to true on the left click', () => {
+        service.startingPoint = { x: 1, y: 1 };
+        service.currentPoint = { x: 0, y: 0 };
         service.onMouseDown(mouseEvent);
         expect(service.mouseDown).toEqual(true);
     });
