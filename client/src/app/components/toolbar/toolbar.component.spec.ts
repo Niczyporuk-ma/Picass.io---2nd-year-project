@@ -5,6 +5,7 @@ import { ExportDrawingComponent } from '@app/components/export-drawing/export-dr
 import { ToolbarComponent } from './toolbar.component';
 
 class MatDialogMock {
+    // tslint:disable-next-line:no-any
     openDialogs: MatDialogRef<any>[] = [];
     open(): {} {
         return {};
@@ -12,7 +13,6 @@ class MatDialogMock {
 }
 
 describe('ToolbarComponent', () => {
-    // tslint:disable-next-line:no-any
     // tslint:disable:no-magic-numbers
     let component: ToolbarComponent;
     let fixture: ComponentFixture<ToolbarComponent>;
