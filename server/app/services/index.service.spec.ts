@@ -1,77 +1,99 @@
-import { TYPES } from '@app/types';
-import { Message } from '@common/communication/message';
+// import { TYPES } from '@app/types';
+import { Drawing } from '@common/drawing.interface';
 import { expect } from 'chai';
-import { Stubbed, testingContainer } from '../../test/test-utils';
-import { DateService } from './date.service';
+// import { testingContainer } from '../../test/test-utils';
+import { describe } from 'mocha';
+import { MongoClient } from 'mongodb';
+import { DatabaseServiceMock } from './database.mock.service';
 import { IndexService } from './index.service';
 
 describe('Index service', () => {
     let indexService: IndexService;
-    let dateService: Stubbed<DateService>;
-
+    let dataBase: DatabaseServiceMock;
+    let client: MongoClient;
+    let testDrawing: Drawing;
     beforeEach(async () => {
-        const [container, sandbox] = await testingContainer();
-        container.rebind(TYPES.DateService).toConstantValue({
-            currentTime: sandbox.stub().resolves({
-                title: 'Time',
-                body: new Date(2020, 0, 10).toString(),
-            }),
-        });
-        dateService = container.get(TYPES.DateService);
-        indexService = container.get<IndexService>(TYPES.IndexService);
+        dataBase = new DatabaseServiceMock();
+        await dataBase.start();
+        // const [container] = await testingContainer();
+        // indexService = container.get<IndexService>(TYPES.IndexService);
+        // tslint:disable
+        indexService = new IndexService(dataBase as any);
+        client = (await dataBase.start()) as MongoClient;
+        testDrawing = {_id:"myFakeID1234",name:"myName",tags:["tags1"]};
+        await indexService['db'].db.collection('drawing').insertOne(testDrawing);
+        
     });
 
-    it('should return a simple message if #about is called', () => {
-        const expectedTitle = 'Basic Server About Page';
-        const expectedBody = 'Try calling helloWorld to get the time';
-        const aboutMessage = indexService.about();
-        expect(aboutMessage.title).to.equals(expectedTitle);
-        expect(aboutMessage.body).to.equals(expectedBody);
+    afterEach(async () => {
+        await dataBase.closeConnection();
+
     });
 
-    it('should return Hello World as title', (done: Mocha.Done) => {
-        indexService.helloWorld().then((result: Message) => {
-            expect(result.title).to.equals('Hello world');
-            done();
-        });
-    });
-
-    it('should have a body that starts with "Time is"', (done: Mocha.Done) => {
-        indexService.helloWorld().then((result: Message) => {
-            expect(result.body)
-                .to.be.a('string')
-                .and.satisfy((body: string) => body.startsWith('Time is'));
-            done();
-        });
-    });
-
-    it('should handle an error from DateService', (done: Mocha.Done) => {
-        dateService.currentTime.rejects(new Error('error in the service'));
-        indexService
-            .helloWorld()
-            .then((result: Message) => {
-                expect(result.title).to.equals('Error');
-                done();
-            })
-            .catch((error: unknown) => {
-                done(error);
-            });
-    });
-
-    it('should store a message', (done: Mocha.Done) => {
-        const newMessage: Message = { title: 'Hello', body: 'World' };
-        indexService.storeMessage(newMessage);
-        expect(indexService.clientMessages[0]).to.equals(newMessage);
+    it(' getDrawings should return an array with the right size',  (done: Mocha.Done) => {
+        indexService.getDrawings().then((data : Drawing[])=> 
+        expect(data.length).to.equal(1)
+        );
         done();
     });
 
-    it('should get all messages', (done: Mocha.Done) => {
-        const newMessage: Message = { title: 'Hello', body: 'World' };
-        const newMessage2: Message = { title: 'Hello', body: 'Again' };
-        indexService.clientMessages.push(newMessage);
-        indexService.clientMessages.push(newMessage2);
-        const messages = indexService.getAllMessages();
-        expect(messages).to.equals(indexService.clientMessages);
-        done();
+    it(' getDrawings should return an array with the right drawing', async () => {
+        const drawings = await indexService.getDrawings();
+        dataBase.database;
+        expect(drawings[0].name).to.equals("myName");
     });
+
+    it('An error should be thrown the connexion is closed() before a get', async () =>{
+        await client.close();
+        expect(indexService.getDrawings()).to.eventually.be.rejectedWith(
+            Error
+          );
+    });
+
+    it('An error should be thrown the connexion is closed() before a post', async () =>{
+        await client.close();
+        let secondDrawing = {_id:"012345678910",name:"myName",tags:["tags2"]};
+        expect(indexService.saveDrawing(secondDrawing)).to.eventually.be.rejectedWith(
+            Error
+          );
+    });
+
+    it('An error should be thrown the connexion is closed() before a delete', async () =>{
+        await client.close();
+        expect(indexService.deleteDoc(testDrawing._id)).to.eventually.be.rejectedWith(
+            Error
+          );
+    });
+
+    it('saveDrawing should add a drawing to the dataBase', async () => {
+        
+        let secondDrawing = {_id:"012345678910",name:"myName",tags:["tags2"]};
+        await indexService.saveDrawing(secondDrawing);
+        const drawings = await indexService.getDrawings();
+        for(let i = 0; i <drawings.length; i ++){
+            expect(drawings[i].name).to.equals("myName");
+        }
+        expect(drawings.length).to.equals(2);
+        
+    });
+
+    it('DeleteDoc should delete a drawing by its id', async () => {
+        
+        let secondDrawing = {_id:"012345678910",name:"myName",tags:["tags2"]};
+        await indexService.saveDrawing(secondDrawing);
+        let drawings = await indexService.getDrawings();
+        expect(drawings.length).to.equals(2);
+        await indexService.deleteDoc(secondDrawing._id);
+        drawings = await indexService.getDrawings();
+        expect(drawings.length).to.equals(1);
+        expect(drawings[0]._id).to.equals(testDrawing._id);
+        
+    });
+
+
+
+    
+
+    
+
 });

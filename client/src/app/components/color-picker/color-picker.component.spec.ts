@@ -23,6 +23,7 @@ describe('ColorPickerComponent', () => {
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
         // tslint:disable:max-file-line-count
+        /* tslint:disable */
     });
 
     it('should create', () => {

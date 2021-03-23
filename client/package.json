@@ -29,6 +29,8 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.2",
     "@material/slider": "^9.0.0",
     "@material/tooltip": "^10.0.0",
+    "bson": "^4.2.3",
+    "bson-objectid": "^2.0.1",
     "double-ended-queue": "^2.1.0-0",
     "hammerjs": "^2.0.8",
     "queue-typescript": "^1.0.1",

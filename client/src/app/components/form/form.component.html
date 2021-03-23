@@ -1,0 +1,23 @@
+<form [formGroup]="drawingForm">
+    <!--Value: {{ drawingForm.value | json }}-->
+
+    <mat-form-field class="full">
+        <input matInput placeholder="name" formControlName="name" (focus)="disableShortcut()" (blur)="enableShortcut()" onkeypress="return (event.keyCode!=13);" />
+        <mat-error *ngIf="name.invalid && name.touched"> Le nom doit avoir une longueur entre 5 et 10 </mat-error>
+    </mat-form-field>
+
+    <div formArrayName="tags">
+        <div *ngFor="let tags of tagsForms.controls; let i = index" [formGroupName]="i">
+            <mat-form-field>
+                <input matInput placeholder="tag" formControlName="tag" (focus)="disableShortcut()" (blur)="enableShortcut()" onkeypress="return (event.keyCode!=13);" />
+                <mat-error *ngIf="tags.invalid && tags.touched"> Le tag ne doit contenir que des lettres </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="addTags()">Rajouter étiquette</button>
+    <br>
+    <button mat-raised-button color="primary" (click)="removeTags()">Enlever étiquette</button>
+
+    <button mat-raised-button [disabled]="drawingForm.invalid" (click)="save(); this['toolManager'].showSaveMenu = false">Save</button>
+</form>
