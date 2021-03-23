@@ -6,6 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/drawing/resize.service';
 import { KeyboardShortcutManagerService } from '@app/services/tools/keyboard-shortcut-manager.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 @Component({
     selector: 'app-drawing',
@@ -16,6 +17,7 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: true }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('backgroundCanvas', { static: true }) backgroundLayer: ElementRef<HTMLCanvasElement>;
+    @ViewChild('input') input: ElementRef;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -28,6 +30,7 @@ export class DrawingComponent implements AfterViewInit {
     resizeService: ResizeService;
     windowSize: Vec2 = { x: window.innerWidth, y: window.innerHeight };
     timeOutDuration: number = 170;
+    shortcuts: ShortcutInput[] = [];
 
     tools: Tool[];
     currentTool: Tool;
@@ -62,13 +65,33 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.backgroundCtx = this.backgroundCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.shortcuts.push(
+            {
+                key: 'ctrl + a',
+                preventDefault: true,
+                command: () => {
+                    this.toolManager.setTool(this.toolManager.rectangleSelection);
+                    this.toolManager.rectangleSelection.selectAll();
+                },
+            },
+            {
+                key: 'ctrl + o',
+                preventDefault: true,
+                command: () => {
+                    this.toolManager.clearArrays();
+                },
+            },
+        );
         window.addEventListener('keydown', (event: KeyboardEvent) => {
+            event.preventDefault();
             this.shortcutKeyboardManager.onKeyPress(event.key);
         });
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
-        window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (event.key === 'Control') {
-                this.shortcutKeyboardManager.waitForOPress();
+        window.addEventListener('keyup', (e) => {
+            if (this.toolManager.currentTool === this.toolManager.ellipseSelection) {
+                this.toolManager.ellipseSelection.keyupHandler(e);
+            } else if (this.toolManager.currentTool === this.toolManager.rectangleSelection) {
+                this.toolManager.rectangleSelection.keyupHandler(e);
             }
         });
     }
@@ -109,6 +132,8 @@ export class DrawingComponent implements AfterViewInit {
     onMouseUp(event: MouseEvent): void {
         if (this.resizeService.mouseDown) {
             this.resizeService.stopResize(this.canvasSize, this.baseCanvas);
+            // this.resizeService.stopResize(this.canvasSize, this.previewCanvas);
+            // event.stopImmediatePropagation();
         } else {
             this.currentTool.onMouseUp(event);
         }
