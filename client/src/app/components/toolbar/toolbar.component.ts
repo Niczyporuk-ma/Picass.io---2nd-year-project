@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Tool } from '@app/classes/tool';
+import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
+import { FormComponent } from '@app/components/form/form.component';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
-import { faDownload, faEraser, faEyeDropper, faPalette, faPen, faSlash, faSprayCan } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faEraser, faEyeDropper, faImages, faPalette, faPen, faSave, faSlash, faSprayCan } from '@fortawesome/free-solid-svg-icons';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
@@ -31,11 +33,25 @@ export class ToolbarComponent {
     faDownload: IconDefinition = faDownload;
     faEyeDropper: IconDefinition = faEyeDropper;
     faSprayCan: IconDefinition = faSprayCan;
+    faImages: IconDefinition = faImages;
+    faSave: IconDefinition = faSave;
 
     constructor(public toolManager: ToolManagerService, public modal: MatDialog) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
         // source: https://www.npmjs.com/package/ng-keyboard-shortcuts
+        this.shortcuts.push(
+            {
+                key: 'ctrl + g',
+                preventDefault: true,
+                command: () => this.openCarousel(),
+            },
+            {
+                key: 'ctrl + s',
+                preventDefault: true,
+                command: () => this.openSaveDrawingForm(),
+            },
+        );
         this.shortcuts.push({
             key: 'ctrl + e',
             preventDefault: true,
@@ -125,11 +141,20 @@ export class ToolbarComponent {
     changeDropletDiameter(diameter: number): void {
         this.toolManager.airbrushService.dropletDiameter = diameter;
     }
+
     disableShortcut(): void {
         this.toolManager.allowKeyPressEvents = false;
     }
 
     enableShortcut(): void {
         this.toolManager.allowKeyPressEvents = true;
+    }
+
+    openCarousel(): void {
+        this.modal.open(CarrouselComponent);
+    }
+
+    openSaveDrawingForm(): void {
+        this.modal.open(FormComponent);
     }
 }

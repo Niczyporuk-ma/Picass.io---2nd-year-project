@@ -16,7 +16,7 @@ describe('IndexService', () => {
         httpMock = TestBed.inject(HttpTestingController);
         // BASE_URL is private so we need to access it with its name as a key
         // Try to avoid this syntax which violates encapsulation
-        // tslint:disable*
+        // tslint:disable
         // tslint:disable:no-string-literal
         // tslint:disable:no-empty
         baseUrl = service['BASE_URL'];
@@ -59,13 +59,4 @@ describe('IndexService', () => {
         // actually send the request
     });
 
-    it('should handle http error safely', () => {
-        service.basicGet().subscribe((response: Drawing[]) => {
-            expect(response).toBeUndefined();
-        }, fail);
-
-        const req = httpMock.expectOne(baseUrl + '/drawing');
-        expect(req.request.method).toBe('GET');
-        req.error(new ErrorEvent('Random error occured'));
-    });
 });

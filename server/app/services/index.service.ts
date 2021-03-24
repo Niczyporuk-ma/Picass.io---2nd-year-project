@@ -3,8 +3,10 @@ import { DatabaseService } from '@app/services/database.service';
 import { TYPES } from '@app/types';
 import { Drawing } from '@common/drawing.interface';
 import { ObjectID } from 'bson';
+import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
+
 const ERROR_CODE = 500;
 @injectable()
 export class IndexService {
@@ -30,27 +32,17 @@ export class IndexService {
             });
     }
 
-    // Peut etre utile ailleur
-
-    // async modifyDoc(drawing: Drawing): Promise<void> {
-    //     let filterQuery: FilterQuery<Drawing> = { name: drawing.name };
-    //     let updateQuery: UpdateQuery<Drawing> = {
-    //         $set: {
-    //             name: drawing.name,
-    //             tags: ['abc', 'aer'],
-    //         },
-    //     };
-
-    //     await this.db.db
-    //         .collection('drawing')
-    //         .updateMany(filterQuery, updateQuery)
-    //         .catch((error: Error) => {
-    //             throw new HttpException(500, 'Failed to modify drawing');
-    //         });
-    // }
-
     async getDrawings(): Promise<Drawing[]> {
         const drawings = await this.db.db.collection('drawing').find({}).toArray();
         return drawings;
+    }
+
+    async deleteDrawingFromServer(id: string): Promise<void> {
+        // source : https://nodejs.org/docs/latest/api/fs.html#fs_fs_unlink_path_callback
+        fs.unlink('uploads/' + id + '.png', (err) => {
+            if (err) {
+                throw err;
+            }
+        });
     }
 }

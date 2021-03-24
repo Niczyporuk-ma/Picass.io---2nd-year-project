@@ -4,6 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
+import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
 
 class ToolStub extends Tool {}
 
@@ -209,5 +210,16 @@ describe('DrawingComponent', () => {
         component.ngAfterViewInit();
         expect(component['baseCtx'].fillStyle).toEqual('#ffffff');
         expect(fillRectSpy).toHaveBeenCalledWith(0, 0, 5, 1555);
+    });
+
+    it(' ctrl + a should call setTool of toolManager', () => {
+        const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
+        const ctrlO = component.shortcuts.find((x) => x.key === 'ctrl + o');
+        const ctrlOSpy = spyOn(ctrlO as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'a' });
+        const setToolSpy = spyOn(component.toolManager, 'setTool').and.callThrough();
+        ctrlA?.command({ event: keyboardEvent, key: 'a' } as ShortcutEventOutput);
+        expect(setToolSpy).toHaveBeenCalled();
+        expect(ctrlOSpy).not.toHaveBeenCalled();
     });
 });

@@ -2,6 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
+import { FormComponent } from '@app/components/form/form.component';
 import { ToolbarComponent } from './toolbar.component';
 
 class MatDialogMock {
@@ -163,9 +164,21 @@ describe('ToolbarComponent', () => {
         expect(component.toolManager.polygonService.contour).toEqual(true);
     });
 
-    it('export should open a modal window', () => {
+    it('export should open a modal window for the ExportDrawingComponent', () => {
         spyOn(modal, 'open').and.callThrough();
         component.export();
         expect(modal.open).toHaveBeenCalledWith(ExportDrawingComponent);
+    });
+
+    it('openSaveDrawingForm should open a modal window for the FormComponent', () => {
+        spyOn(modal, 'open').and.callThrough();
+        component.openSaveDrawingForm();
+        expect(modal.open).toHaveBeenCalledWith(FormComponent);
+    });
+
+    it('openCarousel should open a modal window', () => {
+        spyOn(modal, 'open').and.callThrough();
+        component.openSaveDrawingForm();
+        expect(modal.open).toHaveBeenCalled();
     });
 });

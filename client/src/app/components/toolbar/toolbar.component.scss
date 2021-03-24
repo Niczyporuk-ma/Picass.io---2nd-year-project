@@ -50,11 +50,15 @@ button:focus {
 }
 
 mat-button-toggle-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
     z-index: 3;
     position: relative;
 }
 
 mat-button-toggle {
+    flex-grow: 1;
     background-color: rgba(83, 101, 119);
     color: white;
     width: 81.5px;
@@ -92,6 +96,7 @@ mat-card-subtitle {
     bottom: 45px;
     font-weight: bold;
     color: white;
+    width: 50px;
 }
 
 .Slider {

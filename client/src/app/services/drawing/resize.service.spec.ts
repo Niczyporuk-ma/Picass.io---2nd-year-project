@@ -48,7 +48,7 @@ describe('ResizeService', () => {
     it('startResize shouldnt set resizeActive to false on right click', () => {
         const rightClickMouseEvent: MouseEvent = { button: 2 } as MouseEvent;
         service.startResize(rightClickMouseEvent);
-        expect(service['drawingService'].resizeActive).toEqual(true);
+        expect(service.drawingService.resizeActive).toEqual(true);
     });
 
     it('startResize should set mouseDown to false on right click', () => {

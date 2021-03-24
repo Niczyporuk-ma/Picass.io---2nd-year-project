@@ -1,6 +1,7 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
 import { MenuComponent } from './menu.component';
 
@@ -12,7 +13,7 @@ describe('MenuComponent', () => {
         TestBed.configureTestingModule({
             declarations: [MenuComponent, CarrouselComponent],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
-            providers: [HttpClient, HttpHandler],
+            providers: [HttpClient, HttpHandler, [{ provide: MatDialog, useValue: {} }]],
         }).compileComponents();
     }));
 

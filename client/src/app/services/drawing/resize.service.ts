@@ -22,6 +22,7 @@ export class ResizeService {
     startResize(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         this.drawingService.resizeActive = true;
+        // event.stopImmediatePropagation();
     }
 
     resize(event: MouseEvent, canvas: DOMRect): void {

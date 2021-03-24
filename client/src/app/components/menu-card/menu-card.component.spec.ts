@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { MenuComponent } from '@app/components/menu/menu.component';
 import { MenuCardComponent } from './menu-card.component';
 
@@ -11,6 +12,7 @@ describe('MenuCardComponent', () => {
         TestBed.configureTestingModule({
             declarations: [MenuCardComponent, MenuCardComponent, MenuComponent],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
+            providers: [{ provide: MatDialog, useValue: {} }],
         }).compileComponents();
     }));
 

@@ -75,7 +75,7 @@ export class ToolManagerService {
 
     clearArrays(): void {
         if (this.drawingService.drawingStarted) {
-            if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
+            if (confirm('Cette action effacera votre dessin actuel!\n Assurez-vous de le sauvegarder si vous voulez le conserver.')) {
                 for (const tool of this.tools) {
                     tool.clearArrays();
                 }

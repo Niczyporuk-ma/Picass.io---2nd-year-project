@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
@@ -75,7 +76,11 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
+        MatDialogModule,
+        MatSelectModule,
+        MatProgressSpinnerModule,
         KeyboardShortcutsModule.forRoot(),
+        MatButtonModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

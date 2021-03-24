@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Component({
@@ -13,11 +15,15 @@ export class MenuComponent {
 
     drawingService: DrawingService;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, public modal: MatDialog) {
         this.drawingService = drawingService;
     }
 
     isStarted(): boolean {
         return this.drawingService.drawingStarted;
+    }
+
+    openCarousel(): void {
+        this.modal.open(CarrouselComponent);
     }
 }

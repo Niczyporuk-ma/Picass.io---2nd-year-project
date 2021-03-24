@@ -19,6 +19,7 @@ describe('IndexController', () => {
             saveDrawing: sandbox.stub().resolves(),
             deleteDoc: sandbox.stub().resolves(),
             getDrawings: sandbox.stub().resolves([baseDrawing, baseDrawing]),
+            deleteDrawingFromServer: sandbox.stub().resolves(),
         });
         app = container.get<Application>(TYPES.Application).app;
         // tslint:disable
@@ -40,34 +41,29 @@ describe('IndexController', () => {
             .then((response: any) => {
                 expect(response.body).to.deep.equal({ message: 'Not Found', error: {} });
             });
-            
     });
 
-
     it('should return the 200 status code for a valid delete route', async () => {
-        return supertest(app)
-            .delete('/api/index/drawing/testID').expect(HTTP_STATUS_OK);
-            
+        return supertest(app).delete('/api/index/drawing/testID').expect(HTTP_STATUS_OK);
     });
 
     it('should return the 500 status code for an invalid delete route', async () => {
-        return supertest(app)
-            .delete('/api/index/falseRoute/testID').expect(HTTP_ERROR_CODE);
-            
+        return supertest(app).delete('/api/index/falseRoute/testID').expect(HTTP_ERROR_CODE);
     });
 
     it('should return the 201 status code for a valid post route', async () => {
-        return supertest(app)
-            .post('/api/index/send').expect(HTTP_STATUS_CREATED);
-            
+        return supertest(app).post('/api/index/send').expect(HTTP_STATUS_CREATED);
     });
 
-    it('should return the 500 status code for an invalid post route', async () => {
-        return supertest(app)
-            .post('/api/index/falseRoute').expect(HTTP_ERROR_CODE);
-            
-    })
+    // it('should return the 201 status code for a valid post route', async () => {
+    //     return supertest(app)
+    //         .post('/api/index/saveDrawing').expect(HTTP_STATUS_CREATED);
 
+    // });
+
+    it('should return the 500 status code for an invalid post route', async () => {
+        return supertest(app).post('/api/index/falseRoute').expect(HTTP_ERROR_CODE);
+    });
 
     /*it('should store message in the array on valid post request to /send', async () => {
         const message: Message = { title: 'Hello', body: 'World' };
