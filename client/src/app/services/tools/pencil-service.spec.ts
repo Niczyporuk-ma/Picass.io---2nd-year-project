@@ -89,14 +89,6 @@ describe('PencilService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-    // it(' onMouseUp should call clearCanvas if mouse was already down', () => {
-    //     const clearCanvasSpy = spyOn(service['drawingService'], 'clearCanvas');
-    //     service.mouseDown = true;
-
-    //     service.onMouseUp(mouseEvent);
-    //     expect(clearCanvasSpy).toHaveBeenCalled();
-    // });
-
     it(' onMouseUp should call enableUndoRedo', () => {
         const enableUndoRedoSpy = spyOn(service.undoRedoManager, 'enableUndoRedo');
         service.mouseDown = true;
