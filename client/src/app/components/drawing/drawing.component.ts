@@ -3,9 +3,10 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { Constant } from '@app/constants/general-constants-store';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ResizeService } from '@app/services/drawing/resize.service';
 import { KeyboardShortcutManagerService } from '@app/services/tools/keyboard-shortcut-manager.service';
+import { ResizeCommandService } from '@app/services/tools/tool-commands/resize-command.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 @Component({
@@ -27,9 +28,10 @@ export class DrawingComponent implements AfterViewInit {
     mouseDown: boolean = false;
     canvas: DOMRect;
     mouse: Vec2;
-    resizeService: ResizeService;
+    resizeServiceCommand: ResizeCommandService;
     windowSize: Vec2 = { x: window.innerWidth, y: window.innerHeight };
     timeOutDuration: number = 170;
+    undoRedoManager: UndoRedoManagerService;
     shortcuts: ShortcutInput[] = [];
 
     tools: Tool[];
@@ -43,18 +45,20 @@ export class DrawingComponent implements AfterViewInit {
         private drawingService: DrawingService,
         toolManager: ToolManagerService,
         keyboardManager: KeyboardShortcutManagerService,
-        resizeService: ResizeService,
+        resizeCommandService: ResizeCommandService,
+        undoRedoManager: UndoRedoManagerService,
     ) {
-        this.resizeService = resizeService;
+        this.resizeServiceCommand = resizeCommandService;
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
         this.shortcutKeyboardManager = keyboardManager;
         this.toolManager.currentToolChange.subscribe((value) => (this.currentTool = value));
         this.currentTool = this.toolManager.currentTool;
-        this.resizeService.bottomHandle = { x: this.canvasSize.x / 2, y: this.canvasSize.y };
-        this.resizeService.sideHandle = { x: this.canvasSize.x, y: this.canvasSize.y / 2 };
-        this.resizeService.cornerHandle = { x: this.canvasSize.x, y: this.canvasSize.y };
+        this.undoRedoManager = undoRedoManager;
         this.ellipseService = this.toolManager.ellipseService;
+        this.resizeServiceCommand.bottomHandle = { x: this.canvasSize.x / 2, y: this.canvasSize.y };
+        this.resizeServiceCommand.sideHandle = { x: this.canvasSize.x, y: this.canvasSize.y / 2 };
+        this.resizeServiceCommand.cornerHandle = { x: this.canvasSize.x, y: this.canvasSize.y };
     }
 
     ngAfterViewInit(): void {
@@ -83,6 +87,16 @@ export class DrawingComponent implements AfterViewInit {
                     this.toolManager.clearArrays();
                 },
             },
+            {
+                key: 'ctrl + z',
+                preventDefault: true,
+                command: () => this.undoRedoManager.undo(),
+            },
+            {
+                key: ['ctrl + shift + z'],
+                preventDefault: true,
+                command: () => this.undoRedoManager.redo(),
+            },
         );
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (this.toolManager.allowKeyPressEvents) {
@@ -106,8 +120,9 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('window:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        if (this.resizeService.mouseDown) {
-            this.resizeService.resize(event, this.canvas);
+        if (this.resizeServiceCommand.mouseDown) {
+            this.resizeServiceCommand.resize(event, this.canvas);
+            this.undoRedoManager.disableUndoRedo();
         } else if (event.pageX > this.canvas.left + window.scrollY) {
             this.currentTool.onMouseMove(event);
         }
@@ -133,15 +148,51 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        this.currentTool.onMouseDown(event);
+        if (this.resizeServiceCommand.mouseDown) {
+            this.resizeServiceCommand.startResize(event);
+            const imageTemp = new Image();
+            imageTemp.src = this.baseCanvas.nativeElement.toDataURL() as string;
+            this.resizeServiceCommand.lastImage = imageTemp;
+            this.undoRedoManager.disableUndoRedo();
+        } else {
+            this.currentTool.onMouseDown(event);
+        }
     }
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        if (this.resizeService.mouseDown) {
-            this.resizeService.stopResize(this.canvasSize, this.baseCanvas);
-            // this.resizeService.stopResize(this.canvasSize, this.previewCanvas);
-            // event.stopImmediatePropagation();
+        if (this.resizeServiceCommand.mouseDown) {
+            const resizeCommand: ResizeCommandService = new ResizeCommandService(this.drawingService);
+            this.resizeServiceCommand.baseCanvas = this.baseCanvas;
+            this.resizeServiceCommand.canvasSize = this.canvasSize;
+            this.resizeServiceCommand.isSubscribed = true;
+
+            resizeCommand.setBaseCanvas(this.baseCanvas); // maybe useless?
+            resizeCommand.setSideBools(this.resizeServiceCommand.isCorner, this.resizeServiceCommand.isSide, this.resizeServiceCommand.isBottom);
+
+            this.resizeServiceCommand.execute(this.baseCtx);
+            resizeCommand.setCanvasSize(this.canvasSize);
+            const imageTemp = new Image();
+            imageTemp.src = this.resizeServiceCommand.lastImage.src;
+            resizeCommand.lastImage = imageTemp;
+            const newCanvasSize: Vec2 = { x: this.canvasSize.x, y: this.canvasSize.y };
+
+            resizeCommand.canvasSizeObserver.subscribe((value) => {
+                this.canvasSize = value;
+                this.resizeServiceCommand.execute(this.drawingService.baseCtx);
+            });
+            resizeCommand.setHandles(
+                this.resizeServiceCommand.sideHandle,
+                this.resizeServiceCommand.bottomHandle,
+                this.resizeServiceCommand.cornerHandle,
+            );
+
+            this.undoRedoManager.resizeUndoStack.push(newCanvasSize);
+            this.undoRedoManager.undoStack.push(resizeCommand);
+
+            this.undoRedoManager.clearRedoStack();
+            this.undoRedoManager.enableUndoRedo();
+            this.resizeServiceCommand.resetSideBools();
         } else {
             this.currentTool.onMouseUp(event);
         }

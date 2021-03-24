@@ -4,6 +4,8 @@ import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { faEraser, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { EraserCommandService } from './tool-commands/eraser-command.service';
+import { UndoRedoManagerService } from './undo-redo-manager.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,9 +17,12 @@ export class EraserService extends Tool {
     indexValue: number = 3;
     minimumWidth: number = 5;
     icon: IconDefinition = faEraser;
+    undoRedoManager: UndoRedoManagerService;
+    private pathData: Vec2[];
 
-    constructor(public drawingService: DrawingService) {
+    constructor(public drawingService: DrawingService, undoRedoManager: UndoRedoManagerService) {
         super(drawingService);
+        this.clearPath();
         this.shortcut = 'e';
         this.localShortcuts = new Map();
         this.index = this.indexValue;
@@ -27,20 +32,41 @@ export class EraserService extends Tool {
             secondaryColor: 'white',
         };
         this.drawingService = drawingService;
+        this.undoRedoManager = undoRedoManager;
     }
 
     onMouseDown(mouseDownEvent: MouseEvent): void {
         this.mouseDown = mouseDownEvent.button === MouseButton.Left;
         if (this.mouseDown) {
+            this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
-            this.startingPoint = this.mouseDownCoord;
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx);
+            this.pathData.push(this.mouseDownCoord);
+            const eraserCommand: EraserCommandService = new EraserCommandService();
+            this.undoRedoManager.disableUndoRedo();
+            eraserCommand.setStyles(this.toolStyles.lineWidth);
+            eraserCommand.setCoordinates(this.pathData);
+            this.drawLine(this.drawingService.previewCtx, eraserCommand);
         }
     }
 
     onMouseUp(mouseUpEvent: MouseEvent): void {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
+            const mousePosition = this.getPositionFromMouse(mouseUpEvent);
+            this.pathData.push(mousePosition);
+
+            const eraserCommand: EraserCommandService = new EraserCommandService();
+            this.undoRedoManager.enableUndoRedo();
+            eraserCommand.setStyles(this.toolStyles.lineWidth);
+            eraserCommand.setCoordinates(this.pathData);
+
+            this.drawLine(this.drawingService.baseCtx, eraserCommand);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+
+            this.undoRedoManager.undoStack.push(eraserCommand);
+            this.undoRedoManager.clearRedoStack();
+        }
         this.mouseDown = false;
+        this.clearPath();
     }
 
     findCoordinate(): Vec2 {
@@ -57,27 +83,22 @@ export class EraserService extends Tool {
         this.cursorEffect(this.findCoordinate());
 
         if (this.mouseDown) {
+            const mousePosition = this.getPositionFromMouse(event);
+            this.pathData.push(mousePosition);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx);
+
+            const eraserCommand: EraserCommandService = new EraserCommandService();
+            eraserCommand.setStyles(this.toolStyles.lineWidth);
+            eraserCommand.setCoordinates(this.pathData);
+            this.drawLine(this.drawingService.baseCtx, eraserCommand);
 
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.cursorEffect(this.findCoordinate());
         }
     }
 
-    drawLine(ctx: CanvasRenderingContext2D): void {
-        ctx.strokeStyle = 'black';
-        ctx.beginPath();
-
-        ctx.lineWidth = this.toolStyles.lineWidth;
-        ctx.lineCap = 'square';
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.moveTo(this.startingPoint.x, this.startingPoint.y);
-        ctx.lineTo(this.currentPoint.x, this.currentPoint.y);
-        ctx.stroke();
-
-        this.startingPoint.x = this.currentPoint.x;
-        this.startingPoint.y = this.currentPoint.y;
+    drawLine(ctx: CanvasRenderingContext2D, eraserCommand: EraserCommandService): void {
+        eraserCommand.execute(ctx);
     }
 
     cursorEffect(location: Vec2): void {
@@ -99,5 +120,9 @@ export class EraserService extends Tool {
             return false;
         }
         return true;
+    }
+
+    private clearPath(): void {
+        this.pathData = [];
     }
 }

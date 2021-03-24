@@ -5,7 +5,6 @@ import { ColorPaletteComponent } from '@app/components/color-picker/color-palett
 import { MouseButton } from '@app/enums/enums';
 import { ColorService } from '@app/services/tools/color.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
 
 @Component({
     selector: 'app-color-picker',
@@ -14,7 +13,6 @@ const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
 })
 export class ColorPickerComponent {
     hue: string;
-    hexColor: string = '#FFF';
     color: string = 'rgba(0,0,0,1)';
     red: string = '';
     green: string = '';
@@ -27,11 +25,10 @@ export class ColorPickerComponent {
     greenIndex: number = 1;
     blueIndex: number = 2;
     opacityIndex: number = 3;
-    private mouseDown: boolean = false;
     isRed: boolean = false;
     isGreen: boolean = false;
     isBlue: boolean = false;
-
+    canConfirm: boolean = true;
     constructor(colorService: ColorService, public toolManager: ToolManagerService) {
         this.colorService = colorService;
         this.toolManager = toolManager;
@@ -42,16 +39,6 @@ export class ColorPickerComponent {
 
     @Output()
     colorEmitted: EventEmitter<string> = new EventEmitter(true);
-
-    changePrimaryOpacity(opacity: number): void {
-        this.colorService.primaryOpacityPreview = opacity;
-        this.colorService.setPrimaryColorWithOpacity(opacity);
-    }
-
-    changeSecondaryOpacity(opacity: number): void {
-        this.colorService.secondaryOpacityPreview = opacity;
-        this.colorService.setSecondaryColorWithOpacity(opacity);
-    }
 
     splitColor(colorToSplit: string): string[] {
         return colorToSplit.replace('rgba(', '').replace(')', '').split(',');
@@ -89,8 +76,9 @@ export class ColorPickerComponent {
 
         const regExp = new RegExp('^#[0-9A-Fa-f]{1,2}$');
         if (!regExp.test('#' + hexValue) && hexValue !== '') {
-            alert('Entrez une valeur en hexadécimal!');
+            alert('Entrez une valeur valide!');
             hexValue = '';
+            this.canConfirm = false;
         }
 
         const decimalValue = parseInt(hexValue, 16);
@@ -114,26 +102,8 @@ export class ColorPickerComponent {
             }
         }
 
-        this.setColorPreview(this.primary);
+        this.colorService.setColorPreview(this.primary, this.color);
         this.resetSelectedColors();
-    }
-
-    setColor(primary: boolean): void {
-        if (primary) {
-            this.colorService.primaryColor = this.color;
-            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
-        } else {
-            this.colorService.secondaryColor = this.color;
-            this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);
-        }
-    }
-
-    setColorPreview(primary: boolean): void {
-        if (primary) {
-            this.colorService.primaryColorPreview = this.color;
-        } else {
-            this.colorService.secondaryColorPreview = this.color;
-        }
     }
 
     rgbaToHex(colorInRgba: string): string {
@@ -170,55 +140,8 @@ export class ColorPickerComponent {
         return !Number.isNaN(num);
     }
 
-    disableShortcut(): void {
-        this.toolManager.allowKeyPressEvents = false;
-    }
-
-    enableShortcut(): void {
-        this.toolManager.allowKeyPressEvents = true;
-    }
-
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(evt: MouseEvent): void {
-        this.mouseDown = false;
-    }
-
-    onLeftClickPreviousColor(evt: MouseEvent, color: string): void {
-        this.mouseDown = evt.button === MouseButton.Left;
-        if (this.mouseDown === true) {
-            this.colorService.primaryColorPreview = color;
-            this.colorService.setPrimaryColorWithOpacity(this.colorService.primaryOpacityPreview);
-            this.adjustQueueWhenSelectingPrevious(color);
-            if (this.colorService.isConfirmed) {
-                this.colorService.isConfirmed = false;
-            }
-        }
-    }
-
-    onRightClickPreviousColor(evt: MouseEvent, color: string): boolean {
-        this.mouseDown = evt.button === MouseButton.Left;
-        this.colorService.secondaryColorPreview = color;
-        this.colorService.setSecondaryColorWithOpacity(this.colorService.secondaryOpacityPreview);
-        this.adjustQueueWhenSelectingPrevious(color);
-        if (this.colorService.isConfirmed) {
-            this.colorService.isConfirmed = false;
-        }
-        return false;
-    }
-
-    emitColor(color: string): void {
-        this.colorEmitted.emit(color);
-    }
-
-    adjustQueueWhenSelectingPrevious(color: string): void {
-        const colorTemp: string = color;
-        if (this.colorService.tenLastUsedColors.length > 1) {
-            this.colorEmitted.emit(color);
-            this.colorService.tenLastUsedColors.remove(color);
-            this.colorService.tenLastUsedColors.append(colorTemp);
-        }
-        if (this.colorService.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
-            this.colorService.tenLastUsedColors.dequeue();
-        }
+        this.colorService.mouseDown = false;
     }
 }

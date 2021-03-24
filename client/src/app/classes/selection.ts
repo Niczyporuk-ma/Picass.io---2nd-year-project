@@ -1,4 +1,6 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SelectionCommandService } from '@app/services/tools/tool-commands/selection-command.service';
+import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { Tool } from './tool';
 import { Vec2 } from './vec2';
 
@@ -22,8 +24,9 @@ export abstract class Selection extends Tool {
     anchorPoints: Vec2[];
     hasBeenReseted: boolean = false;
     currentlySelecting: boolean = false;
+    undoRedoManager: UndoRedoManagerService;
 
-    constructor(public drawingService: DrawingService) {
+    constructor(public drawingService: DrawingService, undoRedoManager: UndoRedoManagerService) {
         super(drawingService);
         this.localShortcuts = new Map([
             ['Shift', this.onShift],
@@ -32,6 +35,7 @@ export abstract class Selection extends Tool {
             ['ArrowUp', this.moveUp],
             ['ArrowDown', this.moveDown],
         ]);
+        this.undoRedoManager = undoRedoManager;
     }
 
     fixCurrentLine(): void {
@@ -62,6 +66,15 @@ export abstract class Selection extends Tool {
         this.anchorPoints = [];
         this.currentLine = [];
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        const selectionCommand: SelectionCommandService = new SelectionCommandService(this.drawingService);
+        selectionCommand.imageData = this.drawingService.baseCtx.getImageData(
+            0,
+            0,
+            this.drawingService.baseCtx.canvas.width,
+            this.drawingService.baseCtx.canvas.height,
+        );
+        this.undoRedoManager.undoStack.push(selectionCommand);
+        this.undoRedoManager.clearRedoStack();
         this.hasBeenReseted = true;
         this.currentlySelecting = false;
     }

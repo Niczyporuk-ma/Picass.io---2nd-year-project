@@ -99,24 +99,4 @@ describe('FormComponent', () => {
         component.removeTags();
         expect(spy).not.toHaveBeenCalled();
     });
-
-
-    // it('save should call sendTimeToserver', () => {
-    //     const basicPostSpy = spyOn(component['indexService'], 'basicPost').and.returnValue(of());
-    //     let tag1: AbstractControl = ('first' as unknown) as AbstractControl;
-    //     component.drawingForm.controls['tags'] = component['builder'].array([tag1]);
-    //     component.save();
-    //     expect(basicPostSpy).toHaveBeenCalled();
-    // });
-
-    /*it('save should get then name from the form  to construc the drawing document',() =>{
-    spyOn(component['indexService'],'basicPost').and.returnValue(of());
-    let tag1 : AbstractControl = "first"  as unknown as AbstractControl;
-    component.drawingForm.controls['tags'] = component['builder'].array([tag1]);
-    //component.drawingForm.controls['name'] = "nameTest" as unknown as AbstractControl;
-    let nameSpy = spyOn(component.drawingForm,'get');
-    
-    component.save();
-    expect(nameSpy).toHaveBeenCalledWith('name');
-  });*/
 });

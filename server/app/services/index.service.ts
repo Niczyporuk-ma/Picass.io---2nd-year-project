@@ -12,7 +12,6 @@ const ERROR_CODE = 500;
 export class IndexService {
     constructor(@inject(TYPES.DatabaseService) private db: DatabaseService) {}
 
-    // TODO : ceci est à titre d'exemple. À enlever pour la remise
     async saveDrawing(drawing: Drawing): Promise<void> {
         const id = new ObjectID(drawing._id);
         await this.db.db

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
+import { PolygonCommandService } from '@app/services/tools/tool-commands/polygone-command.service';
 import { PolygonService } from './polygon.service';
 
 describe('PolygonService', () => {
@@ -40,6 +41,13 @@ describe('PolygonService', () => {
         expect(getMouseFromPositionSpy).not.toHaveBeenCalled();
     });
 
+    it(' mouseDown should call disableUndoRedo()', () => {
+        const disableUndoRedoSpy = spyOn(service.undoRedoManager, 'disableUndoRedo');
+        let mouseEvent: MouseEvent = { button: MouseButton.Left } as MouseEvent;
+        service.onMouseDown(mouseEvent);
+        expect(disableUndoRedoSpy).toHaveBeenCalled();
+    });
+
     it('onMouseUp should set the endPoint when mouseDown is true', () => {
         spyOn(service['drawingService'], 'clearCanvas').and.returnValue();
         spyOn(service, 'drawLine').and.returnValue();
@@ -72,6 +80,25 @@ describe('PolygonService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
+    it(' onMouseUp should call enableUndoRedo', () => {
+        const enableUndoRedoSpy = spyOn(service.undoRedoManager, 'enableUndoRedo');
+        spyOn(service['drawingService'], 'clearCanvas').and.stub();
+        service.mouseDown = true;
+        let mouseEvent: MouseEvent = { offsetX: 120, offsetY: 14 } as MouseEvent;
+        service.onMouseUp(mouseEvent);
+        expect(enableUndoRedoSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseUp should call clearRedoStack', () => {
+        const clearRedoStackSpy = spyOn(service.undoRedoManager, 'clearRedoStack');
+        spyOn(service['drawingService'], 'clearCanvas').and.stub();
+        service.mouseDown = true;
+        let mouseEvent: MouseEvent = { offsetX: 120, offsetY: 14 } as MouseEvent;
+
+        service.onMouseUp(mouseEvent);
+        expect(clearRedoStackSpy).toHaveBeenCalled();
+    });
+
     it('onMouseUp should always set mouseDown to false', () => {
         spyOn(service['drawingService'], 'clearCanvas').and.returnValue();
         spyOn(service, 'drawLine').and.returnValue();
@@ -93,6 +120,14 @@ describe('PolygonService', () => {
         service['drawingService'].resizeActive = false;
         service.onMouseMove(mouseEvent);
         expect(service.endPoint).toEqual({ x: 120, y: 14 });
+    });
+
+    it(' mouseMove should call disableUndoRedo()', () => {
+        let mouseEvent: MouseEvent = { offsetX: 120, offsetY: 14 } as MouseEvent;
+        spyOn(service['drawingService'], 'clearCanvas').and.stub();
+        const disableUndoRedoSpy = spyOn(service.undoRedoManager, 'disableUndoRedo');
+        service.onMouseDown(mouseEvent);
+        expect(disableUndoRedoSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should call drawLine, drawCircle and clearCanvas when mouseDown is true', () => {
@@ -168,18 +203,30 @@ describe('PolygonService', () => {
             'fillStyle',
         ]);
         service.toolStyles.fill = true;
-        service.drawLine(polygonSpyObj, [
-            { x: 100, y: 113 },
-            { x: 25, y: 200 },
-        ]);
+        let command: PolygonCommandService = new PolygonCommandService();
+        service.drawLine(
+            polygonSpyObj,
+            [
+                { x: 100, y: 113 },
+                { x: 25, y: 200 },
+            ],
+            command,
+        );
+
         expect(polygonSpyObj.fill).toHaveBeenCalledTimes(1);
     });
 
     it('drawLine should put drawing started to true when the context is the baseCtx', () => {
-        service.drawLine(baseCtxStub, [
-            { x: 100, y: 113 },
-            { x: 25, y: 200 },
-        ]);
+        let command: PolygonCommandService = new PolygonCommandService();
+        service.drawLine(
+            baseCtxStub,
+            [
+                { x: 100, y: 113 },
+                { x: 25, y: 200 },
+            ],
+            command,
+        );
+
         expect(service['drawingService'].drawingStarted).toEqual(true);
     });
 
@@ -188,9 +235,10 @@ describe('PolygonService', () => {
             { x: 100, y: 113 },
             { x: 25, y: 200 },
         ];
+        let command: PolygonCommandService = new PolygonCommandService();
         let moveToSpy = spyOn(service['drawingService'].baseCtx, 'moveTo');
         service.computeCircleValues(path);
-        service.drawLine(baseCtxStub, path);
+        service.drawLine(baseCtxStub, path, command);
         expect(moveToSpy).toHaveBeenCalledWith(100, 150.5);
     });
 
@@ -199,10 +247,37 @@ describe('PolygonService', () => {
             { x: 100, y: 113 },
             { x: 25, y: 200 },
         ];
+        let command: PolygonCommandService = new PolygonCommandService();
         let lineToSpy = spyOn(service['drawingService'].baseCtx, 'lineTo');
         service.computeCircleValues(path);
-        service.drawLine(baseCtxStub, path);
+        service.drawLine(baseCtxStub, path, command);
         expect(lineToSpy).toHaveBeenCalled();
+    });
+
+    it('DrawLine should set the strokestyle to the primary color when contour is false', () => {
+        let path: Vec2[] = [
+            { x: 100, y: 113 },
+            { x: 25, y: 200 },
+        ];
+        let command: PolygonCommandService = new PolygonCommandService();
+        service.colorService.primaryColor = 'rbga(0,0,0,1)';
+        service.contour = false;
+        service.computeCircleValues(path);
+        service.drawLine(baseCtxStub, path, command);
+        expect(baseCtxStub.strokeStyle).toEqual('#000000');
+    });
+
+    it('DrawLine should set the strokestyle to the secondary color when contour is true', () => {
+        let path: Vec2[] = [
+            { x: 100, y: 113 },
+            { x: 25, y: 200 },
+        ];
+        let command: PolygonCommandService = new PolygonCommandService();
+        service.colorService.secondaryColor = 'rbga(0,0,0,1)';
+        service.contour = false;
+        service.computeCircleValues(path);
+        service.drawLine(baseCtxStub, path, command);
+        expect(baseCtxStub.strokeStyle).toEqual('#000000');
     });
 
     it('drawCircle should call arc() with the right values', () => {

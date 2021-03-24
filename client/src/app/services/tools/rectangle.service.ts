@@ -6,6 +6,8 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { faSquare, IconDefinition } from '@fortawesome/free-regular-svg-icons';
+import { RectangleCommandService } from './tool-commands/rectangle-command.service';
+import { UndoRedoManagerService } from './undo-redo-manager.service';
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +19,14 @@ export class RectangleService extends Tool {
     eventListenerIsSet: boolean;
     contour: boolean = true;
     icon: IconDefinition = faSquare;
-    constructor(drawingService: DrawingService, private squareHelperService: SquareHelperService, public colorService: ColorService) {
+    isStarted: boolean = false;
+    undoRedoManager: UndoRedoManagerService;
+    constructor(
+        drawingService: DrawingService,
+        private squareHelperService: SquareHelperService,
+        public colorService: ColorService,
+        undoRedoManager: UndoRedoManagerService,
+    ) {
         super(drawingService);
         this.shortcut = '1';
         this.localShortcuts = new Map([['Shift', this.onShift]]);
@@ -29,6 +38,7 @@ export class RectangleService extends Tool {
             fill: false,
             secondaryColor: 'black',
         };
+        this.undoRedoManager = undoRedoManager;
     }
 
     startingPoint: Vec2;
@@ -44,15 +54,19 @@ export class RectangleService extends Tool {
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
             this.startingPoint = this.mouseDownCoord;
         }
+        this.undoRedoManager.disableUndoRedo();
     }
 
     setShiftIsPressed = (keyDownShiftEvent: KeyboardEvent) => {
-        if (keyDownShiftEvent.key === 'Shift') {
-            this.shiftIsPressed = true;
-            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint]) && !this.drawingService.resizeActive) {
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
-                this.drawLine(this.drawingService.previewCtx, this.currentLine);
+        if (this.isStarted) {
+            if (keyDownShiftEvent.key === 'Shift') {
+                this.shiftIsPressed = true;
+                if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint]) && !this.drawingService.resizeActive) {
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                    this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
+                    const rectangleCommand: RectangleCommandService = new RectangleCommandService(this.squareHelperService);
+                    this.drawLine(this.drawingService.previewCtx, rectangleCommand);
+                }
             }
         }
     };
@@ -66,9 +80,12 @@ export class RectangleService extends Tool {
                 this.eventListenerIsSet = false;
                 this.currentLine = [this.startingPoint, this.endPoint];
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawLine(this.drawingService.previewCtx, this.currentLine);
+                const rectangleCommand: RectangleCommandService = new RectangleCommandService(this.squareHelperService);
+                this.drawLine(this.drawingService.previewCtx, rectangleCommand);
             } else {
                 this.shiftIsPressed = false;
+                this.drawingService.clearBackground();
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
             }
         }
     };
@@ -88,15 +105,24 @@ export class RectangleService extends Tool {
                 this.endPoint = mousePosition;
                 this.currentLine = [this.startingPoint, this.endPoint];
             }
-            this.drawLine(this.drawingService.baseCtx, this.currentLine);
+            const rectangleCommand: RectangleCommandService = new RectangleCommandService(this.squareHelperService);
+            this.undoRedoManager.enableUndoRedo();
+            this.drawLine(this.drawingService.baseCtx, rectangleCommand);
+            this.undoRedoManager.undoStack.push(rectangleCommand);
+            this.drawingService.clearBackground();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.undoRedoManager.clearRedoStack();
         }
         this.mouseDown = false;
     }
 
     onMouseMove(mouseMoveEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
+            this.undoRedoManager.disableUndoRedo();
             const mousePosition = this.getPositionFromMouse(mouseMoveEvent);
             this.endPoint = mousePosition;
+            this.drawingService.clearBackground();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             if (this.shiftIsPressed) {
                 this.currentLine = [this.startingPoint, this.squareHelperService.closestSquare([this.startingPoint, this.endPoint])];
                 if (this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint])) {
@@ -105,47 +131,31 @@ export class RectangleService extends Tool {
             } else {
                 this.currentLine = [this.startingPoint, this.endPoint];
             }
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.currentLine);
+            const rectangleCommand: RectangleCommandService = new RectangleCommandService(this.squareHelperService);
+            this.drawLine(this.drawingService.previewCtx, rectangleCommand);
         }
     }
 
-    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawLine(ctx: CanvasRenderingContext2D, rectangleCommand: RectangleCommandService): void {
+        this.isStarted = ctx === this.drawingService.previewCtx;
         this.setColors(this.colorService);
         this.setStyles();
-
-        this.drawingService.previewCtx.fillStyle = this.toolStyles.primaryColor as string;
-        this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
-
-        this.drawingService.previewCtx.strokeStyle = this.toolStyles.secondaryColor as string;
-        this.drawingService.baseCtx.strokeStyle = this.toolStyles.secondaryColor as string;
-
-        if (!this.contour) {
-            ctx.strokeStyle = this.colorService.primaryColor;
-        }
-        ctx.beginPath();
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.toolStyles.lineWidth;
-        ctx.lineCap = 'square';
-
+        rectangleCommand.setContourAndShiftBools(this.contour, this.shiftIsPressed);
+        rectangleCommand.setCoordinates(this.currentLine);
+        rectangleCommand.setToolStyles(
+            this.toolStyles.primaryColor,
+            this.toolStyles.lineWidth,
+            this.toolStyles.fill as boolean,
+            this.toolStyles.secondaryColor as string,
+        );
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
+        this.drawingService.previewCtx.fillStyle = rectangleCommand.toolStyle.primaryColor as string;
+        this.drawingService.baseCtx.fillStyle = rectangleCommand.toolStyle.primaryColor as string;
 
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[1].x, path[0].y);
-
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[0].x, path[1].y);
-
-        ctx.moveTo(path[0].x, path[1].y);
-        ctx.lineTo(path[1].x, path[1].y);
-
-        ctx.moveTo(path[1].x, path[0].y);
-        ctx.lineTo(path[1].x, path[1].y);
-        ctx.stroke();
-        if (this.toolStyles.fill) {
-            ctx.fillRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
-        }
+        this.drawingService.previewCtx.strokeStyle = rectangleCommand.toolStyle.secondaryColor as string;
+        this.drawingService.baseCtx.strokeStyle = rectangleCommand.toolStyle.secondaryColor as string;
+        rectangleCommand.execute(ctx);
     }
 }

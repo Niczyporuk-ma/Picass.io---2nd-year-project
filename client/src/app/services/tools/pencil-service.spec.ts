@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PencilCommandService } from '@app/services/tools/tool-commands/pencil-command.service';
 import { PencilService } from './pencil-service';
 
 // tslint:disable:no-any
@@ -66,6 +67,12 @@ describe('PencilService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
+    it(' mouseDown should call disableUndoRedo()', () => {
+        const disableUndoRedoSpy = spyOn(service.undoRedoManager, 'disableUndoRedo');
+        service.onMouseDown(mouseEvent);
+        expect(disableUndoRedoSpy).toHaveBeenCalled();
+    });
+
     it(' onMouseUp should call drawLine if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
@@ -82,6 +89,30 @@ describe('PencilService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
+    // it(' onMouseUp should call clearCanvas if mouse was already down', () => {
+    //     const clearCanvasSpy = spyOn(service['drawingService'], 'clearCanvas');
+    //     service.mouseDown = true;
+
+    //     service.onMouseUp(mouseEvent);
+    //     expect(clearCanvasSpy).toHaveBeenCalled();
+    // });
+
+    it(' onMouseUp should call enableUndoRedo', () => {
+        const enableUndoRedoSpy = spyOn(service.undoRedoManager, 'enableUndoRedo');
+        service.mouseDown = true;
+
+        service.onMouseUp(mouseEvent);
+        expect(enableUndoRedoSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseUp should call clearRedoStack', () => {
+        const clearRedoStackSpy = spyOn(service.undoRedoManager, 'clearRedoStack');
+        service.mouseDown = true;
+
+        service.onMouseUp(mouseEvent);
+        expect(clearRedoStackSpy).toHaveBeenCalled();
+    });
+
     it(' onMouseMove should call drawLine if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
@@ -89,6 +120,13 @@ describe('PencilService', () => {
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it(' mouseMove should call disableUndoRedo()', () => {
+        const disableUndoRedoSpy = spyOn(service.undoRedoManager, 'disableUndoRedo');
+        service.mouseDown = true;
+        service.onMouseMove(mouseEvent);
+        expect(disableUndoRedoSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should not call drawLine if mouse was not already down', () => {
@@ -108,12 +146,16 @@ describe('PencilService', () => {
             'stroke',
             'lineTo',
         ]);
-        service.drawLine(rectangleSpyObject, [
+        service.toolStyles.primaryColor = 'rbga(0,0,0,0)';
+        service.toolStyles.lineWidth = 1;
+        service['pathData'] = [
             { x: 1, y: 1 },
             { x: 1, y: 2 },
             { x: 2, y: 1 },
             { x: 2, y: 2 },
-        ]);
+        ];
+        const command: PencilCommandService = new PencilCommandService();
+        service.drawLine(rectangleSpyObject, command);
         expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
     });
 
@@ -125,7 +167,11 @@ describe('PencilService', () => {
             'stroke',
             'lineTo',
         ]);
-        service.drawLine(rectangleSpyObject, []);
+        service.toolStyles.primaryColor = 'rbga(0,0,0,0)';
+        service.toolStyles.lineWidth = 1;
+        service['pathData'] = [];
+        const command: PencilCommandService = new PencilCommandService();
+        service.drawLine(rectangleSpyObject, command);
         expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(0);
     });
 

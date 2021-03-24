@@ -7,7 +7,10 @@ describe('ToolManagerService', () => {
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
+        // Configuration du spy
+        // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
+        // tslint:disable:max-file-line-count
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],

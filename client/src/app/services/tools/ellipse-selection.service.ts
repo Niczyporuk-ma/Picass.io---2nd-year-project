@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 
 export interface ABHKAxis {
     A: number;
@@ -29,8 +30,8 @@ export class EllipseSelectionService extends Selection {
     isMovingImg: boolean = false;
     backgroundImageData: ImageData;
 
-    constructor(public drawingService: DrawingService, public squareHelperService: SquareHelperService) {
-        super(drawingService);
+    constructor(public drawingService: DrawingService, public squareHelperService: SquareHelperService, undoRedoManager: UndoRedoManagerService) {
+        super(drawingService, undoRedoManager);
         this.shortcut = 's';
         this.index = INDEX;
     }
@@ -38,6 +39,7 @@ export class EllipseSelectionService extends Selection {
     onMouseDown(mouseDownEvent: MouseEvent): void {
         this.mouseDown = mouseDownEvent.button === MouseButton.Left;
         if (this.mouseDown) {
+            this.undoRedoManager.disableUndoRedo();
             if (this.currentLine.length > 0) {
                 const ELLIPSE_PARAMETERS: ABHKAxis = this.getABHKXaxis();
                 if (!this.checkIfInsideEllipse(ELLIPSE_PARAMETERS, mouseDownEvent.offsetX, mouseDownEvent.offsetY)) {
@@ -148,6 +150,7 @@ export class EllipseSelectionService extends Selection {
 
     onMouseUp(mouseUpEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
+            this.undoRedoManager.enableUndoRedo();
             this.mouseDown = false;
             if (this.hasBeenReseted) {
                 this.hasBeenReseted = false;
@@ -219,6 +222,7 @@ export class EllipseSelectionService extends Selection {
 
     onMouseMove(mouseMoveEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive && !this.hasBeenReseted) {
+            this.undoRedoManager.disableUndoRedo();
             if (this.isMovingImg) {
                 this.moveImageData(mouseMoveEvent.offsetX, mouseMoveEvent.offsetY);
                 return;

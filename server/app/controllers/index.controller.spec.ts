@@ -55,28 +55,7 @@ describe('IndexController', () => {
         return supertest(app).post('/api/index/send').expect(HTTP_STATUS_CREATED);
     });
 
-    // it('should return the 201 status code for a valid post route', async () => {
-    //     return supertest(app)
-    //         .post('/api/index/saveDrawing').expect(HTTP_STATUS_CREATED);
-
-    // });
-
     it('should return the 500 status code for an invalid post route', async () => {
         return supertest(app).post('/api/index/falseRoute').expect(HTTP_ERROR_CODE);
     });
-
-    /*it('should store message in the array on valid post request to /send', async () => {
-        const message: Message = { title: 'Hello', body: 'World' };
-        return supertest(app).post('/api/index/send').send(message).set('Accept', 'application/json').expect(HTTP_STATUS_CREATED);
-    });*/
-
-    /*it('should return an arrat of messages on valid get request to /all', async () => {
-        indexService.getAllMessages.returns([baseMessage, baseMessage]);
-        return supertest(app)
-            .get('/api/index/all')
-            .expect(HTTP_STATUS_OK)
-            .then((response: any) => {
-                expect(response.body).to.deep.equal([baseMessage, baseMessage]);
-            });
-    });*/
 });

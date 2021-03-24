@@ -14,6 +14,7 @@ import { EraserService } from './eraser.service';
 import { PipetteService } from './pipette.service';
 import { PolygonService } from './polygon.service';
 import { RectangleService } from './rectangle.service';
+import { UndoRedoManagerService } from './undo-redo-manager.service';
 
 @Injectable({
     providedIn: 'root',
@@ -33,6 +34,7 @@ export class ToolManagerService {
         this.ellipseSelection,
         this.pipetteService,
     ];
+
     toolBoxShortcuts: Map<string, Tool>;
     lineHistory: Vec2[][] = [];
     pencilHistory: Vec2[][] = [];
@@ -41,6 +43,7 @@ export class ToolManagerService {
     blockEventListener: boolean = false;
     allowKeyPressEvents: boolean = true;
     showPalette: boolean = false;
+    undoRedoManager: UndoRedoManagerService;
     showSaveMenu: boolean = false;
 
     constructor(
@@ -51,9 +54,10 @@ export class ToolManagerService {
         public ellipseService: EllipseService,
         public colorService: ColorService,
         public drawingService: DrawingService,
-        public pipetteService: PipetteService,
+        undoRedoManager: UndoRedoManagerService,
         public airbrushService: AirbrushService,
         public polygonService: PolygonService,
+        public pipetteService: PipetteService,
         public rectangleSelection: RectangleSelectionService,
         public ellipseSelection: EllipseSelectionService,
     ) {
@@ -70,18 +74,23 @@ export class ToolManagerService {
             [this.polygonService.shortcut, this.tools[this.polygonService.index]],
             [this.rectangleSelection.shortcut, this.tools[this.rectangleSelection.index]],
             [this.ellipseSelection.shortcut, this.tools[this.ellipseSelection.index]],
+            [this.pipetteService.shortcut, this.tools[this.pipetteService.index]],
         ]);
+        this.undoRedoManager = undoRedoManager;
     }
 
     clearArrays(): void {
         if (this.drawingService.drawingStarted) {
-            if (confirm('Cette action effacera votre dessin actuel!\n Assurez-vous de le sauvegarder si vous voulez le conserver.')) {
+            if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
                 for (const tool of this.tools) {
                     tool.clearArrays();
                 }
                 this.drawingService.drawingStarted = false;
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.undoRedoManager.clearRedoStack();
+                this.undoRedoManager.clearUndoStack();
+                this.undoRedoManager.disableUndoRedo();
             }
         }
     }
@@ -89,5 +98,13 @@ export class ToolManagerService {
     setTool(tool: Tool): void {
         this.currentToolChange.next(tool);
         this.currentTool.setColors(this.colorService);
+    }
+
+    disableShortcut(): void {
+        this.allowKeyPressEvents = false;
+    }
+
+    enableShortcut(): void {
+        this.allowKeyPressEvents = true;
     }
 }

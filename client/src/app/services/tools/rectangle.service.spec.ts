@@ -2,6 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { RectangleCommandService } from '@app/services/tools/tool-commands/rectangle-command.service';
 import { RectangleService } from './rectangle.service';
 
 describe('RectangleService', () => {
@@ -14,7 +16,7 @@ describe('RectangleService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'clearBackground']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
@@ -28,6 +30,7 @@ describe('RectangleService', () => {
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
+        // tslint:disable *
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
 
@@ -67,7 +70,6 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
         const drawLineSpy = spyOn(service, 'drawLine').and.stub();
-
         service.onMouseUp(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
     });
@@ -151,7 +153,7 @@ describe('RectangleService', () => {
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.startingPoint = { x: 1, y: 5 };
         service.endPoint = { x: 5, y: 5 };
-
+        service.isStarted = true;
         service.setShiftIsPressed(event);
         expect(drawLineSpy).toHaveBeenCalled();
     });
@@ -162,12 +164,21 @@ describe('RectangleService', () => {
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.startingPoint = { x: 1, y: 1 };
         service.endPoint = { x: 5, y: 5 };
-
+        service.isStarted = true;
         service.setShiftIsPressed(event);
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
     it('setShiftIsPressed does nothing if the key isnt shift', () => {
+        service.shiftIsPressed = false;
+        service.isStarted = true;
+        const event = new KeyboardEvent('keydown', { key: 'A' });
+        service.setShiftIsPressed(event);
+        expect(service.shiftIsPressed).toBeFalse();
+    });
+
+    it('setShiftIsPressed does nothing if isStarted is false', () => {
+        service.isStarted = false;
         service.shiftIsPressed = false;
         const event = new KeyboardEvent('keydown', { key: 'A' });
         service.setShiftIsPressed(event);
@@ -229,11 +240,14 @@ describe('RectangleService', () => {
             'lineTo',
             'fillRect',
         ]);
-        service.toolStyles.fill = true;
-        service.drawLine(rectangleSpyObject, [
+        service.startingPoint = { x: 1, y: 1 };
+        service.endPoint = { x: 2, y: 2 };
+        service.currentLine = [
             { x: 1, y: 1 },
             { x: 2, y: 2 },
-        ]);
+        ];
+        service.toolStyles.fill = true;
+        service.drawLine(rectangleSpyObject, new RectangleCommandService(new SquareHelperService()));
         expect(rectangleSpyObject.fillRect).toHaveBeenCalled();
     });
 
@@ -247,10 +261,13 @@ describe('RectangleService', () => {
             'moveTo',
             'lineTo',
         ]);
-        service.drawLine(rectangleSpyObject, [
+        service.startingPoint = { x: 1, y: 1 };
+        service.endPoint = { x: 2, y: 2 };
+        service.currentLine = [
             { x: 1, y: 1 },
             { x: 2, y: 2 },
-        ]);
+        ];
+        service.drawLine(rectangleSpyObject, new RectangleCommandService(new SquareHelperService()));
         expect(rectangleSpyObject.lineTo).toHaveBeenCalledTimes(4);
         expect(rectangleSpyObject.moveTo).toHaveBeenCalledTimes(4);
     });
@@ -260,20 +277,25 @@ describe('RectangleService', () => {
             { x: 1, y: 1 },
             { x: 2, y: 2 },
         ];
+        service.startingPoint = mockPath[0];
+        service.endPoint = mockPath[1];
+        service.currentLine = [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+        ];
         service.contour = false;
         drawingServiceSpy.baseCtx.strokeStyle = 'blue';
-        service.drawLine(drawingServiceSpy.baseCtx, mockPath);
+        service.drawLine(drawingServiceSpy.baseCtx, new RectangleCommandService(new SquareHelperService()));
         expect(drawingServiceSpy.baseCtx.strokeStyle).toEqual('#000000');
     });
 
     it('drawLine should set drawingStarted to true if ctx is baseCtx', () => {
-        const mockPath: Vec2[] = [
+        drawingServiceSpy.drawingStarted = false;
+        service.currentLine = [
             { x: 1, y: 1 },
             { x: 2, y: 2 },
         ];
-        drawingServiceSpy.drawingStarted = false;
-
-        service.drawLine(drawingServiceSpy.baseCtx, mockPath);
+        service.drawLine(drawingServiceSpy.baseCtx, new RectangleCommandService(new SquareHelperService()));
         expect(drawingServiceSpy.drawingStarted).toBeTrue();
     });
 });

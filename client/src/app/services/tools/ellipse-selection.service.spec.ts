@@ -58,6 +58,13 @@ describe('EllipseSelectionService', () => {
         expect(service.mouseDown).toEqual(true);
     });
 
+    it(' mouseDown should call disableUndoRedo', () => {
+        service.mouseDown = false;
+        const disableUndoRedoSpy = spyOn(service.undoRedoManager, 'disableUndoRedo');
+        service.onMouseDown(mouseEvent);
+        expect(disableUndoRedoSpy).toHaveBeenCalled();
+    });
+
     it(' mouseDown should set mouseDown property to false on right click', () => {
         const mouseEventRClick = {
             offsetX: 25,
@@ -372,6 +379,20 @@ describe('EllipseSelectionService', () => {
         service.drawingService.resizeActive = true;
         service.onMouseUp(mouseEvent);
         expect(drawEllipseSpy).not.toHaveBeenCalled();
+    });
+
+    it(' mouseUp should call enableUndoRedo', () => {
+        service.mouseDown = true;
+        service['drawingService'].resizeActive = false;
+        const enableUndoRedoSpy = spyOn(service.undoRedoManager, 'enableUndoRedo');
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.startingPoint = mockStartingPoint;
+        service.endPoint = mockEndingPoint;
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.onMouseUp(mouseEvent);
+        expect(enableUndoRedoSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should set mouseDown as false if it was true', () => {

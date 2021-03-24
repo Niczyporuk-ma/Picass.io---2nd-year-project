@@ -1,5 +1,3 @@
-// insprired by: https://stackoverflow.com/questions/4839993/how-to-draw-polygons-on-an-html5-canvas
-
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -7,6 +5,8 @@ import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { PolygonCommandService } from './tool-commands/polygone-command.service';
+import { UndoRedoManagerService } from './undo-redo-manager.service';
 
 @Injectable({
     providedIn: 'root',
@@ -25,19 +25,26 @@ export class PolygonService extends Tool {
     angle: number;
     radius: number;
     squareCornerPos: Vec2;
+    undoRedoManager: UndoRedoManagerService;
 
-    constructor(drawingService: DrawingService, public colorService: ColorService, private squareHelper: SquareHelperService) {
+    constructor(
+        drawingService: DrawingService,
+        public colorService: ColorService,
+        private squareHelper: SquareHelperService,
+        undoRedoManager: UndoRedoManagerService,
+    ) {
         super(drawingService);
         this.shortcut = '3';
         this.localShortcuts = new Map();
         this.currentLine = [];
-        this.index = this.indexNumber;
+        this.index = this.indexNumber; // ask slimane
         this.toolStyles = {
             primaryColor: 'rgba(0, 0, 0, 1)',
             lineWidth: 1,
             fill: false,
             secondaryColor: 'black',
         };
+        this.undoRedoManager = undoRedoManager;
     }
 
     clearArrays(): void {
@@ -54,6 +61,7 @@ export class PolygonService extends Tool {
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
             this.startingPoint = this.mouseDownCoord;
         }
+        this.undoRedoManager.disableUndoRedo();
     }
 
     onMouseUp(mouseUpEvent: MouseEvent): void {
@@ -61,7 +69,11 @@ export class PolygonService extends Tool {
             const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, this.currentLine);
+            const polygonCommand: PolygonCommandService = new PolygonCommandService();
+            this.undoRedoManager.enableUndoRedo();
+            this.drawLine(this.drawingService.baseCtx, this.currentLine, polygonCommand);
+            this.undoRedoManager.undoStack.push(polygonCommand);
+            this.undoRedoManager.clearRedoStack();
         }
         this.mouseDown = false;
     }
@@ -73,7 +85,9 @@ export class PolygonService extends Tool {
             this.currentLine = [this.startingPoint, this.endPoint];
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.computeCircleValues(this.currentLine);
-            this.drawLine(this.drawingService.previewCtx, this.currentLine);
+            const polygonCommand: PolygonCommandService = new PolygonCommandService();
+            this.undoRedoManager.disableUndoRedo();
+            this.drawLine(this.drawingService.previewCtx, this.currentLine, polygonCommand);
             this.drawCircle(this.drawingService.previewCtx, this.currentLine);
         }
     }
@@ -82,10 +96,17 @@ export class PolygonService extends Tool {
         this.showNumberOfSidesInput = !this.showNumberOfSidesInput;
     }
 
-    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[], polygonCommand: PolygonCommandService): void {
         // partie couleur
         this.setColors(this.colorService);
         this.setStyles();
+        polygonCommand.setToolStyles(
+            this.toolStyles.primaryColor,
+            this.toolStyles.lineWidth,
+            this.toolStyles.fill as boolean,
+            this.toolStyles.secondaryColor as string,
+        );
+        polygonCommand.setPolygoneAttributes(this.contour, this.centerX, this.centerY, this.angle, this.radius, this.sides);
 
         this.drawingService.previewCtx.fillStyle = this.toolStyles.primaryColor as string;
         this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
@@ -93,33 +114,10 @@ export class PolygonService extends Tool {
         this.drawingService.previewCtx.strokeStyle = this.toolStyles.secondaryColor as string;
         this.drawingService.baseCtx.strokeStyle = this.toolStyles.secondaryColor as string;
 
-        if (!this.contour) {
-            ctx.strokeStyle = this.colorService.primaryColor;
-        }
-
-        ctx.beginPath();
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = this.toolStyles.lineWidth;
-        ctx.lineCap = 'square';
-
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
-
-        ctx.beginPath();
-        ctx.setLineDash([]);
-
-        ctx.moveTo(this.centerX + this.radius * Math.cos(0), this.centerY);
-
-        for (let i = 1; i <= this.sides; i++) {
-            ctx.lineTo(this.centerX + this.radius * Math.cos(i * this.angle), this.centerY + this.radius * Math.sin(i * this.angle));
-        }
-
-        ctx.stroke();
-
-        if (this.toolStyles.fill) {
-            ctx.fill();
-        }
+        polygonCommand.execute(ctx);
     }
 
     drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {

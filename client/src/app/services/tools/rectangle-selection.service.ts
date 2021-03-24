@@ -6,6 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineHelperService } from '@app/services/tools/line-helper.service';
 import { RectangleService } from '@app/services/tools/rectangle.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
+import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 
 const INDEX = 7;
 const ANCHOR_OFFSET = 3;
@@ -33,8 +34,9 @@ export class RectangleSelectionService extends Selection {
         public squareHelperService: SquareHelperService,
         public rectangleService: RectangleService,
         public lineHelper: LineHelperService,
+        undoRedoManager: UndoRedoManagerService,
     ) {
-        super(drawingService);
+        super(drawingService, undoRedoManager);
         this.shortcut = 'r';
         this.currentLine = [];
         this.index = INDEX;
@@ -59,6 +61,7 @@ export class RectangleSelectionService extends Selection {
     onMouseDown(mouseDownEvent: MouseEvent): void {
         this.mouseDown = mouseDownEvent.button === MouseButton.Left;
         if (this.mouseDown) {
+            this.undoRedoManager.disableUndoRedo();
             if (this.currentLine.length > 0) {
                 if (!this.checkIfInsideRectangle(mouseDownEvent)) {
                     this.resetState();
@@ -156,6 +159,7 @@ export class RectangleSelectionService extends Selection {
 
     onMouseUp(mouseUpEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive) {
+            this.undoRedoManager.enableUndoRedo();
             if (this.hasBeenReseted) {
                 this.hasBeenReseted = false;
                 this.mouseDown = false;
@@ -184,6 +188,7 @@ export class RectangleSelectionService extends Selection {
 
     onMouseMove(mouseMoveEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive && !this.hasBeenReseted) {
+            this.undoRedoManager.disableUndoRedo();
             this.hasBeenReseted = false;
             if (this.isMovingImg) {
                 this.moveImageData(mouseMoveEvent.offsetX, mouseMoveEvent.offsetY);

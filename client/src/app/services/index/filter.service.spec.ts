@@ -3,7 +3,6 @@ import { Drawing } from '@app/interface/drawing-interface';
 import { Image } from '@app/interface/image-interface';
 import { FilterService } from '@app/services/index/filter.service';
 
-// Mettre dans un seul fichier ???
 const DRAWINGS_URL = 'http://localhost:3000/retrieve-images/';
 const EXTENSION = '.PNG';
 

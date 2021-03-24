@@ -59,14 +59,6 @@ describe('DrawingComponent', () => {
         expect(currentTool).toEqual(toolStub);
     });
 
-    it("should call the resizeService's resize method called", () => {
-        component.resizeService.mouseDown = true;
-        const event = {} as MouseEvent;
-        const resizeSpy = spyOn(component.resizeService, 'resize').and.stub();
-        component.onMouseMove(event);
-        expect(resizeSpy).toHaveBeenCalled();
-    });
-
     it(" should call the tool's mouse move when receiving a mouse move event", () => {
         const event = { pageX: 10000000 } as MouseEvent;
         const mouseEventSpy = spyOn(component.currentTool, 'onMouseMove').and.callThrough();
@@ -98,14 +90,6 @@ describe('DrawingComponent', () => {
         component.onMouseUp(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
-    });
-
-    it('onMouseUp should call stopResize if mouseDown is true', () => {
-        component.resizeService.mouseDown = true;
-        const stopResizeSpy = spyOn(component.resizeService, 'stopResize').and.stub();
-        const event = {} as MouseEvent;
-        component.onMouseUp(event);
-        expect(stopResizeSpy).toHaveBeenCalled();
     });
 
     it(' ngAfterViewInit should add two event listener', () => {

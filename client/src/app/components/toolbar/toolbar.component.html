@@ -2,6 +2,15 @@
 <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
 
 <div class="btns">
+    <div *ngIf="this.undoRedoManager.undoDisabled == false && this.undoRedoManager.redoDisabled == false" class="undoRedo">
+        <button (click)="this.undoRedoManager.undo()" *ngIf="!this.undoRedoManager.isEmpty(this.undoRedoManager.undoStack)" class="undo">
+            <fa-icon [icon]="faUndoAlt" size="lg"></fa-icon>
+        </button>
+        <button (click)="this.undoRedoManager.redo()" *ngIf="!this.undoRedoManager.isEmpty(this.undoRedoManager.redoStack)" class="redo">
+            <fa-icon [icon]="faRedoAlt" size="lg"></fa-icon>
+        </button>
+    </div>
+
     <button (click)="this.toolManager.clearArrays()" matTooltip="Créer un nouveau dessin" matTooltipPosition="after" matTooltipShowDelay="600">
         <fa-icon [icon]="faPlusSquare" size="lg"></fa-icon>
     </button>

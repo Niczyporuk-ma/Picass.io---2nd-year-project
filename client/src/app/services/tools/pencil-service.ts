@@ -5,6 +5,8 @@ import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { faPen, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { PencilCommandService } from './tool-commands/pencil-command.service';
+import { UndoRedoManagerService } from './undo-redo-manager.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,8 +17,9 @@ export class PencilService extends Tool {
     private pathData: Vec2[];
     isEraser: boolean = false;
     icon: IconDefinition = faPen;
+    undoRedoManager: UndoRedoManagerService;
 
-    constructor(drawingService: DrawingService, public colorService: ColorService) {
+    constructor(drawingService: DrawingService, public colorService: ColorService, undoRedoManager: UndoRedoManagerService) {
         super(drawingService);
         this.clearPath();
         this.shortcut = 'c';
@@ -26,6 +29,7 @@ export class PencilService extends Tool {
             primaryColor: 'black',
             lineWidth: 1,
         };
+        this.undoRedoManager = undoRedoManager;
     }
 
     clearArrays(): void {
@@ -38,7 +42,9 @@ export class PencilService extends Tool {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
             this.pathData.push(this.mouseDownCoord);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            const pencilCommand: PencilCommandService = new PencilCommandService();
+            this.undoRedoManager.disableUndoRedo();
+            this.drawLine(this.drawingService.previewCtx, pencilCommand);
         }
     }
 
@@ -46,7 +52,15 @@ export class PencilService extends Tool {
         if (this.mouseDown && !this.drawingService.resizeActive) {
             const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+
+            const pencilCommand: PencilCommandService = new PencilCommandService();
+
+            this.drawLine(this.drawingService.baseCtx, pencilCommand);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+
+            this.undoRedoManager.undoStack.push(pencilCommand);
+            this.undoRedoManager.enableUndoRedo();
+            this.undoRedoManager.clearRedoStack();
         }
         this.mouseDown = false;
         this.clearPath();
@@ -57,25 +71,19 @@ export class PencilService extends Tool {
             const mousePosition = this.getPositionFromMouse(mouseMoveEvent);
             this.pathData.push(mousePosition);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            const pencilCommand: PencilCommandService = new PencilCommandService();
+            this.undoRedoManager.disableUndoRedo();
+            this.drawLine(this.drawingService.previewCtx, pencilCommand);
         }
     }
 
-    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawLine(ctx: CanvasRenderingContext2D, pencilCommand: PencilCommandService): void {
+        pencilCommand.setStyles(this.colorService.primaryColor, this.toolStyles.lineWidth);
+        pencilCommand.setPathData(this.pathData);
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
-        this.setColors(this.colorService);
-        this.setStyles();
-
-        ctx.beginPath();
-        ctx.lineWidth = this.toolStyles.lineWidth;
-        ctx.lineCap = 'round';
-        ctx.globalCompositeOperation = 'source-over';
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
-        }
-        ctx.stroke();
+        pencilCommand.execute(ctx);
     }
 
     private clearPath(): void {

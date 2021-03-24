@@ -5,9 +5,22 @@ import { CarrouselComponent } from '@app/components/carrousel/carrousel.componen
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { FormComponent } from '@app/components/form/form.component';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
-import { faDownload, faEraser, faEyeDropper, faImages, faPalette, faPen, faSave, faSlash, faSprayCan } from '@fortawesome/free-solid-svg-icons';
+import {
+    faDownload,
+    faEraser,
+    faEyeDropper,
+    faImages,
+    faPalette,
+    faPen,
+    faRedoAlt,
+    faSave,
+    faSlash,
+    faSprayCan,
+    faUndoAlt,
+} from '@fortawesome/free-solid-svg-icons';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
@@ -35,8 +48,10 @@ export class ToolbarComponent {
     faSprayCan: IconDefinition = faSprayCan;
     faImages: IconDefinition = faImages;
     faSave: IconDefinition = faSave;
+    faUndoAlt: IconDefinition = faUndoAlt;
+    faRedoAlt: IconDefinition = faRedoAlt;
 
-    constructor(public toolManager: ToolManagerService, public modal: MatDialog) {
+    constructor(public toolManager: ToolManagerService, public undoRedoManager: UndoRedoManagerService, public modal: MatDialog) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
         // source: https://www.npmjs.com/package/ng-keyboard-shortcuts
@@ -57,6 +72,7 @@ export class ToolbarComponent {
             preventDefault: true,
             command: () => this.export(),
         });
+        this.undoRedoManager = undoRedoManager;
     }
 
     setRectangleStyle(recStyleCode: string): void {

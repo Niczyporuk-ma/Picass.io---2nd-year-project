@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { EraserCommandService } from '@app/services/tools/tool-commands/eraser-command.service';
 import { EraserService } from './eraser.service';
 
 describe('EraserService', () => {
@@ -14,6 +15,7 @@ describe('EraserService', () => {
 
     beforeEach(() => {
         // tslint:disable:no-magic-numbers
+        // tslint:disable:no-string-literal
 
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'baseCtx.lineTo', 'baseCtx.moveTo', 'previewCtx.strokeRect']);
 
@@ -65,9 +67,53 @@ describe('EraserService', () => {
         expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
     });
 
+    it('mouseDown should push the mouseCoord to pathData', () => {
+        service.mouseDown = true;
+        service.mouseDownCoord = { x: 35, y: 35 };
+        service.onMouseDown(mouseEvent);
+        expect(service['pathData'][0]).toEqual({ x: 35, y: 35 });
+    });
+
+    it(' mouseDown should call disableUndoRedo()', () => {
+        const disableUndoRedoSpy = spyOn(service.undoRedoManager, 'disableUndoRedo');
+        service.onMouseDown(mouseEvent);
+        expect(disableUndoRedoSpy).toHaveBeenCalled();
+    });
+
     it('onMouseUp should set mouseDown property to false', () => {
         service.onMouseUp(mouseEvent);
         expect(service.mouseDown).toEqual(false);
+    });
+
+    it(' onMouseUp should call enableUndoRedo', () => {
+        const enableUndoRedoSpy = spyOn(service.undoRedoManager, 'enableUndoRedo');
+        service.mouseDown = true;
+
+        service.onMouseUp(mouseEvent);
+        expect(enableUndoRedoSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseUp should call clearRedoStack', () => {
+        const clearRedoStackSpy = spyOn(service.undoRedoManager, 'clearRedoStack');
+        service.mouseDown = true;
+
+        service.onMouseUp(mouseEvent);
+        expect(clearRedoStackSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseUp should make mouseDown false', () => {
+        service.mouseDown = true;
+
+        service.onMouseUp(mouseEvent);
+        expect(service.mouseDown).toBeFalse();
+    });
+
+    it(' onMouseUp should call clearPath', () => {
+        service['pathData'] = [{ x: 35, y: 35 }];
+        service.mouseDown = true;
+
+        service.onMouseUp(mouseEvent);
+        expect(service['pathData'].length).toEqual(0);
     });
 
     it('onMouseMove should call findCoordinate if mouse was not already down', () => {
@@ -135,13 +181,14 @@ describe('EraserService', () => {
     });
 
     it('drawLine should call moveTo and lineTo one time each', () => {
-        service.startingPoint = { x: 10, y: 30 };
-        service.currentPoint = { x: 30, y: 10 };
         const lineToSpy = spyOn(drawServiceSpy.baseCtx, 'lineTo').and.stub();
-        const moveToSpy = spyOn(drawServiceSpy.baseCtx, 'moveTo').and.stub();
-        service.drawLine(drawServiceSpy.baseCtx);
+        const command: EraserCommandService = new EraserCommandService();
+        command.setCoordinates([
+            { x: 10, y: 30 },
+            { x: 30, y: 10 },
+        ]);
+        service.drawLine(drawServiceSpy.baseCtx, command);
         expect(lineToSpy).toHaveBeenCalled();
-        expect(moveToSpy).toHaveBeenCalled();
     });
 
     it('cursorEffect should set lineWidth to 1 for the preview', () => {
