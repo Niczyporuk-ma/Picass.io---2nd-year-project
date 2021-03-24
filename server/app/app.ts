@@ -4,6 +4,7 @@ import * as cors from 'cors';
 import * as express from 'express';
 import { inject, injectable } from 'inversify';
 import * as logger from 'morgan';
+import * as multer from 'multer';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { IndexController } from './controllers/index.controller';
@@ -41,6 +42,21 @@ export class Application {
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(cookieParser());
         this.app.use(cors());
+        // source: https://www.npmjs.com/package/multer
+        // tslint:disable
+        this.app.use(
+            multer({
+                storage: multer.diskStorage({
+                    destination(req, file, callback) {
+                        callback(null, './uploads/');
+                    },
+                    filename(req, file, callback) {
+                        callback(null, file.originalname);
+                    },
+                }),
+            }).single('drawing'),
+        );
+        this.app.use('/retrieve-images', express.static('./uploads'));
     }
 
     bindRoutes(): void {

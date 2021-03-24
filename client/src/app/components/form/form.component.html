@@ -1,23 +1,39 @@
-<form [formGroup]="drawingForm">
-    <!--Value: {{ drawingForm.value | json }}-->
+<div>
+    <!-- // form: source: https://www.youtube.com/watch?v=JeeUY6WaXiA -->
+    <form [formGroup]="drawingForm" autocomplete="off">
 
-    <mat-form-field class="full">
-        <input matInput placeholder="name" formControlName="name" (focus)="disableShortcut()" (blur)="enableShortcut()" onkeypress="return (event.keyCode!=13);" />
-        <mat-error *ngIf="name.invalid && name.touched"> Le nom doit avoir une longueur entre 5 et 10 </mat-error>
-    </mat-form-field>
-
-    <div formArrayName="tags">
-        <div *ngFor="let tags of tagsForms.controls; let i = index" [formGroupName]="i">
-            <mat-form-field>
-                <input matInput placeholder="tag" formControlName="tag" (focus)="disableShortcut()" (blur)="enableShortcut()" onkeypress="return (event.keyCode!=13);" />
-                <mat-error *ngIf="tags.invalid && tags.touched"> Le tag ne doit contenir que des lettres </mat-error>
-            </mat-form-field>
+        <h3>Nommez votre dessin: </h3>
+        <mat-form-field class="full">
+            <input matInput placeholder="nom du dessin" formControlName="name" (focus)="disableShortcut()" (blur)="enableShortcut()" onkeypress="return (event.keyCode!=13);" />
+            <mat-error *ngIf="name.invalid && name.touched"> Le nom doit avoir une longueur entre 5 et 10 caractères </mat-error>
+        </mat-form-field>
+    
+        <h3>Vous pouvez aussi ajouter des étiquettes: </h3>
+    
+        <div formArrayName="tags">
+            <div *ngFor="let tags of tagsForms.controls; let i = index" [formGroupName]="i">
+                <mat-form-field>
+                    <input matInput placeholder="tag" formControlName="tag" (focus)="disableShortcut()" (blur)="enableShortcut()" onkeypress="return (event.keyCode!=13);" />
+                    <mat-error *ngIf="tags.invalid && tags.touched"> Le tag ne doit contenir que des lettres </mat-error>
+                </mat-form-field>
+            </div>
         </div>
+    <div>
+        <button mat-raised-button color="primary" (click)="addTags()">Rajouter étiquette</button>
+        <br>
+        <button mat-raised-button color="accent" (click)="removeTags()">Enlever étiquette</button>
     </div>
-
-    <button mat-raised-button color="primary" (click)="addTags()">Rajouter étiquette</button>
+    <div *ngIf="this.isLoading">
+        <mat-spinner></mat-spinner>
+    </div>
     <br>
-    <button mat-raised-button color="primary" (click)="removeTags()">Enlever étiquette</button>
-
-    <button mat-raised-button [disabled]="drawingForm.invalid" (click)="save(); this['toolManager'].showSaveMenu = false">Save</button>
-</form>
+        <br>
+        <div id="saveButton">
+            <button mat-raised-button color="accent" mat-dialog-close>Fermer</button>   
+            <button mat-raised-button [disabled]="this.isLoading || drawingForm.invalid" (click)="save();" 
+            mat-button color="primary">Save</button>
+        </div>
+      
+    </form>
+    
+</div>

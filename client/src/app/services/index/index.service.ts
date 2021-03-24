@@ -13,7 +13,7 @@ export class IndexService {
     constructor(private http: HttpClient) {}
 
     basicGet(): Observable<Drawing[]> {
-        return this.http.get<Drawing[]>(this.BASE_URL + '/drawing').pipe(catchError(this.handleError<Drawing[]>('basicGet')));
+        return this.http.get<Drawing[]>(this.BASE_URL + '/drawing');
     }
 
     basicPost(drawing: Drawing): Observable<void> {
@@ -24,8 +24,8 @@ export class IndexService {
         return this.http.delete(this.BASE_URL + '/drawing/' + id).pipe(catchError(this.handleError<void>('basicDelete'))) as Observable<void>;
     }
 
-    basicPatch(drawing: Drawing): Observable<void> {
-        return this.http.patch(this.BASE_URL + '/modify', drawing).pipe(catchError(this.handleError<void>('basicPost'))) as Observable<void>;
+    saveDrawingFile(formData: FormData): Observable<FormData> {
+        return this.http.post<FormData>(this.BASE_URL + '/savedDrawings', formData);
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

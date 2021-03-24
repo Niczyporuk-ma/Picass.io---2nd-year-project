@@ -1,30 +1,94 @@
-<mat-list-option (click)="toggleCarrousel()">
-    Ouvrir le carrousel de dessins
-    <mat-divider></mat-divider>
-</mat-list-option>
-<mat-card class="card" *ngIf="visible">
-    Le carrousel n'est pas encore disponible !
+<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
 
+<mat-card class="card">
     <br />
+    <h3>Entrez des étiquettes séparées par des virgules</h3>
+    <h3>Si vous ne mettez aucune étiquette, vous allez voir tous les dessin de notre base de données!</h3>
 
-    <input placeholder="tag" (keyup)="this.filterService.extractInput($event)" />
-    <button (click)="getDrawings()">Trouver un dessin</button>
-    <div *ngIf="this.isErrorGetting">Aucun dessin trouve.</div>
-    <div *ngIf="!this.isErrorGetting">
-        <div *ngFor="let drawing of this.dataFiltered">
-            Nom du dessin trouve: {{ drawing.name }}
-            <div>Id du dessin: {{ drawing._id.toString() }}</div>
-            <div *ngFor="let tags of drawing.tags">{{ tags.tag }}</div>
+    <div *ngIf="this.isLoading">Hello</div>
+
+    <input matInput placeholder="étiquette1,étiquette2" (keyup)="this.filterService.extractInput($event)" (keydown)="disableShortcut()" />
+    <button mat-raised-button color="primary" (click)="getDrawings()" (click)="enableShortcut()">Trouver un dessin</button>
+    <h4>Attention! Ne mettez pas d'espaces!</h4>
+
+    <div *ngIf="this.isLoading">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="this.showImages">
+        <div id="carrousel">
+            <div *ngIf="this.availableImages.length > 0">
+                <div>nom: {{ this.availableImages[this.firstSlideIndex].name }}</div>
+                <img #firstSlide [src]="this.availableImages[this.firstSlideIndex].path" />
+                <div *ngFor="let tags of this.availableImages[this.firstSlideIndex].tags">
+                    {{ tags.tag }}
+                </div>
+                <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="loadDrawing(this.availableImages[this.firstSlideIndex].path)"
+                    mat-dialog-close
+                    routerLink="/editor"
+                >
+                    Continuer ce dessin
+                </button>
+                <button mat-raised-button color="accent" (click)="deleteDrawings(this.availableImages[this.firstSlideIndex].id)">
+                    supprimer le dessin
+                </button>
+            </div>
+
+            <div *ngIf="this.availableImages.length > 1">
+                <div>nom: {{ this.availableImages[this.secondSlideIndex].name }}</div>
+                <img #secondSlide [src]="this.availableImages[this.secondSlideIndex].path" />
+                <div *ngFor="let tags of this.availableImages[this.secondSlideIndex].tags">
+                    {{ tags.tag }}
+                </div>
+                <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="loadDrawing(this.availableImages[this.secondSlideIndex].path)"
+                    mat-dialog-close
+                    routerLink="/editor"
+                >
+                    Continuer ce dessin
+                </button>
+                <button mat-raised-button color="accent" (click)="deleteDrawings(this.availableImages[this.secondSlideIndex].id)">
+                    supprimer le dessin
+                </button>
+            </div>
+
+            <div *ngIf="this.availableImages.length > 2">
+                <div>nom: {{ this.availableImages[this.thirdSlideIndex].name }}</div>
+                <img #thirdSlide [src]="this.availableImages[this.thirdSlideIndex].path" />
+                <div *ngFor="let tags of this.availableImages[this.thirdSlideIndex].tags">
+                    {{ tags.tag }}
+                </div>
+                <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="loadDrawing(this.availableImages[this.thirdSlideIndex].path)"
+                    mat-dialog-close
+                    routerLink="/editor"
+                >
+                    Continuer ce dessin
+                </button>
+                <button mat-raised-button color="accent" (click)="deleteDrawings(this.availableImages[this.thirdSlideIndex].id)">
+                    supprimer le dessin
+                </button>
+            </div>
+
+            <div *ngIf="this.availableImages.length > 3">
+                <button class="control prev" (click)="moveLeft()">
+                    <span class="arrow left"></span>
+                </button>
+                <button class="control next" (click)="moveRight()">
+                    <span class="arrow right"></span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <div *ngIf="this.isPossibleToDelete">
-        <input placeholder="id" (keyup)="this.filterService.extractID($event)" />
-        <button (click)="deleteDrawings()">Supprimer un dessin</button>
-        <div *ngIf="this.isErrorRemoving">Aucun dessin supprime, veuiller rentre un id existant</div>
-    </div>
-
     <mat-card-actions>
-        <button (click)="toggleCarrousel()">Fermer</button>
+        <button mat-raised-button color="accent" mat-dialog-close>Fermer</button>
     </mat-card-actions>
 </mat-card>

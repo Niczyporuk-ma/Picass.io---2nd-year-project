@@ -1,17 +1,21 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
+
 <div class="btns">
     <button (click)="this.toolManager.clearArrays()" matTooltip="Créer un nouveau dessin" matTooltipPosition="after" matTooltipShowDelay="600">
         <fa-icon [icon]="faPlusSquare" size="lg"></fa-icon>
     </button>
 
+    <button (click)="openSaveDrawingForm()" matTooltip="Sauvegarder le dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faSave" size="lg"></fa-icon>
+    </button>
+
+    <button (click)="openCarousel()" matTooltip="Ouvrir le carrousel de dessins" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faImages" size="lg"></fa-icon>
+    </button>
     <button (click)="export()" matTooltip="Exporter le dessin" matTooltipPosition="after" matTooltipShowDelay="600">
         <fa-icon [icon]="faDownload" size="lg"></fa-icon>
     </button>
-    <button (click)="showSaveDrawing()">Save</button>
-    <div *ngIf="this.toolManager.showSaveMenu">
-        <app-form></app-form>
-    </div>
 
     <button
         (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()"
@@ -54,6 +58,13 @@
     >
         <fa-icon [icon]="faSquare" size="lg"></fa-icon>
     </button>
+
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService">
+        <mat-button-toggle value="1" (change)="setRectangleStyle($event.value)">Remplir</mat-button-toggle>
+        <mat-button-toggle value="2" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
+        <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
+    </mat-button-toggle-group>
+
     <button
         (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth()"
         matTooltip="Outil ellipse (2): Cliquer et glisser, et relâcher pour déssiner un ellipse. tenir (Shift) pour dessiner un cercle. Cliquez ici pour voir plus d'options"
@@ -94,6 +105,12 @@
             <mat-card-subtitle>{{ this.toolManager.polygonService.sides }}</mat-card-subtitle>
         </mat-card>
     </div>
+
+    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService">
+        <mat-button-toggle value="1" (change)="setEllipseStyle($event.value)">Remplir</mat-button-toggle>
+        <mat-button-toggle value="2" (change)="setEllipseStyle($event.value)">Contour</mat-button-toggle>
+        <mat-button-toggle value="3" (change)="setEllipseStyle($event.value)">Les Deux</mat-button-toggle>
+    </mat-button-toggle-group>
 
     <button
         (click)="onPressPalette()"
@@ -137,18 +154,6 @@
         </mat-card>
     </div>
 
-    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService">
-        <mat-button-toggle value="1" (change)="setEllipseStyle($event.value)">Remplir</mat-button-toggle>
-        <mat-button-toggle value="2" (change)="setEllipseStyle($event.value)">Contour</mat-button-toggle>
-        <mat-button-toggle value="3" (change)="setEllipseStyle($event.value)">Les Deux</mat-button-toggle>
-    </mat-button-toggle-group>
-
-    <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService">
-        <mat-button-toggle value="1" (change)="setRectangleStyle($event.value)">Remplir</mat-button-toggle>
-        <mat-button-toggle value="2" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
-        <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
-    </mat-button-toggle-group>
-
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.polygonService">
         <mat-button-toggle value="1" (change)="setPolygonStyle($event.value)">Remplir</mat-button-toggle>
         <mat-button-toggle value="2" (change)="setPolygonStyle($event.value)">Contour</mat-button-toggle>
@@ -161,7 +166,6 @@
     </mat-button-toggle-group>
 
     <app-pipette *ngIf="this.toolManager.currentTool == this.toolManager.pipetteService"></app-pipette>
-    <!-- calls pipette component html -->
 
     <br />
     <div class="junctionRadiusSlider" *ngIf="this.toolManager.currentTool == this.toolManager.lineService">

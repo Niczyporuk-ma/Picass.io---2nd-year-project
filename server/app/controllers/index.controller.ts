@@ -104,6 +104,32 @@ export class IndexController {
         /**
          * @swagger
          *
+         * /api/index/savedDrawings:
+         *   post:
+         *     description: Save image posted
+         *     tags:
+         *       - Index
+         *       - Message
+         *     requestBody:
+         *         description:
+         *         required: true
+         *         content:
+         *           application/json:
+         *             schema:
+         *               $ref: '#/definitions/Message'
+         *     produces:
+         *       - application/json
+         *     responses:
+         *       201:
+         *         description: Created
+         */
+        this.router.post('/savedDrawings', (req: Request, res: Response, next: NextFunction) => {
+            res.sendStatus(HTTP_STATUS_CREATED);
+        });
+
+        /**
+         * @swagger
+         *
          * /api/index/all:
          *   get:
          *     description: Return all messages
@@ -127,6 +153,7 @@ export class IndexController {
 
         this.router.delete('/drawing/:id', async (req: Request, res: Response, next: NextFunction) => {
             this.indexService.deleteDoc(req.params.id).then(() => res.sendStatus(HTTP_STATUS_OK));
+            this.indexService.deleteDrawingFromServer(req.params.id);
         });
     }
 }

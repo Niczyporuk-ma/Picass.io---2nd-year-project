@@ -1,3 +1,5 @@
+// insprired by: https://stackoverflow.com/questions/4839993/how-to-draw-polygons-on-an-html5-canvas
+
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -31,7 +33,7 @@ export class PolygonService extends Tool {
         this.currentLine = [];
         this.index = this.indexNumber;
         this.toolStyles = {
-            primaryColor: 'rgba(255, 0, 0, 1)',
+            primaryColor: 'rgba(0, 0, 0, 1)',
             lineWidth: 1,
             fill: false,
             secondaryColor: 'black',
