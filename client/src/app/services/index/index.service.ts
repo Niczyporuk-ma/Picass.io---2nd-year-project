@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Message } from '@common/communication/message';
+import { Drawing } from '@common/drawing.interface';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -12,12 +12,20 @@ export class IndexService {
 
     constructor(private http: HttpClient) {}
 
-    basicGet(): Observable<Message> {
-        return this.http.get<Message>(this.BASE_URL).pipe(catchError(this.handleError<Message>('basicGet')));
+    basicGet(): Observable<Drawing[]> {
+        return this.http.get<Drawing[]>(this.BASE_URL + '/drawing');
     }
 
-    basicPost(message: Message): Observable<void> {
-        return this.http.post<void>(this.BASE_URL + '/send', message).pipe(catchError(this.handleError<void>('basicPost')));
+    basicPost(drawing: Drawing): Observable<void> {
+        return this.http.post<void>(this.BASE_URL + '/send', drawing).pipe(catchError(this.handleError<void>('basicPost')));
+    }
+
+    basicDelete(id: string): Observable<void> {
+        return this.http.delete(this.BASE_URL + '/drawing/' + id).pipe(catchError(this.handleError<void>('basicDelete'))) as Observable<void>;
+    }
+
+    saveDrawingFile(formData: FormData): Observable<FormData> {
+        return this.http.post<FormData>(this.BASE_URL + '/savedDrawings', formData);
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

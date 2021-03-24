@@ -1,11 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { ColorService } from './color.service';
+import { ColorService } from '@app/services/tools/color.service';
 
 describe('ColorService', () => {
     let service: ColorService;
 
     beforeEach(() => {
+        // Configuration du spy du service
+        // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
+        // tslint:disable:max-file-line-count
 
         TestBed.configureTestingModule({});
         service = TestBed.inject(ColorService);
@@ -293,5 +296,142 @@ describe('ColorService', () => {
         expect(removeSpy).toHaveBeenCalledTimes(1);
         expect(appendSpy).toHaveBeenCalledTimes(1);
         expect(dequeueSpy).not.toHaveBeenCalled();
+    });
+
+    it(' pushToQueueOnConfirm append with color if the length of tenLastUsedColors is strictly larger than 1', () => {
+        const appendSpy = spyOn(service.tenLastUsedColors, 'append').and.callThrough();
+        Object.defineProperty(service.tenLastUsedColors, 'length', { value: 3 });
+        service.pushToQueueOnConfirm('rgba(100,0,42,1)');
+        expect(appendSpy).toHaveBeenCalledWith('rgba(100,0,42,1)');
+    });
+
+    it(' pushToQueueOnConfirm should call dequeue if the length of tenLastUsedColors is strictly larger than 10', () => {
+        const dequeueSpy = spyOn(service.tenLastUsedColors, 'dequeue').and.callThrough();
+        Object.defineProperty(service.tenLastUsedColors, 'length', { value: 25 });
+        service.pushToQueueOnConfirm('rgba(100,0,42,1)');
+        expect(dequeueSpy).toHaveBeenCalled();
+    });
+
+    it(' onLeftClickPreviousColor should affect primaryColorPreview with color and call both setPrimaryColorWithOpacity and pushToQueueOnConfirm if contextmenu is false and mouseDown is true', () => {
+        const mouseEventLClick = {
+            offsetX: 25,
+            offsetY: 25,
+            button: 0,
+        } as MouseEvent;
+        service['mouseDown'] = true;
+        const setPrimaryColorWithOpacitySpy = spyOn(service, 'setPrimaryColorWithOpacity').and.callThrough();
+        const pushToQueueOnCOnfirmSpy = spyOn(service, 'pushToQueueOnConfirm').and.callThrough();
+        service.onLeftClickPreviousColor(mouseEventLClick, 'rgba(0,0,42,1)');
+        expect(service.primaryColorPreview).toEqual('rgba(0,0,42,1)');
+        expect(setPrimaryColorWithOpacitySpy).toHaveBeenCalledWith(service.primaryOpacityPreview);
+        expect(pushToQueueOnCOnfirmSpy).toHaveBeenCalledWith('rgba(0,0,42,1)');
+    });
+
+    it(' onLeftClickPreviousColor should affect isConfirmed with false if contextmenu is false, mouseDown is true and isConfirmed is false', () => {
+        const mouseEventLClick = {
+            offsetX: 25,
+            offsetY: 25,
+            button: 0,
+        } as MouseEvent;
+
+        service['mouseDown'] = true;
+        service.isConfirmed = true;
+        service.onLeftClickPreviousColor(mouseEventLClick, 'rgba(0,0,42,1)');
+        expect(service.isConfirmed).toEqual(false);
+    });
+
+    it('onLeftClickPreviousColor shouldnt set primaryColorPreview as color if mouseDown is false', () => {
+        const mouseEventRClick = {
+            offsetX: 25,
+            offsetY: 25,
+            button: 1,
+        } as MouseEvent;
+        service.primaryColorPreview = 'expectedResult';
+        service.onLeftClickPreviousColor(mouseEventRClick, 'nonExpectedResult');
+        expect(service.primaryColorPreview).toEqual('expectedResult');
+    });
+
+    it(' onRightClickPreviousColor should affect secondaryColorPreview with color and call both setSecondaryColorWithOpacity and pushToQueueOnConfirm', () => {
+        const mouseEventLClick = {
+            offsetX: 25,
+            offsetY: 25,
+            button: 0,
+        } as MouseEvent;
+        const setSecondaryColorWithOpacitySpy = spyOn(service, 'setSecondaryColorWithOpacity').and.callThrough();
+        const pushToQueueOnConfirmSpy = spyOn(service, 'pushToQueueOnConfirm').and.callThrough();
+        service.onRightClickPreviousColor(mouseEventLClick, 'rgba(200,72,42,1)');
+        expect(service.secondaryColorPreview).toEqual('rgba(200,72,42,1)');
+        expect(setSecondaryColorWithOpacitySpy).toHaveBeenCalledWith(service.secondaryOpacityPreview);
+        expect(pushToQueueOnConfirmSpy).toHaveBeenCalledWith('rgba(200,72,42,1)');
+    });
+
+    it(' onRightClickPreviousColor should affect isConfirmed with false if isConfirmed is true and always return false', () => {
+        const mouseEventLClick = {
+            offsetX: 25,
+            offsetY: 25,
+            button: 0,
+        } as MouseEvent;
+        service.isConfirmed = true;
+        service.onRightClickPreviousColor(mouseEventLClick, 'rgba(0,0,42,1)');
+        expect(service.isConfirmed).toEqual(false);
+        expect(service.onRightClickPreviousColor(mouseEventLClick, 'rgba(0,0,42,1)')).toEqual(false);
+    });
+
+    it(' setColor should affect primaryColor with color and call setPrimaryColorWithOpacity if primary is true', () => {
+        const primary = true;
+        const color = 'rgba(0,0,0,1)';
+        const setPrimaryColorWithOpacitySpy = spyOn(service, 'setPrimaryColorWithOpacity').and.callThrough();
+        service.setColor(primary, color);
+        expect(service.primaryColor).toEqual(color);
+        expect(setPrimaryColorWithOpacitySpy).toHaveBeenCalledWith(service.primaryOpacityPreview);
+    });
+
+    it(' setColor should affect secondaryColor with color and call setSecondaryColorWithOpacity if primary is false', () => {
+        const primary = false;
+        const color = 'rgba(0,0,0,1)';
+        const setSecondaryColorWithOpacitySpy = spyOn(service, 'setSecondaryColorWithOpacity').and.callThrough();
+        service.setColor(primary, color);
+        expect(service.secondaryColor).toEqual(color);
+        expect(setSecondaryColorWithOpacitySpy).toHaveBeenCalledWith(service.secondaryOpacityPreview);
+    });
+
+    it(' setColorPreview should affect primaryColorPreview with color and call setPrimaryColorWithOpacity if primary is true', () => {
+        const primary = true;
+        const color = 'rgba(0,0,0,1)';
+        service.setColorPreview(primary, color);
+        expect(service.primaryColorPreview).toEqual(color);
+    });
+
+    it(' setColorPreview should affect secondaryColorPreview with color and call setSecondaryColorWithOpacity if primary is false', () => {
+        const primary = false;
+        const color = 'rgba(0,0,0,1)';
+        service.setColorPreview(primary, color);
+        expect(service.secondaryColorPreview).toEqual(color);
+    });
+
+    it(' changePrimaryOpacity should affect primaryOpacityPreview with opacity', () => {
+        const opacity = 50;
+        service.changePrimaryOpacity(opacity);
+        expect(service.primaryOpacityPreview).toEqual(50);
+    });
+
+    it(' changePrimaryOpacity should call changePrimaryOpacity with opacity', () => {
+        const opacity = 50;
+        const setPrimaryColorWithOpacitySpy = spyOn(service, 'setPrimaryColorWithOpacity').and.callThrough();
+        service.changePrimaryOpacity(opacity);
+        expect(setPrimaryColorWithOpacitySpy).toHaveBeenCalledWith(opacity);
+    });
+
+    it(' changeSecondaryOpacity should affect secondaryOpacityPreview with opacity', () => {
+        const opacity = 75;
+        service.changeSecondaryOpacity(opacity);
+        expect(service.secondaryOpacityPreview).toEqual(75);
+    });
+
+    it(' changeSecondaryOpacity should call setSecondaryColorWithOpacity with opacity', () => {
+        const opacity = 50;
+        const setSecondaryColorWithOpacitySpy = spyOn(service, 'setSecondaryColorWithOpacity').and.callThrough();
+        service.changeSecondaryOpacity(opacity);
+        expect(setSecondaryColorWithOpacitySpy).toHaveBeenCalledWith(opacity);
     });
 });

@@ -1,48 +1,47 @@
+import { HttpException } from '@app/http.exception';
+import { DatabaseService } from '@app/services/database.service';
 import { TYPES } from '@app/types';
-import { Message } from '@common/communication/message';
+import { Drawing } from '@common/drawing.interface';
+import { ObjectID } from 'bson';
+import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { DateService } from './date.service';
 
+const ERROR_CODE = 500;
 @injectable()
 export class IndexService {
-    clientMessages: Message[];
-    constructor(@inject(TYPES.DateService) private dateService: DateService) {
-        this.clientMessages = [];
-    }
+    constructor(@inject(TYPES.DatabaseService) private db: DatabaseService) {}
 
-    about(): Message {
-        return {
-            title: 'Basic Server About Page',
-            body: 'Try calling helloWorld to get the time',
-        };
-    }
-
-    async helloWorld(): Promise<Message> {
-        return this.dateService
-            .currentTime()
-            .then((timeMessage: Message) => {
-                return {
-                    title: 'Hello world',
-                    body: 'Time is ' + timeMessage.body,
-                };
-            })
-            .catch((error: unknown) => {
-                console.error('There was an error!!!', error);
-
-                return {
-                    title: 'Error',
-                    body: error as string,
-                };
+    async saveDrawing(drawing: Drawing): Promise<void> {
+        const id = new ObjectID(drawing._id);
+        await this.db.db
+            .collection('drawing')
+            .insertOne({ _id: id, name: drawing.name, tags: drawing.tags })
+            .catch((error: Error) => {
+                throw new HttpException(ERROR_CODE, 'Failed to insert drawing');
             });
     }
 
-    // TODO : ceci est à titre d'exemple. À enlever pour la remise
-    storeMessage(message: Message): void {
-        this.clientMessages.push(message);
+    async deleteDoc(id: string): Promise<void> {
+        await this.db.db
+            .collection('drawing')
+            .deleteOne({ _id: new ObjectID(id) })
+            .catch((error: Error) => {
+                throw new HttpException(ERROR_CODE, 'Failed to delete drawing');
+            });
     }
 
-    getAllMessages(): Message[] {
-        return this.clientMessages;
+    async getDrawings(): Promise<Drawing[]> {
+        const drawings = await this.db.db.collection('drawing').find({}).toArray();
+        return drawings;
+    }
+
+    async deleteDrawingFromServer(id: string): Promise<void> {
+        // source : https://nodejs.org/docs/latest/api/fs.html#fs_fs_unlink_path_callback
+        fs.unlink('uploads/' + id + '.png', (err) => {
+            if (err) {
+                throw err;
+            }
+        });
     }
 }

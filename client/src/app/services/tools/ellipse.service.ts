@@ -7,6 +7,8 @@ import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { IconDefinition } from '@fortawesome/free-brands-svg-icons';
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { ColorService } from './color.service';
+import { EllipseCommandService } from './tool-commands/ellipse-command.service';
+import { UndoRedoManagerService } from './undo-redo-manager.service';
 
 const TOOL_INDEX = 4;
 
@@ -21,8 +23,14 @@ export class EllipseService extends Tool {
     border: boolean = true;
     isShiftPressed: boolean;
     icon: IconDefinition = faCircle;
+    undoRedoManager: UndoRedoManagerService;
 
-    constructor(drawingService: DrawingService, public squareHelperService: SquareHelperService, public colorService: ColorService) {
+    constructor(
+        drawingService: DrawingService,
+        public squareHelperService: SquareHelperService,
+        public colorService: ColorService,
+        undoRedoManager: UndoRedoManagerService,
+    ) {
         super(drawingService);
         this.shortcut = '2';
         this.index = TOOL_INDEX;
@@ -33,6 +41,7 @@ export class EllipseService extends Tool {
             fill: false,
             secondaryColor: 'black',
         };
+        this.undoRedoManager = undoRedoManager;
     }
 
     clearArrays(): void {
@@ -56,7 +65,9 @@ export class EllipseService extends Tool {
             if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint]) && this.mouseDown) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawingService.clearBackground();
-                this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+                const ellipseCommand: EllipseCommandService = new EllipseCommandService(this.squareHelperService);
+                // ellipseCommand.setBorderAndShiftBools(this.border, this.isShiftPressed);
+                this.drawEllipse(this.drawingService.previewCtx, ellipseCommand);
                 this.drawRectangle(
                     this.drawingService.backgroundCtx,
                     this.startingPoint,
@@ -69,12 +80,14 @@ export class EllipseService extends Tool {
     setShiftNonPressed = (keyUpShiftEvent: KeyboardEvent) => {
         if (keyUpShiftEvent.key === 'Shift') {
             this.shiftIsPressed = false;
+            const ellipseCommand: EllipseCommandService = new EllipseCommandService(this.squareHelperService);
             if (this.mouseDown) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+                this.drawEllipse(this.drawingService.previewCtx, ellipseCommand);
                 this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
             }
             window.removeEventListener('keydown', this.setShiftIfPressed);
+            // ellipseCommand.setBorderAndShiftBools(this.border, this.isShiftPressed);
             window.removeEventListener('keyup', this.setShiftNonPressed);
             this.isShiftPressed = false;
             if (!this.mouseDown) {
@@ -90,6 +103,7 @@ export class EllipseService extends Tool {
             return;
         }
         this.mouseDownCoord = this.getPositionFromMouse(mouseDownevent);
+        this.undoRedoManager.disableUndoRedo();
         this.startingPoint = this.mouseDownCoord;
     }
 
@@ -98,9 +112,13 @@ export class EllipseService extends Tool {
             const mousePosition = this.getPositionFromMouse(mouseUpEvent);
             this.endPoint = mousePosition;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint);
+            const ellipseCommand: EllipseCommandService = new EllipseCommandService(this.squareHelperService);
+            this.undoRedoManager.enableUndoRedo();
+            this.drawEllipse(this.drawingService.baseCtx, ellipseCommand);
+            this.undoRedoManager.undoStack.push(ellipseCommand);
             this.drawingService.clearBackground();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.undoRedoManager.clearRedoStack();
         }
         this.mouseDown = false;
     }
@@ -111,12 +129,14 @@ export class EllipseService extends Tool {
             this.endPoint = mousePosition;
             this.drawingService.clearBackground();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint);
+            const ellipseCommand: EllipseCommandService = new EllipseCommandService(this.squareHelperService);
+            this.undoRedoManager.disableUndoRedo();
+            this.drawEllipse(this.drawingService.previewCtx, ellipseCommand);
             if (this.shiftIsPressed) {
                 this.drawRectangle(
                     this.drawingService.backgroundCtx,
                     this.startingPoint,
-                    this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
+                    ellipseCommand.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
                 );
             } else {
                 this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
@@ -144,49 +164,25 @@ export class EllipseService extends Tool {
         ctx.setLineDash([]);
     }
 
-    drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2): void {
+    drawEllipse(ctx: CanvasRenderingContext2D, ellipseCommand: EllipseCommandService): void {
         this.setColors(this.colorService);
         this.setStyles();
+        ellipseCommand.setToolStyles(
+            this.toolStyles.primaryColor,
+            this.toolStyles.lineWidth,
+            this.toolStyles.fill as boolean,
+            this.toolStyles.secondaryColor as string,
+        );
+        ellipseCommand.setBorderAndShiftBools(this.border, this.shiftIsPressed);
+        ellipseCommand.setCoordinates(this.startingPoint, this.endPoint, this.currentLine);
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
+        this.drawingService.previewCtx.fillStyle = ellipseCommand.toolStyle.primaryColor as string;
+        this.drawingService.baseCtx.fillStyle = ellipseCommand.toolStyle.primaryColor as string;
 
-        this.drawingService.previewCtx.fillStyle = this.toolStyles.primaryColor as string;
-        this.drawingService.baseCtx.fillStyle = this.toolStyles.primaryColor as string;
-
-        this.drawingService.previewCtx.strokeStyle = this.toolStyles.secondaryColor as string;
-        this.drawingService.baseCtx.strokeStyle = this.toolStyles.secondaryColor as string;
-
-        if (!this.border) {
-            ctx.strokeStyle = this.colorService.primaryColor;
-        }
-
-        ctx.globalCompositeOperation = 'source-over';
-        const width = end.y - start.y;
-        const height = end.x - start.x;
-        const radiusX = width / 2;
-        const radiusY = height / 2;
-
-        ctx.beginPath();
-        ctx.setLineDash([]);
-
-        if (this.shiftIsPressed) {
-            const squareCornerPos = this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]);
-            ctx.arc(
-                (this.startingPoint.x + squareCornerPos.x) / 2,
-                (this.startingPoint.y + squareCornerPos.y) / 2,
-                Math.abs((this.startingPoint.x - squareCornerPos.x) / 2),
-                0,
-                2 * Math.PI,
-            );
-        } else {
-            ctx.ellipse(start.x + radiusY, start.y + radiusX, Math.abs(radiusX), Math.abs(radiusY), Math.PI / 2, 0, 2 * Math.PI);
-        }
-
-        if (this.toolStyles.fill) {
-            ctx.setLineDash([]);
-            ctx.fill();
-        }
-        ctx.stroke();
+        this.drawingService.previewCtx.strokeStyle = ellipseCommand.toolStyle.secondaryColor as string;
+        this.drawingService.baseCtx.strokeStyle = ellipseCommand.toolStyle.secondaryColor as string;
+        ellipseCommand.execute(ctx);
     }
 }

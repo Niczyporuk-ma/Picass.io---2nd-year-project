@@ -13,7 +13,7 @@
     opacity: 2;
 }
 
-.btns{
+.btns {
     width: 355px;
 }
 
@@ -36,26 +36,29 @@ button:hover {
     width: 216px;
     height: 50px;
     border-radius: 0%;
-
 }
 
-button:focus{
+button:focus {
     outline: none;
     background-color: rgb(107, 240, 206);
-    color:black;
+    color: black;
 }
 
-::ng-deep .mat-tooltip { //tooltip
+::ng-deep .mat-tooltip {
+    //tooltip
     background-color: rgb(53, 64, 75, 0.9);
 }
 
-
 mat-button-toggle-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
     z-index: 3;
     position: relative;
 }
 
-mat-button-toggle{
+mat-button-toggle {
+    flex-grow: 1;
     background-color: rgba(83, 101, 119);
     color: white;
     width: 81.5px;
@@ -72,37 +75,41 @@ mat-card {
     height: 30px;
     color: white;
     background-color: rgba(83, 101, 119);
-    bottom : 15px;
+    bottom: 15px;
     padding: auto;
-    margin-top : 10px; 
+    margin-top: 10px;
 }
 
-mat-button-toggle-group{
+mat-button-toggle-group {
     width: 216px;
 }
 
-.junctionRadiusSlider mat-card{
+.junctionRadiusSlider mat-card {
     width: 216px;
     padding: 0;
     padding-left: 2px;
 }
 
-mat-card-subtitle{
+mat-card-subtitle {
     position: relative;
     left: 150px;
-    bottom : 45px;
+    bottom: 45px;
     font-weight: bold;
     color: white;
+    width: 50px;
 }
 
-
-
-
-.widthSlider{
+.Slider {
     padding: 0;
     width: 216px;
+    vertical-align: top;
+    text-align: left;
 }
 
-mat-slider{
-    bottom : 15px;
+mat-slider {
+    bottom: 15px;
+}
+
+mat-slider {
+    bottom: 15px;
 }

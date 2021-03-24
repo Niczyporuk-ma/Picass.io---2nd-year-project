@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": "./",
         "target": "es6",
-        "types": ["reflect-metadata"],
+        "types": ["reflect-metadata","@types/mocha"],
         "module": "commonjs",
         "moduleResolution": "node",
         "sourceRoot": "app",
@@ -10,6 +10,7 @@
         "outDir": "out",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
+        "allowJs": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "noFallthroughCasesInSwitch": true,
@@ -23,5 +24,6 @@
         }
     },
     "include": ["app/**/*.ts"],
-    "exclude": ["node_modules", "dist", "**/*.spec.ts", "test/*"]
+    "exclude": ["node_modules", "dist"]
+    //"exclude": ["node_modules", "dist", "**/*.spec.ts", "test/*"]
 }

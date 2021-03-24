@@ -2,7 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { EllipseService } from './ellipse.service';
+import { EllipseCommandService } from './tool-commands/ellipse-command.service';
 
 describe('EllipseService', () => {
     let service: EllipseService;
@@ -54,11 +56,17 @@ describe('EllipseService', () => {
         expect(service.mouseDown).toEqual(true);
     });
 
+    it(' mouseDown should call disableUndoRedo()', () => {
+        const disableUndoRedoSpy = spyOn(service.undoRedoManager, 'disableUndoRedo');
+        service.onMouseDown(mouseEvent);
+        expect(disableUndoRedoSpy).toHaveBeenCalled();
+    });
+
     it(' mouseDown should set mouseDown property to false on right click', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1,
+            button: 2,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
@@ -73,12 +81,33 @@ describe('EllipseService', () => {
         expect(drawEllipseSpy).toHaveBeenCalled();
     });
 
+    it(' onMouseUp should call enableUndoRedo', () => {
+        const enableUndoRedoSpy = spyOn(service.undoRedoManager, 'enableUndoRedo');
+        spyOn(service, 'drawEllipse').and.stub();
+        service.mouseDown = true;
+
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+        expect(enableUndoRedoSpy).toHaveBeenCalled();
+    });
+
     it(' onMouseUp should not call drawEllipse if mouse was not already down', () => {
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);
         expect(drawEllipseSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onMouseUp should clear redoStack', () => {
+        spyOn(service, 'drawEllipse').and.stub();
+        service.mouseDown = true;
+        const ellipseCommand: EllipseCommandService = new EllipseCommandService(service.squareHelperService);
+        service.undoRedoManager.redoStack = [ellipseCommand];
+
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.onMouseUp(mouseEvent);
+        expect(service.undoRedoManager.redoStack).toEqual([]);
     });
 
     it(' onMouseMove should call drawEllipse if mouse was already down', () => {
@@ -150,7 +179,13 @@ describe('EllipseService', () => {
         service.shiftIsPressed = true;
         service.startingPoint = { x: 1, y: 1 };
         service.endPoint = { x: 2, y: 2 };
-        service.drawEllipse(drawServiceSpy.baseCtx, service.startingPoint, service.endPoint);
+        service.currentLine = [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+        ];
+        service.toolStyles = { primaryColor: 'rbga(0,0,0,0)', secondaryColor: 'rbga(0,0,0,0)', lineWidth: 5, fill: true };
+        const command: EllipseCommandService = new EllipseCommandService(new SquareHelperService());
+        service.drawEllipse(drawServiceSpy.baseCtx, command);
         expect(arcSpy).toHaveBeenCalled();
     });
 
@@ -160,18 +195,34 @@ describe('EllipseService', () => {
             'beginPath',
             'setLineDash',
             'stroke',
+            'fill',
         ]);
+        service.shiftIsPressed = true;
+        service.startingPoint = { x: 1, y: 3 };
+        service.endPoint = { x: 9, y: 6 };
+        service.currentLine = [
+            { x: 1, y: 3 },
+            { x: 9, y: 6 },
+        ];
+        service.toolStyles = { primaryColor: 'rbga(0,0,0,0)', secondaryColor: 'rbga(0,0,0,0)', lineWidth: 5, fill: true };
+        const command: EllipseCommandService = new EllipseCommandService(new SquareHelperService());
         service.shiftIsPressed = false;
-        service.drawEllipse(ellipseSpyObject, { x: 1, y: 3 }, { x: 9, y: 6 });
+        service.drawEllipse(ellipseSpyObject, command);
         expect(ellipseSpyObject.ellipse).toHaveBeenCalledWith(5, 4.5, 1.5, 4, Math.PI / 2, 0, 2 * Math.PI);
     });
 
     it('drawEllipse should set strokeStyle as primaryColor if border is false', () => {
         service.startingPoint = { x: 0, y: 0 };
         service.endPoint = { x: 1, y: 1 };
+        service.currentLine = [
+            { x: 1, y: 3 },
+            { x: 9, y: 6 },
+        ];
+        service.toolStyles = { primaryColor: 'rbga(0,0,0,0)', secondaryColor: 'rbga(0,0,0,0)', lineWidth: 5, fill: true };
+        const command: EllipseCommandService = new EllipseCommandService(new SquareHelperService());
         drawServiceSpy.baseCtx.strokeStyle = 'blue';
         service.border = false;
-        service.drawEllipse(drawServiceSpy.baseCtx, service.startingPoint, service.endPoint);
+        service.drawEllipse(drawServiceSpy.baseCtx, command);
         expect(drawServiceSpy.baseCtx.strokeStyle).toEqual('#000000');
     });
 
@@ -181,7 +232,13 @@ describe('EllipseService', () => {
         service.startingPoint = { x: 0, y: 0 };
         service.endPoint = { x: 1, y: 1 };
         service.toolStyles.fill = true;
-        service.drawEllipse(drawServiceSpy.baseCtx, service.startingPoint, service.endPoint);
+        service.currentLine = [
+            { x: 1, y: 3 },
+            { x: 9, y: 6 },
+        ];
+        service.toolStyles = { primaryColor: 'rbga(0,0,0,0)', secondaryColor: 'rbga(0,0,0,0)', lineWidth: 5, fill: true };
+        const command: EllipseCommandService = new EllipseCommandService(new SquareHelperService());
+        service.drawEllipse(drawServiceSpy.baseCtx, command);
         expect(setLineDashSpy).toHaveBeenCalled();
         expect(fillSpy).toHaveBeenCalled();
     });
