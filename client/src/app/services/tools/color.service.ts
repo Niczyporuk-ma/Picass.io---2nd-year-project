@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { MouseButton } from '@app/enums/enums';
 import { faPalette, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { Queue } from 'queue-typescript';
+
 const MAX_NUMBER_IN_LIST_OF_LAST_USED = 10;
 
 @Injectable({
@@ -18,6 +20,7 @@ export class ColorService {
     tenLastUsedColors: Queue<string>;
     icon: IconDefinition = faPalette;
     isConfirmed: boolean = false;
+    mouseDown: boolean = false;
 
     constructor() {
         this.primaryColor = 'rgba(0,0,0,1)';
@@ -29,6 +32,16 @@ export class ColorService {
         this.primaryOpacityPreview = 1;
         this.secondaryOpacityPreview = 1;
         this.tenLastUsedColors = new Queue<string>();
+    }
+
+    changePrimaryOpacity(opacity: number): void {
+        this.primaryOpacityPreview = opacity;
+        this.setPrimaryColorWithOpacity(opacity);
+    }
+
+    changeSecondaryOpacity(opacity: number): void {
+        this.secondaryOpacityPreview = opacity;
+        this.setSecondaryColorWithOpacity(opacity);
     }
 
     setPrimaryColorWithOpacity(opacity: number): void {
@@ -65,7 +78,6 @@ export class ColorService {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -108,6 +120,47 @@ export class ColorService {
             if (this.tenLastUsedColors.length > MAX_NUMBER_IN_LIST_OF_LAST_USED) {
                 this.tenLastUsedColors.dequeue();
             }
+        }
+    }
+
+    onLeftClickPreviousColor(evt: MouseEvent, color: string): void {
+        this.mouseDown = evt.button === MouseButton.Left;
+        if (this.mouseDown === true) {
+            this.primaryColorPreview = color;
+            this.setPrimaryColorWithOpacity(this.primaryOpacityPreview);
+            this.pushToQueueOnConfirm(color);
+            if (this.isConfirmed) {
+                this.isConfirmed = false;
+            }
+        }
+    }
+
+    onRightClickPreviousColor(evt: MouseEvent, color: string): boolean {
+        this.mouseDown = evt.button === MouseButton.Left;
+        this.secondaryColorPreview = color;
+        this.setSecondaryColorWithOpacity(this.secondaryOpacityPreview);
+        this.pushToQueueOnConfirm(color);
+        if (this.isConfirmed) {
+            this.isConfirmed = false;
+        }
+        return false;
+    }
+
+    setColor(primary: boolean, color: string): void {
+        if (primary) {
+            this.primaryColor = color;
+            this.setPrimaryColorWithOpacity(this.primaryOpacityPreview);
+        } else {
+            this.secondaryColor = color;
+            this.setSecondaryColorWithOpacity(this.secondaryOpacityPreview);
+        }
+    }
+
+    setColorPreview(primary: boolean, color: string): void {
+        if (primary) {
+            this.primaryColorPreview = color;
+        } else {
+            this.secondaryColorPreview = color;
         }
     }
 }

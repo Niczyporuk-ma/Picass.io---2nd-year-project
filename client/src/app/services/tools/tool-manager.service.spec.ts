@@ -7,7 +7,10 @@ describe('ToolManagerService', () => {
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
+        // Configuration du spy
+        // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
+        // tslint:disable:max-file-line-count
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
@@ -44,6 +47,16 @@ describe('ToolManagerService', () => {
     it(' setTool should set current tool to rectangle', () => {
         service.setTool(service.rectangleService);
         expect(service.currentTool).toEqual(service.rectangleService);
+    });
+
+    it(' setTool should set current tool to ellipse', () => {
+        service.setTool(service.ellipseService);
+        expect(service.currentTool).toEqual(service.ellipseService);
+    });
+
+    it(' setTool should set current tool to rectangle', () => {
+        service.setTool(service.pipetteService);
+        expect(service.currentTool).toEqual(service.pipetteService);
     });
 
     it(' setTool should call setColors', () => {

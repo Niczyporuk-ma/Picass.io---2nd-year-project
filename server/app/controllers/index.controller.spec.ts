@@ -1,64 +1,61 @@
 import { Application } from '@app/app';
-import { IndexService } from '@app/services/index.service';
 import { TYPES } from '@app/types';
-import { Message } from '@common/communication/message';
+import { Drawing } from '@common/drawing.interface';
 import { expect } from 'chai';
 import * as supertest from 'supertest';
-import { Stubbed, testingContainer } from '../../test/test-utils';
+import { testingContainer } from '../../test/test-utils';
 
-// tslint:disable:no-any
 const HTTP_STATUS_OK = 200;
 const HTTP_STATUS_CREATED = 201;
+const HTTP_ERROR_CODE = 500;
 
 describe('IndexController', () => {
-    const baseMessage = { title: 'Hello world', body: 'anything really' } as Message;
-    let indexService: Stubbed<IndexService>;
+    const baseDrawing = { _id: '', name: 'myName', tags: ['firstTag', 'secondTag'] } as Drawing;
     let app: Express.Application;
 
     beforeEach(async () => {
         const [container, sandbox] = await testingContainer();
         container.rebind(TYPES.IndexService).toConstantValue({
-            helloWorld: sandbox.stub().resolves(baseMessage),
-            about: sandbox.stub().resolves(baseMessage),
-            storeMessage: sandbox.stub().resolves(),
-            getAllMessages: sandbox.stub().resolves([baseMessage, baseMessage]),
+            saveDrawing: sandbox.stub().resolves(),
+            deleteDoc: sandbox.stub().resolves(),
+            getDrawings: sandbox.stub().resolves([baseDrawing, baseDrawing]),
+            deleteDrawingFromServer: sandbox.stub().resolves(),
         });
-        indexService = container.get(TYPES.IndexService);
         app = container.get<Application>(TYPES.Application).app;
+        // tslint:disable
     });
 
-    it('should return message from index service on valid get request to root', async () => {
+    it('should return an array of all the drawings from index service on valid get request to root', async () => {
         return supertest(app)
-            .get('/api/index')
+            .get('/api/index/drawing')
             .expect(HTTP_STATUS_OK)
             .then((response: any) => {
-                expect(response.body).to.deep.equal(baseMessage);
+                expect(response.body).to.deep.equal([baseDrawing, baseDrawing]);
             });
     });
 
-    it('should return message from index service on valid get request to about route', async () => {
-        const aboutMessage = { ...baseMessage, title: 'About' };
-        indexService.about.returns(aboutMessage);
+    it('should return the 500 status code for an invalid get route and a error body', async () => {
         return supertest(app)
-            .get('/api/index/about')
-            .expect(HTTP_STATUS_OK)
+            .get('/api/index/falseRoute')
+            .expect(HTTP_ERROR_CODE)
             .then((response: any) => {
-                expect(response.body).to.deep.equal(aboutMessage);
+                expect(response.body).to.deep.equal({ message: 'Not Found', error: {} });
             });
     });
 
-    it('should store message in the array on valid post request to /send', async () => {
-        const message: Message = { title: 'Hello', body: 'World' };
-        return supertest(app).post('/api/index/send').send(message).set('Accept', 'application/json').expect(HTTP_STATUS_CREATED);
+    it('should return the 200 status code for a valid delete route', async () => {
+        return supertest(app).delete('/api/index/drawing/testID').expect(HTTP_STATUS_OK);
     });
 
-    it('should return an arrat of messages on valid get request to /all', async () => {
-        indexService.getAllMessages.returns([baseMessage, baseMessage]);
-        return supertest(app)
-            .get('/api/index/all')
-            .expect(HTTP_STATUS_OK)
-            .then((response: any) => {
-                expect(response.body).to.deep.equal([baseMessage, baseMessage]);
-            });
+    it('should return the 500 status code for an invalid delete route', async () => {
+        return supertest(app).delete('/api/index/falseRoute/testID').expect(HTTP_ERROR_CODE);
+    });
+
+    it('should return the 201 status code for a valid post route', async () => {
+        return supertest(app).post('/api/index/send').expect(HTTP_STATUS_CREATED);
+    });
+
+    it('should return the 500 status code for an invalid post route', async () => {
+        return supertest(app).post('/api/index/falseRoute').expect(HTTP_ERROR_CODE);
     });
 });

@@ -6,7 +6,10 @@ describe('SquareHelperService', () => {
     let service: SquareHelperService;
 
     beforeEach(() => {
+        // Configuration du spy
+        // tslint:disable:no-string-literal
         // tslint:disable:no-magic-numbers
+        // tslint:disable:max-file-line-count
         TestBed.configureTestingModule({});
         service = TestBed.inject(SquareHelperService);
     });

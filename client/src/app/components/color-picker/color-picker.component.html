@@ -23,80 +23,79 @@
     <div class="ten-last">
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[0])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[0])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[0])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[0])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[0] || 'white' }"
         ></div>
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[1])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[1])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[1])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[1])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[1] || 'white' }"
         ></div>
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[2])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[2])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[2])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[2])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[2] || 'white' }"
         ></div>
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[3])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[3])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[3])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[3])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[3] || 'white' }"
         ></div>
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[4])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[4])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[4])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[4])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[4] || 'white' }"
         ></div>
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[5])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[5])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[5])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[5])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[5] || 'white' }"
         ></div>
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[6])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[6])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[6])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[6])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[6] || 'white' }"
         ></div>
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[7])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[7])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[7])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[7])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[7] || 'white' }"
         ></div>
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[8])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[8])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[8])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[8])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[8] || 'white' }"
         ></div>
         <div
             class="color-div"
-            (mousedown)="onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[9])"
-            (contextmenu)="onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[9])"
+            (mousedown)="this.colorService.onLeftClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[9])"
+            (contextmenu)="this.colorService.onRightClickPreviousColor($event, colorService.tenLastUsedColors.toArray()[9])"
             [ngStyle]="{ 'background-color': colorService.tenLastUsedColors.toArray()[9] || 'white' }"
         ></div>
     </div>
     <div class="side-input-wrapper">
         <label
-            >R: <input type="text" (keyup)="this.isRed = true; adjustColor($event)" (focus)="disableShortcut()" (blur)="enableShortcut()" /><br />
+            >R: <input type="text" (keyup)="this.isRed = true; adjustColor($event)" (focus)="this.toolManager.disableShortcut()" (blur)="this.toolManager.enableShortcut()" /><br />
         </label>
         <label
             >G:
-            <input type="text" (keyup)="this.isGreen = true; adjustColor($event)" (focus)="disableShortcut()" (blur)="enableShortcut()" />
+            <input type="text" (keyup)="this.isGreen = true; adjustColor($event)" (focus)="this.toolManager.disableShortcut()" (blur)="this.toolManager.enableShortcut()" />
             <br />
         </label>
 
         <label
             >B:
-            <input type="text" (keyup)="this.isBlue = true; adjustColor($event)" (focus)="disableShortcut()" (blur)="enableShortcut()" />
+            <input type="text" (keyup)="this.isBlue = true; adjustColor($event)" (focus)="this.toolManager.disableShortcut()" (blur)="this.toolManager.enableShortcut()" />
         </label>
-
     </div>
 
     <div>
@@ -106,14 +105,13 @@
                 min="0"
                 max="1"
                 step="0.01"
-                (change)="changePrimaryOpacity($event.value)"
+                (change)="this.colorService.changePrimaryOpacity($event.value)"
                 (input)="this.colorService.primaryOpacityPreview = $event.value"
                 [value]="this.colorService.primaryOpacityPreview"
             ></mat-slider>
             {{ this.colorService.primaryOpacityPreview }}
         </mat-card>
     </div>
-
     <div>
         <mat-card>
             Opacité sec:
@@ -121,7 +119,7 @@
                 min="0"
                 max="1"
                 step="0.01"
-                (change)="changeSecondaryOpacity($event.value)"
+                (change)="this.colorService.changeSecondaryOpacity($event.value)"
                 (input)="this.colorService.secondaryOpacityPreview = $event.value"
                 [value]="this.colorService.secondaryOpacityPreview"
             ></mat-slider>
@@ -131,6 +129,7 @@
     <div>
         <button
             class="confirm"
+            *ngIf="canConfirm == true"
             (mousedown)="this.colorService.isConfirmed = true; this.toolManager.showPalette = false; this.colorService.setValuesOnConfirm()"
         >
             confirmer

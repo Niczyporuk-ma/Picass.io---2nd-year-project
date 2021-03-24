@@ -4,9 +4,9 @@ import * as cors from 'cors';
 import * as express from 'express';
 import { inject, injectable } from 'inversify';
 import * as logger from 'morgan';
+import * as multer from 'multer';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
-import { DateController } from './controllers/date.controller';
 import { IndexController } from './controllers/index.controller';
 import { TYPES } from './types';
 
@@ -16,10 +16,7 @@ export class Application {
     private readonly swaggerOptions: swaggerJSDoc.Options;
     app: express.Application;
 
-    constructor(
-        @inject(TYPES.IndexController) private indexController: IndexController,
-        @inject(TYPES.DateController) private dateController: DateController,
-    ) {
+    constructor(@inject(TYPES.IndexController) private indexController: IndexController) {
         this.app = express();
 
         this.swaggerOptions = {
@@ -45,13 +42,27 @@ export class Application {
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(cookieParser());
         this.app.use(cors());
+        // source: https://www.npmjs.com/package/multer
+        // tslint:disable
+        this.app.use(
+            multer({
+                storage: multer.diskStorage({
+                    destination(req, file, callback) {
+                        callback(null, './uploads/');
+                    },
+                    filename(req, file, callback) {
+                        callback(null, file.originalname);
+                    },
+                }),
+            }).single('drawing'),
+        );
+        this.app.use('/retrieve-images', express.static('./uploads'));
     }
 
     bindRoutes(): void {
         // Notre application utilise le routeur de notre API `Index`
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/index', this.indexController.router);
-        this.app.use('/api/date', this.dateController.router);
         this.errorHandling();
     }
 

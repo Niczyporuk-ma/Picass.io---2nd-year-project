@@ -1,8 +1,10 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
+import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
-import { DrawingComponent } from './drawing.component';
+import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
 
 class ToolStub extends Tool {}
 
@@ -16,7 +18,10 @@ describe('DrawingComponent', () => {
     let toolStub: ToolStub;
     let drawingStub: DrawingService;
 
+    // Configuration du spy
+    // tslint:disable:no-string-literal
     // tslint:disable:no-magic-numbers
+    // tslint:disable:max-file-line-count
 
     beforeEach(async(() => {
         toolStub = new ToolStub({} as DrawingService);
@@ -24,6 +29,7 @@ describe('DrawingComponent', () => {
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
             providers: [
                 { provide: PencilService, useValue: toolStub },
                 { provide: DrawingService, useValue: drawingStub },
@@ -51,14 +57,6 @@ describe('DrawingComponent', () => {
     it('should get stubTool', () => {
         const currentTool = component.currentTool;
         expect(currentTool).toEqual(toolStub);
-    });
-
-    it("should call the resizeService's resize method called", () => {
-        component.resizeService.mouseDown = true;
-        const event = {} as MouseEvent;
-        const resizeSpy = spyOn(component.resizeService, 'resize').and.stub();
-        component.onMouseMove(event);
-        expect(resizeSpy).toHaveBeenCalled();
     });
 
     it(" should call the tool's mouse move when receiving a mouse move event", () => {
@@ -94,35 +92,46 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
-    it('onMouseUp should call stopResize if mouseDown is true', () => {
-        component.resizeService.mouseDown = true;
-        const stopResizeSpy = spyOn(component.resizeService, 'stopResize').and.stub();
-        const event = {} as MouseEvent;
-        component.onMouseUp(event);
-        expect(stopResizeSpy).toHaveBeenCalled();
-    });
-
     it(' ngAfterViewInit should add two event listener', () => {
         const enventListenerSpy = spyOn(window, 'addEventListener').and.callThrough();
         component.ngAfterViewInit();
-        expect(enventListenerSpy).toHaveBeenCalledTimes(2);
+        expect(enventListenerSpy).toHaveBeenCalledTimes(3);
     });
 
-    // On a enlever ce test car il est trop instable par rapport au setTimeout
+    it('component should call keyupHandler on keyup if currentTool is ellipseSelection or rectangleSelection', () => {
+        const mockArrowUp = new KeyboardEvent('keyup', { key: 'ArrowUp' });
+        const mockArrowDown = new KeyboardEvent('keyup', { key: 'ArrowDown' });
+        const mockArrowLeft = new KeyboardEvent('keyup', { key: 'ArrowLeft' });
+        const mockArrowRight = new KeyboardEvent('keyup', { key: 'ArrowRight' });
+        component.toolManager.currentTool = component.toolManager.ellipseSelection;
+        const keyupHandlerSpy = spyOn(component.toolManager.ellipseSelection, 'keyupHandler').and.callThrough();
+        component.toolManager.ellipseSelection.offsetYModifier = 0;
+        component.toolManager.ellipseSelection.offsetXModifier = 0;
 
-    // it(" ngAfterViewInit should call onKeyPress & waitForOPress when Control is pressed", async (done) => {
-    //     const event = new KeyboardEvent('keydown',{key :'Control'});
-    //     const onKeyPressSpy = spyOn(component.shortcutKeyboardManager,'onKeyPress').and.stub();
-    //    const oPressSpy = spyOn(component.shortcutKeyboardManager,'waitForOPress').and.stub();
-    //     component.ngAfterViewInit();
-    //     window.dispatchEvent(event);
-    //     setTimeout(() => {
-    //         expect(onKeyPressSpy).toHaveBeenCalled();
-    //         expect(oPressSpy).toHaveBeenCalled();
-    //         done();
-    //     }, 500);
+        window.dispatchEvent(mockArrowUp);
+        setTimeout(() => {
+            return;
+        }, 200);
 
-    //  });
+        window.dispatchEvent(mockArrowDown);
+        setTimeout(() => {
+            return;
+        }, 200);
+
+        window.dispatchEvent(mockArrowLeft);
+        setTimeout(() => {
+            return;
+        }, 200);
+
+        window.dispatchEvent(mockArrowRight);
+        setTimeout(() => {
+            return;
+        }, 200);
+
+        expect(keyupHandlerSpy).toHaveBeenCalledTimes(4);
+        expect(component.toolManager.ellipseSelection.offsetYModifier).toEqual(0);
+        expect(component.toolManager.ellipseSelection.offsetXModifier).toEqual(0);
+    });
 
     it(' onMouseClick should call onMouseClick of current tool if there is a single click', async (done) => {
         const event = {} as MouseEvent;
@@ -147,6 +156,7 @@ describe('DrawingComponent', () => {
         const onDoubleCLickSpy = spyOn(component.toolManager.currentTool, 'onDoubleClick').and.callThrough();
         component.onMouseClick(event);
         setTimeout(() => {
+            expect(onDoubleCLickSpy).not.toHaveBeenCalled();
             component.clickCount++;
             done();
         }, component.timeOutDuration / 16);
@@ -164,5 +174,36 @@ describe('DrawingComponent', () => {
             expect(component.clickCount).toEqual(0);
             done();
         }, component.timeOutDuration);
+    });
+
+    it(' ngAfterViewInit should call preventDefault', async (done) => {
+        const event = new MouseEvent('contextmenu');
+        const preventDefaultSpy = spyOn(event, 'preventDefault').and.callThrough();
+        component.ngAfterViewInit();
+        window.dispatchEvent(event);
+        setTimeout(() => {
+            expect(preventDefaultSpy).toHaveBeenCalled();
+            done();
+        }, 50);
+    });
+
+    it(' ngAfterViewInit should make baseCtx white and call fillRect', () => {
+        component.baseCanvas.nativeElement.width = 5;
+        component.baseCanvas.nativeElement.height = 1555;
+        const fillRectSpy = spyOn(component['baseCtx'], 'fillRect').and.callThrough();
+        component.ngAfterViewInit();
+        expect(component['baseCtx'].fillStyle).toEqual('#ffffff');
+        expect(fillRectSpy).toHaveBeenCalledWith(0, 0, 5, 1555);
+    });
+
+    it(' ctrl + a should call setTool of toolManager', () => {
+        const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
+        const ctrlO = component.shortcuts.find((x) => x.key === 'ctrl + o');
+        const ctrlOSpy = spyOn(ctrlO as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'a' });
+        const setToolSpy = spyOn(component.toolManager, 'setTool').and.callThrough();
+        ctrlA?.command({ event: keyboardEvent, key: 'a' } as ShortcutEventOutput);
+        expect(setToolSpy).toHaveBeenCalled();
+        expect(ctrlOSpy).not.toHaveBeenCalled();
     });
 });

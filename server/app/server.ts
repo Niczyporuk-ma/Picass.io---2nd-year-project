@@ -1,3 +1,4 @@
+import { DatabaseService } from '@app/services/database.service';
 import * as http from 'http';
 import { inject, injectable } from 'inversify';
 import { Application } from './app';
@@ -9,9 +10,9 @@ export class Server {
     private readonly baseDix: number = 10;
     private server: http.Server;
 
-    constructor(@inject(TYPES.Application) private application: Application) {}
+    constructor(@inject(TYPES.Application) private application: Application, @inject(TYPES.DatabaseService) private db: DatabaseService) {}
 
-    init(): void {
+    async init(): Promise<void> {
         this.application.app.set('port', this.appPort);
 
         this.server = http.createServer(this.application.app);
@@ -19,6 +20,14 @@ export class Server {
         this.server.listen(this.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
+
+        // Permet la connection a la base de donne
+        try {
+            await this.db.start();
+        } catch {
+            console.error('erreur de connection avec la base de donne');
+            process.exit(1);
+        }
     }
 
     private normalizePort(val: number | string): number | string | boolean {
