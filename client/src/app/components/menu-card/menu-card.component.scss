@@ -1,19 +1,28 @@
-.card {
-    width: 500px;
-    height: auto;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    background-color: rgb(107, 240, 206);
-}
+// .card {
+//     width: 500px;
+//     height: auto;
+//     margin: 0;
+//     padding: 0;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+//     text-align: center;
+//     background-color: rgb(107, 240, 206);
+// }
 
 .title {
-    border-bottom: solid black;
-    padding-bottom: 5px;
+    padding-bottom: 80px;
     padding-top: 5px;
-    margin: 0;
-    justify-content: center;
+    font-size: 100px;
+    text-align: center;
+    display: flex;
 }
+
+.Poly{
+    padding-bottom: 80px;
+    padding-top: 5px;
+    text-align: center;
+    color:rgb(158, 243, 220);
+    display: flex;
+}
+
