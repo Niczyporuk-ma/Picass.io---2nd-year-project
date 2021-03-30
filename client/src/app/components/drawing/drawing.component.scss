@@ -19,6 +19,10 @@ canvas {
     z-index: 1;
 }
 
+#grid {
+    z-index: 4;
+}
+
 #canvas-container {
     position: absolute;
 }

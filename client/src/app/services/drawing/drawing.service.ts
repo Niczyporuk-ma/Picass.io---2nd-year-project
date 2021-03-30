@@ -8,6 +8,7 @@ export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     backgroundCtx: CanvasRenderingContext2D;
+    gridCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     drawingStarted: boolean = false;
 
