@@ -69,7 +69,6 @@ export class ToolManagerService {
             [this.eraserService.shortcut, this.tools[this.eraserService.index]],
             [this.pencilService.shortcut, this.tools[this.pencilService.index]],
             [this.ellipseService.shortcut, this.tools[this.ellipseService.index]],
-            [this.pipetteService.shortcut, this.tools[this.pipetteService.index]],
             [this.airbrushService.shortcut, this.tools[this.airbrushService.index]],
             [this.polygonService.shortcut, this.tools[this.polygonService.index]],
             [this.rectangleSelection.shortcut, this.tools[this.rectangleSelection.index]],
