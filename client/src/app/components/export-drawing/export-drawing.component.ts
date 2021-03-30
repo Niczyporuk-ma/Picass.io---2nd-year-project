@@ -51,6 +51,7 @@ export class ExportDrawingComponent implements AfterViewInit {
     }
 
     exportDrawing(): void {
+        this.drawImageReadyToExport();
         const imageUrl = this.filterPreviewCanvas.nativeElement.toDataURL('image/' + this.fileExtentionControl.value);
         this.downloadLink.nativeElement.href = imageUrl;
         this.downloadLink.nativeElement.download = this.fileNameControl.value + '.' + this.fileExtentionControl.value;
@@ -60,6 +61,12 @@ export class ExportDrawingComponent implements AfterViewInit {
     applyFilter(): void {
         this.filterPreviewCtx.filter = this.filterControl.value;
         this.drawImageOnFilterPreviewCanvas();
+    }
+
+    drawImageReadyToExport(): void {
+        this.filterPreviewCanvas.nativeElement.width = this.drawingService.canvas.width;
+        this.filterPreviewCanvas.nativeElement.height = this.drawingService.canvas.height;
+        this.applyFilter();
     }
 
     disableShortcut(): void {

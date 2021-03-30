@@ -11,6 +11,7 @@
         (mousemove)="this.onMouseMove($event)"
         (mouseup)="this.onMouseUp($event)"
     ></div>
+    <canvas id="grid" #gridCanvas [attr.width]="width" [attr.height]="height"> </canvas>
 
     <button
         class="resizer"

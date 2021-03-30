@@ -3,12 +3,14 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { Constant } from '@app/constants/general-constants-store';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { GridService } from '@app/services/grid/grid.service';
 import { KeyboardShortcutManagerService } from '@app/services/tools/keyboard-shortcut-manager.service';
 import { ResizeCommandService } from '@app/services/tools/tool-commands/resize-command.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
+const WAIT_TIME = 5;
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
@@ -18,11 +20,13 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: true }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('backgroundCanvas', { static: true }) backgroundLayer: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: true }) gridCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('input') input: ElementRef;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private backgroundCtx: CanvasRenderingContext2D;
+    private gridCtx: CanvasRenderingContext2D;
 
     canvasSize: Vec2 = { x: Constant.DEFAULT_WIDTH, y: Constant.DEFAULT_HEIGHT };
     mouseDown: boolean = false;
@@ -47,6 +51,7 @@ export class DrawingComponent implements AfterViewInit {
         keyboardManager: KeyboardShortcutManagerService,
         resizeCommandService: ResizeCommandService,
         undoRedoManager: UndoRedoManagerService,
+        public gridService: GridService,
     ) {
         this.resizeServiceCommand = resizeCommandService;
         this.toolManager = toolManager;
@@ -65,9 +70,11 @@ export class DrawingComponent implements AfterViewInit {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.backgroundCtx = this.backgroundLayer.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.backgroundCtx = this.backgroundCtx;
+        this.drawingService.gridCtx = this.gridCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         this.baseCtx.fillStyle = 'white';
         this.baseCtx.fillRect(0, 0, this.baseCanvas.nativeElement.width, this.baseCanvas.nativeElement.height);
@@ -176,6 +183,12 @@ export class DrawingComponent implements AfterViewInit {
             imageTemp.src = this.resizeServiceCommand.lastImage.src;
             resizeCommand.lastImage = imageTemp;
             const newCanvasSize: Vec2 = { x: this.canvasSize.x, y: this.canvasSize.y };
+
+            if (this.gridService.isGridVisible) {
+                setTimeout(() => {
+                    this.gridService.drawGrid();
+                }, WAIT_TIME);
+            }
 
             resizeCommand.canvasSizeObserver.subscribe((value) => {
                 this.canvasSize = value;

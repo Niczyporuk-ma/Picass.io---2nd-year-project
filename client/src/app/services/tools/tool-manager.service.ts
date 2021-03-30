@@ -28,8 +28,8 @@ export class ToolManagerService {
         this.rectangleService,
         this.eraserService,
         this.ellipseService,
-        this.airbrushService,
         this.polygonService,
+        this.airbrushService,
         this.rectangleSelection,
         this.ellipseSelection,
         this.pipetteService,
@@ -44,7 +44,6 @@ export class ToolManagerService {
     allowKeyPressEvents: boolean = true;
     showPalette: boolean = false;
     undoRedoManager: UndoRedoManagerService;
-    showSaveMenu: boolean = false;
 
     constructor(
         public pencilService: PencilService,

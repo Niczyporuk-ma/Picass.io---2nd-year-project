@@ -10,7 +10,7 @@ class ToolStub extends Tool {}
 
 const DEFAULT_WIDTH = 1000;
 const DEFAULT_HEIGHT = 800;
-const TIMEOUT_WAIT = 5000;
+const TIMEOUT_WAIT = 10000;
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
@@ -206,4 +206,39 @@ describe('DrawingComponent', () => {
         expect(setToolSpy).toHaveBeenCalled();
         expect(ctrlOSpy).not.toHaveBeenCalled();
     });
+
+    it(' ctrl + o should call clearArrays of toolManager', () => {
+        const ctrlO = component.shortcuts.find((x) => x.key === 'ctrl + o');
+        const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
+        const ctrlASpy = spyOn(ctrlA as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'o' });
+        const clearArraysSpy = spyOn(component.toolManager, 'clearArrays').and.callThrough();
+        ctrlO?.command({ event: keyboardEvent, key: 'o' } as ShortcutEventOutput);
+        expect(clearArraysSpy).toHaveBeenCalled();
+        expect(ctrlASpy).not.toHaveBeenCalled();
+    });
+
+    it(' ctrl + z should call undo of undoRedoManager', () => {
+        const ctrlZ = component.shortcuts.find((x) => x.key === 'ctrl + z');
+        const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
+        const ctrlASpy = spyOn(ctrlA as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'z' });
+        const undoSpy = spyOn(component.undoRedoManager, 'undo').and.callThrough();
+        ctrlZ?.command({ event: keyboardEvent, key: 'z' } as ShortcutEventOutput);
+        expect(undoSpy).toHaveBeenCalled();
+        expect(ctrlASpy).not.toHaveBeenCalled();
+    });
+
+    // TODO: find out why it doest work
+
+    // it(' ctrl + shift + z should call  call redo of undoRedoManager', () => {
+    //     const ctrlShiftZ = component.shortcuts.find((x) => x.key === 'ctrl + shift + z');
+    //     const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
+    //     const ctrlASpy = spyOn(ctrlA as ShortcutInput, 'command').and.callThrough();
+    //     const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, shiftKey: true, key: 'z' });
+    //     const redoSpy = spyOn(component.undoRedoManager, 'redo').and.callThrough();
+    //     ctrlShiftZ?.command({ event: keyboardEvent, key: 'z' } as ShortcutEventOutput);
+    //     expect(redoSpy).not.toHaveBeenCalled();
+    //     expect(ctrlASpy).not.toHaveBeenCalled();
+    // });
 });

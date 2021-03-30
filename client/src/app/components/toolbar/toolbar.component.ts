@@ -4,6 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { FormComponent } from '@app/components/form/form.component';
+import { GridService } from '@app/services/grid/grid.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -19,6 +20,7 @@ import {
     faSave,
     faSlash,
     faSprayCan,
+    faTh,
     faUndoAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -50,8 +52,14 @@ export class ToolbarComponent {
     faSave: IconDefinition = faSave;
     faUndoAlt: IconDefinition = faUndoAlt;
     faRedoAlt: IconDefinition = faRedoAlt;
+    faTh: IconDefinition = faTh;
 
-    constructor(public toolManager: ToolManagerService, public undoRedoManager: UndoRedoManagerService, public modal: MatDialog) {
+    constructor(
+        public toolManager: ToolManagerService,
+        public undoRedoManager: UndoRedoManagerService,
+        public modal: MatDialog,
+        public gridService: GridService,
+    ) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
         // source: https://www.npmjs.com/package/ng-keyboard-shortcuts
@@ -66,12 +74,32 @@ export class ToolbarComponent {
                 preventDefault: true,
                 command: () => this.openSaveDrawingForm(),
             },
+            {
+                key: 'g',
+                preventDefault: true,
+                command: () => this.showGrid(),
+            },
+            {
+                key: '=',
+                preventDefault: true,
+                command: () => this.increaseSquareSizebyByFactor(),
+            },
+            {
+                key: 'ctrl + =',
+                preventDefault: true,
+                command: () => this.increaseSquareSizebyByFactor(),
+            },
+            {
+                key: '-',
+                preventDefault: true,
+                command: () => this.decreaseSquareSizebyByFactor(),
+            },
+            {
+                key: 'ctrl + e',
+                preventDefault: true,
+                command: () => this.export(),
+            },
         );
-        this.shortcuts.push({
-            key: 'ctrl + e',
-            preventDefault: true,
-            command: () => this.export(),
-        });
         this.undoRedoManager = undoRedoManager;
     }
 
@@ -92,8 +120,13 @@ export class ToolbarComponent {
         this.toolManager.showPalette = !this.toolManager.showPalette;
     }
 
-    showSaveDrawing(): void {
-        this.toolManager.showSaveMenu = !this.toolManager.showSaveMenu;
+    showGrid(): void {
+        this.gridService.isGridVisible = !this.gridService.isGridVisible;
+        if (this.gridService.isGridVisible) {
+            this.gridService.drawGrid();
+        } else {
+            this.gridService.eraseGrid();
+        }
     }
 
     setEllipseStyle(ellipseStyleCode: string): void {
@@ -172,5 +205,30 @@ export class ToolbarComponent {
 
     openSaveDrawingForm(): void {
         this.modal.open(FormComponent);
+    }
+
+    changeGridOpacity(opacity: number): void {
+        this.gridService.lineOpacity = opacity;
+        this.gridService.drawGrid();
+    }
+
+    changeSquareSize(size: number): void {
+        this.gridService.squareSize = size;
+        this.gridService.drawGrid();
+    }
+
+    increaseSquareSizebyByFactor(): void {
+        const increaseFactor = 5;
+        const maxSquareSize = 100;
+        if (this.gridService.squareSize < maxSquareSize) {
+            this.changeSquareSize(this.gridService.squareSize + increaseFactor);
+        }
+    }
+    decreaseSquareSizebyByFactor(): void {
+        const decreaseFactor = 5;
+        const minSquareSize = 5;
+        if (this.gridService.squareSize > minSquareSize) {
+            this.changeSquareSize(this.gridService.squareSize - decreaseFactor);
+        }
     }
 }
