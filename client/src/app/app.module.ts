@@ -34,6 +34,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { PipetteComponent } from './components/pipette/pipette.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { AttributesBarComponent } from './components/attributes/attributes-bar/attributes-bar.component';
 
 @NgModule({
     declarations: [
@@ -52,6 +53,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         ExportDrawingComponent,
         PipetteComponent,
         FormComponent,
+        AttributesBarComponent,
     ],
     imports: [
         BrowserModule,

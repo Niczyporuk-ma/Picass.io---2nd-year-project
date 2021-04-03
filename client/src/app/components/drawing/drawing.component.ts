@@ -99,20 +99,20 @@ export class DrawingComponent implements AfterViewInit {
             },
         );
         window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (this.toolManager.allowKeyPressEvents) {
+            if (this.toolManager.currentTool == this.toolManager.textService) {
                 event.preventDefault();
-                this.shortcutKeyboardManager.onKeyPress(event.key);
+                this.toolManager.textService.onKeyDown(event);
             }
         });
 
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
-        window.addEventListener('keyup', (e) => {
-            if (this.toolManager.currentTool === this.toolManager.ellipseSelection) {
-                this.toolManager.ellipseSelection.keyupHandler(e);
-            } else if (this.toolManager.currentTool === this.toolManager.rectangleSelection) {
-                this.toolManager.rectangleSelection.keyupHandler(e);
-            }
-        });
+        // window.addEventListener('keyup', (e) => {
+        //     if (this.toolManager.currentTool === this.toolManager.ellipseSelection) {
+        //         this.toolManager.ellipseSelection.keyupHandler(e);
+        //     } else if (this.toolManager.currentTool === this.toolManager.rectangleSelection) {
+        //         this.toolManager.rectangleSelection.keyupHandler(e);
+        //     }
+        // });
         window.addEventListener('contextmenu', (event: MouseEvent) => {
             event.preventDefault();
         });

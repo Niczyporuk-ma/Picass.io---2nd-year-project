@@ -50,6 +50,7 @@
     >
         <fa-icon [icon]="faEraser" size="lg"></fa-icon>
     </button>
+    <button (click)="this.toolManager.setTool(this.toolManager.textService)"> T </button>
     <button
         (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth()"
         matTooltip="Outil ligne (L): Cliquer et glisser pour déssiner une ligne. Cliquer à la fin pour enchaîner

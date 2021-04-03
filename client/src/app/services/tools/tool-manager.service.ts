@@ -7,6 +7,7 @@ import { EllipseSelectionService } from '@app/services/tools/ellipse-selection.s
 import { LineServiceService } from '@app/services/tools/line-service.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleSelectionService } from '@app/services/tools/rectangle-selection.service';
+import { TextService } from '@app/services/tools/text.service';
 import { Subject } from 'rxjs';
 import { ColorService } from './color.service';
 import { EllipseService } from './ellipse.service';
@@ -15,6 +16,7 @@ import { PipetteService } from './pipette.service';
 import { PolygonService } from './polygon.service';
 import { RectangleService } from './rectangle.service';
 import { UndoRedoManagerService } from './undo-redo-manager.service';
+
 
 @Injectable({
     providedIn: 'root',
@@ -33,6 +35,7 @@ export class ToolManagerService {
         this.rectangleSelection,
         this.ellipseSelection,
         this.pipetteService,
+        this.textService,
     ];
 
     toolBoxShortcuts: Map<string, Tool>;
@@ -60,6 +63,7 @@ export class ToolManagerService {
         public pipetteService: PipetteService,
         public rectangleSelection: RectangleSelectionService,
         public ellipseSelection: EllipseSelectionService,
+        public textService: TextService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
@@ -75,6 +79,7 @@ export class ToolManagerService {
             [this.rectangleSelection.shortcut, this.tools[this.rectangleSelection.index]],
             [this.ellipseSelection.shortcut, this.tools[this.ellipseSelection.index]],
             [this.pipetteService.shortcut, this.tools[this.pipetteService.index]],
+            [this.textService.shortcut, this.tools[this.textService.index]],
         ]);
         this.undoRedoManager = undoRedoManager;
     }
@@ -96,6 +101,9 @@ export class ToolManagerService {
     }
 
     setTool(tool: Tool): void {
+        if(this.currentTool == this.textService){
+            this.textService.resetState();
+        }
         this.currentToolChange.next(tool);
         this.currentTool.setColors(this.colorService);
     }
