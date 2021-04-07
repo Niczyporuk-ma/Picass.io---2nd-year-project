@@ -102,6 +102,8 @@ export class DrawingComponent implements AfterViewInit {
             if (this.toolManager.currentTool == this.toolManager.textService) {
                 event.preventDefault();
                 this.toolManager.textService.onKeyDown(event);
+                this.toolManager.textService.enterKey(event);
+                this.toolManager.textService.escapeKey(event);
             }
         });
 

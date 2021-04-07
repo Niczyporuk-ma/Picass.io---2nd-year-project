@@ -3,16 +3,16 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-//import { ColorService } from '@app/services/tools/color.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
+import { ColorService } from './color.service';
 //import { TextCommandService } from '@app/services/tools/tool-commands/text-command.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TextService extends Tool{
-  //private colorService: ColorService;
   undoRedoManager: UndoRedoManagerService;
+  colorService: ColorService;
   font: string = "Courier New";
   fontSize: number = 30;
   isBold: boolean = false;
@@ -27,9 +27,7 @@ export class TextService extends Tool{
   hasBeenReset: boolean = false;
   textArray: string[] = [''];
   editingText: boolean = false;
-  //cursorColumnIndex: number = 0;
-  //cursorRowIndex: number = 0;
-  alignment: CanvasTextAlign = "left"
+  alignment: CanvasTextAlign = "right"
   allowKeyPressEvents: boolean = true;
   isNotWriting: boolean = true;
   usefulKeys: string[] = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Backspace", "Enter", "Delete", "Escape", "Shift"];
@@ -37,7 +35,7 @@ export class TextService extends Tool{
                             "Control", "Alt", "CapsLock", "Tab", "Meta"];
   cursorPosition: Vec2 = { x: 0, y: 0 }; //column idx = x, row idx = y
 
-  constructor(drawingService: DrawingService, undoRedoManager: UndoRedoManagerService) { 
+  constructor(drawingService: DrawingService, undoRedoManager: UndoRedoManagerService, colorService: ColorService) { 
     super(drawingService);
     this.undoRedoManager = undoRedoManager;
     this.toolStyles = {
@@ -48,6 +46,7 @@ export class TextService extends Tool{
     }
     this.shortcut = 't';
     this.index = 10;
+    this.colorService = colorService;
   }
 
   resetState(): void {
@@ -119,14 +118,6 @@ export class TextService extends Tool{
         this.mouseDown = false;
         return;
       }
-      if (!this.creatingTextBox) {
-        //this.imageData = this.getImageData();
-      }
-      // if (this.isMovingText) {
-      //   //this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
-      //   this.mouseDown = false;
-      //   return;
-      // }
       const mousePosition = this.getPositionFromMouse(mouseUpEvent);
       this.endPoint = mousePosition;
       this.currentLine = [this.startingPoint, this.endPoint];
@@ -147,16 +138,48 @@ export class TextService extends Tool{
     ctx.closePath();
   }
 
+  enterKey(keyboardEvent: KeyboardEvent): void {
+    if(keyboardEvent.key === "Enter"){
+      this.cursorPosition.y++; 
+      this.textArray[this.cursorPosition.y] = '';
+    }
+  }
+
+  escapeKey(keyboardEvent: KeyboardEvent): void {
+    if(keyboardEvent.key === "Escape"){
+      this.drawingService.clearCanvas(this.drawingService.previewCtx);
+      this.clearTextArray();
+    }
+  }
+
+  switchStartingAndEndPoints(): void {
+    if(this.startingPoint.x > this.endPoint.x){
+      const tempPoint: Vec2 = {x: this.startingPoint.x, y: this.startingPoint.y};
+      this.startingPoint = {x: this.endPoint.x, y: this.endPoint.y};
+      this.endPoint = {x: tempPoint.x, y: tempPoint.y};
+    }
+    if(this.startingPoint.y > this.endPoint.y){
+      const tempPoint: Vec2 = {x: this.startingPoint.x, y: this.startingPoint.y};
+      this.startingPoint = {x: this.startingPoint.x, y: this.endPoint.y};
+      this.endPoint = {x: this.endPoint.x, y: tempPoint.y};
+    }
+  }
+
   drawText(ctx: CanvasRenderingContext2D): void {
-    this.setStyles();
+    this.setColors(this.colorService);
+    ctx.fillStyle = this.colorService.primaryColor;
+    this.switchStartingAndEndPoints();
     for(let i  = 0; i < this.textArray.length; i++){
       ctx.textAlign = this.alignment;
       ctx.font = this.fontSize + "px " + this.font; 
       if(this.alignment === "left"){
         ctx.fillText(this.textArray[i], this.startingPoint.x, this.startingPoint.y + this.fontSize + (this.fontSize * i));
       }
-      else{
+      else if (this.alignment === "right") {
         ctx.fillText(this.textArray[i], this.endPoint.x, this.startingPoint.y + this.fontSize + (this.fontSize * i));
+      }
+      else if (this.alignment === "center") {
+        ctx.fillText(this.textArray[i], ((this.endPoint.x - this.startingPoint.x)/2) + this.startingPoint.x, this.startingPoint.y + this.fontSize + (this.fontSize * i));
       }
     }
     this.cursorPosition.x++;
@@ -200,13 +223,4 @@ export class TextService extends Tool{
     this.drawingService.previewCtx.lineTo(this.cursorPosition.x, this.cursorPosition.y + this.fontSize);
     this.drawingService.previewCtx.stroke();
   }
-
-  // disableShortcut(): void {
-  //   this.allowKeyPressEvents = false;
-  // }
-
-  // enableShortcut(): void {
-  //   this.allowKeyPressEvents = true;
-  // }
-
 }
