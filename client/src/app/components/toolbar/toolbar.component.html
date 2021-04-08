@@ -147,7 +147,7 @@
         <!-- calls color picker component html -->
     </div>
 
-    <div class="Slider" *ngIf="this.toolManager.currentTool != this.toolManager.airbrushService">
+    <div class="Slider" *ngIf="this.toolManager.currentTool != this.toolManager.airbrushService && this.toolManager.currentTool != this.toolManager.textService">
         <mat-card>
             Épaisseur:
             <mat-slider
@@ -161,6 +161,37 @@
                 [value]="this.toolManager.widthValue"
             ></mat-slider>
             <mat-card-subtitle>{{ this.toolManager.widthValue }} </mat-card-subtitle>
+        </mat-card>
+    </div>
+
+    <div class="fontMenu" *ngIf="this.toolManager.currentTool == this.toolManager.textService">
+        <mat-menu #appMenu="matMenu">
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Arial'">Arial</button>
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Algerian'">Algerian</button>
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Trebuchet MS'">Trebuchet MS</button>
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Times New Roman'">Times New Roman</button>
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Comic Sans MS'">Comic Sans MS</button>
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Blackadder ITC'">Blackadder ITC</button>
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Magneto'">Magneto</button>
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Showcard Gothic'">Showcard Gothic</button>
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Courier New'">Courier New</button>
+            <button mat-menu-item (click)="this.toolManager.textService.font ='Brush Script MT'">Brush Script MT</button>
+        </mat-menu>
+        <button mat-flat-button [matMenuTriggerFor]="appMenu"> Police: {{this.toolManager.textService.font}}</button>
+
+        <mat-card class = "TextSlider">
+            Taille de Police:
+            <mat-slider
+                min="12"
+                max="72"
+                step="2"
+                value="this.toolManager.textService.fontSize"
+                class="slider"
+                (change)="this.toolManager.textService.changeFontSize($event.value)"
+                (input)="this.toolManager.textService.fontSize = $event.value"
+                [value]="this.toolManager.textService.fontSize"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.textService.fontSize }}</mat-card-subtitle>
         </mat-card>
     </div>
 

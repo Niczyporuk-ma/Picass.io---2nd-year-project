@@ -14,8 +14,7 @@
 }
 
 .btns {
-    width: 100px;
-    z-index: 4;
+    width: 355px;
 }
 
 button {
@@ -23,11 +22,10 @@ button {
     border: none;
     background-color: rgb(53, 64, 75);
     color: white;
-    width: 50px;
+    width: 216px;
     height: 50px;
     border-radius: 0%;
     transition: 0.3s;
-    z-index: 4;
 }
 
 button:hover {
@@ -35,7 +33,7 @@ button:hover {
     border: none;
     background-color: rgb(197, 243, 231);
     color: black;
-    //width: 55px;
+    width: 216px;
     height: 50px;
     border-radius: 0%;
 }
@@ -108,15 +106,18 @@ mat-card-subtitle {
     text-align: left;
 }
 
-mat-slider {
-    bottom: 15px;
+.TextSlider {
+    padding-top: 10px;
+    width: 183px;
+    vertical-align: top;
+    text-align: left;
 }
 
 mat-slider {
     bottom: 15px;
 }
 
-app-color-picker{
-    padding-left: 216px;
-    margin-top: -700px;
+mat-slider {
+    bottom: 15px;
 }
+

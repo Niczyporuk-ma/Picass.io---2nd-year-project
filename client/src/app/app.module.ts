@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
@@ -21,6 +22,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
+import { AttributesBarComponent } from './components/attributes/attributes-bar/attributes-bar.component';
 import { CarrouselComponent } from './components/carrousel/carrousel.component';
 import { ColorPaletteComponent } from './components/color-picker/color-palette/color-palette.component';
 import { ColorPickerComponent } from './components/color-picker/color-picker.component';
@@ -34,7 +36,6 @@ import { MenuComponent } from './components/menu/menu.component';
 import { PipetteComponent } from './components/pipette/pipette.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
-import { AttributesBarComponent } from './components/attributes/attributes-bar/attributes-bar.component';
 
 @NgModule({
     declarations: [
@@ -83,6 +84,7 @@ import { AttributesBarComponent } from './components/attributes/attributes-bar/a
         MatProgressSpinnerModule,
         KeyboardShortcutsModule.forRoot(),
         MatButtonModule,
+        MatMenuModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

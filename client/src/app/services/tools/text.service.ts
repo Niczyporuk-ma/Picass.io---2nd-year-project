@@ -3,9 +3,9 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { TextCommandService } from '@app/services/tools/tool-commands/text-command.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { ColorService } from './color.service';
-//import { TextCommandService } from '@app/services/tools/tool-commands/text-command.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,23 +13,24 @@ import { ColorService } from './color.service';
 export class TextService extends Tool{
   undoRedoManager: UndoRedoManagerService;
   colorService: ColorService;
-  font: string = "Courier New";
+  font: string = "Arial";
   fontSize: number = 30;
   isBold: boolean = false;
   isItalic: boolean = false;
   creatingTextBox: boolean = false;
   anchorPoints: Vec2[];
   mouseDown: boolean = false;
-  startingPoint: Vec2;
-  endPoint: Vec2;
+  startingPoint: Vec2 = { x: 0, y: 0 };;
+  endPoint: Vec2 = { x: 0, y: 0 };;
   lastPos: Vec2 = { x: 0, y: 0 };
   currentLine: Vec2[] = [];
   hasBeenReset: boolean = false;
   textArray: string[] = [''];
   editingText: boolean = false;
-  alignment: CanvasTextAlign = "right"
+  alignment: CanvasTextAlign = "left"
   allowKeyPressEvents: boolean = true;
   isNotWriting: boolean = true;
+  textBoxActive: boolean = false;
   usefulKeys: string[] = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Backspace", "Enter", "Delete", "Escape", "Shift"];
   uselessKeys: string[] = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "ScrollLock", "Pause", "Insert", "PageUp", "End", "PageDown", "ContextMenu", 
                             "Control", "Alt", "CapsLock", "Tab", "Meta"];
@@ -48,20 +49,23 @@ export class TextService extends Tool{
     this.index = 10;
     this.colorService = colorService;
   }
+  
+  changeFontSize(size: number) {
+    this.fontSize = size;
+  }
 
   resetState(): void {
-    this.anchorPoints = [];
-    this.currentLine = [];
     this.drawingService.clearCanvas(this.drawingService.previewCtx);
-    //TODO: print text on the base ctx;
-    this.drawText(this.drawingService.baseCtx);
-    this.undoRedoManager.undoStack.push(); //push text command 
+    let textCommand: TextCommandService = new TextCommandService();
+    this.drawText(this.drawingService.baseCtx, textCommand);
+    this.undoRedoManager.undoStack.push(textCommand); //push text command 
     this.undoRedoManager.clearRedoStack();
     this.cursorPosition = { x: 0, y: 0 };
     this.hasBeenReset = true;
     this.creatingTextBox = false;
     this.isNotWriting = true;
-    this.clearTextArray();
+    this.clearArrays();
+    this.textBoxActive = false;
   }
   
   checkIfInsideRectangle(event: MouseEvent): boolean {
@@ -75,8 +79,9 @@ export class TextService extends Tool{
     return X >= MIN_X && X <= MAX_X && Y >= MIN_Y && Y <= MAX_Y;
   }
 
-  clearTextArray(): void {
+  clearArrays(): void {
     this.textArray = [''];
+    this.currentLine = [];
   }
   
   onMouseDown(mouseDownEvent: MouseEvent): void {
@@ -136,19 +141,45 @@ export class TextService extends Tool{
     ctx.strokeStyle = 'black';
     ctx.strokeRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
     ctx.closePath();
+    this.textBoxActive = true;
   }
 
   enterKey(keyboardEvent: KeyboardEvent): void {
-    if(keyboardEvent.key === "Enter"){
+    if(keyboardEvent.key === "Enter" && this.textBoxActive){
       this.cursorPosition.y++; 
       this.textArray[this.cursorPosition.y] = '';
     }
   }
 
   escapeKey(keyboardEvent: KeyboardEvent): void {
-    if(keyboardEvent.key === "Escape"){
+    if(keyboardEvent.key === "Escape" && this.textBoxActive){
       this.drawingService.clearCanvas(this.drawingService.previewCtx);
-      this.clearTextArray();
+      this.textBoxActive = false;
+      this.clearArrays();
+    }
+  }
+
+  arrowUp(keyboardEvent: KeyboardEvent): void { //BROKEN
+    if(keyboardEvent.key === "ArrowUp" && this.cursorPosition.y > 0 && this.textBoxActive){
+      this.cursorPosition.y--;
+    }
+  }
+
+  arrowDown(keyboardEvent: KeyboardEvent): void { //BROKEN
+    if(keyboardEvent.key === "ArrowDown" && this.cursorPosition.y < this.textArray.length && this.textBoxActive){
+      this.cursorPosition.y++;
+    }
+  }
+
+  arrowLeft(keyboardEvent: KeyboardEvent): void { //BROKEN
+    if(keyboardEvent.key === "ArrowLeft" && this.cursorPosition.x > 0 && this.textBoxActive){
+      this.cursorPosition.x--;
+    }
+  }
+
+  arrowRight(keyboardEvent: KeyboardEvent): void { //BROKEN
+    if(keyboardEvent.key === "ArrowRight" && this.cursorPosition.y < this.textArray.length && this.textBoxActive){
+      this.cursorPosition.x++;
     }
   }
 
@@ -165,54 +196,38 @@ export class TextService extends Tool{
     }
   }
 
-  drawText(ctx: CanvasRenderingContext2D): void {
+  drawText(ctx: CanvasRenderingContext2D, textCommand: TextCommandService): void {
     this.setColors(this.colorService);
-    ctx.fillStyle = this.colorService.primaryColor;
     this.switchStartingAndEndPoints();
-    for(let i  = 0; i < this.textArray.length; i++){
-      ctx.textAlign = this.alignment;
-      ctx.font = this.fontSize + "px " + this.font; 
-      if(this.alignment === "left"){
-        ctx.fillText(this.textArray[i], this.startingPoint.x, this.startingPoint.y + this.fontSize + (this.fontSize * i));
-      }
-      else if (this.alignment === "right") {
-        ctx.fillText(this.textArray[i], this.endPoint.x, this.startingPoint.y + this.fontSize + (this.fontSize * i));
-      }
-      else if (this.alignment === "center") {
-        ctx.fillText(this.textArray[i], ((this.endPoint.x - this.startingPoint.x)/2) + this.startingPoint.x, this.startingPoint.y + this.fontSize + (this.fontSize * i));
-      }
-    }
+    textCommand.setTextAttributes(this.fontSize, this.font, this.textArray, this.alignment, this.startingPoint, this.endPoint, this.colorService.primaryColor);
+    textCommand.execute(ctx);
     this.cursorPosition.x++;
-    const cursorPosition: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
-    if(cursorPosition.width >= this.endPoint.x - this.startingPoint.x - 13){ 
-      this.cursorPosition.y++; 
-      this.textArray[this.cursorPosition.y] = '';
-    }
+    // const cursorPosition: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
+    // if(cursorPosition.width >= this.endPoint.x - this.startingPoint.x - 13){ 
+    //   this.cursorPosition.y++; 
+    //   this.textArray[this.cursorPosition.y] = '';
+    //}
   }
 
-  checkIfInUsefulKeys(key: string): boolean {
-    for(const keys of this.usefulKeys) {
-      if(key === keys) {return true};
-    }
-    return false;
-  }
-  checkIfInUselessKeys(key: string): boolean {
-    for(const keys of this.uselessKeys) {
+  checkIfInKeyArray(key: string, array: string[]): boolean {
+    for(const keys of array) {
       if(key === keys) {return true};
     }
     return false;
   }
 
   onKeyDown(keydown: KeyboardEvent): void {
-    if(!this.checkIfInUsefulKeys(keydown.key) && !(this.checkIfInUselessKeys(keydown.key))){
-      this.textArray[this.cursorPosition.y] = this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x) + keydown.key + 
-      this.textArray[this.cursorPosition.y].substring(this.cursorPosition.x);
-      this.drawCursor();
+    if(this.textBoxActive){
+      if(!this.checkIfInKeyArray(keydown.key, this.usefulKeys) && !(this.checkIfInKeyArray(keydown.key, this.uselessKeys))){
+        this.textArray[this.cursorPosition.y] = this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x) + keydown.key + 
+        this.textArray[this.cursorPosition.y].substring(this.cursorPosition.x);
+        this.drawCursor();
+      }
+      this.drawingService.clearCanvas(this.drawingService.previewCtx);
+      this.drawTextBox(this.drawingService.previewCtx, this.currentLine);
+      let textCommand: TextCommandService = new TextCommandService();
+      this.drawText(this.drawingService.previewCtx, textCommand);
     }
-    console.log(this.textArray);
-    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-    this.drawTextBox(this.drawingService.previewCtx, this.currentLine);
-    this.drawText(this.drawingService.previewCtx);
   }
 
   drawCursor(): void {

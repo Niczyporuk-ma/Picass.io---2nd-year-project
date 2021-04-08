@@ -19,7 +19,7 @@ import {
     faSave,
     faSlash,
     faSprayCan,
-    faUndoAlt,
+    faUndoAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
