@@ -18,7 +18,6 @@ export class TextService extends Tool{
   isBold: boolean = false;
   isItalic: boolean = false;
   creatingTextBox: boolean = false;
-  anchorPoints: Vec2[];
   mouseDown: boolean = false;
   startingPoint: Vec2 = { x: 0, y: 0 };;
   endPoint: Vec2 = { x: 0, y: 0 };;
@@ -29,7 +28,6 @@ export class TextService extends Tool{
   editingText: boolean = false;
   alignment: CanvasTextAlign = "left"
   allowKeyPressEvents: boolean = true;
-  isNotWriting: boolean = true;
   textBoxActive: boolean = false;
   usefulKeys: string[] = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Backspace", "Enter", "Delete", "Escape", "Shift"];
   uselessKeys: string[] = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "ScrollLock", "Pause", "Insert", "PageUp", "End", "PageDown", "ContextMenu", 
@@ -63,7 +61,6 @@ export class TextService extends Tool{
     this.cursorPosition = { x: 0, y: 0 };
     this.hasBeenReset = true;
     this.creatingTextBox = false;
-    this.isNotWriting = true;
     this.clearArrays();
     this.textBoxActive = false;
   }
@@ -76,7 +73,7 @@ export class TextService extends Tool{
     const MIN_Y = this.currentLine[0].y;
     const MAX_X = this.currentLine[1].x;
     const MAX_Y = this.currentLine[1].y;
-    return X >= MIN_X && X <= MAX_X && Y >= MIN_Y && Y <= MAX_Y;
+    return X > MIN_X && X < MAX_X && Y > MIN_Y && Y < MAX_Y;
   }
 
   clearArrays(): void {
@@ -94,10 +91,8 @@ export class TextService extends Tool{
           return;
         }
         this.lastPos = this.getPositionFromMouse(mouseDownEvent);
-        this.isNotWriting = false;
         return;
       }
-      this.anchorPoints = [];
       this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
       this.startingPoint = this.mouseDownCoord;
     }
@@ -147,6 +142,7 @@ export class TextService extends Tool{
   enterKey(keyboardEvent: KeyboardEvent): void {
     if(keyboardEvent.key === "Enter" && this.textBoxActive){
       this.cursorPosition.y++; 
+      this.cursorPosition.x = 0;
       this.textArray[this.cursorPosition.y] = '';
     }
   }
@@ -156,31 +152,32 @@ export class TextService extends Tool{
       this.drawingService.clearCanvas(this.drawingService.previewCtx);
       this.textBoxActive = false;
       this.clearArrays();
+      this.cursorPosition = {x: 0, y: 0};
     }
   }
 
   arrowUp(keyboardEvent: KeyboardEvent): void { //BROKEN
     if(keyboardEvent.key === "ArrowUp" && this.cursorPosition.y > 0 && this.textBoxActive){
       this.cursorPosition.y--;
-    }
+      console.log(this.cursorPosition.x, this.cursorPosition.y);    }
   }
 
   arrowDown(keyboardEvent: KeyboardEvent): void { //BROKEN
-    if(keyboardEvent.key === "ArrowDown" && this.cursorPosition.y < this.textArray.length && this.textBoxActive){
+    if(keyboardEvent.key === "ArrowDown" && this.cursorPosition.y < this.textArray.length - 1 && this.textBoxActive){
       this.cursorPosition.y++;
-    }
+      console.log(this.cursorPosition.x, this.cursorPosition.y);    }
   }
 
   arrowLeft(keyboardEvent: KeyboardEvent): void { //BROKEN
     if(keyboardEvent.key === "ArrowLeft" && this.cursorPosition.x > 0 && this.textBoxActive){
       this.cursorPosition.x--;
-    }
+      console.log(this.cursorPosition.x, this.cursorPosition.y);    }
   }
 
   arrowRight(keyboardEvent: KeyboardEvent): void { //BROKEN
-    if(keyboardEvent.key === "ArrowRight" && this.cursorPosition.y < this.textArray.length && this.textBoxActive){
+    if(keyboardEvent.key === "ArrowRight" && this.cursorPosition.x <= this.textArray[this.cursorPosition.y].length - 1 && this.textBoxActive){
       this.cursorPosition.x++;
-    }
+      console.log(this.cursorPosition.x, this.cursorPosition.y);    }
   }
 
   switchStartingAndEndPoints(): void {
@@ -218,16 +215,18 @@ export class TextService extends Tool{
 
   onKeyDown(keydown: KeyboardEvent): void {
     if(this.textBoxActive){
+      //debugger;
       if(!this.checkIfInKeyArray(keydown.key, this.usefulKeys) && !(this.checkIfInKeyArray(keydown.key, this.uselessKeys))){
         this.textArray[this.cursorPosition.y] = this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x) + keydown.key + 
         this.textArray[this.cursorPosition.y].substring(this.cursorPosition.x);
         this.drawCursor();
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawTextBox(this.drawingService.previewCtx, this.currentLine);
+        let textCommand: TextCommandService = new TextCommandService();
+        this.drawText(this.drawingService.previewCtx, textCommand);
       }
-      this.drawingService.clearCanvas(this.drawingService.previewCtx);
-      this.drawTextBox(this.drawingService.previewCtx, this.currentLine);
-      let textCommand: TextCommandService = new TextCommandService();
-      this.drawText(this.drawingService.previewCtx, textCommand);
     }
+    console.log(this.cursorPosition.x, this.cursorPosition.y);
   }
 
   drawCursor(): void {
