@@ -95,6 +95,7 @@ export class TextService extends Tool{
       }
       this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
       this.startingPoint = this.mouseDownCoord;
+      console.log(this.endPoint);
     }
   }
 
@@ -119,11 +120,13 @@ export class TextService extends Tool{
         return;
       }
       const mousePosition = this.getPositionFromMouse(mouseUpEvent);
+      if(!this.textBoxActive && !this.checkIfInsideRectangle(mouseUpEvent))
       this.endPoint = mousePosition;
       this.currentLine = [this.startingPoint, this.endPoint];
       this.lastPos.x = mouseUpEvent.offsetX;
       this.lastPos.y = mouseUpEvent.offsetY;
       this.mouseDown = false;
+      console.log(this.endPoint);
     }
   }
 
@@ -142,8 +145,30 @@ export class TextService extends Tool{
   enterKey(keyboardEvent: KeyboardEvent): void {
     if(keyboardEvent.key === "Enter" && this.textBoxActive){
       this.cursorPosition.y++; 
+      const tempString: string = this.textArray[this.cursorPosition.y - 1].slice(this.cursorPosition.x);
+      this.textArray.splice(this.cursorPosition.y, 0, tempString);
+      this.textArray[this.cursorPosition.y-1] = this.textArray[this.cursorPosition.y - 1].slice(0, this.cursorPosition.x);
       this.cursorPosition.x = 0;
-      this.textArray[this.cursorPosition.y] = '';
+      this.clearAndDrawPreview();
+    }
+  }
+
+  backspaceKey(keyboardEvent: KeyboardEvent): void {
+    if(keyboardEvent.key === "Backspace" && this.textBoxActive && this.cursorPosition.x != 0){
+      const beforeDeletedChar: string = this.textArray[this.cursorPosition.y].slice(0, this.cursorPosition.x - 1);
+      const afterDeletedChar: string = this.textArray[this.cursorPosition.y].slice(this.cursorPosition.x);
+      this.cursorPosition.x--;
+      this.textArray[this.cursorPosition.y] = beforeDeletedChar + afterDeletedChar;
+      this.clearAndDrawPreview();
+    }
+  }
+
+  deleteKey(keyboardEvent: KeyboardEvent): void {
+    if(keyboardEvent.key === "Delete" && this.textBoxActive && this.cursorPosition.x <= this.textArray[this.cursorPosition.y].length - 1){
+      const beforeDeletedChar: string = this.textArray[this.cursorPosition.y].slice(0, this.cursorPosition.x);
+      const afterDeletedChar: string = this.textArray[this.cursorPosition.y].slice(this.cursorPosition.x + 1);
+      this.textArray[this.cursorPosition.y] = beforeDeletedChar + afterDeletedChar;
+      this.clearAndDrawPreview();
     }
   }
 
@@ -156,28 +181,33 @@ export class TextService extends Tool{
     }
   }
 
-  arrowUp(keyboardEvent: KeyboardEvent): void { //BROKEN
+  arrowUp(keyboardEvent: KeyboardEvent): void {
     if(keyboardEvent.key === "ArrowUp" && this.cursorPosition.y > 0 && this.textBoxActive){
       this.cursorPosition.y--;
-      console.log(this.cursorPosition.x, this.cursorPosition.y);    }
+      this.clearAndDrawPreview();
+    }
   }
 
-  arrowDown(keyboardEvent: KeyboardEvent): void { //BROKEN
+  arrowDown(keyboardEvent: KeyboardEvent): void {
     if(keyboardEvent.key === "ArrowDown" && this.cursorPosition.y < this.textArray.length - 1 && this.textBoxActive){
       this.cursorPosition.y++;
-      console.log(this.cursorPosition.x, this.cursorPosition.y);    }
+      this.clearAndDrawPreview();
+    }
   }
 
-  arrowLeft(keyboardEvent: KeyboardEvent): void { //BROKEN
+  arrowLeft(keyboardEvent: KeyboardEvent): void {
     if(keyboardEvent.key === "ArrowLeft" && this.cursorPosition.x > 0 && this.textBoxActive){
       this.cursorPosition.x--;
-      console.log(this.cursorPosition.x, this.cursorPosition.y);    }
+      this.clearAndDrawPreview();
+    }
   }
 
-  arrowRight(keyboardEvent: KeyboardEvent): void { //BROKEN
+  arrowRight(keyboardEvent: KeyboardEvent): void {
     if(keyboardEvent.key === "ArrowRight" && this.cursorPosition.x <= this.textArray[this.cursorPosition.y].length - 1 && this.textBoxActive){
       this.cursorPosition.x++;
-      console.log(this.cursorPosition.x, this.cursorPosition.y);    }
+      this.drawingService.clearCanvas(this.drawingService.previewCtx);
+      this.clearAndDrawPreview();
+    }
   }
 
   switchStartingAndEndPoints(): void {
@@ -198,12 +228,6 @@ export class TextService extends Tool{
     this.switchStartingAndEndPoints();
     textCommand.setTextAttributes(this.fontSize, this.font, this.textArray, this.alignment, this.startingPoint, this.endPoint, this.colorService.primaryColor);
     textCommand.execute(ctx);
-    this.cursorPosition.x++;
-    // const cursorPosition: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
-    // if(cursorPosition.width >= this.endPoint.x - this.startingPoint.x - 13){ 
-    //   this.cursorPosition.y++; 
-    //   this.textArray[this.cursorPosition.y] = '';
-    //}
   }
 
   checkIfInKeyArray(key: string, array: string[]): boolean {
@@ -213,28 +237,38 @@ export class TextService extends Tool{
     return false;
   }
 
+  clearAndDrawPreview(): void {
+    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    this.drawTextBox(this.drawingService.previewCtx, this.currentLine);
+    let textCommand: TextCommandService = new TextCommandService();
+    this.drawText(this.drawingService.previewCtx, textCommand);
+    this.drawCursor();
+  }
+
   onKeyDown(keydown: KeyboardEvent): void {
     if(this.textBoxActive){
-      //debugger;
-      if(!this.checkIfInKeyArray(keydown.key, this.usefulKeys) && !(this.checkIfInKeyArray(keydown.key, this.uselessKeys))){
-        this.textArray[this.cursorPosition.y] = this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x) + keydown.key + 
-        this.textArray[this.cursorPosition.y].substring(this.cursorPosition.x);
-        this.drawCursor();
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawTextBox(this.drawingService.previewCtx, this.currentLine);
-        let textCommand: TextCommandService = new TextCommandService();
-        this.drawText(this.drawingService.previewCtx, textCommand);
+      let cursorPositionX: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
+      let cursorPositionY: number = this.textArray.length * this.fontSize;
+      if(cursorPositionX.width < (this.endPoint.x - this.startingPoint.x - 5) && 
+      cursorPositionY < (this.endPoint.y - this.startingPoint.y + this.fontSize/2) &&
+      !this.checkIfInKeyArray(keydown.key, this.usefulKeys) && 
+      !(this.checkIfInKeyArray(keydown.key, this.uselessKeys))){
+        this.textArray[this.cursorPosition.y] = this.textArray[this.cursorPosition.y].slice(0, this.cursorPosition.x) + keydown.key + 
+        this.textArray[this.cursorPosition.y].slice(this.cursorPosition.x);
+        this.cursorPosition.x++;
+        this.clearAndDrawPreview();
       }
+      cursorPositionX = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
+      cursorPositionY = this.textArray.length * this.fontSize;
     }
-    console.log(this.cursorPosition.x, this.cursorPosition.y);
   }
 
   drawCursor(): void {
-    //const cursorPosition: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
+    const cursorPositionX: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
     this.drawingService.previewCtx.setLineDash([]);
     this.drawingService.previewCtx.beginPath();
-    this.drawingService.previewCtx.moveTo(this.cursorPosition.x, this.cursorPosition.y);
-    this.drawingService.previewCtx.lineTo(this.cursorPosition.x, this.cursorPosition.y + this.fontSize);
+    this.drawingService.previewCtx.moveTo(this.startingPoint.x + cursorPositionX.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + 7);
+    this.drawingService.previewCtx.lineTo(this.startingPoint.x + cursorPositionX.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + this.fontSize);
     this.drawingService.previewCtx.stroke();
   }
 }

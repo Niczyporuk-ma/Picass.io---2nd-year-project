@@ -108,6 +108,9 @@ export class DrawingComponent implements AfterViewInit {
                 this.toolManager.textService.arrowDown(event);
                 this.toolManager.textService.arrowLeft(event);
                 this.toolManager.textService.arrowRight(event);
+                this.toolManager.textService.backspaceKey(event);
+                this.toolManager.textService.deleteKey(event);
+
             }
         });
 
