@@ -15,8 +15,8 @@ export class TextService extends Tool{
   colorService: ColorService;
   font: string = "Arial";
   fontSize: number = 30;
-  isBold: boolean = false;
-  isItalic: boolean = false;
+  bold: boolean = false;
+  italic: boolean = false;
   creatingTextBox: boolean = false;
   mouseDown: boolean = false;
   startingPoint: Vec2 = { x: 0, y: 0 };;
@@ -47,9 +47,30 @@ export class TextService extends Tool{
     this.index = 10;
     this.colorService = colorService;
   }
+
+  reverseBold(): void {
+    this.bold = !this.bold;
+    this.clearAndDrawPreview();
+  }
+
+  reverseItalic(): void {
+    this.italic = !this.italic;
+    this.clearAndDrawPreview();
+  }
   
   changeFontSize(size: number) {
     this.fontSize = size;
+    this.clearAndDrawPreview();
+  }
+
+  changeFont(newFont: string) {
+    this.font = newFont;
+    this.clearAndDrawPreview();
+  }
+
+  changeAlignment(newAlignment: CanvasTextAlign): void {
+    this.alignment = newAlignment;
+    this.clearAndDrawPreview();
   }
 
   resetState(): void {
@@ -205,7 +226,6 @@ export class TextService extends Tool{
   arrowRight(keyboardEvent: KeyboardEvent): void {
     if(keyboardEvent.key === "ArrowRight" && this.cursorPosition.x <= this.textArray[this.cursorPosition.y].length - 1 && this.textBoxActive){
       this.cursorPosition.x++;
-      this.drawingService.clearCanvas(this.drawingService.previewCtx);
       this.clearAndDrawPreview();
     }
   }
@@ -226,7 +246,8 @@ export class TextService extends Tool{
   drawText(ctx: CanvasRenderingContext2D, textCommand: TextCommandService): void {
     this.setColors(this.colorService);
     this.switchStartingAndEndPoints();
-    textCommand.setTextAttributes(this.fontSize, this.font, this.textArray, this.alignment, this.startingPoint, this.endPoint, this.colorService.primaryColor);
+    textCommand.setTextAttributes
+    (this.fontSize, this.font, this.textArray, this.alignment, this.startingPoint, this.endPoint, this.colorService.primaryColor, this.italic, this.bold);
     textCommand.execute(ctx);
   }
 
@@ -267,8 +288,20 @@ export class TextService extends Tool{
     const cursorPositionX: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
     this.drawingService.previewCtx.setLineDash([]);
     this.drawingService.previewCtx.beginPath();
-    this.drawingService.previewCtx.moveTo(this.startingPoint.x + cursorPositionX.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + 7);
-    this.drawingService.previewCtx.lineTo(this.startingPoint.x + cursorPositionX.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + this.fontSize);
+    if(this.alignment === "left"){
+      this.drawingService.previewCtx.moveTo(this.startingPoint.x + cursorPositionX.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + 7);
+      this.drawingService.previewCtx.lineTo(this.startingPoint.x + cursorPositionX.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + this.fontSize);
+    }
+    else if (this.alignment === "right") { //broken
+      this.drawingService.previewCtx.moveTo(this.endPoint.x, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + 7);
+      this.drawingService.previewCtx.lineTo(this.endPoint.x, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + this.fontSize);
+    }
+    else if (this.alignment === "center") { //broken
+      this.drawingService.previewCtx.moveTo(this.startingPoint.x + cursorPositionX.width/2 + (this.endPoint.x - this.startingPoint.x)/2, 
+      this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + 7);
+      this.drawingService.previewCtx.lineTo(this.startingPoint.x + cursorPositionX.width/2 + (this.endPoint.x - this.startingPoint.x)/2, 
+      this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + this.fontSize);
+    }
     this.drawingService.previewCtx.stroke();
   }
 }

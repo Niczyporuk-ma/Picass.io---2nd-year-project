@@ -166,16 +166,16 @@
 
     <div class="fontMenu" *ngIf="this.toolManager.currentTool == this.toolManager.textService">
         <mat-menu #appMenu="matMenu">
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Arial'">Arial</button>
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Algerian'">Algerian</button>
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Trebuchet MS'">Trebuchet MS</button>
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Times New Roman'">Times New Roman</button>
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Comic Sans MS'">Comic Sans MS</button>
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Blackadder ITC'">Blackadder ITC</button>
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Magneto'">Magneto</button>
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Showcard Gothic'">Showcard Gothic</button>
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Courier New'">Courier New</button>
-            <button mat-menu-item (click)="this.toolManager.textService.font ='Brush Script MT'">Brush Script MT</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Arial')">Arial</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Algerian')">Algerian</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Trebuchet MS')">Trebuchet MS</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Times New Roman')">Times New Roman</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Comic Sans MS')">Comic Sans MS</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Blackadder ITC')">Blackadder ITC</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Magneto')">Magneto</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Showcard Gothic')">Showcard Gothic</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Courier New')">Courier New</button>
+            <button mat-menu-item (click)="this.toolManager.textService.changeFont('Brush Script MT')">Brush Script MT</button>
         </mat-menu>
         <button mat-flat-button [matMenuTriggerFor]="appMenu"> Police: {{this.toolManager.textService.font}}</button>
 
@@ -195,9 +195,14 @@
         </mat-card>
 
         <mat-button-toggle-group>
-            <mat-button-toggle (click)="this.toolManager.textService.alignment = 'left'">Gauche</mat-button-toggle>
-            <mat-button-toggle (click)="this.toolManager.textService.alignment = 'center'">Centre</mat-button-toggle>
-            <mat-button-toggle (click)="this.toolManager.textService.alignment = 'right'">Droite</mat-button-toggle>
+            <mat-button-toggle (click)="this.toolManager.textService.changeAlignment('left')">Gauche</mat-button-toggle>
+            <mat-button-toggle (click)="this.toolManager.textService.changeAlignment('center')">Centre</mat-button-toggle>
+            <mat-button-toggle (click)="this.toolManager.textService.changeAlignment('right')">Droite</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-button-toggle-group>
+            <mat-button-toggle (click)="this.toolManager.textService.reverseBold()">Gras</mat-button-toggle>
+            <mat-button-toggle (click)="this.toolManager.textService.reverseItalic()">Italic</mat-button-toggle>
         </mat-button-toggle-group>
     </div>
 
