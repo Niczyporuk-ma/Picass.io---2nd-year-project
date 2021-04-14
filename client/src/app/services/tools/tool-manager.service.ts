@@ -11,6 +11,7 @@ import { Subject } from 'rxjs';
 import { ColorService } from './color.service';
 import { EllipseService } from './ellipse.service';
 import { EraserService } from './eraser.service';
+import { LassoService } from './lasso.service';
 import { PipetteService } from './pipette.service';
 import { PolygonService } from './polygon.service';
 import { RectangleService } from './rectangle.service';
@@ -33,6 +34,7 @@ export class ToolManagerService {
         this.rectangleSelection,
         this.ellipseSelection,
         this.pipetteService,
+        this.lassoService,
     ];
 
     toolBoxShortcuts: Map<string, Tool>;
@@ -59,6 +61,7 @@ export class ToolManagerService {
         public pipetteService: PipetteService,
         public rectangleSelection: RectangleSelectionService,
         public ellipseSelection: EllipseSelectionService,
+        public lassoService: LassoService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
@@ -73,6 +76,7 @@ export class ToolManagerService {
             [this.rectangleSelection.shortcut, this.tools[this.rectangleSelection.index]],
             [this.ellipseSelection.shortcut, this.tools[this.ellipseSelection.index]],
             [this.pipetteService.shortcut, this.tools[this.pipetteService.index]],
+            [this.lassoService.shortcut, this.tools[this.lassoService.index]],
         ]);
         this.undoRedoManager = undoRedoManager;
     }

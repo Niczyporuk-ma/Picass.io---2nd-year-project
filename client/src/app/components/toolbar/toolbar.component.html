@@ -69,6 +69,14 @@
         <fa-icon [icon]="faPen" size="lg"></fa-icon>
     </button>
     <button
+        (click)="this.toolManager.setTool(this.toolManager.lassoService);"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+    lasso
+    </button>
+
+    <button
         (click)="this.toolManager.setTool(this.toolManager.airbrushService)"
         matTooltip="Outil aérosol (A): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
