@@ -42,6 +42,7 @@ export class EllipseService extends Tool {
             secondaryColor: 'black',
         };
         this.undoRedoManager = undoRedoManager;
+        this.toolName = "Ellipse";
     }
 
     clearArrays(): void {

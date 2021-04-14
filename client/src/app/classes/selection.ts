@@ -36,6 +36,7 @@ export abstract class Selection extends Tool {
             ['ArrowDown', this.moveDown],
         ]);
         this.undoRedoManager = undoRedoManager;
+        this.toolName = "Selection";
     }
 
     fixCurrentLine(): void {
