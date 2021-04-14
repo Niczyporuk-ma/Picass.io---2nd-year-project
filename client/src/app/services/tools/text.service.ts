@@ -152,7 +152,7 @@ export class TextService extends Tool{
 
   drawTextBox(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
     ctx.fillStyle = 'white';
-    ctx.setLineDash([5, 5])
+    ctx.setLineDash([5, 5]);
     ctx.globalCompositeOperation = 'source-over';
     ctx.lineWidth = 1;
     ctx.lineCap = 'square';
@@ -160,6 +160,7 @@ export class TextService extends Tool{
     ctx.strokeRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
     ctx.closePath();
     this.textBoxActive = true;
+    ctx.setLineDash([])
   }
 
   enterKey(keyboardEvent: KeyboardEvent): void {
