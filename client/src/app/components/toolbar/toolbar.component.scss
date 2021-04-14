@@ -9,12 +9,65 @@
     margin-top: 250px;
 }
 
-.slider:hover {
-    opacity: 2;
-}
-
 .btns {
     width: 355px;
+}
+
+.undo{
+    width: 50px;
+}
+
+.undo:focus{
+    background-color: rgb(53, 64, 75);
+    color: white;
+}
+
+.redo:focus{
+    background-color: rgb(53, 64, 75);
+    color: white;
+}
+
+.undoDis{
+    color: rgb(123, 140, 156);
+    width: 50px;
+}
+
+.undoDis:hover{
+    background-color: rgb(63, 72, 80);
+    color: rgb(123, 140, 156);
+    width: 50px;
+}
+
+.undoDis:focus{
+    background-color: rgb(53, 64, 75);
+    color: rgb(123, 140, 156);
+    width: 50px;
+}
+
+.redoDis:focus{
+    background-color: rgb(53, 64, 75);
+    color: rgb(123, 140, 156);
+    width: 50px;
+}
+
+.redo{
+    width: 50px;
+}
+
+.redoDis{
+    color: rgb(123, 140, 156);
+    width: 50px;
+}
+
+.redoDis:hover{
+    background-color: rgb(63, 72, 80);
+    color: rgb(123, 140, 156);
+    width: 50px;
+}
+
+.undoRedo {
+    display: flex;
+    padding-bottom: 20px;
 }
 
 button {
@@ -22,7 +75,7 @@ button {
     border: none;
     background-color: rgb(53, 64, 75);
     color: white;
-    width: 216px;
+    width: 100px;
     height: 50px;
     border-radius: 0%;
     transition: 0.3s;
@@ -33,9 +86,9 @@ button:hover {
     border: none;
     background-color: rgb(197, 243, 231);
     color: black;
-    width: 216px;
     height: 50px;
     border-radius: 0%;
+    font-size: 20px;
 }
 
 button:focus {
@@ -49,61 +102,15 @@ button:focus {
     background-color: rgb(53, 64, 75, 0.9);
 }
 
-mat-button-toggle-group {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    z-index: 3;
-    position: relative;
-}
-
-mat-button-toggle {
-    flex-grow: 1;
-    background-color: rgba(83, 101, 119);
-    color: white;
-    width: 81.5px;
-}
-
 #jonc {
     width: 122.5px;
 }
 
-mat-card {
-    z-index: 3;
-    position: relative;
-    width: auto;
-    height: 30px;
-    color: white;
-    background-color: rgba(83, 101, 119);
-    bottom: 15px;
-    padding: auto;
-    margin-top: 10px;
-}
-
-mat-button-toggle-group {
-    width: 216px;
-}
 
 .junctionRadiusSlider mat-card {
     width: 216px;
     padding: 0;
     padding-left: 2px;
-}
-
-mat-card-subtitle {
-    position: relative;
-    left: 150px;
-    bottom: 45px;
-    font-weight: bold;
-    color: white;
-    width: 50px;
-}
-
-.Slider {
-    padding: 0;
-    width: 216px;
-    vertical-align: top;
-    text-align: left;
 }
 
 .TextSlider {
@@ -113,16 +120,12 @@ mat-card-subtitle {
     text-align: left;
 }
 
-mat-slider {
-    bottom: 15px;
-}
-
-mat-slider {
-    bottom: 15px;
-}
-
 app-color-picker{
-    padding-left: 216px;
+    padding-left: 100px;
     margin-top: -700px;
+}
+
+.non-tools {
+    padding-top: 80px;
 }
 

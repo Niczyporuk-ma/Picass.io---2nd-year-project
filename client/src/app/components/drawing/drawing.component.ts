@@ -100,28 +100,40 @@ export class DrawingComponent implements AfterViewInit {
         );
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (this.toolManager.currentTool == this.toolManager.textService) {
-                event.preventDefault();
-                this.toolManager.textService.onKeyDown(event);
-                this.toolManager.textService.enterKey(event);
-                this.toolManager.textService.escapeKey(event);
-                this.toolManager.textService.arrowUp(event);
-                this.toolManager.textService.arrowDown(event);
-                this.toolManager.textService.arrowLeft(event);
-                this.toolManager.textService.arrowRight(event);
-                this.toolManager.textService.backspaceKey(event);
-                this.toolManager.textService.deleteKey(event);
+                if(this.toolManager.textService.textBoxActive){
+                    this.toolManager.disableShortcut();
+                    event.preventDefault();
+                    this.toolManager.textService.onKeyDown(event);
+                    this.toolManager.textService.enterKey(event);
+                    this.toolManager.textService.escapeKey(event);
+                    this.toolManager.textService.arrowUp(event);
+                    this.toolManager.textService.arrowDown(event);
+                    this.toolManager.textService.arrowLeft(event);
+                    this.toolManager.textService.arrowRight(event);
+                    this.toolManager.textService.backspaceKey(event);
+                    this.toolManager.textService.deleteKey(event);
+                }
+                else{
+                    this.toolManager.enableShortcut();
+                }
+            }
+        });
 
+        window.addEventListener('keydown', (event: KeyboardEvent) => {
+            if (this.toolManager.allowKeyPressEvents) {
+                event.preventDefault();
+                this.shortcutKeyboardManager.onKeyPress(event.key);
             }
         });
 
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
-        // window.addEventListener('keyup', (e) => {
-        //     if (this.toolManager.currentTool === this.toolManager.ellipseSelection) {
-        //         this.toolManager.ellipseSelection.keyupHandler(e);
-        //     } else if (this.toolManager.currentTool === this.toolManager.rectangleSelection) {
-        //         this.toolManager.rectangleSelection.keyupHandler(e);
-        //     }
-        // });
+        window.addEventListener('keyup', (e) => {
+            if (this.toolManager.currentTool === this.toolManager.ellipseSelection) {
+                this.toolManager.ellipseSelection.keyupHandler(e);
+            } else if (this.toolManager.currentTool === this.toolManager.rectangleSelection) {
+                this.toolManager.rectangleSelection.keyupHandler(e);
+            }
+        });
         window.addEventListener('contextmenu', (event: MouseEvent) => {
             event.preventDefault();
         });

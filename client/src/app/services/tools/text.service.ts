@@ -40,12 +40,11 @@ export class TextService extends Tool{
     this.toolStyles = {
       primaryColor: 'black',
       lineWidth: this.fontSize,
-      fill: true,
-      secondaryColor: 'black',
     }
     this.shortcut = 't';
     this.index = 10;
     this.colorService = colorService;
+    this.localShortcuts = new Map();
   }
 
   reverseBold(): void {
@@ -259,11 +258,13 @@ export class TextService extends Tool{
   }
 
   clearAndDrawPreview(): void {
-    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-    this.drawTextBox(this.drawingService.previewCtx, this.currentLine);
-    let textCommand: TextCommandService = new TextCommandService();
-    this.drawText(this.drawingService.previewCtx, textCommand);
-    this.drawCursor();
+    if(this.textBoxActive){
+      this.drawingService.clearCanvas(this.drawingService.previewCtx);
+      this.drawTextBox(this.drawingService.previewCtx, this.currentLine);
+      let textCommand: TextCommandService = new TextCommandService();
+      this.drawText(this.drawingService.previewCtx, textCommand);
+      this.drawCursor();
+    }
   }
 
   onKeyDown(keydown: KeyboardEvent): void {
@@ -283,23 +284,29 @@ export class TextService extends Tool{
       cursorPositionY = this.textArray.length * this.fontSize;
     }
   }
-
+  reverseString(): string {
+    return this.textArray[this.cursorPosition.y].split("").reverse().join("");
+  }
   drawCursor(): void {
-    const cursorPositionX: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
     this.drawingService.previewCtx.setLineDash([]);
     this.drawingService.previewCtx.beginPath();
+    const cursorPositionX: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x));
     if(this.alignment === "left"){
       this.drawingService.previewCtx.moveTo(this.startingPoint.x + cursorPositionX.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + 7);
       this.drawingService.previewCtx.lineTo(this.startingPoint.x + cursorPositionX.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + this.fontSize);
     }
     else if (this.alignment === "right") { //broken
-      this.drawingService.previewCtx.moveTo(this.endPoint.x, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + 7);
-      this.drawingService.previewCtx.lineTo(this.endPoint.x, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + this.fontSize);
+      //this.cursorPosition.x += this.textArray[this.cursorPosition.y].length - this.cursorPosition.x;
+      const textArrayRightAlign = this.reverseString();
+      const cursorPositionXRight: TextMetrics = this.drawingService.previewCtx.measureText(textArrayRightAlign.substring(0, this.cursorPosition.x));
+      this.drawingService.previewCtx.moveTo(this.endPoint.x + cursorPositionXRight.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + 7);
+      this.drawingService.previewCtx.lineTo(this.endPoint.x + cursorPositionXRight.width, this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + this.fontSize);
     }
     else if (this.alignment === "center") { //broken
-      this.drawingService.previewCtx.moveTo(this.startingPoint.x + cursorPositionX.width/2 + (this.endPoint.x - this.startingPoint.x)/2, 
+      let newStartPoint: Vec2 = {x: this.startingPoint.x - cursorPositionX.width, y: this.startingPoint.y};
+      this.drawingService.previewCtx.moveTo(newStartPoint.x + cursorPositionX.width + (this.endPoint.x - newStartPoint.x)/2, 
       this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + 7);
-      this.drawingService.previewCtx.lineTo(this.startingPoint.x + cursorPositionX.width/2 + (this.endPoint.x - this.startingPoint.x)/2, 
+      this.drawingService.previewCtx.lineTo(newStartPoint.x + cursorPositionX.width + (this.endPoint.x - newStartPoint.x)/2, 
       this.startingPoint.y + (this.fontSize * this.cursorPosition.y) + this.fontSize);
     }
     this.drawingService.previewCtx.stroke();
