@@ -5,7 +5,7 @@ import { ExportDrawingComponent } from '@app/components/export-drawing/export-dr
 import { FormComponent } from '@app/components/form/form.component';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
-import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faDownload, faHome, faImages, faItalic, faSave, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faChevronDown, faDownload, faHome, faImages, faItalic, faSave, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
@@ -28,6 +28,7 @@ export class AttributesBarComponent implements OnInit {
   faImages: IconDefinition = faImages;
   faSave: IconDefinition = faSave;
   faHome: IconDefinition = faHome;
+  faChevronDown: IconDefinition = faChevronDown;
   shortcuts: ShortcutInput[] = [];
 
   constructor(public toolManager: ToolManagerService, public modal: MatDialog) { 

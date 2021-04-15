@@ -112,7 +112,8 @@
             <button mat-menu-item class="font-button" style="font-family: 'Showcard Gothic'" (click)="this.toolManager.textService.changeFont('Showcard Gothic')">Showcard Gothic</button>
             <button mat-menu-item class="font-button" style="font-family: 'Times New Roman'" (click)="this.toolManager.textService.changeFont('Times New Roman')">Times New Roman</button>
         </mat-menu>
-        <button mat-flat-button [matMenuTriggerFor]="appMenu"> {{this.toolManager.textService.font}}</button>
+        <button mat-flat-button [matMenuTriggerFor]="appMenu" class="currentFont"> {{this.toolManager.textService.font}} 
+            <div class = "dropDownArrow"><fa-icon [icon]="faChevronDown" size="small"></fa-icon></div></button>
     </div>
 
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService">
