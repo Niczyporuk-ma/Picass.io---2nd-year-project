@@ -90,6 +90,8 @@ export class UndoRedoManagerService extends Tool {
                 this.drawImage(resizeCommand);
             } else {
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.drawingService.baseCtx.fillStyle = 'white';
+                this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
                 const lastCommand: UndoRedoCommand = this.undoStack.pop() as UndoRedoCommand;
                 this.redoStack.push(lastCommand);
                 if (lastCommand.isResizer) {
