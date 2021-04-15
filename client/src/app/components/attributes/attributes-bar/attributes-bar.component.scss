@@ -84,6 +84,7 @@ mat-button-toggle {
     background-color: rgba(83, 101, 119);
     color: white;
     width: 81.5px;
+    border-radius: 0%;
 }
 
 mat-slider {
@@ -119,6 +120,12 @@ button:hover {
     color: black;
     height: 50px;
     border-radius: 0%;
+}
+
+mat-button-toggle.active {
+    outline: none;
+    background-color: rgb(107, 240, 206);
+    color: black;
 }
 
 .nonTools {

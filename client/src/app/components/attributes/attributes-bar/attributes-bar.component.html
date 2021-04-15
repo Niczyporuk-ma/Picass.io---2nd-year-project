@@ -73,8 +73,12 @@
         </mat-button-toggle-group>
     
         <mat-button-toggle-group>
-            <mat-button-toggle (click)="this.toolManager.textService.reverseBold()"><fa-icon [icon]="faBold" size="lg"></fa-icon></mat-button-toggle>
-            <mat-button-toggle (click)="this.toolManager.textService.reverseItalic()"><fa-icon [icon]="faItalic" size="lg"></fa-icon></mat-button-toggle>
+            <mat-button-toggle 
+            [ngClass]="{active: this.toolManager.textService.bold}"
+            (click)="this.toolManager.textService.reverseBold()"><fa-icon [icon]="faBold" size="lg"></fa-icon></mat-button-toggle>
+            <mat-button-toggle
+            [ngClass]="{active: this.toolManager.textService.italic}"
+            (click)="this.toolManager.textService.reverseItalic()"><fa-icon [icon]="faItalic" size="lg"></fa-icon></mat-button-toggle>
         </mat-button-toggle-group>
     
     
@@ -196,5 +200,8 @@
     </button>
     <button class= "nonTools" (click)="export()" matTooltip="Exporter le dessin" matTooltipPosition="after" matTooltipShowDelay="600">
         <fa-icon [icon]="faDownload" size="lg"></fa-icon>
+    </button>
+    <button class= "nonTools" routerLink="/home" matTooltip="Retour à la page principale" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faHome" size="lg"></fa-icon>
     </button>
 </div>
