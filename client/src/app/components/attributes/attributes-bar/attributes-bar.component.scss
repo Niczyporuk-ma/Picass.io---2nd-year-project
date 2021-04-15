@@ -121,6 +121,12 @@ button:hover {
     border-radius: 0%;
 }
 
+.nonTools {
+    width: 216px;
+    outline: none;
+    text-align: center;
+}
+
 ::ng-deep .mat-menu-content {
     background-color: rgb(53, 64, 75);
 }

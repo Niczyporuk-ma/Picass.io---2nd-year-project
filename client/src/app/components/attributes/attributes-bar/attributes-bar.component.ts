@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
+import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
+import { FormComponent } from '@app/components/form/form.component';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faItalic, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
+import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faDownload, faImages, faItalic, faSave, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
@@ -17,9 +23,32 @@ export class AttributesBarComponent implements OnInit {
   faAlignRight: IconDefinition = faAlignRight;
   faBold : IconDefinition = faBold;
   faItalic : IconDefinition = faItalic;
+  faPlusSquare: IconDefinition = faPlusSquare;
+  faDownload: IconDefinition = faDownload;
+  faImages: IconDefinition = faImages;
+  faSave: IconDefinition = faSave;
+  shortcuts: ShortcutInput[] = [];
 
-  constructor(public toolManager: ToolManagerService) { 
+  constructor(public toolManager: ToolManagerService, public modal: MatDialog) { 
     this.toolManager = toolManager;
+    // source: https://www.npmjs.com/package/ng-keyboard-shortcuts
+    this.shortcuts.push(
+      {
+          key: 'ctrl + g',
+          preventDefault: true,
+          command: () => this.openCarousel(),
+      },
+      {
+          key: 'ctrl + s',
+          preventDefault: true,
+          command: () => this.openSaveDrawingForm(),
+      },
+    );
+    this.shortcuts.push({
+        key: 'ctrl + e',
+        preventDefault: true,
+        command: () => this.export(),
+    });
   }
 
   ngOnInit(): void {
@@ -91,6 +120,18 @@ export class AttributesBarComponent implements OnInit {
   
   changeDiameter(newDiameter: number): void {
       this.toolManager.lineService.currentDiameter = newDiameter;
+  }
+
+  export(): void {
+    this.modal.open(ExportDrawingComponent);
+  }
+
+  openCarousel(): void {
+      this.modal.open(CarrouselComponent);
+  }
+
+  openSaveDrawingForm(): void {
+      this.modal.open(FormComponent);
   }
 
 }

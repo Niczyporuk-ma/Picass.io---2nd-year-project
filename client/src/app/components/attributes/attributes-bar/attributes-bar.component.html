@@ -1,5 +1,7 @@
-<div class = "title">{{this.toolManager.currentTool.toolName}}</div>
-<div *ngIf = "!this.toolManager.showPalette">
+<div class = "title" *ngIf = "!this.toolManager.nonTools">{{this.toolManager.currentTool.toolName}}</div>
+<div class = "title" *ngIf = "this.toolManager.nonTools">Autres Options</div>
+<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
+<div *ngIf = "!this.toolManager.showPalette && !this.toolManager.nonTools">
     <div class="Slider" *ngIf="this.toolManager.currentTool != this.toolManager.airbrushService && this.toolManager.currentTool != this.toolManager.textService 
     && this.toolManager.currentTool != this.toolManager.pipetteService">
         <mat-card>
@@ -177,4 +179,22 @@
         <mat-button-toggle id="jonc" value="0" (change)="setLineJunction($event.value)">Sans jonction</mat-button-toggle>
         <mat-button-toggle id="jonc" value="1" (change)="setLineJunction($event.value)">Avec jonction</mat-button-toggle>
     </mat-button-toggle-group>
+    
+</div>
+
+<div class= "non-tools" *ngIf = "this.toolManager.nonTools">
+    <button class= "nonTools" (click)="this.toolManager.clearArrays()" matTooltip="Créer un nouveau dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faPlusSquare" size="lg"></fa-icon>
+    </button>
+
+    <button class= "nonTools" (click)="openSaveDrawingForm()" matTooltip="Sauvegarder le dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faSave" size="lg"></fa-icon>
+    </button>
+
+    <button class= "nonTools" (click)="openCarousel()" matTooltip="Ouvrir le carrousel de dessins" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faImages" size="lg"></fa-icon>
+    </button>
+    <button class= "nonTools" (click)="export()" matTooltip="Exporter le dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+        <fa-icon [icon]="faDownload" size="lg"></fa-icon>
+    </button>
 </div>

@@ -1,3 +1,4 @@
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
@@ -37,6 +38,7 @@ import { PipetteComponent } from './components/pipette/pipette.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -58,6 +60,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
     ],
     imports: [
         BrowserModule,
+        ScrollingModule,
         HttpClientModule,
         AppRoutingModule,
         BrowserAnimationsModule,

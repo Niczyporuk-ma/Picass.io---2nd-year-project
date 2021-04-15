@@ -48,6 +48,7 @@ export class ToolManagerService {
     showPalette: boolean = false;
     undoRedoManager: UndoRedoManagerService;
     showSaveMenu: boolean = false;
+    nonTools: boolean = false;
 
     constructor(
         public pencilService: PencilService,
@@ -96,8 +97,15 @@ export class ToolManagerService {
                 this.undoRedoManager.clearRedoStack();
                 this.undoRedoManager.clearUndoStack();
                 this.undoRedoManager.disableUndoRedo();
+                this.drawingService.baseCtx.fillStyle = 'white';
+                this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
             }
         }
+    }
+
+    flipNonToolBool(): void {
+        this.nonTools = !this.nonTools;
+        console.log(this.nonTools);
     }
 
     setTool(tool: Tool): void {
