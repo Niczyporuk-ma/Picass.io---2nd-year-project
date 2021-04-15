@@ -67,9 +67,12 @@
     
     <div *ngIf="this.toolManager.currentTool == this.toolManager.textService">
         <mat-button-toggle-group>
-            <mat-button-toggle (click)="this.toolManager.textService.changeAlignment('left')"><fa-icon [icon]="faAlignLeft" size="lg"></fa-icon></mat-button-toggle>
-            <mat-button-toggle (click)="this.toolManager.textService.changeAlignment('center')"><fa-icon [icon]="faAlignCenter" size="lg"></fa-icon></mat-button-toggle>
-            <mat-button-toggle (click)="this.toolManager.textService.changeAlignment('right')"><fa-icon [icon]="faAlignRight" size="lg"></fa-icon></mat-button-toggle>
+            <mat-button-toggle [ngClass]="{active: this.toolManager.textService.alignment === 'left'}"
+                (click)="this.toolManager.textService.changeAlignment('left')"><fa-icon [icon]="faAlignLeft" size="lg"></fa-icon></mat-button-toggle>
+            <mat-button-toggle [ngClass]="{active: this.toolManager.textService.alignment === 'center'}"
+                (click)="this.toolManager.textService.changeAlignment('center')"><fa-icon [icon]="faAlignCenter" size="lg"></fa-icon></mat-button-toggle>
+            <mat-button-toggle [ngClass]="{active: this.toolManager.textService.alignment === 'right'}"
+                (click)="this.toolManager.textService.changeAlignment('right')"><fa-icon [icon]="faAlignRight" size="lg"></fa-icon></mat-button-toggle>
         </mat-button-toggle-group>
     
         <mat-button-toggle-group>
