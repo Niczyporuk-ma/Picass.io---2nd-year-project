@@ -22,6 +22,7 @@
     </div>
 
     <button
+        [ngClass]="{active: this.toolManager.currentTool == this.toolManager.pencilService}"
         (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()"
         matTooltip="Outil crayon (C): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
@@ -30,6 +31,7 @@
         <fa-icon [icon]="faPen" size="lg"></fa-icon>
     </button>
     <button
+        [ngClass]="{active: this.toolManager.currentTool == this.toolManager.airbrushService}"
         (click)="this.toolManager.setTool(this.toolManager.airbrushService)"
         matTooltip="Outil aérosol (A): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
@@ -38,6 +40,7 @@
         <fa-icon [icon]="faSprayCan" size="lg"></fa-icon>
     </button>
     <button
+        [ngClass]="{active: this.toolManager.currentTool == this.toolManager.eraserService}"
         (click)="this.toolManager.setTool(this.toolManager.eraserService); updateSliderWidth()"
         matTooltip="Outil efface (E): Cliquer et glisser pour effacer. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
@@ -45,8 +48,13 @@
     >
         <fa-icon [icon]="faEraser" size="lg"></fa-icon>
     </button>
-    <button (click)="this.toolManager.setTool(this.toolManager.textService)" style="font-family: 'Times New Roman'; font-size: x-large;"> T </button>
+
+    <button [ngClass]="{active: this.toolManager.currentTool == this.toolManager.textService}"
+        (click)="this.toolManager.setTool(this.toolManager.textService)" style="font-family: 'Times New Roman'; font-size: x-large;"> T 
+    </button>
+
     <button
+        [ngClass]="{active: this.toolManager.currentTool == this.toolManager.lineService}"
         (click)="this.toolManager.setTool(this.toolManager.lineService); updateSliderWidth()"
         matTooltip="Outil ligne (L): Cliquer et glisser pour déssiner une ligne. Cliquer à la fin pour enchaîner
     les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'options"
@@ -55,7 +63,9 @@
     >
         <fa-icon [icon]="faSlash" size="lg"></fa-icon>
     </button>
+
     <button
+        [ngClass]="{active: this.toolManager.currentTool == this.toolManager.rectangleService}"
         (click)="this.toolManager.setTool(this.toolManager.rectangleService); updateSliderWidth()"
         matTooltip="Outil rectangle (1): Cliquer et glisser, et relâcher pour déssiner un rectangle. tenir (Shift) pour dessiner un carré. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
@@ -65,6 +75,7 @@
     </button>
 
     <button
+        [ngClass]="{active: this.toolManager.currentTool == this.toolManager.ellipseService}"
         (click)="this.toolManager.setTool(this.toolManager.ellipseService); updateSliderWidth()"
         matTooltip="Outil ellipse (2): Cliquer et glisser, et relâcher pour déssiner un ellipse. tenir (Shift) pour dessiner un cercle. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
@@ -73,9 +84,14 @@
         <fa-icon [icon]="faCircle" size="lg"></fa-icon>
     </button>
 
-    <button (click)="this.toolManager.setTool(this.toolManager.rectangleSelection)">Selection</button>
+    <button 
+        [ngClass]="{active: this.toolManager.currentTool == this.toolManager.rectangleSelection}"
+        (click)="this.toolManager.setTool(this.toolManager.rectangleSelection)">Selection
+    </button>
 
-    <button (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth(); this.toolManager.polygonService.onButtonPress()">
+    <button 
+        [ngClass]="{active: this.toolManager.currentTool == this.toolManager.polygonService}"    
+        (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth(); this.toolManager.polygonService.onButtonPress()">
         Poly
     </button>
 
@@ -89,8 +105,10 @@
     >
         <fa-icon [icon]="faPalette" size="lg"></fa-icon>
     </button>
+
     <button
         class=""
+        [ngClass]="{active: this.toolManager.currentTool == this.toolManager.pipetteService}"    
         (click)="this.toolManager.setTool(this.toolManager.pipetteService)"
         matTooltip="Outil pipette (I): CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire"
         matTooltipPosition="after"

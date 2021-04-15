@@ -1,6 +1,6 @@
 .container {
     height: auto;
-    min-height: 98vh;
+    min-height: 100vh;
     padding: 0px;
     margin-right: 0px;
     width: 100px;
@@ -13,15 +13,14 @@
     flex-direction: column;
     width: auto;
     padding: 0;
-
 }
 
 .attributes {
-    height: auto;
-    min-height: 100%;
+    height: 100vh;
+    //min-height: 100vh;
     margin-left: 100px;
     margin-right: 0px;
-    margin-top: -98vh;
+    margin-top: -100vh;
     width: 216px;
     background-color: rgba(83, 101, 119);
     z-index: -1;
