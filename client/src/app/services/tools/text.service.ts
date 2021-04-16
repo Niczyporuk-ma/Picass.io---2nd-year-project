@@ -76,7 +76,7 @@ export class TextService extends Tool{
     this.drawingService.clearCanvas(this.drawingService.previewCtx);
     let textCommand: TextCommandService = new TextCommandService();
     this.drawText(this.drawingService.baseCtx, textCommand);
-    this.undoRedoManager.undoStack.push(textCommand); //push text command 
+    this.undoRedoManager.undoStack.push(textCommand);
     this.undoRedoManager.clearRedoStack();
     this.cursorPosition = { x: 0, y: 0 };
     this.hasBeenReset = true;
@@ -142,7 +142,6 @@ export class TextService extends Tool{
       this.endPoint = mousePosition;
       this.currentLine = [this.startingPoint, this.endPoint];
       this.mouseDown = false;
-      console.log(this.endPoint);
     }
   }
 
@@ -271,9 +270,7 @@ export class TextService extends Tool{
   onKeyDown(keydown: KeyboardEvent): void {
     if(this.textBoxActive){
       let cursorPositionX: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0));
-      if( 
-        !this.checkIfInKeyArray(keydown.key, this.usefulKeys) && 
-        !(this.checkIfInKeyArray(keydown.key, this.uselessKeys))){
+      if(!this.checkIfInKeyArray(keydown.key, this.usefulKeys) && !(this.checkIfInKeyArray(keydown.key, this.uselessKeys))){
           this.textArray[this.cursorPosition.y] = this.textArray[this.cursorPosition.y].slice(0, this.cursorPosition.x) + keydown.key + 
           this.textArray[this.cursorPosition.y].slice(this.cursorPosition.x);
           this.cursorPosition.x++;
