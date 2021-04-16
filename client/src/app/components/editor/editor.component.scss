@@ -4,7 +4,9 @@
 }
 
 .drawing-container {
-    overflow: auto;
+    // overflow: hidden;
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    overflow-x: hidden; /* Hide horizontal scrollbar */
     flex: 1 1 auto;
 }
 

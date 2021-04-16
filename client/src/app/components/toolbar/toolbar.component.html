@@ -15,14 +15,29 @@
         <fa-icon [icon]="faPlusSquare" size="lg"></fa-icon>
     </button>
 
-    <button (click)="openSaveDrawingForm()" matTooltip="Sauvegarder le dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+    <button
+        (click)="openSaveDrawingForm(); this.toolManager.setTool(this.toolManager.noToolService)"
+        matTooltip="Sauvegarder le dessin"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
         <fa-icon [icon]="faSave" size="lg"></fa-icon>
     </button>
 
-    <button (click)="openCarousel()" matTooltip="Ouvrir le carrousel de dessins" matTooltipPosition="after" matTooltipShowDelay="600">
+    <button
+        (click)="openCarousel(); this.toolManager.setTool(this.toolManager.noToolService)"
+        matTooltip="Ouvrir le carrousel de dessins"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
         <fa-icon [icon]="faImages" size="lg"></fa-icon>
     </button>
-    <button (click)="export()" matTooltip="Exporter le dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+    <button
+        (click)="export(); this.toolManager.setTool(this.toolManager.noToolService)"
+        matTooltip="Exporter le dessin"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
         <fa-icon [icon]="faDownload" size="lg"></fa-icon>
     </button>
 
@@ -59,6 +74,61 @@
             <mat-card-subtitle>{{ this.gridService.squareSize }} px</mat-card-subtitle>
         </mat-card>
     </div>
+
+    <button
+        (click)="this.toolManager.setTool(this.toolManager.stampService)"
+        matTooltip="Aposer une étampe"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faStamp" size="lg"> </fa-icon>
+    </button>
+    <div class="Slider" *ngIf="this.toolManager.currentTool == this.toolManager.stampService">
+        <mat-card>
+            Orientation de l'étampe:
+            <mat-slider
+                min="0"
+                max="360"
+                step="15"
+                value="1"
+                class="slider"
+                (change)="rotateStamp($event.value)"
+                (input)="this.toolManager.stampService.rotationAngle = $event.value"
+                [value]="this.toolManager.stampService.rotationAngle"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.stampService.rotationAngle }} </mat-card-subtitle>
+        </mat-card>
+        <mat-card>
+            Mise à l'échelle de l'étampe:
+            <mat-slider
+                min="50"
+                max="400"
+                step="50"
+                value="1"
+                class="slider"
+                (change)="changeStampSize($event.value)"
+                (input)="this.toolManager.stampService.stampSize = $event.value"
+                [value]="this.toolManager.stampService.stampSize"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.stampService.stampSize / 200 }}</mat-card-subtitle>
+        </mat-card>
+    </div>
+    <mat-button-toggle-group id="stamps" *ngIf="this.toolManager.currentTool == this.toolManager.stampService">
+        <mat-button-toggle value="0" (change)="setStampStyle($event.value)">Poulpe 🐙</mat-button-toggle>
+        <mat-button-toggle value="1" (change)="setStampStyle($event.value)">Chapmagne 🥂</mat-button-toggle>
+        <mat-button-toggle value="2" (change)="setStampStyle($event.value)">Cerises 🍒</mat-button-toggle>
+        <mat-button-toggle value="3" (change)="setStampStyle($event.value)">Plaisir 😏</mat-button-toggle>
+        <mat-button-toggle value="4" (change)="setStampStyle($event.value)">Bombe 💣</mat-button-toggle>
+        <mat-button-toggle value="5" (change)="setStampStyle($event.value)">Aubergine 🍆</mat-button-toggle>
+        <mat-button-toggle value="6" (change)="setStampStyle($event.value)">Gorille 🦍</mat-button-toggle>
+        <mat-button-toggle value="7" (change)="setStampStyle($event.value)">Crayon 🖍</mat-button-toggle>
+        <mat-button-toggle value="8" (change)="setStampStyle($event.value)">Pêche 🍑</mat-button-toggle>
+        <mat-button-toggle value="9" (change)="setStampStyle($event.value)">Cheval 🐎</mat-button-toggle>
+        <mat-button-toggle value="10" (change)="setStampStyle($event.value)">Yeux 👀</mat-button-toggle>
+        <mat-button-toggle value="11" (change)="setStampStyle($event.value)">Étoile⭐</mat-button-toggle>
+        <mat-button-toggle value="12" (change)="setStampStyle($event.value)">100 points 💯</mat-button-toggle>
+        <mat-button-toggle value="13" (change)="setStampStyle($event.value)">Argent💸</mat-button-toggle>
+    </mat-button-toggle-group>
 
     <button
         (click)="this.toolManager.setTool(this.toolManager.pencilService); updateSliderWidth()"
@@ -125,7 +195,9 @@
         <fa-icon [icon]="faCircle" size="lg"></fa-icon>
     </button>
 
-    <button (click)="this.toolManager.setTool(this.toolManager.rectangleSelection)">Selection</button>
+    <button (click)="this.toolManager.setTool(this.toolManager.rectangleSelection)">
+        <fa-icon [icon]="faVectorSquare" size="lg"></fa-icon>
+    </button>
     <mat-button-toggle-group
         *ngIf="
             this.toolManager.currentTool == this.toolManager.rectangleSelection || this.toolManager.currentTool == this.toolManager.ellipseSelection
@@ -139,7 +211,7 @@
     </mat-button-toggle-group>
 
     <button (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth(); this.toolManager.polygonService.onButtonPress()">
-        Poly
+        <fa-icon [icon]="faPlay" size="lg"></fa-icon>
     </button>
     <div *ngIf="this.toolManager.polygonService.showNumberOfSidesInput" class="Slider">
         <mat-card>

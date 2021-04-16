@@ -200,12 +200,12 @@ describe('ToolbarComponent', () => {
         expect(modal.open).toHaveBeenCalled();
     });
 
-    it(' showGrid should change the isGridVisible boolean of gridService', () => {
+    it(' showGrid should change the isGridVisible boolean of gridService every time it is called', () => {
         component.gridService.isGridVisible = false;
         component.showGrid();
-        component.gridService.isGridVisible = true;
+        expect(component.gridService.isGridVisible).toBe(true);
         component.showGrid();
-        component.gridService.isGridVisible = false;
+        expect(component.gridService.isGridVisible).toBe(false);
     });
 
     it(' showGrid should call drawGrid if isGridVisible of gridService was initially false', () => {
@@ -351,5 +351,20 @@ describe('ToolbarComponent', () => {
         equals?.command({ event: keyboardEvent, key: '-' } as ShortcutEventOutput);
         expect(decreaseSquareSizebyByFactorSpy).toHaveBeenCalled();
         expect(ctrlGSpy).not.toHaveBeenCalled();
+    });
+
+    it(' rotateStamp sets the rotationAngle of the stamp service', () => {
+        component.rotateStamp(50);
+        expect(component.toolManager.stampService.rotationAngle).toEqual(50);
+    });
+
+    it(' changeStamp size sets the stampSize of the stamp service', () => {
+        component.changeStampSize(75);
+        expect(component.toolManager.stampService.stampSize).toEqual(75);
+    });
+
+    it(' setStampStyle sets the stamp image of the stamp service', () => {
+        component.setStampStyle(5);
+        expect(component.toolManager.stampService.stampName).toEqual('assets/5.png');
     });
 });

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { Constant } from '@app/constants/general-constants-store';
@@ -22,6 +22,7 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('backgroundCanvas', { static: true }) backgroundLayer: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvas', { static: true }) gridCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('input') input: ElementRef;
+    @ViewChildren('baseCanvas, previewCanvas, backgroundCanvas, gridCanvas') allCanvases: QueryList<ElementRef<HTMLCanvasElement>>;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -110,6 +111,7 @@ export class DrawingComponent implements AfterViewInit {
                 event.preventDefault();
                 this.shortcutKeyboardManager.onKeyPress(event.key);
             }
+            this.drawingService.clearBackground();
         });
 
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
@@ -123,6 +125,18 @@ export class DrawingComponent implements AfterViewInit {
         window.addEventListener('contextmenu', (event: MouseEvent) => {
             event.preventDefault();
         });
+        window.addEventListener(
+            'wheel',
+            (event: WheelEvent) => {
+                if (this.toolManager.currentTool === this.toolManager.stampService) {
+                    this.toolManager.stampService.onMouseWheel(event);
+                }
+            },
+            // https://github.com/inuyaksa/jquery.nicescroll/issues/799
+            // solves the following problem:
+            // "[Chrome] Unable to preventDefault inside passive event listener due to target being treated as passive"
+            { passive: false },
+        );
     }
 
     @HostListener('window:mousemove', ['$event'])
@@ -135,6 +149,19 @@ export class DrawingComponent implements AfterViewInit {
         }
         if (this.toolManager.currentTool === this.toolManager.ellipseService && this.toolManager.ellipseService.mouseDown) {
             this.toolManager.ellipseService.onMouseMove(event);
+        }
+        if (this.toolManager.currentTool === this.toolManager.stampService) {
+            for (const canvas of this.allCanvases) {
+                canvas.nativeElement.style.cursor = 'none';
+            }
+        } else if (this.toolManager.currentTool === this.toolManager.noToolService) {
+            for (const canvas of this.allCanvases) {
+                canvas.nativeElement.style.cursor = 'default';
+            }
+        } else {
+            for (const canvas of this.allCanvases) {
+                canvas.nativeElement.style.cursor = 'crosshair';
+            }
         }
     }
 

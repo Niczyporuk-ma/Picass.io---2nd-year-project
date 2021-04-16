@@ -1,12 +1,20 @@
 import { TestBed } from '@angular/core/testing';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { KeyboardShortcutManagerService } from './keyboard-shortcut-manager.service';
 
 describe('KeyboardShortcutManagerService', () => {
     let service: KeyboardShortcutManagerService;
+    let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+    let ctxSpyObject: jasmine.SpyObj<CanvasRenderingContext2D>;
 
     beforeEach(() => {
         // tslint:disable:no-magic-numbers
-        TestBed.configureTestingModule({});
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', ['clearRect']);
+        drawingServiceSpy.previewCtx = ctxSpyObject;
+        TestBed.configureTestingModule({
+            providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
+        });
         service = TestBed.inject(KeyboardShortcutManagerService);
     });
 
@@ -41,6 +49,7 @@ describe('KeyboardShortcutManagerService', () => {
         service.toolManager.eraserService.toolStyles.lineWidth = 14;
         service.onKeyPress('e');
         expect(service.toolManager.widthValue).toEqual(14);
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('onKeyPress should do nothing if allowKeyPressEvents is false', () => {
