@@ -17,7 +17,6 @@ import { PolygonService } from './polygon.service';
 import { RectangleService } from './rectangle.service';
 import { UndoRedoManagerService } from './undo-redo-manager.service';
 
-
 @Injectable({
     providedIn: 'root',
 })
@@ -109,7 +108,7 @@ export class ToolManagerService {
     }
 
     setTool(tool: Tool): void {
-        if(this.currentTool == this.textService){
+        if (this.currentTool === this.textService) {
             this.textService.resetState();
         }
         this.currentToolChange.next(tool);

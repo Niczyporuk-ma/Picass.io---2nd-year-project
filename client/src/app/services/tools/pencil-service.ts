@@ -30,7 +30,7 @@ export class PencilService extends Tool {
             lineWidth: 1,
         };
         this.undoRedoManager = undoRedoManager;
-        this.toolName = "Crayon";
+        this.toolName = 'Crayon';
     }
 
     clearArrays(): void {

@@ -162,7 +162,9 @@
         <mat-button-toggle value="3" (change)="setEllipseStyle($event.value)">Les Deux</mat-button-toggle>
     </mat-button-toggle-group>
 
-    <app-pipette *ngIf="this.toolManager.currentTool == this.toolManager.pipetteService"></app-pipette>
+    <div class = "pipette">
+        <app-pipette *ngIf="this.toolManager.currentTool == this.toolManager.pipetteService"></app-pipette>
+    </div>
 
     
     <br />

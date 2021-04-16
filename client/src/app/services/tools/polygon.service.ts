@@ -45,7 +45,7 @@ export class PolygonService extends Tool {
             secondaryColor: 'black',
         };
         this.undoRedoManager = undoRedoManager;
-        this.toolName = "Polygone";
+        this.toolName = 'Polygone';
     }
 
     clearArrays(): void {

@@ -33,7 +33,7 @@ export class EraserService extends Tool {
         };
         this.drawingService = drawingService;
         this.undoRedoManager = undoRedoManager;
-        this.toolName = "Efface";
+        this.toolName = 'Efface';
     }
 
     onMouseDown(mouseDownEvent: MouseEvent): void {

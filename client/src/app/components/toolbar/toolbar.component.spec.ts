@@ -17,7 +17,7 @@ describe('ToolbarComponent', () => {
     // tslint:disable:no-magic-numbers
     let component: ToolbarComponent;
     let fixture: ComponentFixture<ToolbarComponent>;
-    //let modal: MatDialog;
+    // let modal: MatDialog;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -31,7 +31,7 @@ describe('ToolbarComponent', () => {
         fixture = TestBed.createComponent(ToolbarComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        //modal = TestBed.inject(MatDialog);
+        // modal = TestBed.inject(MatDialog);
     });
 
     it('should create', () => {

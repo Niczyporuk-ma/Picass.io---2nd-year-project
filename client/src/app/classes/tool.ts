@@ -18,7 +18,7 @@ export abstract class Tool {
     mouseDown: boolean = false;
     shortcut: string;
     index: number;
-    toolName: string = "";
+    toolName: string = '';
 
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;

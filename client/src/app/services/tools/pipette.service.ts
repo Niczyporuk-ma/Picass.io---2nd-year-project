@@ -57,7 +57,7 @@ export class PipetteService extends Tool {
             primaryColor: 'black',
             lineWidth: 1,
         };
-        this.toolName = "Pipette";
+        this.toolName = 'Pipette';
     }
 
     @Output()

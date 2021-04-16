@@ -99,8 +99,8 @@ export class DrawingComponent implements AfterViewInit {
             },
         );
         window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (this.toolManager.currentTool == this.toolManager.textService) {
-                if(this.toolManager.textService.textBoxActive){
+            if (this.toolManager.currentTool === this.toolManager.textService) {
+                if (this.toolManager.textService.textBoxActive) {
                     this.toolManager.disableShortcut();
                     event.preventDefault();
                     this.toolManager.textService.onKeyDown(event);
@@ -112,8 +112,7 @@ export class DrawingComponent implements AfterViewInit {
                     this.toolManager.textService.arrowRight(event);
                     this.toolManager.textService.backspaceKey(event);
                     this.toolManager.textService.deleteKey(event);
-                }
-                else{
+                } else {
                     this.toolManager.enableShortcut();
                 }
             }

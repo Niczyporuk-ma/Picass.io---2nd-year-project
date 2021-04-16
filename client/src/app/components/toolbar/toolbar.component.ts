@@ -4,16 +4,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faSquare } from '@fortawesome/free-regular-svg-icons';
-import {
-    faBars, faEraser,
-    faEyeDropper,
-    faPalette,
-    faPen,
-    faRedoAlt,
-    faSlash,
-    faSprayCan,
-    faUndoAlt
-} from '@fortawesome/free-solid-svg-icons';
+import { faBars, faEraser, faEyeDropper, faPalette, faPen, faRedoAlt, faSlash, faSprayCan, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-toolbar',
@@ -49,17 +40,16 @@ export class ToolbarComponent {
     showSaveDrawing(): void {
         this.toolManager.showSaveMenu = !this.toolManager.showSaveMenu;
     }
-    
+
     disableShortcut(): void {
         this.toolManager.allowKeyPressEvents = false;
     }
-    
+
     enableShortcut(): void {
         this.toolManager.allowKeyPressEvents = true;
     }
 
     updateSliderWidth(): void {
         this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
-      }
-    
+    }
 }

@@ -52,7 +52,7 @@ export class LineServiceService extends Tool {
         this.lineHelper = lineHelper;
         this.colorService = colorService;
         this.undoRedoManager = undoRedoManager;
-        this.toolName = "Ligne";
+        this.toolName = 'Ligne';
     }
 
     clearArrays(): void {

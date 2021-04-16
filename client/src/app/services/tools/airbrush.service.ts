@@ -37,7 +37,7 @@ export class AirbrushService extends Tool {
             fill: true,
         };
         this.undoRedoManager = undoRedoManager;
-        this.toolName = "Aérosol";
+        this.toolName = 'Aérosol';
     }
 
     clearArrays(): void {

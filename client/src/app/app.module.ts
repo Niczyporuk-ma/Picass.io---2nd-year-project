@@ -38,7 +38,6 @@ import { PipetteComponent } from './components/pipette/pipette.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 
-
 @NgModule({
     declarations: [
         AppComponent,
