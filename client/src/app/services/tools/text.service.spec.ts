@@ -96,18 +96,21 @@ describe('TextService', () => {
     });
 
     it('resetState should call drawText', () => {
+        service.textArray = ['hello'];
         const drawTextSpy = spyOn(service, 'drawText');
         service.resetState();
         expect(drawTextSpy).toHaveBeenCalled();
     });
 
     it('resetState should push a new command into the undoStack', () => {
+        service.textArray = ['hello'];
         service.undoRedoManager.undoStack = [];
         service.resetState();
         expect(service.undoRedoManager.undoStack.length).toEqual(1);
     });
 
     it('resetState should call clearRedoStack of undoRedoManager', () => {
+        service.textArray = ['hello'];
         const clearRedoStackSpy = spyOn(service.undoRedoManager, 'clearRedoStack');
         service.resetState();
         expect(clearRedoStackSpy).toHaveBeenCalled();
