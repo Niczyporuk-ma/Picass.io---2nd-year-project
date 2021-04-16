@@ -244,6 +244,9 @@ export class TextService extends Tool {
     drawText(ctx: CanvasRenderingContext2D, textCommand: TextCommandService): void {
         this.setColors(this.colorService);
         this.switchStartingAndEndPoints();
+        if (ctx === this.drawingService.baseCtx) {
+            this.drawingService.drawingStarted = true;
+        }
         textCommand.setTextAttributes(
             this.fontSize,
             this.font,
