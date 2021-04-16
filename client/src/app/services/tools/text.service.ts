@@ -154,7 +154,6 @@ export class TextService extends Tool {
         ctx.strokeRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
         ctx.closePath();
         this.textBoxActive = true;
-        this.drawCursor();
         ctx.setLineDash([]);
     }
 
