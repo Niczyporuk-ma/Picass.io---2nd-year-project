@@ -17,7 +17,6 @@ const EXTRA_SPACING = 7;
 })
 export class TextService extends Tool {
     undoRedoManager: UndoRedoManagerService;
-    colorService: ColorService;
     font: string = 'Arial';
     fontSize: number = 30;
     bold: boolean = false;
@@ -29,13 +28,11 @@ export class TextService extends Tool {
     currentLine: Vec2[] = [];
     hasBeenReset: boolean = false;
     textArray: string[] = [''];
-    editingText: boolean = false;
     alignment: CanvasTextAlign = 'left';
-    allowKeyPressEvents: boolean = true;
     textBoxActive: boolean = false;
     cursorPosition: Vec2 = { x: 0, y: 0 }; // column idx = x, row idx = y
 
-    constructor(drawingService: DrawingService, undoRedoManager: UndoRedoManagerService, colorService: ColorService) {
+    constructor(drawingService: DrawingService, undoRedoManager: UndoRedoManagerService, public colorService: ColorService) {
         super(drawingService);
         this.undoRedoManager = undoRedoManager;
         this.toolStyles = {
@@ -44,7 +41,6 @@ export class TextService extends Tool {
         };
         this.shortcut = 't';
         this.index = INDEX;
-        this.colorService = colorService;
         this.localShortcuts = new Map();
         this.toolName = 'Texte';
     }
@@ -295,7 +291,7 @@ export class TextService extends Tool {
                         this.endPoint.x += this.fontSize;
                     } else if (this.alignment === 'right') {
                         this.startingPoint.x -= this.fontSize;
-                    } else if (this.alignment === 'center') {
+                    } else {
                         this.startingPoint.x -= this.fontSize / 2;
                         this.endPoint.x += this.fontSize / 2;
                     }
@@ -312,34 +308,20 @@ export class TextService extends Tool {
         const widthToCursor: TextMetrics = this.drawingService.previewCtx.measureText(
             this.textArray[this.cursorPosition.y].substring(0, this.cursorPosition.x),
         );
+        const cursorLength: number = this.startingPoint.y + this.fontSize * this.cursorPosition.y;
         const textLength: TextMetrics = this.drawingService.previewCtx.measureText(this.textArray[this.cursorPosition.y].substring(0));
         if (this.alignment === 'left') {
-            this.drawingService.previewCtx.moveTo(
-                this.startingPoint.x + widthToCursor.width,
-                this.startingPoint.y + this.fontSize * this.cursorPosition.y + EXTRA_SPACING,
-            );
-            this.drawingService.previewCtx.lineTo(
-                this.startingPoint.x + widthToCursor.width,
-                this.startingPoint.y + this.fontSize * this.cursorPosition.y + this.fontSize,
-            );
+            this.drawingService.previewCtx.moveTo(this.startingPoint.x + widthToCursor.width, cursorLength + EXTRA_SPACING);
+            this.drawingService.previewCtx.lineTo(this.startingPoint.x + widthToCursor.width, cursorLength + this.fontSize);
         } else if (this.alignment === 'right') {
-            this.drawingService.previewCtx.moveTo(
-                this.endPoint.x - textLength.width + widthToCursor.width,
-                this.startingPoint.y + this.fontSize * this.cursorPosition.y + EXTRA_SPACING,
-            );
-            this.drawingService.previewCtx.lineTo(
-                this.endPoint.x - textLength.width + widthToCursor.width,
-                this.startingPoint.y + this.fontSize * this.cursorPosition.y + this.fontSize,
-            );
-        } else if (this.alignment === 'center') {
-            this.drawingService.previewCtx.moveTo(
-                this.startingPoint.x - textLength.width / 2 + widthToCursor.width + (this.endPoint.x - this.startingPoint.x) / 2,
-                this.startingPoint.y + this.fontSize * this.cursorPosition.y + EXTRA_SPACING,
-            );
-            this.drawingService.previewCtx.lineTo(
-                this.startingPoint.x - textLength.width / 2 + widthToCursor.width + (this.endPoint.x - this.startingPoint.x) / 2,
-                this.startingPoint.y + this.fontSize * this.cursorPosition.y + this.fontSize,
-            );
+            const horizontalPosition: number = this.endPoint.x - textLength.width + widthToCursor.width;
+            this.drawingService.previewCtx.moveTo(horizontalPosition, cursorLength + EXTRA_SPACING);
+            this.drawingService.previewCtx.lineTo(horizontalPosition, cursorLength + this.fontSize);
+        } else {
+            const boxMidPoint: number = (this.endPoint.x - this.startingPoint.x) / 2;
+            const horizontalPosition: number = this.startingPoint.x - textLength.width / 2 + widthToCursor.width + boxMidPoint;
+            this.drawingService.previewCtx.moveTo(horizontalPosition, cursorLength + EXTRA_SPACING);
+            this.drawingService.previewCtx.lineTo(horizontalPosition, cursorLength + this.fontSize);
         }
         this.drawingService.previewCtx.stroke();
     }

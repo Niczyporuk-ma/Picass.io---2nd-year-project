@@ -64,7 +64,7 @@ export class TextCommandService extends UndoRedoCommand {
             );
         } else if (this.alignment === 'right') {
             ctx.fillText(this.textArray[index], this.endPoint.x, this.startingPoint.y + this.toolStyle.lineWidth + this.toolStyle.lineWidth * index);
-        } else if (this.alignment === 'center') {
+        } else {
             ctx.fillText(
                 this.textArray[index],
                 (this.endPoint.x - this.startingPoint.x) / 2 + this.startingPoint.x,
