@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class KeyboardShortcutManagerService {
-    constructor(private toolManagerService: ToolManagerService) {
+    constructor(private toolManagerService: ToolManagerService, public drawingService: DrawingService) {
         this.toolManager = toolManagerService;
     }
     toolManager: ToolManagerService;
@@ -19,6 +20,7 @@ export class KeyboardShortcutManagerService {
                 if (this.toolManagerService.toolBoxShortcuts.has(key)) {
                     this.toolManager.setTool(this.toolManager.toolBoxShortcuts.get(key) as Tool);
                     this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 }
             }
         }

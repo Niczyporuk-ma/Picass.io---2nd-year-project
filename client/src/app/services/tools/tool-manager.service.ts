@@ -12,9 +12,11 @@ import { ColorService } from './color.service';
 import { EllipseService } from './ellipse.service';
 import { EraserService } from './eraser.service';
 import { LassoService } from './lasso.service';
+import { NoToolService } from './no-tool.service';
 import { PipetteService } from './pipette.service';
 import { PolygonService } from './polygon.service';
 import { RectangleService } from './rectangle.service';
+import { StampService } from './stamp.service';
 import { UndoRedoManagerService } from './undo-redo-manager.service';
 
 @Injectable({
@@ -35,6 +37,8 @@ export class ToolManagerService {
         this.ellipseSelection,
         this.pipetteService,
         this.lassoService,
+        this.stampService,
+        this.noToolService,
     ];
 
     toolBoxShortcuts: Map<string, Tool>;
@@ -61,6 +65,8 @@ export class ToolManagerService {
         public pipetteService: PipetteService,
         public rectangleSelection: RectangleSelectionService,
         public ellipseSelection: EllipseSelectionService,
+        public stampService: StampService,
+        public noToolService: NoToolService,
         public lassoService: LassoService,
     ) {
         this.currentTool = this.pencilService;
@@ -77,6 +83,8 @@ export class ToolManagerService {
             [this.ellipseSelection.shortcut, this.tools[this.ellipseSelection.index]],
             [this.pipetteService.shortcut, this.tools[this.pipetteService.index]],
             [this.lassoService.shortcut, this.tools[this.lassoService.index]],
+            [this.stampService.shortcut, this.tools[this.stampService.index]],
+            [this.noToolService.shortcut, this.tools[this.noToolService.index]],
         ]);
         this.undoRedoManager = undoRedoManager;
     }
@@ -93,6 +101,8 @@ export class ToolManagerService {
                 this.undoRedoManager.clearRedoStack();
                 this.undoRedoManager.clearUndoStack();
                 this.undoRedoManager.disableUndoRedo();
+                this.drawingService.baseCtx.fillStyle = 'white';
+                this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.baseCtx.canvas.width, this.drawingService.baseCtx.canvas.height);
             }
         }
     }
@@ -100,6 +110,7 @@ export class ToolManagerService {
     setTool(tool: Tool): void {
         this.currentToolChange.next(tool);
         this.currentTool.setColors(this.colorService);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     disableShortcut(): void {

@@ -76,6 +76,26 @@ describe('DrawingComponent', () => {
         expect(ellipseMouseMoveSpy).toHaveBeenCalled();
     });
 
+    it('onMouseMove should change the cursor dependingly on the current tool (if stamp, then none)', () => {
+        const event = {} as MouseEvent;
+        component.toolManager.setTool(component.toolManager.stampService);
+        component.onMouseMove(event);
+        expect(component.baseCanvas.nativeElement.style.cursor).toBe('none');
+        expect(component.previewCanvas.nativeElement.style.cursor).toBe('none');
+        expect(component.gridCanvas.nativeElement.style.cursor).toBe('none');
+        expect(component.backgroundLayer.nativeElement.style.cursor).toBe('none');
+    });
+
+    it('onMouseMove should change the cursor dependingly on the current tool (if noTool, then default)', () => {
+        const event = {} as MouseEvent;
+        component.toolManager.setTool(component.toolManager.noToolService);
+        component.onMouseMove(event);
+        expect(component.baseCanvas.nativeElement.style.cursor).toBe('default');
+        expect(component.previewCanvas.nativeElement.style.cursor).toBe('default');
+        expect(component.gridCanvas.nativeElement.style.cursor).toBe('default');
+        expect(component.backgroundLayer.nativeElement.style.cursor).toBe('default');
+    });
+
     it(" should call the tool's mouse down when receiving a mouse down event", () => {
         const event = {} as MouseEvent;
         const mouseEventSpy = spyOn(toolStub, 'onMouseDown').and.callThrough();
@@ -92,10 +112,10 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
-    it(' ngAfterViewInit should add two event listener', () => {
+    it(' ngAfterViewInit should add four event listener', () => {
         const enventListenerSpy = spyOn(window, 'addEventListener').and.callThrough();
         component.ngAfterViewInit();
-        expect(enventListenerSpy).toHaveBeenCalledTimes(3);
+        expect(enventListenerSpy).toHaveBeenCalledTimes(4);
     });
 
     it('component should call keyupHandler on keyup if currentTool is ellipseSelection or rectangleSelection', () => {
@@ -131,6 +151,22 @@ describe('DrawingComponent', () => {
         expect(keyupHandlerSpy).toHaveBeenCalledTimes(4);
         expect(component.toolManager.ellipseSelection.offsetYModifier).toEqual(0);
         expect(component.toolManager.ellipseSelection.offsetXModifier).toEqual(0);
+    });
+
+    it('component should call onMouseWheel when the mouse wheel is being turned if currentTool is stampService', () => {
+        component.toolManager.currentTool = component.toolManager.stampService;
+        const onMouseWheelSpy = spyOn(component.toolManager.stampService, 'onMouseWheel').and.callThrough();
+        // dispatching a wheelEvent
+        // https://stackoverflow.com/questions/6756331/chrome-dispatching-wheel-event
+        const wheelEvent = document.createEvent('WheelEvent');
+        wheelEvent.initEvent('mousewheel', true, true);
+        window.dispatchEvent(wheelEvent);
+        component.toolManager.stampService.onMouseWheel(wheelEvent);
+        setTimeout(() => {
+            return;
+        }, 200);
+        expect(onMouseWheelSpy).toHaveBeenCalled();
+        expect(onMouseWheelSpy).toHaveBeenCalledWith(wheelEvent);
     });
 
     it(' onMouseClick should call onMouseClick of current tool if there is a single click', async (done) => {

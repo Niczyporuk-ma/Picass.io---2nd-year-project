@@ -16,12 +16,15 @@ import {
     faImages,
     faPalette,
     faPen,
+    faPlay,
     faRedoAlt,
     faSave,
     faSlash,
     faSprayCan,
+    faStamp,
     faTh,
     faUndoAlt,
+    faVectorSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
@@ -53,6 +56,9 @@ export class ToolbarComponent {
     faUndoAlt: IconDefinition = faUndoAlt;
     faRedoAlt: IconDefinition = faRedoAlt;
     faTh: IconDefinition = faTh;
+    faStamp: IconDefinition = faStamp;
+    faVectorSquare: IconDefinition = faVectorSquare;
+    faPlay: IconDefinition = faPlay;
 
     constructor(
         public toolManager: ToolManagerService,
@@ -67,12 +73,18 @@ export class ToolbarComponent {
             {
                 key: 'ctrl + g',
                 preventDefault: true,
-                command: () => this.openCarousel(),
+                command: () => {
+                    this.openCarousel();
+                    this.toolManager.setTool(this.toolManager.noToolService);
+                },
             },
             {
                 key: 'ctrl + s',
                 preventDefault: true,
-                command: () => this.openSaveDrawingForm(),
+                command: () => {
+                    this.openSaveDrawingForm();
+                    this.toolManager.setTool(this.toolManager.noToolService);
+                },
             },
             {
                 key: 'g',
@@ -97,7 +109,10 @@ export class ToolbarComponent {
             {
                 key: 'ctrl + e',
                 preventDefault: true,
-                command: () => this.export(),
+                command: () => {
+                    this.export();
+                    this.toolManager.setTool(this.toolManager.noToolService);
+                },
             },
         );
         this.undoRedoManager = undoRedoManager;
@@ -230,5 +245,17 @@ export class ToolbarComponent {
         if (this.gridService.squareSize > minSquareSize) {
             this.changeSquareSize(this.gridService.squareSize - decreaseFactor);
         }
+    }
+
+    rotateStamp(rotationAngle: number): void {
+        this.toolManager.stampService.rotationAngle = rotationAngle;
+    }
+
+    changeStampSize(newSize: number): void {
+        this.toolManager.stampService.stampSize = newSize;
+    }
+
+    setStampStyle(stampNb: number): void {
+        this.toolManager.stampService.stampName = 'assets/' + stampNb + '.png';
     }
 }

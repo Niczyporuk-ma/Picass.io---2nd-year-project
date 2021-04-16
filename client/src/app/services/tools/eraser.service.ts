@@ -46,6 +46,7 @@ export class EraserService extends Tool {
             eraserCommand.setStyles(this.toolStyles.lineWidth);
             eraserCommand.setCoordinates(this.pathData);
             this.drawLine(this.drawingService.previewCtx, eraserCommand);
+            this.drawingService.previewCtx.globalCompositeOperation = 'source-over';
         }
     }
 
