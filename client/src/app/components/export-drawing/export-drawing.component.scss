@@ -10,17 +10,19 @@
 #buttons {
     margin-top: 20px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .cancel {
     background-color: #fc463d;
     margin-right: 10px;
+    border-radius: 0%;
 }
 
 .export {
     background-color: rgb(107, 240, 206);
     color: black;
+    border-radius: 0%;
 }
 
 #canvas {
