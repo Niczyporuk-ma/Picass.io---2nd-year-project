@@ -69,6 +69,9 @@ export class ColorService {
 
         this.setPrimaryColorWithOpacity(this.primaryOpacityPreview);
         this.setSecondaryColorWithOpacity(this.secondaryOpacityPreview);
+
+        this.primaryColor = this.primaryColorPreview;
+        this.secondaryColor = this.secondaryColorPreview;
     }
 
     contains(color: string): boolean {

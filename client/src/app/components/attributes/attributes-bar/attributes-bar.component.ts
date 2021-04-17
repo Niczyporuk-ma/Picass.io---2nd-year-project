@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
+import { ColorPickerComponent } from '@app/components/color-picker/color-picker.component';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { FormComponent } from '@app/components/form/form.component';
+import { ColorService } from '@app/services/tools/color.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
 import {
@@ -12,6 +14,7 @@ import {
     faBold,
     faChevronDown,
     faDownload,
+    faExchangeAlt,
     faHome,
     faImages,
     faItalic,
@@ -22,7 +25,6 @@ import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
-
 @Component({
     selector: 'app-attributes-bar',
     templateUrl: './attributes-bar.component.html',
@@ -40,9 +42,13 @@ export class AttributesBarComponent {
     faSave: IconDefinition = faSave;
     faHome: IconDefinition = faHome;
     faChevronDown: IconDefinition = faChevronDown;
+    faExchangeAlt: IconDefinition = faExchangeAlt;
     shortcuts: ShortcutInput[] = [];
 
-    constructor(public toolManager: ToolManagerService, public modal: MatDialog) {
+    @ViewChild(ColorPickerComponent)
+    colorPicker: ColorPickerComponent;
+
+    constructor(public toolManager: ToolManagerService, public modal: MatDialog, public colorService: ColorService) {
         this.toolManager = toolManager;
         // source: https://www.npmjs.com/package/ng-keyboard-shortcuts
         this.shortcuts.push(
@@ -142,5 +148,25 @@ export class AttributesBarComponent {
 
     openSaveDrawingForm(): void {
         this.modal.open(FormComponent);
+    }
+
+    onPressPalette(): void {
+        this.toolManager.showPalette = !this.toolManager.showPalette;
+    }
+
+    selectPrimaryColor(evt: MouseEvent): void {
+        if (this.toolManager.showPalette) {
+            setTimeout(() => {
+                this.colorPicker.selectPrimaryColor(evt);
+            }, 5);
+        }
+    }
+
+    selectSecondaryColor(evt: MouseEvent): void {
+        if (this.toolManager.showPalette) {
+            setTimeout(() => {
+                this.colorPicker.selectSecondaryColor(evt);
+            }, 5);
+        }
     }
 }

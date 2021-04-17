@@ -13,53 +13,53 @@
     width: 100px;
 }
 
-.undo{
+.undo {
     width: 50px;
 }
 
-.undo:focus{
+.undo:focus {
     background-color: rgb(53, 64, 75);
     color: white;
 }
 
-.redo:focus{
+.redo:focus {
     background-color: rgb(53, 64, 75);
     color: white;
 }
 
-.undoDis{
+.undoDis {
     color: rgb(123, 140, 156);
     width: 50px;
 }
 
-.undoDis:hover{
+.undoDis:hover {
     background-color: rgb(63, 72, 80);
     color: rgb(123, 140, 156);
     width: 50px;
 }
 
-.undoDis:focus{
+.undoDis:focus {
     background-color: rgb(53, 64, 75);
     color: rgb(123, 140, 156);
     width: 50px;
 }
 
-.redoDis:focus{
+.redoDis:focus {
     background-color: rgb(53, 64, 75);
     color: rgb(123, 140, 156);
     width: 50px;
 }
 
-.redo{
+.redo {
     width: 50px;
 }
 
-.redoDis{
+.redoDis {
     color: rgb(123, 140, 156);
     width: 50px;
 }
 
-.redoDis:hover{
+.redoDis:hover {
     background-color: rgb(63, 72, 80);
     color: rgb(123, 140, 156);
     width: 50px;
@@ -107,7 +107,6 @@ button.active {
     width: 122.5px;
 }
 
-
 .junctionRadiusSlider mat-card {
     width: 216px;
     padding: 0;
@@ -121,12 +120,6 @@ button.active {
     text-align: left;
 }
 
-app-color-picker{
-    padding-left: 100px;
-    margin-top: -636px;
-}
-
 .non-tools {
     padding-top: 80px;
 }
-

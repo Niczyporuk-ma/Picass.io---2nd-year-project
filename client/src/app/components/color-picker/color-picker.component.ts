@@ -5,6 +5,7 @@ import { ColorPaletteComponent } from '@app/components/color-picker/color-palett
 import { MouseButton } from '@app/enums/enums';
 import { ColorService } from '@app/services/tools/color.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { faExchangeAlt, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-color-picker',
@@ -29,6 +30,7 @@ export class ColorPickerComponent {
     isGreen: boolean = false;
     isBlue: boolean = false;
     canConfirm: boolean = true;
+    faExchangeAlt: IconDefinition = faExchangeAlt;
     constructor(colorService: ColorService, public toolManager: ToolManagerService) {
         this.colorService = colorService;
         this.toolManager = toolManager;

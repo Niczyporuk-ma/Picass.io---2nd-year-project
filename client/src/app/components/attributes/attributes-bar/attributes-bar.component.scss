@@ -22,7 +22,7 @@
     padding-bottom: 20px;
     padding-top: 20px;
     text-align: center;
-    font-family: "Century Gothic";
+    font-family: 'Century Gothic';
     background-color: rgb(107, 240, 206);
 }
 
@@ -150,4 +150,74 @@ mat-button-toggle.active {
 
 .pipette {
     margin-top: 20px;
+}
+
+.input-wrapper {
+    border: none;
+    padding: 8px;
+    height: 32px;
+    justify-content: center;
+    margin-top: 300px;
+    border-radius: 1px;
+    color: white;
+    margin-left: 2px;
+    position: absolute;
+    top: 0px;
+}
+.color-div {
+    width: 22px;
+    height: 22px;
+    border-radius: 10%;
+    margin: 5px;
+}
+
+.prim-sec {
+    display: flex;
+    margin-right: 15px;
+    margin-left: 10px;
+}
+
+#primary {
+    margin-top: -1px;
+    width: 50px;
+    height: 50px;
+}
+
+#secondary {
+    width: 35px;
+    height: 35px;
+}
+
+.swap-button {
+    margin-top: 5px;
+    background-color: rgba(83, 101, 119);
+    width: 60px;
+    height: 32px;
+    border: none;
+    font-weight: bold;
+    color: white;
+    outline: none;
+    font-size: 25px;
+    transition: 0.3s;
+    margin-left: 8px;
+}
+
+.swap-button:hover {
+    margin-top: 5px;
+    color: rgb(197, 243, 231);
+    width: 60px;
+    height: 32px;
+    border: none;
+    font-weight: bold;
+    outline: none;
+    font-size: 25px;
+    transition: 0.3s;
+    background-color: rgba(83, 101, 119);
+}
+
+app-color-picker {
+    margin-left: -16px;
+    margin-top: 350px;
+    position: absolute;
+    top: 0px;
 }

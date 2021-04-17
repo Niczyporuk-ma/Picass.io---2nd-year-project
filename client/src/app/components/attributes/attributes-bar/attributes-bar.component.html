@@ -1,7 +1,7 @@
 <div class="title" *ngIf="!this.toolManager.nonTools">{{ this.toolManager.currentTool.toolName }}</div>
 <div class="title" *ngIf="this.toolManager.nonTools">Autres Options</div>
 <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
-<div *ngIf="!this.toolManager.showPalette && !this.toolManager.nonTools">
+<div *ngIf="!this.toolManager.nonTools">
     <div
         class="Slider"
         *ngIf="
@@ -291,4 +291,28 @@
     <button class="nonTools" routerLink="/home" matTooltip="Retour à la page principale" matTooltipPosition="after" matTooltipShowDelay="600">
         <fa-icon [icon]="faHome" size="lg"></fa-icon>
     </button>
+</div>
+
+<div class="input-wrapper">
+    <div class="prim-sec">
+        <div
+            (click)="this.toolManager.showPalette = true; this.selectPrimaryColor($event)"
+            class="color-div"
+            id="primary"
+            [ngStyle]="{ 'background-color': this.colorService.primaryColorPreview || 'white' }"
+        ></div>
+        <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">
+            <fa-icon [icon]="faExchangeAlt" size="lg"></fa-icon>
+        </button>
+        <div
+            (click)="this.toolManager.showPalette = true; this.selectSecondaryColor($event)"
+            class="color-div"
+            id="secondary"
+            [ngStyle]="{ 'background-color': this.colorService.secondaryColorPreview || 'white' }"
+        ></div>
+    </div>
+</div>
+
+<div class="colorPicker" *ngIf="this.toolManager.showPalette">
+    <app-color-picker></app-color-picker>
 </div>
