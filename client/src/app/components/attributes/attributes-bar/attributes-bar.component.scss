@@ -43,7 +43,7 @@ mat-card {
     z-index: 3;
     position: relative;
     width: auto;
-    height: 30px;
+    height: 20px;
     color: white;
     background-color: rgba(83, 101, 119);
     bottom: 15px;
@@ -155,14 +155,11 @@ mat-button-toggle.active {
 .input-wrapper {
     border: none;
     padding: 8px;
-    height: 32px;
+    height: 105px;
     justify-content: center;
-    margin-top: 300px;
     border-radius: 1px;
     color: white;
     margin-left: 2px;
-    position: absolute;
-    top: 0px;
 }
 .color-div {
     width: 22px;
@@ -173,8 +170,6 @@ mat-button-toggle.active {
 
 .prim-sec {
     display: flex;
-    margin-right: 15px;
-    margin-left: 10px;
 }
 
 #primary {
@@ -183,6 +178,9 @@ mat-button-toggle.active {
     width: 50px;
     height: 50px;
     transition: 0.3s;
+    margin-left: 50px;
+    z-index: 3;
+    border: rgba(83, 101, 119) solid 0.5px;
 }
 
 #primary:hover {
@@ -193,50 +191,28 @@ mat-button-toggle.active {
 
 #secondary {
     cursor: pointer;
-    width: 35px;
-    height: 35px;
-    transition: 0.3s;
-    margin-left: 130px;
-    position: absolute;
-}
-
-#secondary:hover {
+    margin-top: 25px;
     width: 40px;
     height: 40px;
     transition: 0.3s;
-}
-
-.swap-button {
-    margin-top: 5px;
-    background-color: rgba(83, 101, 119);
-    width: 60px;
-    height: 32px;
-    border: none;
-    font-weight: bold;
-    color: white;
-    outline: none;
-    font-size: 25px;
-    transition: 0.3s;
-    margin-left: 68px;
+    margin-left: 90px;
     position: absolute;
+    z-index: 2;
 }
 
-.swap-button:hover {
-    margin-top: 5px;
-    color: rgb(197, 243, 231);
-    width: 60px;
-    height: 32px;
-    border: none;
-    font-weight: bold;
-    outline: none;
-    font-size: 25px;
+#secondary:hover {
+    width: 45px;
+    height: 45px;
     transition: 0.3s;
-    background-color: rgba(83, 101, 119);
 }
 
 app-color-picker {
     margin-left: -16px;
-    margin-top: 350px;
+    margin-top: 365px;
     position: absolute;
     top: 0px;
+}
+
+p {
+    margin-left: 5px;
 }

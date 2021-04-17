@@ -31,6 +31,7 @@ export class TextService extends Tool {
     alignment: CanvasTextAlign = 'left';
     textBoxActive: boolean = false;
     cursorPosition: Vec2 = { x: 0, y: 0 }; // column idx = x, row idx = y
+    allowText: boolean = true;
 
     constructor(drawingService: DrawingService, undoRedoManager: UndoRedoManagerService, public colorService: ColorService) {
         super(drawingService);

@@ -102,16 +102,18 @@ export class DrawingComponent implements AfterViewInit {
             if (this.toolManager.currentTool === this.toolManager.textService) {
                 if (this.toolManager.textService.textBoxActive) {
                     this.toolManager.disableShortcut();
-                    event.preventDefault();
-                    this.toolManager.textService.onKeyDown(event);
-                    this.toolManager.textService.enterKey(event);
-                    this.toolManager.textService.escapeKey(event);
-                    this.toolManager.textService.arrowUp(event);
-                    this.toolManager.textService.arrowDown(event);
-                    this.toolManager.textService.arrowLeft(event);
-                    this.toolManager.textService.arrowRight(event);
-                    this.toolManager.textService.backspaceKey(event);
-                    this.toolManager.textService.deleteKey(event);
+                    if (this.toolManager.textService.allowText) {
+                        event.preventDefault();
+                        this.toolManager.textService.onKeyDown(event);
+                        this.toolManager.textService.enterKey(event);
+                        this.toolManager.textService.escapeKey(event);
+                        this.toolManager.textService.arrowUp(event);
+                        this.toolManager.textService.arrowDown(event);
+                        this.toolManager.textService.arrowLeft(event);
+                        this.toolManager.textService.arrowRight(event);
+                        this.toolManager.textService.backspaceKey(event);
+                        this.toolManager.textService.deleteKey(event);
+                    }
                 } else {
                     this.toolManager.enableShortcut();
                 }
@@ -120,6 +122,7 @@ export class DrawingComponent implements AfterViewInit {
 
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (this.toolManager.allowKeyPressEvents) {
+                console.log(this.toolManager.allowKeyPressEvents);
                 event.preventDefault();
                 this.shortcutKeyboardManager.onKeyPress(event.key);
             }

@@ -110,6 +110,7 @@ export class ToolManagerService {
     setTool(tool: Tool): void {
         if (this.currentTool === this.textService) {
             this.textService.resetState();
+            console.log('reset' + tool.toolName);
         }
         this.currentToolChange.next(tool);
         this.currentTool.setColors(this.colorService);
@@ -117,6 +118,7 @@ export class ToolManagerService {
 
     disableShortcut(): void {
         this.allowKeyPressEvents = false;
+        console.log('disabled');
     }
 
     enableShortcut(): void {

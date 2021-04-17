@@ -8,6 +8,24 @@
         <span class="text">{{ this.rgbaToHex(color) }}</span>
     </div>
 
+    <div class="prim-sec">
+        <div
+            (click)="this.toolManager.showPalette = true"
+            class="color-div"
+            id="primary"
+            [ngStyle]="{ 'background-color': this.colorService.primaryColorPreview || 'white' }"
+        ></div>
+        <button (click)="this.colorService.swapPrimaryAndSecondary()" class="swap-button">
+            <fa-icon [icon]="faExchangeAlt" size="lg"></fa-icon>
+        </button>
+        <div
+            (click)="this.toolManager.showPalette = true"
+            class="color-div"
+            id="secondary"
+            [ngStyle]="{ 'background-color': this.colorService.secondaryColorPreview || 'white' }"
+        ></div>
+    </div>
+
     <div class="ten-last">
         <div class="first-5">
             <div
@@ -80,8 +98,8 @@
             <input
                 type="text"
                 (keyup)="this.isRed = true; adjustColor($event)"
-                (focus)="this.toolManager.disableShortcut()"
-                (blur)="this.toolManager.enableShortcut()"
+                (focus)="this.toolManager.allowKeyPressEvents = false; this.toolManager.textService.allowText = false"
+                (blur)="this.toolManager.enableShortcut(); this.toolManager.textService.allowText = true"
             /><br />
         </label>
         <label
@@ -89,8 +107,8 @@
             <input
                 type="text"
                 (keyup)="this.isGreen = true; adjustColor($event)"
-                (focus)="this.toolManager.disableShortcut()"
-                (blur)="this.toolManager.enableShortcut()"
+                (focus)="this.toolManager.disableShortcut(); this.toolManager.textService.allowText = false"
+                (blur)="this.toolManager.enableShortcut(); this.toolManager.textService.allowText = true"
             />
             <br />
         </label>
@@ -100,8 +118,8 @@
             <input
                 type="text"
                 (keyup)="this.isBlue = true; adjustColor($event)"
-                (focus)="this.toolManager.disableShortcut()"
-                (blur)="this.toolManager.enableShortcut()"
+                (focus)="this.toolManager.disableShortcut(); this.toolManager.textService.allowText = false"
+                (blur)="this.toolManager.enableShortcut(); this.toolManager.textService.allowText = true"
             />
         </label>
     </div>
@@ -134,12 +152,22 @@
             {{ this.colorService.secondaryOpacityPreview }}
         </mat-card>
     </div>
-    <div>
-        <button class="cancel" (mousedown)="this.toolManager.showPalette = false; this.colorService.resetValuesOnCancel()">Annuler</button>
+    <div class="confirm-cancel">
+        <button
+            class="cancel"
+            (mousedown)="this.toolManager.showPalette = false; this.colorService.resetValuesOnCancel(); this.toolManager.textService.allowText = true"
+        >
+            Annuler
+        </button>
         <button
             class="confirm"
             *ngIf="canConfirm == true"
-            (mousedown)="this.colorService.isConfirmed = true; this.toolManager.showPalette = false; this.colorService.setValuesOnConfirm()"
+            (mousedown)="
+                this.colorService.isConfirmed = true;
+                this.toolManager.showPalette = false;
+                this.colorService.setValuesOnConfirm();
+                this.toolManager.textService.allowText = true
+            "
         >
             Confirmer
         </button>

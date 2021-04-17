@@ -33,7 +33,7 @@
 
     <button
         [ngClass]="{ active: this.toolManager.nonTools }"
-        (click)="this.toolManager.flipNonToolBool()"
+        (click)="this.toolManager.flipNonToolBool(); this.toolManager.showPalette = false"
         matTooltip="Exporter, sauvegarder, creer un nouveau dessin carrousel de dessins et retour a la page principale"
         matTooltipPosition="after"
         matTooltipShowDelay="600"
