@@ -264,16 +264,16 @@ export class MagnetismService {
         if ((topLeftCorner.x + adjustement.x) % this.gridService.squareSize === 0) {
             const newPosition = {
                 x:
-                    Math.floor((topLeftCorner.x + adjustement.x) / this.gridService.squareSize) * this.gridService.squareSize -
+                    Math.round((topLeftCorner.x + adjustement.x) / this.gridService.squareSize) * this.gridService.squareSize -
                     this.gridService.squareSize -
                     adjustement.x,
-                y: topLeftCorner.y,
+                y: Math.round((topLeftCorner.y + adjustement.y) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.y,
             };
             return { x: newPosition.x - topLeftCorner.x, y: newPosition.y - topLeftCorner.y };
         } else {
             const nearestGrid = {
                 x: Math.floor((topLeftCorner.x + adjustement.x) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.x,
-                y: topLeftCorner.y,
+                y: Math.round((topLeftCorner.y + adjustement.y) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.y,
             };
             return { x: nearestGrid.x - topLeftCorner.x, y: nearestGrid.y - topLeftCorner.y };
         }
@@ -286,13 +286,13 @@ export class MagnetismService {
                     Math.round((topLeftCorner.x + adjustement.x) / this.gridService.squareSize) * this.gridService.squareSize +
                     this.gridService.squareSize -
                     adjustement.x,
-                y: topLeftCorner.y,
+                y: Math.round((topLeftCorner.y + adjustement.y) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.y,
             };
             return { x: newPosition.x - topLeftCorner.x, y: newPosition.y - topLeftCorner.y };
         } else {
             const nearestGrid = {
                 x: Math.ceil((topLeftCorner.x + adjustement.x) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.x,
-                y: topLeftCorner.y,
+                y: Math.round((topLeftCorner.y + adjustement.y) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.y,
             };
             return { x: nearestGrid.x - topLeftCorner.x, y: nearestGrid.y - topLeftCorner.y };
         }
@@ -301,7 +301,7 @@ export class MagnetismService {
     moveUp(topLeftCorner: Vec2, adjustement: Vec2): Vec2 {
         if ((topLeftCorner.y + adjustement.y) % this.gridService.squareSize === 0) {
             const newPosition = {
-                x: topLeftCorner.x,
+                x: Math.round((topLeftCorner.x + adjustement.x) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.x,
                 y:
                     Math.round((topLeftCorner.y + adjustement.y) / this.gridService.squareSize) * this.gridService.squareSize -
                     this.gridService.squareSize -
@@ -310,7 +310,7 @@ export class MagnetismService {
             return { x: newPosition.x - topLeftCorner.x, y: newPosition.y - topLeftCorner.y };
         } else {
             const nearestGrid = {
-                x: topLeftCorner.x,
+                x: Math.round((topLeftCorner.x + adjustement.x) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.x,
                 y: Math.floor((topLeftCorner.y + adjustement.y) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.y,
             };
             return { x: nearestGrid.x - topLeftCorner.x, y: nearestGrid.y - topLeftCorner.y };
@@ -320,7 +320,7 @@ export class MagnetismService {
     moveDown(topLeftCorner: Vec2, adjustement: Vec2): Vec2 {
         if (Math.round(topLeftCorner.y + adjustement.y) % this.gridService.squareSize === 0) {
             const newPosition = {
-                x: topLeftCorner.x,
+                x: Math.round((topLeftCorner.x + adjustement.x) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.x,
                 y:
                     Math.round((topLeftCorner.y + adjustement.y) / this.gridService.squareSize) * this.gridService.squareSize +
                     this.gridService.squareSize -
@@ -329,7 +329,7 @@ export class MagnetismService {
             return { x: newPosition.x - topLeftCorner.x, y: newPosition.y - topLeftCorner.y };
         } else {
             const nearestGrid = {
-                x: topLeftCorner.x,
+                x: Math.round((topLeftCorner.x + adjustement.x) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.x,
                 y: Math.ceil((topLeftCorner.y + adjustement.y) / this.gridService.squareSize) * this.gridService.squareSize - adjustement.y,
             };
             return { x: nearestGrid.x - topLeftCorner.x, y: nearestGrid.y - topLeftCorner.y };

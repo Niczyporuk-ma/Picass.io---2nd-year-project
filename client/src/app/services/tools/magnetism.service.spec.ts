@@ -248,7 +248,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isMiddleLeft = true;
-        const expectedResult: Vec2 = { x: 50, y: 0 };
+        const expectedResult: Vec2 = { x: 50, y: 25 };
         expect(service.moveRightHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -258,7 +258,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isCenter = true;
-        const expectedResult: Vec2 = { x: 25, y: 0 };
+        const expectedResult: Vec2 = { x: 25, y: 25 };
         expect(service.moveRightHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -268,7 +268,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isMiddleRight = true;
-        const expectedResult: Vec2 = { x: 50, y: 0 };
+        const expectedResult: Vec2 = { x: 50, y: 25 };
         expect(service.moveRightHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -346,7 +346,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isMiddleLeft = true;
-        const expectedResult: Vec2 = { x: -50, y: 0 };
+        const expectedResult: Vec2 = { x: -50, y: 25 };
         expect(service.moveLeftHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -356,7 +356,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isCenter = true;
-        const expectedResult: Vec2 = { x: -25, y: 0 };
+        const expectedResult: Vec2 = { x: -25, y: 25 };
         expect(service.moveLeftHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -366,7 +366,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isMiddleRight = true;
-        const expectedResult: Vec2 = { x: -50, y: 0 };
+        const expectedResult: Vec2 = { x: -50, y: 25 };
         expect(service.moveLeftHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -424,7 +424,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isTopMiddle = true;
-        const expectedResult: Vec2 = { x: 0, y: -50 };
+        const expectedResult: Vec2 = { x: 25, y: -50 };
         expect(service.moveUpHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -454,7 +454,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isCenter = true;
-        const expectedResult: Vec2 = { x: 0, y: -25 };
+        const expectedResult: Vec2 = { x: 25, y: -25 };
         expect(service.moveUpHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -484,7 +484,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isBottomMiddle = true;
-        const expectedResult: Vec2 = { x: 0, y: -50 };
+        const expectedResult: Vec2 = { x: 25, y: -50 };
         expect(service.moveUpHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -522,7 +522,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isTopMiddle = true;
-        const expectedResult: Vec2 = { x: 0, y: 50 };
+        const expectedResult: Vec2 = { x: 25, y: 50 };
         expect(service.moveDownHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -552,7 +552,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isCenter = true;
-        const expectedResult: Vec2 = { x: 0, y: 25 };
+        const expectedResult: Vec2 = { x: 25, y: 25 };
         expect(service.moveDownHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -582,7 +582,7 @@ describe('MagnetismService', () => {
         currentLine.push({ x: 50, y: 50 });
         service.resetAnchors();
         service.isBottomMiddle = true;
-        const expectedResult: Vec2 = { x: 0, y: 50 };
+        const expectedResult: Vec2 = { x: 25, y: 50 };
         expect(service.moveDownHandler(currentLine)).toEqual(expectedResult);
     });
 
@@ -647,10 +647,10 @@ describe('MagnetismService', () => {
             { x: 5.5, y: 0 },
         ];
         const expectedResult: Vec2[] = [
-            { x: -2, y: 0 },
-            { x: -2.5, y: 0 },
-            { x: -0.8999999999999986, y: 0 },
-            { x: -2.1000000000000227, y: 0 },
+            { x: -2, y: 1 },
+            { x: -2.5, y: -0.06780000000000541 },
+            { x: -0.8999999999999986, y: -0.6000000000000014 },
+            { x: -2.1000000000000227, y: -1.2000000000000028 },
         ];
 
         for (let i = 0; i < topLeftCorner.length; i++) {
@@ -673,10 +673,10 @@ describe('MagnetismService', () => {
             { x: -0.6, y: 0 },
         ];
         const expectedResult: Vec2[] = [
+            { x: -5, y: 0.12399999999999523 },
             { x: -5, y: 0 },
-            { x: -5, y: 0 },
-            { x: -5, y: 0 },
-            { x: -5, y: 0 },
+            { x: -5, y: 0.14999999999999858 },
+            { x: -5, y: -1.2000000000000028 },
         ];
 
         for (let i = 0; i < topLeftCorner.length; i++) {
@@ -699,10 +699,10 @@ describe('MagnetismService', () => {
             { x: 5.4, y: 0.89 },
         ];
         const expectedResult: Vec2[] = [
-            { x: 1, y: 0 },
-            { x: 2.966000000000001, y: 0 },
-            { x: 2.1000000000000014, y: 0 },
-            { x: 3, y: 0 },
+            { x: 1, y: -1 },
+            { x: 2.966000000000001, y: 1.2999999999999972 },
+            { x: 2.1000000000000014, y: 1.6000000000000014 },
+            { x: 3, y: -1.0900000000000034 },
         ];
 
         for (let i = 0; i < topLeftCorner.length; i++) {
@@ -725,10 +725,10 @@ describe('MagnetismService', () => {
             { x: 4.4, y: 0 },
         ];
         const expectedResult: Vec2[] = [
+            { x: 5, y: 0.12399999999999523 },
             { x: 5, y: 0 },
-            { x: 5, y: 0 },
-            { x: 0.20000000000000284, y: 0 },
-            { x: 5, y: 0 },
+            { x: 0.20000000000000284, y: 0.14999999999999858 },
+            { x: 5, y: -1.2000000000000028 },
         ];
 
         for (let i = 0; i < lastPos.length; i++) {
@@ -751,10 +751,10 @@ describe('MagnetismService', () => {
             { x: 0, y: 5.5 },
         ];
         const expectedResult: Vec2[] = [
-            { x: 0, y: -0.6000000000000014 },
-            { x: 0, y: -0.5 },
-            { x: 0, y: -0.8999999999999986 },
-            { x: 0, y: -2.1000000000000227 },
+            { x: 1, y: -0.6000000000000014 },
+            { x: -0.06780000000000541, y: -0.5 },
+            { x: -0.6000000000000014, y: -0.8999999999999986 },
+            { x: -1.2000000000000028, y: -2.1000000000000227 },
         ];
 
         for (let i = 0; i < lastPos.length; i++) {
@@ -777,10 +777,10 @@ describe('MagnetismService', () => {
             { x: 0, y: -0.4 },
         ];
         const expectedResult: Vec2[] = [
+            { x: 0.12399999999999523, y: -5 },
             { x: 0, y: -5 },
-            { x: 0, y: -5 },
-            { x: 0, y: -5 },
-            { x: 0, y: -0.20000000000004547 },
+            { x: 0.14999999999999858, y: -5 },
+            { x: -1.2000000000000028, y: -0.20000000000004547 },
         ];
 
         for (let i = 0; i < lastPos.length; i++) {
@@ -803,10 +803,10 @@ describe('MagnetismService', () => {
             { x: 0.89, y: 5.4 },
         ];
         const expectedResult: Vec2[] = [
-            { x: 0, y: 1 },
-            { x: 0, y: 2.966000000000001 },
-            { x: 0, y: 2.1000000000000014 },
-            { x: 0, y: 3 },
+            { x: -1, y: 1 },
+            { x: 1.2999999999999972, y: 2.966000000000001 },
+            { x: 1.6000000000000014, y: 2.1000000000000014 },
+            { x: -1.0900000000000034, y: 3 },
         ];
 
         for (let i = 0; i < lastPos.length; i++) {
@@ -829,10 +829,10 @@ describe('MagnetismService', () => {
             { x: 0, y: -0.6 },
         ];
         const expectedResult: Vec2[] = [
+            { x: 0.12399999999999523, y: 5 },
             { x: 0, y: 5 },
-            { x: 0, y: 5 },
-            { x: 0, y: 5 },
-            { x: 0, y: 5 },
+            { x: 0.14999999999999858, y: 5 },
+            { x: -1.2000000000000028, y: 5 },
         ];
 
         for (let i = 0; i < lastPos.length; i++) {
