@@ -138,13 +138,8 @@
     >
         <fa-icon [icon]="faPen" size="lg"></fa-icon>
     </button>
-    <button
-        (click)="this.toolManager.setTool(this.toolManager.lassoService);"
-        matTooltipPosition="after"
-        matTooltipShowDelay="600"
-    >
-    lasso
-    </button>
+
+    <button (click)="this.toolManager.setTool(this.toolManager.lassoService)" matTooltipPosition="after" matTooltipShowDelay="600">lasso</button>
 
     <button
         (click)="this.toolManager.setTool(this.toolManager.airbrushService)"
@@ -209,6 +204,111 @@
             >Tout selectionner</mat-button-toggle
         >
     </mat-button-toggle-group>
+    <mat-slide-toggle
+        *ngIf="
+            this.toolManager.currentTool == this.toolManager.rectangleSelection || this.toolManager.currentTool == this.toolManager.ellipseSelection
+        "
+        labelPosition="before"
+        [(ngModel)]="this.toolManager.rectangleSelection.magnetismService.isActivated"
+        >Activer le magnétisme</mat-slide-toggle
+    >
+    <div
+        *ngIf="
+            (this.toolManager.currentTool == this.toolManager.rectangleSelection ||
+                this.toolManager.currentTool == this.toolManager.ellipseSelection ||
+                this.toolManager.currentTool == this.toolManager.lassoService) &&
+            this.toolManager.rectangleSelection.magnetismService.isActivated
+        "
+        class="gridLock"
+    >
+        <div id="verticalLineLeft"></div>
+        <div id="verticalLineMiddle"></div>
+        <div id="verticalLineRight"></div>
+        <div id="horizontalLineTop"></div>
+        <div id="horizontalLineMiddle"></div>
+        <div id="horizontalLineBottom"></div>
+        <button
+            [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isTopLeft }"
+            class="gridButton"
+            id="TL"
+            (click)="
+                this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                this.toolManager.rectangleSelection.magnetismService.isTopLeft = true
+            "
+        ></button>
+        <button
+            [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isTopMiddle }"
+            class="gridButton"
+            id="TM"
+            (click)="
+                this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                this.toolManager.rectangleSelection.magnetismService.isTopMiddle = true
+            "
+        ></button>
+        <button
+            [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isTopRight }"
+            class="gridButton"
+            id="TR"
+            (click)="
+                this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                this.toolManager.rectangleSelection.magnetismService.isTopRight = true
+            "
+        ></button>
+        <button
+            [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isMiddleLeft }"
+            class="gridButton"
+            id="ML"
+            (click)="
+                this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                this.toolManager.rectangleSelection.magnetismService.isMiddleLeft = true
+            "
+        ></button>
+        <button
+            [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isCenter }"
+            class="gridButton"
+            id="C"
+            (click)="
+                this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                this.toolManager.rectangleSelection.magnetismService.isCenter = true
+            "
+        ></button>
+        <button
+            [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isMiddleRight }"
+            class="gridButton"
+            id="MR"
+            (click)="
+                this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                this.toolManager.rectangleSelection.magnetismService.isMiddleRight = true
+            "
+        ></button>
+        <button
+            [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isBottomLeft }"
+            class="gridButton"
+            id="BL"
+            (click)="
+                this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                this.toolManager.rectangleSelection.magnetismService.isBottomLeft = true
+            "
+        ></button>
+        <button
+            [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isBottomMiddle }"
+            class="gridButton"
+            id="BM"
+            (click)="
+                this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                this.toolManager.rectangleSelection.magnetismService.isBottomMiddle = true
+            "
+        ></button>
+        <button
+            [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isBottomRight }"
+            class="gridButton"
+            id="BR"
+            (click)="
+                this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                this.toolManager.rectangleSelection.magnetismService.isBottomRight = true
+            "
+        ></button>
+    </div>
 
     <button (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth(); this.toolManager.polygonService.onButtonPress()">
         <fa-icon [icon]="faPlay" size="lg"></fa-icon>

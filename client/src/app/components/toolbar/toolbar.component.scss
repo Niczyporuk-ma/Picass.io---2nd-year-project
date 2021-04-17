@@ -17,7 +17,7 @@
     width: 355px;
 }
 
-button {
+button:not(.gridButton) {
     display: block;
     border: none;
     background-color: rgb(53, 64, 75);
@@ -28,7 +28,7 @@ button {
     transition: 0.3s;
 }
 
-button:hover {
+button:not(.gridButton):hover {
     display: block;
     border: none;
     background-color: rgb(197, 243, 231);
@@ -38,7 +38,7 @@ button:hover {
     border-radius: 0%;
 }
 
-button:focus {
+button:not(.gridButton):focus {
     outline: none;
     background-color: rgb(107, 240, 206);
     color: black;
@@ -112,6 +112,109 @@ mat-slider {
 
 mat-slider {
     bottom: 15px;
+}
+
+#verticalLineLeft {
+    width: 5px;
+    height: 150px;
+    background-color: white;
+    margin-left: 5px;
+}
+#verticalLineMiddle {
+    width: 5px;
+    height: 150px;
+    background-color: white;
+    margin-left: 70px;
+}
+#verticalLineRight {
+    width: 5px;
+    height: 150px;
+    background-color: white;
+    margin-left: 70px;
+}
+#horizontalLineTop {
+    width: 150px;
+    height: 5px;
+    background-color: white;
+    margin-left: -150px;
+}
+
+#horizontalLineMiddle {
+    width: 150px;
+    height: 5px;
+    background-color: white;
+    margin-left: -150px;
+    margin-top: 75px;
+}
+
+#horizontalLineBottom {
+    width: 155px;
+    height: 5px;
+    background-color: white;
+    margin-left: -155px;
+    margin-top: 150px;
+}
+
+.gridLock {
+    display: flex;
+}
+
+.gridButton {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background-color: grey;
+    outline: none;
+}
+
+#TL {
+    margin-left: -160px;
+    margin-top: -5px;
+}
+
+#TM {
+    margin-left: 52px;
+    margin-top: -5px;
+}
+
+#TR {
+    margin-left: 55px;
+    margin-top: -5px;
+}
+
+#ML {
+    margin-left: -167px;
+    margin-top: 67px;
+}
+
+#C {
+    margin-left: 52px;
+    margin-top: 67px;
+}
+
+#MR {
+    margin-left: 55px;
+    margin-top: 67px;
+}
+
+#BL {
+    margin-left: -167px;
+    margin-top: 140px;
+}
+
+#BM {
+    margin-left: 52px;
+    margin-top: 140px;
+}
+
+#BR {
+    margin-left: 55px;
+    margin-top: 140px;
+}
+
+.gridButton.active {
+    background-color: rgb(107, 240, 206);
 }
 
 #stamps {

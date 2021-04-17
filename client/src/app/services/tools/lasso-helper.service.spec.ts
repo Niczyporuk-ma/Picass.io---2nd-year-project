@@ -2,11 +2,17 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { LassoHelperService } from './lasso-helper.service';
+
+const MINUS_ONE = -1;
+
 describe('LassoHelperService', () => {
     let service: LassoHelperService;
     let canvasTestHelper: CanvasTestHelper;
     let previewCtxStub: CanvasRenderingContext2D;
+    // Configuration du spy du service
+    // tslint:disable:no-string-literal
     // tslint:disable:no-magic-numbers
+    // tslint:disable:max-file-line-count
     beforeEach(() => {
         TestBed.configureTestingModule({});
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
@@ -218,5 +224,151 @@ describe('LassoHelperService', () => {
         service.updateRectangle(path, currentLine, width, height);
         expect(currentLine[0]).toEqual({ x: 10, y: 10 });
         expect(currentLine[1]).toEqual({ x: 20, y: 15 });
+    });
+
+    it('translatePathForPaste reduce the oldCurrentLine from the lassoPath', () => {
+        const oldCurrentLine: Vec2 = { x: 5, y: 5 };
+        const path: Vec2[][] = [
+            [
+                { x: 20, y: 15 },
+                { x: 15, y: 10 },
+            ],
+            [
+                { x: 20, y: 10 },
+                { x: 10, y: 10 },
+            ],
+            [
+                { x: 10, y: 10 },
+                { x: 10, y: 15 },
+            ],
+            [
+                { x: 10, y: 15 },
+                { x: 20, y: 15 },
+            ],
+        ];
+        const expectedResult: Vec2[][] = [
+            [
+                { x: 15, y: 10 },
+                { x: 10, y: 5 },
+            ],
+            [
+                { x: 15, y: 5 },
+                { x: 5, y: 5 },
+            ],
+            [
+                { x: 5, y: 5 },
+                { x: 5, y: 10 },
+            ],
+            [
+                { x: 5, y: 10 },
+                { x: 15, y: 10 },
+            ],
+        ];
+        service.translatePathForPaste(oldCurrentLine, path);
+        for (let i = 0; i < path.length; i++) {
+            expect(expectedResult[i][1].x).toEqual(path[i][1].x);
+            expect(expectedResult[i][1].y).toEqual(path[i][1].y);
+        }
+    });
+
+    it('translateImage should add the difference between offset and the lastPos and add this difference in currentLine and lassoPath', () => {
+        const currentLine: Vec2[] = [
+            { x: 10, y: 15 },
+            { x: 20, y: 10 },
+        ];
+        const offset: Vec2 = { x: 10, y: 10 };
+        const lastPos: Vec2 = { x: 5, y: 5 };
+        const path: Vec2[][] = [
+            [
+                { x: 20, y: 15 },
+                { x: 15, y: 10 },
+            ],
+            [
+                { x: 20, y: 10 },
+                { x: 10, y: 10 },
+            ],
+            [
+                { x: 10, y: 10 },
+                { x: 10, y: 15 },
+            ],
+            [
+                { x: 10, y: 15 },
+                { x: 20, y: 15 },
+            ],
+        ];
+
+        const resultCurrentLine: Vec2[] = [
+            { x: 15, y: 20 },
+            { x: 25, y: 15 },
+        ];
+
+        const resultPath: Vec2[][] = [
+            [
+                { x: 20, y: 15 },
+                { x: 20, y: 15 },
+            ],
+            [
+                { x: 20, y: 10 },
+                { x: 15, y: 15 },
+            ],
+            [
+                { x: 10, y: 10 },
+                { x: 15, y: 20 },
+            ],
+            [
+                { x: 10, y: 15 },
+                { x: 25, y: 20 },
+            ],
+        ];
+        service.translateImage(currentLine, offset, path, lastPos);
+
+        for (let i = 0; i < currentLine.length; i++) {
+            expect(currentLine[i].x).toEqual(resultCurrentLine[i].x);
+            expect(currentLine[i].y).toEqual(resultCurrentLine[i].y);
+        }
+
+        for (let i = 0; i < path.length; i++) {
+            expect(path[i][1].x).toEqual(resultPath[i][1].x);
+            expect(path[i][1].y).toEqual(resultPath[i][1].y);
+        }
+    });
+
+    it('flipMathematic should set scaleValue.x to MINUS_ONE when the currentLine[0].x is greater than currentLine[1].x', () => {
+        const currentLine: Vec2[] = [
+            { x: 25, y: 15 },
+            { x: 20, y: 10 },
+        ];
+        const scaleValue: Vec2 = { x: 0, y: 0 };
+        service.flipMathematic(currentLine, scaleValue);
+        expect(scaleValue.x).toEqual(MINUS_ONE);
+    });
+
+    it('flipMathematic should set scaleValue.y to MINUS_ONE when the currentLine[0].y is greater than currentLine[1].x', () => {
+        const currentLine: Vec2[] = [
+            { x: 25, y: 15 },
+            { x: 20, y: 10 },
+        ];
+        const scaleValue: Vec2 = { x: 0, y: 0 };
+        service.flipMathematic(currentLine, scaleValue);
+        expect(scaleValue.y).toEqual(MINUS_ONE);
+    });
+
+    it('flipMathematic should return the currentLine[0] when scaleValue is not going to be equal to MINUS_ONE in x and y', () => {
+        const currentLine: Vec2[] = [
+            { x: 25, y: 15 },
+            { x: 30, y: 35 },
+        ];
+        const scaleValue: Vec2 = { x: 0, y: 0 };
+        expect(service.flipMathematic(currentLine, scaleValue)).toEqual(currentLine[0]);
+    });
+
+    it('flipMathematic should return the currentLine[1] when scaleValue is going to be equal to MINUS_ONE in x and y', () => {
+        const currentLine: Vec2[] = [
+            { x: 250, y: 150 },
+            { x: 30, y: 35 },
+        ];
+        const scaleValue: Vec2 = { x: 0, y: 0 };
+        const result: Vec2 = { x: -currentLine[1].x, y: -currentLine[1].y };
+        expect(service.flipMathematic(currentLine, scaleValue)).toEqual(result);
     });
 });

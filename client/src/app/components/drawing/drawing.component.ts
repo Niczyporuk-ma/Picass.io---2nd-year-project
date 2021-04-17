@@ -105,6 +105,19 @@ export class DrawingComponent implements AfterViewInit {
                 preventDefault: true,
                 command: () => this.undoRedoManager.redo(),
             },
+            {
+                key: 'm',
+                preventDefault: true,
+                command: () => {
+                    if (
+                        this.toolManager.rectangleSelection === this.currentTool ||
+                        this.toolManager.ellipseSelection === this.currentTool ||
+                        this.toolManager.lassoService === this.currentTool
+                    ) {
+                        this.toolManager.rectangleSelection.magnetismService.switchOnOrOff();
+                    }
+                },
+            },
         );
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (this.toolManager.allowKeyPressEvents) {

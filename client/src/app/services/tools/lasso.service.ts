@@ -3,11 +3,12 @@ import { Selection } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { LassoHelperService } from './lasso-helper.service';
 import { LineHelperService } from './line-helper.service';
+
 const ANCHOR_RADIUS = 10;
-const MINUS_ONE = -1;
 const SEGMENT_TWO = 5;
 const SEGMENT_ONE = 3;
 const INDEX = 10;
@@ -33,8 +34,9 @@ export class LassoService extends Selection {
         lineHelper: LineHelperService,
         lassoHelper: LassoHelperService,
         undoRedoManager: UndoRedoManagerService,
+        public magnetismService: MagnetismService,
     ) {
-        super(drawingService, undoRedoManager);
+        super(drawingService, undoRedoManager, magnetismService);
         this.isStarted = false;
         this.lineHelper = lineHelper;
         this.lassoHelper = lassoHelper;
@@ -116,6 +118,7 @@ export class LassoService extends Selection {
             this.lassoHelper.fixImageData(this.drawingService.baseCtx, this.currentLine, this.imageData, this.lassoPath);
             this.isMovingImg = true;
             this.lastPos = this.getPositionFromMouse(event);
+            this.magnetismService.mouseReference = this.getPositionFromMouse(event);
         } else {
             this.isMovingImg = false;
         }
@@ -140,13 +143,10 @@ export class LassoService extends Selection {
     moveImageData(offsetX: number, offsetY: number): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
-        this.currentLine[0].x += offsetX - this.lastPos.x;
-        this.currentLine[1].x += offsetX - this.lastPos.x;
-        this.currentLine[1].y += offsetY - this.lastPos.y;
-        this.currentLine[0].y += offsetY - this.lastPos.y;
-        for (const line of this.lassoPath) {
-            line[1].x += offsetX - this.lastPos.x;
-            line[1].y += offsetY - this.lastPos.y;
+        if (!this.magnetismService.isActivated) {
+            this.lassoHelper.translateImage(this.currentLine, { x: offsetX, y: offsetY }, this.lassoPath, this.lastPos);
+        } else {
+            this.lassoHelper.translateImageWithMagnetism(this.currentLine, { x: offsetX, y: offsetY }, this.lassoPath);
         }
         this.drawingService.baseCtx.putImageData(this.backgroundImageData, 0, 0);
         this.lassoHelper.fixImageData(this.drawingService.baseCtx, this.currentLine, this.imageData, this.lassoPath);
@@ -154,8 +154,13 @@ export class LassoService extends Selection {
         for (const line of this.lassoPath) {
             this.drawPath(this.drawingService.previewCtx, line, 'black');
         }
-        this.lastPos.x = offsetX;
-        this.lastPos.y = offsetY;
+        if (!this.magnetismService.isActivated) {
+            this.lastPos.x = offsetX;
+            this.lastPos.y = offsetY;
+        } else {
+            this.magnetismService.mouseReference.x += offsetX;
+            this.magnetismService.mouseReference.y += offsetY;
+        }
     }
 
     onMouseUp(mouseUpEvent: MouseEvent): void {
@@ -200,6 +205,11 @@ export class LassoService extends Selection {
         }
 
         if (this.isPolygonClosed && this.mouseDown && this.isMovingImg) {
+            if (this.magnetismService.isActivated) {
+                const newPosition: Vec2 = this.magnetismService.dispatch(mouseMoveEvent, this.currentLine);
+                this.moveImageData(newPosition.x, newPosition.y);
+                return;
+            }
             this.moveImageData(mouseMoveEvent.offsetX, mouseMoveEvent.offsetY);
         }
     }
@@ -215,8 +225,7 @@ export class LassoService extends Selection {
                 { x: this.currentLine[1].x, y: this.currentLine[1].y },
             ];
             ctx.setLineDash([SEGMENT_TWO, SEGMENT_ONE]);
-            this.drawAnchorPoints(this.drawingService.previewCtx, local); //
-            // ctx.rect(this.currentLine[0].x, this.currentLine[0].y,this.width, this.height);
+            this.drawAnchorPoints(this.drawingService.previewCtx, local);
         }
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
@@ -302,34 +311,16 @@ export class LassoService extends Selection {
             this.drawingService.baseCtx.strokeStyle = 'black';
             this.drawingService.baseCtx.globalCompositeOperation = 'source-over';
             this.drawingService.baseCtx.save();
-            let horizontalFlip = 1;
-            let verticalFlip = 1;
-            if (this.currentLine[0].x > this.currentLine[1].x) {
-                horizontalFlip = MINUS_ONE;
-            }
-            if (this.currentLine[0].y > this.currentLine[1].y) {
-                verticalFlip = MINUS_ONE;
-            }
-            let dx: number = this.currentLine[0].x;
-            let dy: number = this.currentLine[0].y;
-
-            if (horizontalFlip === MINUS_ONE) {
-                dx = -this.currentLine[1].x;
-            }
-            if (verticalFlip === MINUS_ONE) {
-                dy = -this.currentLine[1].y;
-            }
-
-            this.drawingService.baseCtx.scale(horizontalFlip, verticalFlip);
-
+            const scaleValue: Vec2 = { x: 1, y: 1 };
+            const imageCoord: Vec2 = this.lassoHelper.flipMathematic(this.currentLine, scaleValue);
+            this.drawingService.baseCtx.scale(scaleValue.x, scaleValue.y);
             this.drawingService.baseCtx.drawImage(
                 imgBitmap,
-                dx,
-                dy,
+                imageCoord.x,
+                imageCoord.y,
                 this.currentLine[1].x - this.currentLine[0].x,
                 this.currentLine[1].y - this.currentLine[0].y,
             );
-
             this.drawingService.baseCtx.restore();
         });
     }

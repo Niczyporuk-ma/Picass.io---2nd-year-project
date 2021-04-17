@@ -3,6 +3,7 @@ import { Selection } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 
@@ -15,7 +16,6 @@ export interface ABHKAxis {
 }
 const INDEX = 8;
 const INDEXES_PER_PIXEL = 4;
-const ANCHOR_RADIUS = 5;
 const ELLIPSE_LINE_DASH = 3;
 
 @Injectable({
@@ -30,8 +30,13 @@ export class EllipseSelectionService extends Selection {
     isMovingImg: boolean = false;
     backgroundImageData: ImageData;
 
-    constructor(public drawingService: DrawingService, public squareHelperService: SquareHelperService, undoRedoManager: UndoRedoManagerService) {
-        super(drawingService, undoRedoManager);
+    constructor(
+        public drawingService: DrawingService,
+        public squareHelperService: SquareHelperService,
+        undoRedoManager: UndoRedoManagerService,
+        public magnetismService: MagnetismService,
+    ) {
+        super(drawingService, undoRedoManager, magnetismService);
         this.shortcut = 's';
         this.index = INDEX;
     }
@@ -53,6 +58,7 @@ export class EllipseSelectionService extends Selection {
                 this.fixImageData();
                 this.isMovingImg = true;
                 this.lastPos = this.getPositionFromMouse(mouseDownEvent);
+                this.magnetismService.mouseReference = this.getPositionFromMouse(mouseDownEvent);
                 return;
             } else {
                 this.isMovingImg = false;
@@ -134,18 +140,30 @@ export class EllipseSelectionService extends Selection {
     moveImageData(offsetX: number, offsetY: number): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
-        this.currentLine[0].x += offsetX - this.lastPos.x;
-        this.currentLine[1].x += offsetX - this.lastPos.x;
-        this.currentLine[0].y += offsetY - this.lastPos.y;
-        this.currentLine[1].y += offsetY - this.lastPos.y;
+        if (!this.magnetismService.isActivated) {
+            this.currentLine[0].x += offsetX - this.lastPos.x;
+            this.currentLine[1].x += offsetX - this.lastPos.x;
+            this.currentLine[0].y += offsetY - this.lastPos.y;
+            this.currentLine[1].y += offsetY - this.lastPos.y;
+        } else {
+            this.currentLine[0].x += offsetX;
+            this.currentLine[1].x += offsetX;
+            this.currentLine[0].y += offsetY;
+            this.currentLine[1].y += offsetY;
+        }
         this.drawingService.baseCtx.putImageData(this.backgroundImageData, 0, 0);
         this.fixImageData();
         this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
         this.drawRectangle(this.drawingService.previewCtx, this.currentLine);
         this.drawAnchorPoints(this.drawingService.previewCtx, this.currentLine);
         this.drawEllipse(this.drawingService.previewCtx, this.currentLine[0], this.currentLine[1], false);
-        this.lastPos.x = offsetX;
-        this.lastPos.y = offsetY;
+        if (!this.magnetismService.isActivated) {
+            this.lastPos.x = offsetX;
+            this.lastPos.y = offsetY;
+        } else {
+            this.magnetismService.mouseReference.x += offsetX;
+            this.magnetismService.mouseReference.y += offsetY;
+        }
     }
 
     onMouseUp(mouseUpEvent: MouseEvent): void {
@@ -224,6 +242,11 @@ export class EllipseSelectionService extends Selection {
         if (this.mouseDown && !this.drawingService.resizeActive && !this.hasBeenReseted) {
             this.undoRedoManager.disableUndoRedo();
             if (this.isMovingImg) {
+                if (this.magnetismService.isActivated) {
+                    const shifting: Vec2 = this.magnetismService.dispatch(mouseMoveEvent, this.currentLine);
+                    this.moveImageData(shifting.x, shifting.y);
+                    return;
+                }
                 this.moveImageData(mouseMoveEvent.offsetX, mouseMoveEvent.offsetY);
                 return;
             }
@@ -237,51 +260,6 @@ export class EllipseSelectionService extends Selection {
             this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint, false);
             this.drawRectangle(this.drawingService.previewCtx, this.currentLine);
         }
-    }
-
-    drawAnchorPoints(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.anchorPoints = [];
-        ctx.strokeStyle = 'black';
-        ctx.fillStyle = 'black';
-        ctx.beginPath();
-        ctx.arc(path[0].x, path[0].y, ANCHOR_RADIUS, 0, Math.PI * 2); // initial
-        this.anchorPoints.push({ x: path[0].x, y: path[0].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc((path[0].x + path[1].x) / 2, path[0].y, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu horizontal
-        this.anchorPoints.push({ x: (path[0].x + path[1].x) / 2, y: path[0].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[1].x, path[0].y, ANCHOR_RADIUS, 0, Math.PI * 2); // inverse horizontal
-        this.anchorPoints.push({ x: path[1].x, y: path[0].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[1].x, (path[0].y + path[1].y) / 2, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu vertical inverse
-        this.anchorPoints.push({ x: path[1].x, y: (path[0].y + path[1].y) / 2 });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[1].x, path[1].y, ANCHOR_RADIUS, 0, Math.PI * 2); // fin
-        this.anchorPoints.push({ x: path[1].x, y: path[1].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc((path[0].x + path[1].x) / 2, path[1].y, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu horizontal inverse
-        this.anchorPoints.push({ x: (path[0].x + path[1].x) / 2, y: path[1].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[0].x, path[1].y, ANCHOR_RADIUS, 0, Math.PI * 2); // inverse vertical
-        this.anchorPoints.push({ x: path[0].x, y: path[1].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[0].x, (path[0].y + path[1].y) / 2, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu vertical
-        this.anchorPoints.push({ x: path[0].x, y: (path[0].y + path[1].y) / 2 });
-        ctx.fill();
     }
 
     drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
