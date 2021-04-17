@@ -71,7 +71,7 @@ export class StampService extends Tool {
     onMouseWheel(event: WheelEvent): void {
         if (!this.drawingService.resizeActive) {
             event.preventDefault();
-            this.rotationAngle = this.rotationAngle + (event.deltaY / MOUSE_WHEEL_SINLGE_ROLL_SIZE) * this.rotationRate;
+            this.rotationAngle = this.rotationAngle + Math.round(event.deltaY / MOUSE_WHEEL_SINLGE_ROLL_SIZE) * this.rotationRate;
             this.resetWheelIfBeyondRange();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             const stampCommand: StampCommandService = new StampCommandService();

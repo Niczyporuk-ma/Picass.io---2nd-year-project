@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineHelperService } from '@app/services/tools/line-helper.service';
+import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { RectangleService } from '@app/services/tools/rectangle.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
@@ -20,7 +21,6 @@ export class RectangleSelectionService extends Selection {
     endPoint: Vec2;
     shiftIsPressed: boolean;
     hasBeenReseted: boolean = false;
-    currentLine: Vec2[] = [];
     eventListenerIsSet: boolean;
     contour: boolean = true;
     imageData: ImageData;
@@ -35,8 +35,9 @@ export class RectangleSelectionService extends Selection {
         public rectangleService: RectangleService,
         public lineHelper: LineHelperService,
         undoRedoManager: UndoRedoManagerService,
+        public magnetismService: MagnetismService,
     ) {
-        super(drawingService, undoRedoManager);
+        super(drawingService, undoRedoManager, magnetismService);
         this.shortcut = 'r';
         this.currentLine = [];
         this.index = INDEX;
@@ -71,8 +72,10 @@ export class RectangleSelectionService extends Selection {
                 if (!this.currentlySelecting) {
                     this.imageData = this.getImageData();
                 }
+
                 this.isMovingImg = true;
                 this.lastPos = this.getPositionFromMouse(mouseDownEvent);
+                this.magnetismService.mouseReference = this.getPositionFromMouse(mouseDownEvent);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 return;
             }
@@ -80,6 +83,8 @@ export class RectangleSelectionService extends Selection {
             this.anchorPoints = [];
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
             this.startingPoint = this.mouseDownCoord;
+            this.lastPos.x = mouseDownEvent.offsetX;
+            this.lastPos.y = mouseDownEvent.offsetY;
         }
     }
 
@@ -145,16 +150,28 @@ export class RectangleSelectionService extends Selection {
     moveImageData(offsetX: number, offsetY: number): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
-        this.currentLine[0].x += offsetX - this.lastPos.x;
-        this.currentLine[1].x += offsetX - this.lastPos.x;
-        this.currentLine[0].y += offsetY - this.lastPos.y;
-        this.currentLine[1].y += offsetY - this.lastPos.y;
+        if (!this.magnetismService.isActivated) {
+            this.currentLine[0].x += offsetX - this.lastPos.x;
+            this.currentLine[1].x += offsetX - this.lastPos.x;
+            this.currentLine[0].y += offsetY - this.lastPos.y;
+            this.currentLine[1].y += offsetY - this.lastPos.y;
+        } else {
+            this.currentLine[0].x += offsetX;
+            this.currentLine[1].x += offsetX;
+            this.currentLine[0].y += offsetY;
+            this.currentLine[1].y += offsetY;
+        }
         this.drawingService.baseCtx.putImageData(this.backgroundImageData, 0, 0);
         this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
         this.drawLine(this.drawingService.previewCtx, this.currentLine);
         this.drawAnchorPoints(this.drawingService.previewCtx, this.currentLine);
-        this.lastPos.x = offsetX;
-        this.lastPos.y = offsetY;
+        if (!this.magnetismService.isActivated) {
+            this.lastPos.x = offsetX;
+            this.lastPos.y = offsetY;
+        } else {
+            this.magnetismService.mouseReference.x += offsetX;
+            this.magnetismService.mouseReference.y += offsetY;
+        }
     }
 
     onMouseUp(mouseUpEvent: MouseEvent): void {
@@ -178,9 +195,9 @@ export class RectangleSelectionService extends Selection {
                 const mousePosition = this.getPositionFromMouse(mouseUpEvent);
                 this.endPoint = mousePosition;
                 this.currentLine = [this.startingPoint, this.endPoint];
+                console.log(this.currentLine);
             }
-            this.lastPos.x = mouseUpEvent.offsetX;
-            this.lastPos.y = mouseUpEvent.offsetY;
+
             this.drawAnchorPoints(this.drawingService.previewCtx, this.currentLine);
             this.mouseDown = false;
         }
@@ -191,6 +208,11 @@ export class RectangleSelectionService extends Selection {
             this.undoRedoManager.disableUndoRedo();
             this.hasBeenReseted = false;
             if (this.isMovingImg) {
+                if (this.magnetismService.isActivated) {
+                    const shifting: Vec2 = this.magnetismService.dispatch(mouseMoveEvent, this.currentLine);
+                    this.moveImageData(shifting.x, shifting.y);
+                    return;
+                }
                 this.moveImageData(mouseMoveEvent.offsetX, mouseMoveEvent.offsetY);
                 return;
             }

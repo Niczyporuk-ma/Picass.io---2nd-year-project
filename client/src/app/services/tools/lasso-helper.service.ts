@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
+
 const INDEXES_PER_PIXEL = 4;
+const MINUS_ONE = -1;
+
 @Injectable({
     providedIn: 'root',
 })
@@ -90,5 +93,54 @@ export class LassoHelperService {
         }
         height = currentLine[1].y - currentLine[0].y;
         width = currentLine[1].x - currentLine[0].x;
+    }
+
+    translatePathForPaste(oldCurrentLine: Vec2, lassoPath: Vec2[][]): void {
+        for (const line of lassoPath) {
+            line[1].x -= oldCurrentLine.x;
+            line[1].y -= oldCurrentLine.y;
+        }
+    }
+
+    translateImage(currentLine: Vec2[], offset: Vec2, lassoPath: Vec2[][], lastPos: Vec2): void {
+        currentLine[0].x += offset.x - lastPos.x;
+        currentLine[1].x += offset.x - lastPos.x;
+        currentLine[1].y += offset.y - lastPos.y;
+        currentLine[0].y += offset.y - lastPos.y;
+        for (const line of lassoPath) {
+            line[1].x += offset.x - lastPos.x;
+            line[1].y += offset.y - lastPos.y;
+        }
+    }
+
+    flipMathematic(currentLine: Vec2[], scaleValue: Vec2): Vec2 {
+        if (currentLine[0].x > currentLine[1].x) {
+            scaleValue.x = MINUS_ONE;
+        }
+        if (currentLine[0].y > currentLine[1].y) {
+            scaleValue.y = MINUS_ONE;
+        }
+        let dx: number = currentLine[0].x;
+        let dy: number = currentLine[0].y;
+
+        if (scaleValue.x === MINUS_ONE) {
+            dx = -currentLine[1].x;
+        }
+        if (scaleValue.y === MINUS_ONE) {
+            dy = -currentLine[1].y;
+        }
+
+        return { x: dx, y: dy };
+    }
+
+    translateImageWithMagnetism(currentLine: Vec2[], offset: Vec2, lassoPath: Vec2[][]): void {
+        currentLine[0].x += offset.x;
+        currentLine[1].x += offset.x;
+        currentLine[0].y += offset.y;
+        currentLine[1].y += offset.y;
+        for (const line of lassoPath) {
+            line[1].x += offset.x;
+            line[1].y += offset.y;
+        }
     }
 }

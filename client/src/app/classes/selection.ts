@@ -1,4 +1,5 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { SelectionCommandService } from '@app/services/tools/tool-commands/selection-command.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { Tool } from './tool';
@@ -41,7 +42,7 @@ export abstract class Selection extends Tool {
     startingPoint: Vec2;
     endPoint: Vec2;
 
-    constructor(public drawingService: DrawingService, undoRedoManager: UndoRedoManagerService) {
+    constructor(public drawingService: DrawingService, undoRedoManager: UndoRedoManagerService, public magnetismService: MagnetismService) {
         super(drawingService);
         this.localShortcuts = new Map([
             ['Shift', this.onShift],
@@ -138,7 +139,12 @@ export abstract class Selection extends Tool {
             this.offsetXModifier += PIXEL_MODIFIER;
             this.rightArrowCheck = true;
         }
-        this.moveImageData(this.lastPos.x + this.offsetXModifier, this.lastPos.y + this.offsetYModifier);
+        if (this.magnetismService.isActivated) {
+            const newPosition: Vec2 = this.magnetismService.moveRightHandler(this.currentLine);
+            this.moveImageData(newPosition.x, newPosition.y);
+        } else {
+            this.moveImageData(this.lastPos.x + this.offsetXModifier, this.lastPos.y + this.offsetYModifier);
+        }
     }
 
     moveLeft(): void {
@@ -147,7 +153,12 @@ export abstract class Selection extends Tool {
             this.offsetXModifier -= PIXEL_MODIFIER;
             this.leftArrowCheck = true;
         }
-        this.moveImageData(this.lastPos.x + this.offsetXModifier, this.lastPos.y + this.offsetYModifier);
+        if (this.magnetismService.isActivated) {
+            const newPosition: Vec2 = this.magnetismService.moveLeftHandler(this.currentLine);
+            this.moveImageData(newPosition.x, newPosition.y);
+        } else {
+            this.moveImageData(this.lastPos.x + this.offsetXModifier, this.lastPos.y + this.offsetYModifier);
+        }
     }
 
     moveUp(): void {
@@ -156,7 +167,12 @@ export abstract class Selection extends Tool {
             this.offsetYModifier -= PIXEL_MODIFIER;
             this.upArrowCheck = true;
         }
-        this.moveImageData(this.lastPos.x + this.offsetXModifier, this.lastPos.y + this.offsetYModifier);
+        if (this.magnetismService.isActivated) {
+            const newPosition: Vec2 = this.magnetismService.moveUpHandler(this.currentLine);
+            this.moveImageData(newPosition.x, newPosition.y);
+        } else {
+            this.moveImageData(this.lastPos.x + this.offsetXModifier, this.lastPos.y + this.offsetYModifier);
+        }
     }
 
     moveDown(): void {
@@ -165,7 +181,12 @@ export abstract class Selection extends Tool {
             this.offsetYModifier += PIXEL_MODIFIER;
             this.downArrowCheck = true;
         }
-        this.moveImageData(this.lastPos.x + this.offsetXModifier, this.lastPos.y + this.offsetYModifier);
+        if (this.magnetismService.isActivated) {
+            const newPosition: Vec2 = this.magnetismService.moveDownHandler(this.currentLine);
+            this.moveImageData(newPosition.x, newPosition.y);
+        } else {
+            this.moveImageData(this.lastPos.x + this.offsetXModifier, this.lastPos.y + this.offsetYModifier);
+        }
     }
 
     onEscape(): void {}
