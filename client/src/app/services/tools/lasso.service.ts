@@ -324,6 +324,7 @@ export class LassoService extends Selection {
 
     pasteSelection(): void {
         if (this.clipboardService.alreadyCopied) {
+            this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
             this.backgroundImageData = this.drawingService.baseCtx.getImageData(
                 0,
                 0,
@@ -331,7 +332,6 @@ export class LassoService extends Selection {
                 this.drawingService.baseCtx.canvas.height,
             );
             const temp: Vec2 = this.currentLine[0];
-            this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
             this.currentLine = [
                 { x: 0, y: 0 },
                 { x: this.clipboardService.copy.width, y: this.clipboardService.copy.height },
