@@ -12,9 +12,12 @@ import { Subject } from 'rxjs';
 import { ColorService } from './color.service';
 import { EllipseService } from './ellipse.service';
 import { EraserService } from './eraser.service';
+import { LassoService } from './lasso.service';
+import { NoToolService } from './no-tool.service';
 import { PipetteService } from './pipette.service';
 import { PolygonService } from './polygon.service';
 import { RectangleService } from './rectangle.service';
+import { StampService } from './stamp.service';
 import { UndoRedoManagerService } from './undo-redo-manager.service';
 
 @Injectable({
@@ -29,12 +32,15 @@ export class ToolManagerService {
         this.rectangleService,
         this.eraserService,
         this.ellipseService,
-        this.airbrushService,
         this.polygonService,
+        this.airbrushService,
         this.rectangleSelection,
         this.ellipseSelection,
         this.pipetteService,
         this.textService,
+        this.lassoService,
+        this.stampService,
+        this.noToolService,
     ];
 
     toolBoxShortcuts: Map<string, Tool>;
@@ -64,6 +70,9 @@ export class ToolManagerService {
         public rectangleSelection: RectangleSelectionService,
         public ellipseSelection: EllipseSelectionService,
         public textService: TextService,
+        public stampService: StampService,
+        public noToolService: NoToolService,
+        public lassoService: LassoService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
@@ -73,13 +82,15 @@ export class ToolManagerService {
             [this.eraserService.shortcut, this.tools[this.eraserService.index]],
             [this.pencilService.shortcut, this.tools[this.pencilService.index]],
             [this.ellipseService.shortcut, this.tools[this.ellipseService.index]],
-            [this.pipetteService.shortcut, this.tools[this.pipetteService.index]],
             [this.airbrushService.shortcut, this.tools[this.airbrushService.index]],
             [this.polygonService.shortcut, this.tools[this.polygonService.index]],
             [this.rectangleSelection.shortcut, this.tools[this.rectangleSelection.index]],
             [this.ellipseSelection.shortcut, this.tools[this.ellipseSelection.index]],
             [this.pipetteService.shortcut, this.tools[this.pipetteService.index]],
             [this.textService.shortcut, this.tools[this.textService.index]],
+            [this.lassoService.shortcut, this.tools[this.lassoService.index]],
+            [this.stampService.shortcut, this.tools[this.stampService.index]],
+            [this.noToolService.shortcut, this.tools[this.noToolService.index]],
         ]);
         this.undoRedoManager = undoRedoManager;
     }
@@ -97,7 +108,7 @@ export class ToolManagerService {
                 this.undoRedoManager.clearUndoStack();
                 this.undoRedoManager.disableUndoRedo();
                 this.drawingService.baseCtx.fillStyle = 'white';
-                this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
+                this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.baseCtx.canvas.width, this.drawingService.baseCtx.canvas.height);
             }
         }
     }
@@ -110,15 +121,14 @@ export class ToolManagerService {
     setTool(tool: Tool): void {
         if (this.currentTool === this.textService) {
             this.textService.resetState();
-            console.log('reset' + tool.toolName);
         }
         this.currentToolChange.next(tool);
         this.currentTool.setColors(this.colorService);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     disableShortcut(): void {
         this.allowKeyPressEvents = false;
-        console.log('disabled');
     }
 
     enableShortcut(): void {

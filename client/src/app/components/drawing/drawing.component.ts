@@ -1,14 +1,16 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { Constant } from '@app/constants/general-constants-store';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { GridService } from '@app/services/grid/grid.service';
 import { KeyboardShortcutManagerService } from '@app/services/tools/keyboard-shortcut-manager.service';
 import { ResizeCommandService } from '@app/services/tools/tool-commands/resize-command.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
+const WAIT_TIME = 5;
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
@@ -17,12 +19,19 @@ import { ShortcutInput } from 'ng-keyboard-shortcuts';
 export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: true }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('backgroundMediatorCanvas', { static: true }) backgroundMediatorCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('backgroundCanvas', { static: true }) backgroundLayer: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: true }) gridCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('input') input: ElementRef;
+    @ViewChildren('baseCanvas, previewCanvas, backgroundCanvas, gridCanvas, backgroundMediatorCanvas') allCanvases: QueryList<
+        ElementRef<HTMLCanvasElement>
+    >;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
+    private backgroundMediatorCtx: CanvasRenderingContext2D;
     private backgroundCtx: CanvasRenderingContext2D;
+    private gridCtx: CanvasRenderingContext2D;
 
     canvasSize: Vec2 = { x: Constant.DEFAULT_WIDTH, y: Constant.DEFAULT_HEIGHT };
     mouseDown: boolean = false;
@@ -47,6 +56,7 @@ export class DrawingComponent implements AfterViewInit {
         keyboardManager: KeyboardShortcutManagerService,
         resizeCommandService: ResizeCommandService,
         undoRedoManager: UndoRedoManagerService,
+        public gridService: GridService,
     ) {
         this.resizeServiceCommand = resizeCommandService;
         this.toolManager = toolManager;
@@ -65,9 +75,12 @@ export class DrawingComponent implements AfterViewInit {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.backgroundCtx = this.backgroundLayer.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
+        this.drawingService.backgroundMediatorCtx = this.backgroundMediatorCtx;
         this.drawingService.backgroundCtx = this.backgroundCtx;
+        this.drawingService.gridCtx = this.gridCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         this.baseCtx.fillStyle = 'white';
         this.baseCtx.fillRect(0, 0, this.baseCanvas.nativeElement.width, this.baseCanvas.nativeElement.height);
@@ -97,6 +110,19 @@ export class DrawingComponent implements AfterViewInit {
                 preventDefault: true,
                 command: () => this.undoRedoManager.redo(),
             },
+            {
+                key: 'm',
+                preventDefault: true,
+                command: () => {
+                    if (
+                        this.toolManager.rectangleSelection === this.currentTool ||
+                        this.toolManager.ellipseSelection === this.currentTool ||
+                        this.toolManager.lassoService === this.currentTool
+                    ) {
+                        this.toolManager.rectangleSelection.magnetismService.switchOnOrOff();
+                    }
+                },
+            },
         );
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (this.toolManager.currentTool === this.toolManager.textService) {
@@ -122,10 +148,17 @@ export class DrawingComponent implements AfterViewInit {
 
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (this.toolManager.allowKeyPressEvents) {
-                console.log(this.toolManager.allowKeyPressEvents);
                 event.preventDefault();
                 this.shortcutKeyboardManager.onKeyPress(event.key);
             }
+        });
+
+        window.addEventListener('keydown', (event: KeyboardEvent) => {
+            if (this.toolManager.allowKeyPressEvents) {
+                event.preventDefault();
+                this.shortcutKeyboardManager.onKeyPress(event.key);
+            }
+            this.drawingService.clearBackground();
         });
 
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
@@ -139,6 +172,18 @@ export class DrawingComponent implements AfterViewInit {
         window.addEventListener('contextmenu', (event: MouseEvent) => {
             event.preventDefault();
         });
+        window.addEventListener(
+            'wheel',
+            (event: WheelEvent) => {
+                if (this.toolManager.currentTool === this.toolManager.stampService) {
+                    this.toolManager.stampService.onMouseWheel(event);
+                }
+            },
+            // https://github.com/inuyaksa/jquery.nicescroll/issues/799
+            // solves the following problem:
+            // "[Chrome] Unable to preventDefault inside passive event listener due to target being treated as passive"
+            { passive: false },
+        );
     }
 
     @HostListener('window:mousemove', ['$event'])
@@ -151,6 +196,19 @@ export class DrawingComponent implements AfterViewInit {
         }
         if (this.toolManager.currentTool === this.toolManager.ellipseService && this.toolManager.ellipseService.mouseDown) {
             this.toolManager.ellipseService.onMouseMove(event);
+        }
+        if (this.toolManager.currentTool === this.toolManager.stampService) {
+            for (const canvas of this.allCanvases) {
+                canvas.nativeElement.style.cursor = 'none';
+            }
+        } else if (this.toolManager.currentTool === this.toolManager.noToolService) {
+            for (const canvas of this.allCanvases) {
+                canvas.nativeElement.style.cursor = 'default';
+            }
+        } else {
+            for (const canvas of this.allCanvases) {
+                canvas.nativeElement.style.cursor = 'crosshair';
+            }
         }
     }
 
@@ -199,6 +257,12 @@ export class DrawingComponent implements AfterViewInit {
             imageTemp.src = this.resizeServiceCommand.lastImage.src;
             resizeCommand.lastImage = imageTemp;
             const newCanvasSize: Vec2 = { x: this.canvasSize.x, y: this.canvasSize.y };
+
+            if (this.gridService.isGridVisible) {
+                setTimeout(() => {
+                    this.gridService.drawGrid();
+                }, WAIT_TIME);
+            }
 
             resizeCommand.canvasSizeObserver.subscribe((value) => {
                 this.canvasSize = value;

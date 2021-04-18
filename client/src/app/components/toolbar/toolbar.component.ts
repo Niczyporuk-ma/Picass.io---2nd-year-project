@@ -1,10 +1,26 @@
 import { Component } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { GridService } from '@app/services/grid/grid.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCircle, faSquare } from '@fortawesome/free-regular-svg-icons';
-import { faBars, faEraser, faEyeDropper, faPalette, faPen, faRedoAlt, faSlash, faSprayCan, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+    faBars,
+    faEraser,
+    faEyeDropper,
+    faPalette,
+    faPen,
+    faPlay,
+    faRedoAlt,
+    faSlash,
+    faSprayCan,
+    faStamp,
+    faTh,
+    faUndoAlt,
+    faVectorSquare,
+} from '@fortawesome/free-solid-svg-icons';
+import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 @Component({
     selector: 'app-toolbar',
@@ -12,6 +28,7 @@ import { faBars, faEraser, faEyeDropper, faPalette, faPen, faRedoAlt, faSlash, f
     styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent {
+    shortcuts: ShortcutInput[] = [];
     tools: Tool[];
     showAdvanced: boolean = false;
     widthValue: number = this.toolManager.currentTool.toolStyles.lineWidth;
@@ -21,16 +38,25 @@ export class ToolbarComponent {
     faEraser: IconDefinition = faEraser;
     faCircle: IconDefinition = faCircle;
     faPalette: IconDefinition = faPalette;
+    faBars: IconDefinition = faBars;
     faEyeDropper: IconDefinition = faEyeDropper;
     faSprayCan: IconDefinition = faSprayCan;
     faUndoAlt: IconDefinition = faUndoAlt;
     faRedoAlt: IconDefinition = faRedoAlt;
-    faBars: IconDefinition = faBars;
+    faTh: IconDefinition = faTh;
+    faStamp: IconDefinition = faStamp;
+    faVectorSquare: IconDefinition = faVectorSquare;
+    faPlay: IconDefinition = faPlay;
 
-    constructor(public toolManager: ToolManagerService, public undoRedoManager: UndoRedoManagerService) {
+    constructor(public toolManager: ToolManagerService, public undoRedoManager: UndoRedoManagerService, public gridService: GridService) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
         this.undoRedoManager = undoRedoManager;
+        this.shortcuts.push({
+            key: 'g',
+            preventDefault: true,
+            command: () => this.showGrid(),
+        });
     }
 
     onPressPalette(): void {
@@ -49,7 +75,34 @@ export class ToolbarComponent {
         this.toolManager.allowKeyPressEvents = true;
     }
 
-    updateSliderWidth(): void {
-        this.toolManager.widthValue = this.toolManager.currentTool.toolStyles.lineWidth;
+    changeGridOpacity(opacity: number): void {
+        this.gridService.lineOpacity = opacity;
+        this.gridService.drawGrid();
+    }
+
+    changeSquareSize(size: number): void {
+        this.gridService.squareSize = size;
+        this.gridService.drawGrid();
+    }
+
+    rotateStamp(rotationAngle: number): void {
+        this.toolManager.stampService.rotationAngle = rotationAngle;
+    }
+
+    changeStampSize(newSize: number): void {
+        this.toolManager.stampService.stampSize = newSize;
+    }
+
+    setStampStyle(stampNb: number): void {
+        this.toolManager.stampService.stampName = 'assets/' + stampNb + '.png';
+    }
+
+    showGrid(): void {
+        this.gridService.isGridVisible = !this.gridService.isGridVisible;
+        if (this.gridService.isGridVisible) {
+            this.gridService.drawGrid();
+        } else {
+            this.gridService.eraseGrid();
+        }
     }
 }

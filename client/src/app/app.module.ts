@@ -14,6 +14,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
@@ -87,6 +88,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         KeyboardShortcutsModule.forRoot(),
         MatButtonModule,
         MatMenuModule,
+        MatSlideToggleModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

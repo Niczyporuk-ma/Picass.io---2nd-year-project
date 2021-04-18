@@ -2,7 +2,7 @@
 <div class="title" *ngIf="this.toolManager.nonTools">Autres Options</div>
 <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
 <div *ngIf="!this.toolManager.nonTools">
-    <div class="input-wrapper" *ngIf="!this.toolManager.nonTools">
+    <div class="input-wrapper" *ngIf="!this.toolManager.nonTools && this.toolManager.currentTool != this.toolManager.stampService">
         <p>Couleur:</p>
         <div class="prim-sec">
             <div
@@ -24,7 +24,11 @@
         *ngIf="
             this.toolManager.currentTool != this.toolManager.airbrushService &&
             this.toolManager.currentTool != this.toolManager.textService &&
-            this.toolManager.currentTool != this.toolManager.pipetteService
+            this.toolManager.currentTool != this.toolManager.pipetteService &&
+            this.toolManager.currentTool != this.toolManager.stampService &&
+            this.toolManager.currentTool != this.toolManager.rectangleSelection &&
+            this.toolManager.currentTool != this.toolManager.ellipseSelection &&
+            this.toolManager.currentTool != this.toolManager.lassoService
         "
     >
         <mat-card>
@@ -210,18 +214,160 @@
         <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
     </mat-button-toggle-group>
 
-    <mat-button-toggle-group
+    <div
+        class="type-selection"
         *ngIf="
-            this.toolManager.currentTool == this.toolManager.rectangleSelection || this.toolManager.currentTool == this.toolManager.ellipseSelection
+            this.toolManager.currentTool == this.toolManager.rectangleSelection ||
+            this.toolManager.currentTool == this.toolManager.ellipseSelection ||
+            this.toolManager.currentTool == this.toolManager.lassoService
         "
     >
-        <mat-button-toggle value="1" (change)="this.toolManager.setTool(this.toolManager.rectangleSelection)">Rectangle</mat-button-toggle>
-        <mat-button-toggle value="2" (change)="this.toolManager.setTool(this.toolManager.ellipseSelection)">Ellipse</mat-button-toggle>
-        <mat-button-toggle (change)="this.toolManager.rectangleSelection.selectAll(); this.toolManager.setTool(this.toolManager.rectangleSelection)"
-            >Tout selectionner</mat-button-toggle
-        >
-    </mat-button-toggle-group>
+        <p id="type">Type de sélection:</p>
+        <mat-button-toggle-group class="selection-menu">
+            <mat-button-toggle
+                value="1"
+                (change)="this.toolManager.setTool(this.toolManager.rectangleSelection)"
+                [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.rectangleSelection }"
+                ><fa-icon [icon]="faSquare" size="lg"></fa-icon
+            ></mat-button-toggle>
+            <mat-button-toggle
+                value="2"
+                (change)="this.toolManager.setTool(this.toolManager.ellipseSelection)"
+                [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.ellipseSelection }"
+                ><fa-icon [icon]="faCircle" size="lg"></fa-icon
+            ></mat-button-toggle>
+            <mat-button-toggle
+                value="3"
+                (change)="this.toolManager.setTool(this.toolManager.lassoService)"
+                [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.lassoService }"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg)"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                >
+                    <path
+                        d="M29.625 2.22a1 1 0 0 0-1.098-.101L17.935 7.8L3.366 2.07a1 1 0 0 0-1.28 1.336l6.435 14.48a3.965 3.965 0 0 0 1.39 6.944A4.005 4.005 0 0 1 6 28H4v2h2a6.004 6.004 0 0 0 5.928-5.12a4.002 4.002 0 0 0 2.93-2.88h8.382a2 2 0 0 0 1.927-1.465l4.796-17.267a1 1 0 0 0-.338-1.049zM11 23a2 2 0 1 1 2-2a2.002 2.002 0 0 1-2 2zm12.24-3h-8.382a3.897 3.897 0 0 0-4.512-2.934L4.905 4.824L18.065 10l9.345-5.012z"
+                    />
+                </svg>
+            </mat-button-toggle>
+            <mat-button-toggle
+                (change)="this.toolManager.rectangleSelection.selectAll(); this.toolManager.setTool(this.toolManager.rectangleSelection)"
+                >Tout</mat-button-toggle
+            >
+        </mat-button-toggle-group>
 
+        <mat-slide-toggle
+            *ngIf="
+                this.toolManager.currentTool == this.toolManager.rectangleSelection ||
+                this.toolManager.currentTool == this.toolManager.ellipseSelection
+            "
+            labelPosition="before"
+            [(ngModel)]="this.toolManager.rectangleSelection.magnetismService.isActivated"
+            >Activer le magnétisme</mat-slide-toggle
+        >
+        <div
+            *ngIf="
+                (this.toolManager.currentTool == this.toolManager.rectangleSelection ||
+                    this.toolManager.currentTool == this.toolManager.ellipseSelection ||
+                    this.toolManager.currentTool == this.toolManager.lassoService) &&
+                this.toolManager.rectangleSelection.magnetismService.isActivated
+            "
+            class="gridLock"
+        >
+            <div id="verticalLineLeft"></div>
+            <div id="verticalLineMiddle"></div>
+            <div id="verticalLineRight"></div>
+            <div id="horizontalLineTop"></div>
+            <div id="horizontalLineMiddle"></div>
+            <div id="horizontalLineBottom"></div>
+            <button
+                [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isTopLeft }"
+                class="gridButton"
+                id="TL"
+                (click)="
+                    this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                    this.toolManager.rectangleSelection.magnetismService.isTopLeft = true
+                "
+            ></button>
+            <button
+                [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isTopMiddle }"
+                class="gridButton"
+                id="TM"
+                (click)="
+                    this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                    this.toolManager.rectangleSelection.magnetismService.isTopMiddle = true
+                "
+            ></button>
+            <button
+                [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isTopRight }"
+                class="gridButton"
+                id="TR"
+                (click)="
+                    this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                    this.toolManager.rectangleSelection.magnetismService.isTopRight = true
+                "
+            ></button>
+            <button
+                [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isMiddleLeft }"
+                class="gridButton"
+                id="ML"
+                (click)="
+                    this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                    this.toolManager.rectangleSelection.magnetismService.isMiddleLeft = true
+                "
+            ></button>
+            <button
+                [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isCenter }"
+                class="gridButton"
+                id="C"
+                (click)="
+                    this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                    this.toolManager.rectangleSelection.magnetismService.isCenter = true
+                "
+            ></button>
+            <button
+                [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isMiddleRight }"
+                class="gridButton"
+                id="MR"
+                (click)="
+                    this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                    this.toolManager.rectangleSelection.magnetismService.isMiddleRight = true
+                "
+            ></button>
+            <button
+                [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isBottomLeft }"
+                class="gridButton"
+                id="BL"
+                (click)="
+                    this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                    this.toolManager.rectangleSelection.magnetismService.isBottomLeft = true
+                "
+            ></button>
+            <button
+                [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isBottomMiddle }"
+                class="gridButton"
+                id="BM"
+                (click)="
+                    this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                    this.toolManager.rectangleSelection.magnetismService.isBottomMiddle = true
+                "
+            ></button>
+            <button
+                [ngClass]="{ active: this.toolManager.rectangleSelection.magnetismService.isBottomRight }"
+                class="gridButton"
+                id="BR"
+                (click)="
+                    this.toolManager.rectangleSelection.magnetismService.resetAnchors();
+                    this.toolManager.rectangleSelection.magnetismService.isBottomRight = true
+                "
+            ></button>
+        </div>
+    </div>
     <div *ngIf="this.toolManager.currentTool == this.toolManager.polygonService" class="Slider">
         <mat-card>
             <div>Nb côté:</div>
@@ -230,7 +376,7 @@
                 max="12"
                 step="1"
                 class="slider"
-                (change)="this.toolManager.polygonService.setNumberOfSides($event)"
+                (change)="this.toolManager.polygonService.setNumberOfSides($event.value)"
                 (input)="this.toolManager.polygonService.sides = $event.value"
                 [value]="this.toolManager.polygonService.sides"
             ></mat-slider>
@@ -263,18 +409,94 @@
                 max="50"
                 step="1"
                 value="this.toolManager.lineService.currentDiameter"
-                class="slider"
                 (change)="changeDiameter($event.value)"
                 (input)="this.toolManager.lineService.currentDiameter = $event.value"
                 [value]="this.toolManager.lineService.currentDiameter"
             ></mat-slider>
             {{ this.toolManager.lineService.currentDiameter }}
-            <br />
         </mat-card>
     </div>
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
         <mat-button-toggle id="jonc" value="0" (change)="setLineJunction($event.value)">Sans jonction</mat-button-toggle>
         <mat-button-toggle id="jonc" value="1" (change)="setLineJunction($event.value)">Avec jonction</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div class="grid-attributes" *ngIf="this.gridService.isGridVisible">
+        <mat-card>
+            Opacité de la grille:
+            <mat-slider
+                min="0.1"
+                max="1.0"
+                step="0.10"
+                value="1"
+                class="slider"
+                (change)="changeGridOpacity($event.value)"
+                (input)="this.gridService.lineOpacity = $event.value"
+                [value]="this.gridService.lineOpacity"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.gridService.lineOpacity }} </mat-card-subtitle>
+        </mat-card>
+        <mat-card>
+            Taille des carrées (en pixels):
+            <mat-slider
+                min="5"
+                max="100"
+                step="5"
+                value="1"
+                class="slider"
+                (change)="changeSquareSize($event.value)"
+                (input)="this.gridService.squareSize = $event.value"
+                [value]="this.gridService.squareSize"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.gridService.squareSize }} px</mat-card-subtitle>
+        </mat-card>
+    </div>
+
+    <div class="slider" *ngIf="this.toolManager.currentTool == this.toolManager.stampService">
+        <mat-card>
+            Orientation de l'étampe:
+            <mat-slider
+                min="0"
+                max="360"
+                step="15"
+                value="1"
+                class="slider"
+                (change)="rotateStamp($event.value)"
+                (input)="this.toolManager.stampService.rotationAngle = $event.value"
+                [value]="this.toolManager.stampService.rotationAngle"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.stampService.rotationAngle }} </mat-card-subtitle>
+        </mat-card>
+        <mat-card>
+            Mise à l'échelle de l'étampe:
+            <mat-slider
+                min="50"
+                max="400"
+                step="50"
+                value="1"
+                class="slider"
+                (change)="changeStampSize($event.value)"
+                (input)="this.toolManager.stampService.stampSize = $event.value"
+                [value]="this.toolManager.stampService.stampSize"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.stampService.stampSize / 200 }}</mat-card-subtitle>
+        </mat-card>
+    </div>
+    <mat-button-toggle-group id="stamps" *ngIf="this.toolManager.currentTool == this.toolManager.stampService">
+        <mat-button-toggle value="0" (change)="setStampStyle($event.value)">Poulpe 🐙</mat-button-toggle>
+        <mat-button-toggle value="1" (change)="setStampStyle($event.value)">Chapmagne 🥂</mat-button-toggle>
+        <mat-button-toggle value="2" (change)="setStampStyle($event.value)">Cerises 🍒</mat-button-toggle>
+        <mat-button-toggle value="3" (change)="setStampStyle($event.value)">Plaisir 😏</mat-button-toggle>
+        <mat-button-toggle value="4" (change)="setStampStyle($event.value)">Bombe 💣</mat-button-toggle>
+        <mat-button-toggle value="5" (change)="setStampStyle($event.value)">Aubergine 🍆</mat-button-toggle>
+        <mat-button-toggle value="6" (change)="setStampStyle($event.value)">Gorille 🦍</mat-button-toggle>
+        <mat-button-toggle value="7" (change)="setStampStyle($event.value)">Crayon 🖍</mat-button-toggle>
+        <mat-button-toggle value="8" (change)="setStampStyle($event.value)">Pêche 🍑</mat-button-toggle>
+        <mat-button-toggle value="9" (change)="setStampStyle($event.value)">Cheval 🐎</mat-button-toggle>
+        <mat-button-toggle value="10" (change)="setStampStyle($event.value)">Yeux 👀</mat-button-toggle>
+        <mat-button-toggle value="11" (change)="setStampStyle($event.value)">Étoile⭐</mat-button-toggle>
+        <mat-button-toggle value="12" (change)="setStampStyle($event.value)">100 points 💯</mat-button-toggle>
+        <mat-button-toggle value="13" (change)="setStampStyle($event.value)">Argent💸</mat-button-toggle>
     </mat-button-toggle-group>
 </div>
 

@@ -35,5 +35,11 @@ module.exports = function (config) {
                 flags: ['--no-sandbox'],
             },
         },
+        // https://stackoverflow.com/questions/64752689/karma-server-typeerror-cannot-read-property-range-of-undefined-angular-u
+        // fixes the following problem in the tests (mainly in the stamp.service.spec.ts):
+        // "UnhandledRejection: Cannot read property 'range' of undefined"
+        proxies: {
+            '/assets/': '/base/src/assets/',
+        },
     });
 };

@@ -5,6 +5,7 @@ import { ToolManagerService } from './tool-manager.service';
 describe('ToolManagerService', () => {
     let service: ToolManagerService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+    let ctxSpyObject: jasmine.SpyObj<CanvasRenderingContext2D>;
 
     beforeEach(() => {
         // Configuration du spy
@@ -12,6 +13,8 @@ describe('ToolManagerService', () => {
         // tslint:disable:no-magic-numbers
         // tslint:disable:max-file-line-count
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
+        ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', ['fillStyle', 'fillRect', 'canvas']);
+        drawingServiceSpy.baseCtx = ctxSpyObject;
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
         });
@@ -95,5 +98,17 @@ describe('ToolManagerService', () => {
         drawingServiceSpy.drawingStarted = true;
         service.clearArrays();
         expect(drawingServiceSpy.drawingStarted).toEqual(false);
+    });
+
+    it('disableShortcut should set allowKeyPressEvents to false', () => {
+        service.allowKeyPressEvents = true;
+        service.disableShortcut();
+        expect(service.allowKeyPressEvents).toEqual(false);
+    });
+
+    it('enableShortcut should set allowKeyPressEvents to true', () => {
+        service.allowKeyPressEvents = false;
+        service.enableShortcut();
+        expect(service.allowKeyPressEvents).toEqual(true);
     });
 });

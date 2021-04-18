@@ -11,6 +11,11 @@ canvas {
     top: 0;
 }
 
+#backgroundMediatorCanvas {
+    background-color: white;
+    z-index: -2;
+}
+
 #canvas {
     z-index: 0;
     overflow: auto;
@@ -18,6 +23,10 @@ canvas {
 
 #drawCanvas {
     z-index: 1;
+}
+
+#grid {
+    z-index: 4;
 }
 
 #canvas-container {
@@ -61,7 +70,7 @@ button {
 }
 
 #backgroundLayer {
-    background-image: url("../main-page/bg.jpg");
+    background-image: url('../main-page/bg.jpg');
     z-index: -10;
     background-size: 10%;
     height: 100vh;

@@ -9,11 +9,8 @@
     margin-top: 250px;
 }
 
-.Slider {
-    padding: 0;
-    width: 216px;
-    vertical-align: top;
-    text-align: left;
+.junctionRadiusSlider {
+    margin-top: -45px;
 }
 
 .title {
@@ -215,4 +212,149 @@ app-color-picker {
 
 p {
     margin-left: 5px;
+}
+
+mat-button-toggle.active {
+    background-color: rgb(107, 240, 206);
+    svg {
+        fill: black;
+    }
+}
+
+svg {
+    fill: white;
+    width: 22px;
+    height: 22px;
+}
+
+#stamps {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.type-selection {
+    color: white;
+}
+
+#type {
+    margin-left: 15px;
+}
+
+#verticalLineLeft {
+    width: 5px;
+    height: 150px;
+    background-color: white;
+    margin-left: 5px;
+}
+#verticalLineMiddle {
+    width: 5px;
+    height: 150px;
+    background-color: white;
+    margin-left: 70px;
+}
+#verticalLineRight {
+    width: 5px;
+    height: 150px;
+    background-color: white;
+    margin-left: 70px;
+}
+#horizontalLineTop {
+    width: 150px;
+    height: 5px;
+    background-color: white;
+    margin-left: -150px;
+}
+
+#horizontalLineMiddle {
+    width: 150px;
+    height: 5px;
+    background-color: white;
+    margin-left: -150px;
+    margin-top: 75px;
+}
+
+#horizontalLineBottom {
+    width: 155px;
+    height: 5px;
+    background-color: white;
+    margin-left: -155px;
+    margin-top: 150px;
+}
+
+mat-slide-toggle {
+    margin-left: 15px;
+    margin-top: 10px;
+}
+
+.gridLock {
+    display: flex;
+    margin-top: 20px;
+    margin-left: 25px;
+}
+
+.gridButton {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background-color: grey;
+    outline: none;
+    cursor: pointer;
+}
+
+#TL {
+    margin-left: -160px;
+    margin-top: -5px;
+}
+
+#TM {
+    margin-left: 52px;
+    margin-top: -5px;
+}
+
+#TR {
+    margin-left: 55px;
+    margin-top: -5px;
+}
+
+#ML {
+    margin-left: -167px;
+    margin-top: 67px;
+}
+
+#C {
+    margin-left: 52px;
+    margin-top: 67px;
+}
+
+#MR {
+    margin-left: 55px;
+    margin-top: 67px;
+}
+
+#BL {
+    margin-left: -167px;
+    margin-top: 140px;
+}
+
+#BM {
+    margin-left: 52px;
+    margin-top: 140px;
+}
+
+#BR {
+    margin-left: 55px;
+    margin-top: 140px;
+}
+
+.gridButton.active {
+    background-color: rgb(107, 240, 206);
+}
+
+.gridButton:hover {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    outline: none;
 }

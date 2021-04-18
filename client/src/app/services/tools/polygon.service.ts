@@ -52,8 +52,8 @@ export class PolygonService extends Tool {
         this.currentLine = [];
     }
 
-    setNumberOfSides(event: KeyboardEvent): void {
-        this.sides = parseInt((event.target as HTMLInputElement).value, 10);
+    setNumberOfSides(numberSides: number): void {
+        this.sides = numberSides;
     }
 
     onMouseDown(mouseDownEvent: MouseEvent): void {

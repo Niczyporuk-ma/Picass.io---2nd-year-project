@@ -7,7 +7,9 @@ export class DrawingService {
     resizeActive: boolean = false;
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
+    backgroundMediatorCtx: CanvasRenderingContext2D;
     backgroundCtx: CanvasRenderingContext2D;
+    gridCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     drawingStarted: boolean = false;
 

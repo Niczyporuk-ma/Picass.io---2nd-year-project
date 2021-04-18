@@ -4,9 +4,10 @@ import { CarrouselComponent } from '@app/components/carrousel/carrousel.componen
 import { ColorPickerComponent } from '@app/components/color-picker/color-picker.component';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { FormComponent } from '@app/components/form/form.component';
+import { GridService } from '@app/services/grid/grid.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
+import { faCircle, faPlusSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 import {
     faAlignCenter,
     faAlignLeft,
@@ -43,31 +44,52 @@ export class AttributesBarComponent {
     faHome: IconDefinition = faHome;
     faChevronDown: IconDefinition = faChevronDown;
     faExchangeAlt: IconDefinition = faExchangeAlt;
+    faCircle: IconDefinition = faCircle;
+    faSquare: IconDefinition = faSquare;
     shortcuts: ShortcutInput[] = [];
 
     @ViewChild(ColorPickerComponent)
     colorPicker: ColorPickerComponent;
 
-    constructor(public toolManager: ToolManagerService, public modal: MatDialog, public colorService: ColorService) {
+    constructor(public toolManager: ToolManagerService, public modal: MatDialog, public colorService: ColorService, public gridService: GridService) {
         this.toolManager = toolManager;
         // source: https://www.npmjs.com/package/ng-keyboard-shortcuts
         this.shortcuts.push(
             {
                 key: 'ctrl + g',
                 preventDefault: true,
-                command: () => this.openCarousel(),
+                command: () => {
+                    this.openCarousel();
+                    this.toolManager.setTool(this.toolManager.noToolService);
+                },
             },
             {
                 key: 'ctrl + s',
                 preventDefault: true,
-                command: () => this.openSaveDrawingForm(),
+                command: () => {
+                    this.openSaveDrawingForm();
+                    this.toolManager.setTool(this.toolManager.noToolService);
+                },
+            },
+            {
+                key: '=',
+                preventDefault: true,
+                command: () => this.increaseSquareSizebyByFactor(),
+            },
+            {
+                key: '-',
+                preventDefault: true,
+                command: () => this.decreaseSquareSizebyByFactor(),
+            },
+            {
+                key: 'ctrl + e',
+                preventDefault: true,
+                command: () => {
+                    this.export();
+                    this.toolManager.setTool(this.toolManager.noToolService);
+                },
             },
         );
-        this.shortcuts.push({
-            key: 'ctrl + e',
-            preventDefault: true,
-            command: () => this.export(),
-        });
     }
 
     changeWidth(width: number): void {
@@ -168,5 +190,42 @@ export class AttributesBarComponent {
                 this.colorPicker.selectSecondaryColor(evt);
             }, 5);
         }
+    }
+
+    increaseSquareSizebyByFactor(): void {
+        const increaseFactor = 5;
+        const maxSquareSize = 100;
+        if (this.gridService.squareSize < maxSquareSize) {
+            this.changeSquareSize(this.gridService.squareSize + increaseFactor);
+        }
+    }
+    decreaseSquareSizebyByFactor(): void {
+        const decreaseFactor = 5;
+        const minSquareSize = 5;
+        if (this.gridService.squareSize > minSquareSize) {
+            this.changeSquareSize(this.gridService.squareSize - decreaseFactor);
+        }
+    }
+
+    changeGridOpacity(opacity: number): void {
+        this.gridService.lineOpacity = opacity;
+        this.gridService.drawGrid();
+    }
+
+    changeSquareSize(size: number): void {
+        this.gridService.squareSize = size;
+        this.gridService.drawGrid();
+    }
+
+    rotateStamp(rotationAngle: number): void {
+        this.toolManager.stampService.rotationAngle = rotationAngle;
+    }
+
+    changeStampSize(newSize: number): void {
+        this.toolManager.stampService.stampSize = newSize;
+    }
+
+    setStampStyle(stampNb: number): void {
+        this.toolManager.stampService.stampName = 'assets/' + stampNb + '.png';
     }
 }
