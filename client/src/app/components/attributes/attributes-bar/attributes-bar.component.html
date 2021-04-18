@@ -275,6 +275,81 @@
             >
         </mat-button-toggle-group>
 
+        <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleSelection">
+            <mat-button-toggle
+                id="copier"
+                [ngClass]="{ disabled: !this.toolManager.rectangleSelection.currentlySelecting }"
+                [disabled]="!this.toolManager.rectangleSelection.currentlySelecting"
+                (click)="this.toolManager.rectangleSelection.copySelection()"
+            >
+                <fa-icon [icon]="faCopy" size="lg"></fa-icon>
+            </mat-button-toggle>
+            <mat-button-toggle
+                [ngClass]="{ disabled: !this.toolManager.rectangleSelection.clipboardService.alreadyCopied }"
+                [disabled]="!this.toolManager.rectangleSelection.clipboardService.alreadyCopied"
+                (click)="this.toolManager.rectangleSelection.pasteSelection()"
+            >
+                <fa-icon [icon]="faClipboard" size="lg"></fa-icon>
+            </mat-button-toggle>
+            <mat-button-toggle
+                [ngClass]="{ disabled: !this.toolManager.rectangleSelection.currentlySelecting }"
+                [disabled]="!this.toolManager.rectangleSelection.currentlySelecting"
+                (click)="this.toolManager.rectangleSelection.deleteSelection()"
+            >
+                <fa-icon [icon]="faCut" size="lg"></fa-icon>
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseSelection">
+            <mat-button-toggle
+                id="copier"
+                [ngClass]="{ disabled: !this.toolManager.ellipseSelection.currentlySelecting }"
+                [disabled]="!this.toolManager.ellipseSelection.currentlySelecting"
+                (click)="this.toolManager.ellipseSelection.copySelection()"
+            >
+                <fa-icon [icon]="faCopy" size="lg"></fa-icon>
+            </mat-button-toggle>
+            <mat-button-toggle
+                [ngClass]="{ disabled: !this.toolManager.ellipseSelection.clipboardService.alreadyCopied }"
+                [disabled]="!this.toolManager.ellipseSelection.clipboardService.alreadyCopied"
+                (click)="this.toolManager.ellipseSelection.pasteSelection()"
+            >
+                <fa-icon [icon]="faClipboard" size="lg"></fa-icon>
+            </mat-button-toggle>
+            <mat-button-toggle
+                [ngClass]="{ disabled: !this.toolManager.ellipseSelection.currentlySelecting }"
+                [disabled]="!this.toolManager.ellipseSelection.currentlySelecting"
+                (click)="this.toolManager.ellipseSelection.deleteSelection()"
+            >
+                <fa-icon [icon]="faCut" size="lg"></fa-icon>
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.lassoService">
+            <mat-button-toggle
+                id="copier"
+                [ngClass]="{ disabled: !this.toolManager.lassoService.currentlySelecting }"
+                [disabled]="!this.toolManager.lassoService.currentlySelecting"
+                (click)="this.toolManager.lassoService.copySelection()"
+            >
+                <fa-icon [icon]="faCopy" size="lg"></fa-icon>
+            </mat-button-toggle>
+            <mat-button-toggle
+                [ngClass]="{ disabled: !this.toolManager.lassoService.clipboardService.alreadyCopied }"
+                [disabled]="!this.toolManager.lassoService.clipboardService.alreadyCopied"
+                (click)="this.toolManager.lassoService.pasteSelection()"
+            >
+                <fa-icon [icon]="faClipboard" size="lg"></fa-icon>
+            </mat-button-toggle>
+            <mat-button-toggle
+                [ngClass]="{ disabled: !this.toolManager.lassoService.currentlySelecting }"
+                [disabled]="!this.toolManager.lassoService.currentlySelecting"
+                (click)="this.toolManager.lassoService.deleteSelection()"
+            >
+                <fa-icon [icon]="faCut" size="lg"></fa-icon>
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+
         <mat-slide-toggle
             *ngIf="
                 this.toolManager.currentTool == this.toolManager.rectangleSelection ||

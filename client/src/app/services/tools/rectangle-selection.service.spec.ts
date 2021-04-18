@@ -239,7 +239,22 @@ describe('SelectionService', () => {
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
     });
 
-    it('moveImageData should correctly set currentLine', () => {
+    it('moveImageData should correctly set currentLine when the magnetism is not activated', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.lastPos = { x: 0, y: 0 };
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.moveImageData(1, 1);
+
+        expect(service.currentLine).toEqual([
+            { x: -49, y: -49 },
+            { x: 2, y: 2 },
+        ]);
+    });
+
+    it('moveImageData should correctly set currentLine when the magnetism is activated', () => {
+        service.magnetismService.isActivated = true;
+        service.magnetismService.mouseReference = { x: 5, y: 5 };
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.lastPos = { x: 0, y: 0 };
         service.imageData = new ImageData(100, 100);
@@ -260,6 +275,18 @@ describe('SelectionService', () => {
         service.moveImageData(1, 1);
 
         expect(service.lastPos).toEqual({ x: 1, y: 1 });
+    });
+
+    it('moveImageData should correctly set lastPos', () => {
+        service.magnetismService.isActivated = true;
+        service.magnetismService.mouseReference = { x: 5, y: 5 };
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.lastPos = { x: 0, y: 0 };
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.moveImageData(1, 1);
+
+        expect(service.magnetismService.mouseReference).toEqual({ x: 6, y: 6 });
     });
 
     it(`moveImageData should call drawLine, drawAnchorPoints and putImageData twice`, () => {
@@ -436,7 +463,7 @@ describe('SelectionService', () => {
         expect(service.currentLine).toEqual(expectedResult);
     });
 
-    it('onMouseMove should call moveImageData if isMovingImg is true', () => {
+    it('onMouseMove should call moveImageData if isMovingImg is true and the magnetism is not activated', () => {
         const moveImageDataSpy = spyOn(service, 'moveImageData').and.stub();
         service.isMovingImg = true;
         service.mouseDown = true;
@@ -446,6 +473,21 @@ describe('SelectionService', () => {
         service.imageData = new ImageData(100, 100);
         service.onMouseMove(mouseEvent);
         expect(moveImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call moveImageData and dispatch if isMovingImg is true and the magnetism is activated', () => {
+        service.magnetismService.isActivated = true;
+        const moveImageDataSpy = spyOn(service, 'moveImageData').and.stub();
+        service.isMovingImg = true;
+        service.mouseDown = true;
+        service.lastPos = { x: 0, y: 0 };
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.backgroundImageData = new ImageData(100, 100);
+        service.imageData = new ImageData(100, 100);
+        const dispatchSpy = spyOn(service.magnetismService, 'dispatch').and.returnValue({ x: 2, y: 3 });
+        service.onMouseMove(mouseEvent);
+        expect(moveImageDataSpy).toHaveBeenCalled();
+        expect(dispatchSpy).toHaveBeenCalled();
     });
 
     it('drawAnchorPoints should call beginPath,fill and arc 8 times', () => {
@@ -484,5 +526,123 @@ describe('SelectionService', () => {
         service.drawLine(drawServiceSpy.baseCtx, service.currentLine);
         expect(closePathSpy).toHaveBeenCalled();
         expect(strokeRectSpy).toHaveBeenCalled();
+    });
+
+    it('deleteSelection should call deleteImageDataRectangle and getImageData', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        const deleteImageDataRectangleSpy = spyOn(service.clipboardService, 'deleteImageDataRectangle').and.returnValue();
+        const getImageDataSpy = spyOn(service, 'getImageData').and.returnValue(new ImageData(2, 6));
+        service.deleteSelection();
+        expect(deleteImageDataRectangleSpy).toHaveBeenCalled();
+        expect(getImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call getImageData when the clipboard is not empty ', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawLine').and.returnValue();
+        const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(getImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call putImageData two times when the clipboard is not empty ', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        const putImageDataSpy = spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(putImageDataSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('pasteSelection should call clearCanvas when the clipboard is not empty ', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call drawLine when the clipboard is not empty ', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        const drawLineSpy = spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call drawAnchorPoints when the clipboard is not empty ', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        const drawAnchorPointsSpy = spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(drawAnchorPointsSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should set the imageData equal to copy when the clipboard is not empty ', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(service.imageData.height).toEqual(service.clipboardService.copy.height);
+        expect(service.imageData.width).toEqual(service.clipboardService.copy.width);
+        expect(service.imageData.data).toEqual(service.clipboardService.copy.data);
+    });
+
+    it('pasteSelection should set the currentLine to the left top corner of the canvas when the clipboard is not empty', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        const resultCurrentLine: Vec2[] = [
+            { x: 0, y: 0 },
+            { x: service.clipboardService.copy.width, y: service.clipboardService.copy.height },
+        ];
+        service.pasteSelection();
+        for (let i = 0; i < resultCurrentLine.length; i++) {
+            expect(service.currentLine[i].x).toEqual(resultCurrentLine[i].x);
+            expect(service.currentLine[i].y).toEqual(resultCurrentLine[i].y);
+        }
+    });
+
+    it('pasteSelection should do and call nothing when the clipboard is empty', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = false;
+        service.clipboardService.copy = new ImageData(2, 3);
+        const drawLineSpy = spyOn(service, 'drawLine').and.returnValue();
+        const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        const drawAnchorPointsSpy = spyOn(service, 'drawAnchorPoints').and.returnValue();
+        const putImageDataSpy = spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(drawAnchorPointsSpy).not.toHaveBeenCalled();
+        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(putImageDataSpy).not.toHaveBeenCalled();
+        expect(getImageDataSpy).not.toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 });

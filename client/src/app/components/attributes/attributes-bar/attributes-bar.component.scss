@@ -82,6 +82,7 @@ mat-button-toggle {
     background-color: rgba(83, 101, 119);
     color: white;
     width: 81.5px;
+    outline: none;
 }
 
 mat-slider {
@@ -221,6 +222,17 @@ mat-button-toggle.active {
     }
 }
 
+mat-button-toggle.disabled {
+    color: rgb(123, 140, 156);
+    background-color: rgb(61, 74, 87);
+    transition: 0.3s;
+}
+mat-button-toggle.disabled:active {
+    color: rgb(123, 140, 156);
+    background-color: #fc463d;
+    transition: 0.3s;
+}
+
 svg {
     fill: white;
     width: 22px;
@@ -234,6 +246,7 @@ svg {
 
 .type-selection {
     color: white;
+    margin-top: 15px;
 }
 
 #type {

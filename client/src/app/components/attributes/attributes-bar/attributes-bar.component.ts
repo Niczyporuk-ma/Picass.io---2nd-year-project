@@ -14,6 +14,9 @@ import {
     faAlignRight,
     faBold,
     faChevronDown,
+    faClipboard,
+    faCopy,
+    faCut,
     faDownload,
     faExchangeAlt,
     faHome,
@@ -46,6 +49,9 @@ export class AttributesBarComponent {
     faExchangeAlt: IconDefinition = faExchangeAlt;
     faCircle: IconDefinition = faCircle;
     faSquare: IconDefinition = faSquare;
+    faCopy: IconDefinition = faCopy;
+    faCut: IconDefinition = faCut;
+    faClipboard: IconDefinition = faClipboard;
     shortcuts: ShortcutInput[] = [];
 
     @ViewChild(ColorPickerComponent)

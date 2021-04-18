@@ -1,4 +1,5 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ClipboardService } from '@app/services/tools/clipboard.service';
 import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { SelectionCommandService } from '@app/services/tools/tool-commands/selection-command.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
@@ -29,8 +30,8 @@ export abstract class Selection extends Tool {
     downArrowCheck: boolean = false;
     needTimer: boolean = false;
     lastPos: Vec2 = { x: 0, y: 0 };
-    currentLine: Vec2[];
-    shiftIsPressed: boolean;
+    currentLine: Vec2[] = [];
+    shiftIsPressed: boolean = false;
     anchorPoints: Vec2[];
     currentAnchor: number;
     hasBeenReseted: boolean = false;
@@ -41,8 +42,15 @@ export abstract class Selection extends Tool {
     lassoPath: Vec2[][] = [];
     startingPoint: Vec2 = { x: 0, y: 0 };
     endPoint: Vec2 = { x: 0, y: 0 };
+    imageData: ImageData;
+    backgroundImageData: ImageData;
 
-    constructor(public drawingService: DrawingService, undoRedoManager: UndoRedoManagerService, public magnetismService: MagnetismService) {
+    constructor(
+        public drawingService: DrawingService,
+        undoRedoManager: UndoRedoManagerService,
+        public magnetismService: MagnetismService,
+        public clipboardService: ClipboardService,
+    ) {
         super(drawingService);
         this.localShortcuts = new Map([
             ['Shift', this.onShift],
@@ -322,4 +330,9 @@ export abstract class Selection extends Tool {
     }
 
     resizeSelection(event: MouseEvent): void {}
+
+    copySelection(): void {
+        this.clipboardService.copy = this.imageData;
+        this.clipboardService.alreadyCopied = true;
+    }
 }
