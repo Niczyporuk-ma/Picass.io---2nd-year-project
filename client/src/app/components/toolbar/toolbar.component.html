@@ -4,29 +4,23 @@
     <div class="undoRedo">
         <button
             (click)="this.undoRedoManager.undo()"
-            *ngIf="this.undoRedoManager.undoDisabled == false && !this.undoRedoManager.isEmpty(this.undoRedoManager.undoStack)"
-            class="undo"
-        >
-            <fa-icon [icon]="faUndoAlt" size="lg"></fa-icon>
-        </button>
-        <button
-            (click)="this.undoRedoManager.undo()"
-            *ngIf="this.undoRedoManager.undoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.undoStack)"
-            class="undoDis"
+            id="undo"
+            [ngClass]="{ disabled: this.undoRedoManager.undoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.undoStack) }"
+            [disabled]="this.undoRedoManager.undoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.undoStack)"
+            matTooltip="Annuler (CTRL+Z)"
+            matTooltipPosition="after"
+            matTooltipShowDelay="250"
         >
             <fa-icon [icon]="faUndoAlt" size="lg"></fa-icon>
         </button>
         <button
             (click)="this.undoRedoManager.redo()"
-            *ngIf="this.undoRedoManager.redoDisabled == false && !this.undoRedoManager.isEmpty(this.undoRedoManager.redoStack)"
-            class="redo"
-        >
-            <fa-icon [icon]="faRedoAlt" size="lg"></fa-icon>
-        </button>
-        <button
-            (click)="this.undoRedoManager.redo()"
-            *ngIf="this.undoRedoManager.redoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.redoStack)"
-            class="redoDis"
+            id="redo"
+            [ngClass]="{ disabled: this.undoRedoManager.redoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.redoStack) }"
+            [disabled]="this.undoRedoManager.redoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.redoStack)"
+            matTooltip="Refaire (CTRL+Shift+Z)"
+            matTooltipPosition="after"
+            matTooltipShowDelay="250"
         >
             <fa-icon [icon]="faRedoAlt" size="lg"></fa-icon>
         </button>
@@ -63,8 +57,10 @@
     </button>
 
     <button
-        (click)="this.toolManager.setTool(this.toolManager.stampService)"
-        matTooltip="Aposer une étampe"
+        [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.stampService && !this.toolManager.nonTools }"
+        (click)="this.toolManager.setTool(this.toolManager.stampService); this.toolManager.nonTools = false"
+        matTooltip="Outil étampe (D): Rotation de l'étampe de 15° avec la ROULETTE de la souris ou de 1° avec la touche ALT. 
+        NOTE: La palette de couleurs n'est pas disponible quand l'outil étampe est actif"
         matTooltipPosition="after"
         matTooltipShowDelay="250"
     >
@@ -86,6 +82,9 @@
         (click)="this.toolManager.setTool(this.toolManager.textService); this.toolManager.nonTools = false"
         style="font-family: 'Times New Roman'"
         class="text-button"
+        matTooltip="Outil texte (T): Cliquez, glissez, et relâcher pour créer la zone de texte. Cliquez ici pour plus d'options"
+        matTooltipPosition="after"
+        matTooltipShowDelay="250"
     >
         T
     </button>
@@ -145,7 +144,9 @@ les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'
 
     <button
         [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.rectangleSelection && !this.toolManager.nonTools }"
-        (click)="this.toolManager.setTool(this.toolManager.rectangleSelection); this.toolManager.nonTools = false"
+        (click)="
+            this.toolManager.setTool(this.toolManager.rectangleSelection); this.toolManager.nonTools = false; this.toolManager.showPalette = false
+        "
     >
         <fa-icon [icon]="faVectorSquare" size="lg"></fa-icon>
     </button>
@@ -154,7 +155,7 @@ les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'
         class=""
         [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.pipetteService && !this.toolManager.nonTools }"
         (click)="this.toolManager.setTool(this.toolManager.pipetteService); this.toolManager.nonTools = false"
-        matTooltip="Outil pipette (I): CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire"
+        matTooltip="Outil pipette ( I ): CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire"
         matTooltipPosition="after"
         matTooltipShowDelay="250"
     >
@@ -162,7 +163,26 @@ les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'
     </button>
 
     <button
-        [ngClass]="{ active: this.toolManager.showPalette && !this.toolManager.nonTools }"
+        [ngClass]="{
+            active:
+                this.toolManager.showPalette &&
+                !this.toolManager.nonTools &&
+                this.toolManager.currentTool != this.toolManager.rectangleSelection &&
+                this.toolManager.currentTool != this.toolManager.ellipseSelection &&
+                this.toolManager.currentTool != this.toolManager.lassoService &&
+                this.toolManager.currentTool != this.toolManager.stampService,
+            disabled:
+                this.toolManager.currentTool == this.toolManager.rectangleSelection ||
+                this.toolManager.currentTool == this.toolManager.ellipseSelection ||
+                this.toolManager.currentTool == this.toolManager.lassoService ||
+                this.toolManager.currentTool == this.toolManager.stampService
+        }"
+        [disabled]="
+            this.toolManager.currentTool == this.toolManager.rectangleSelection ||
+            this.toolManager.currentTool == this.toolManager.ellipseSelection ||
+            this.toolManager.currentTool == this.toolManager.lassoService ||
+            this.toolManager.currentTool == this.toolManager.stampService
+        "
         (click)="onPressPalette(); this.toolManager.nonTools = false"
         matTooltip="Palette de couleur: Sélectionnez une couleur. CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire 
 (ceci s'applique pour les 10 couleurs utilisés précédemment). 
@@ -174,6 +194,12 @@ Cliquez ici pour plus d'options."
     </button>
 </div>
 
-<button (click)="showGrid()" matTooltip="Aposer la grille" matTooltipPosition="after" matTooltipShowDelay="250">
+<button
+    (click)="showGrid()"
+    matTooltip="Aposer la grille (G). Appuyez (+) pour augmenter la taille des carrés de la grille au prochain multiple de 5. 
+    Appuyez ( - ) pour augmenter la taille des carrés de la grille au prochain multiple de 5."
+    matTooltipPosition="after"
+    matTooltipShowDelay="250"
+>
     <fa-icon [icon]="faTh" size="lg"> </fa-icon>
 </button>

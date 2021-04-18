@@ -1,8 +1,21 @@
-<div class="title" *ngIf="!this.toolManager.nonTools">{{ this.toolManager.currentTool.toolName }}</div>
-<div class="title" *ngIf="this.toolManager.nonTools">Autres Options</div>
+<div class="title" *ngIf="!this.toolManager.nonTools && this.toolManager.currentTool != this.toolManager.noToolService">
+    {{ this.toolManager.currentTool.toolName }}
+</div>
+<div class="title" *ngIf="this.toolManager.nonTools && this.toolManager.currentTool != this.toolManager.noToolService">Autres Options</div>
+<div class="title" *ngIf="this.toolManager.currentTool == this.toolManager.noToolService">Aucun Outil</div>
 <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
 <div *ngIf="!this.toolManager.nonTools">
-    <div class="input-wrapper" *ngIf="!this.toolManager.nonTools && this.toolManager.currentTool != this.toolManager.stampService">
+    <div
+        class="input-wrapper"
+        *ngIf="
+            !this.toolManager.nonTools &&
+            this.toolManager.currentTool != this.toolManager.stampService &&
+            this.toolManager.currentTool != this.toolManager.noToolService &&
+            this.toolManager.currentTool != this.toolManager.rectangleSelection &&
+            this.toolManager.currentTool != this.toolManager.ellipseSelection &&
+            this.toolManager.currentTool != this.toolManager.lassoService
+        "
+    >
         <p>Couleur:</p>
         <div class="prim-sec">
             <div
@@ -28,7 +41,8 @@
             this.toolManager.currentTool != this.toolManager.stampService &&
             this.toolManager.currentTool != this.toolManager.rectangleSelection &&
             this.toolManager.currentTool != this.toolManager.ellipseSelection &&
-            this.toolManager.currentTool != this.toolManager.lassoService
+            this.toolManager.currentTool != this.toolManager.lassoService &&
+            this.toolManager.currentTool != this.toolManager.noToolService
         "
     >
         <mat-card>
@@ -532,6 +546,15 @@
     </button>
 </div>
 
-<div class="colorPicker" *ngIf="this.toolManager.showPalette">
+<div
+    class="colorPicker"
+    *ngIf="
+        this.toolManager.showPalette &&
+        this.toolManager.currentTool != this.toolManager.rectangleSelection &&
+        this.toolManager.currentTool != this.toolManager.ellipseSelection &&
+        this.toolManager.currentTool != this.toolManager.lassoService &&
+        this.toolManager.currentTool != this.toolManager.stampService
+    "
+>
     <app-color-picker></app-color-picker>
 </div>

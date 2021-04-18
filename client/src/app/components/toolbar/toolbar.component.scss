@@ -13,62 +13,24 @@
     width: 100px;
 }
 
-.undo {
+#undo {
     width: 50px;
     cursor: pointer;
 }
 
-.undo:focus {
+#undo:focus {
     background-color: rgb(53, 64, 75);
     color: white;
 }
 
-.redo:focus {
+#redo:focus {
     background-color: rgb(53, 64, 75);
     color: white;
 }
 
-.undoDis {
-    color: rgb(123, 140, 156);
-    width: 50px;
-    cursor: default;
-}
-
-.undoDis:hover {
-    background-color: rgb(63, 72, 80);
-    color: rgb(123, 140, 156);
-    width: 50px;
-    font-size: small;
-}
-
-.undoDis:focus {
-    background-color: rgb(53, 64, 75);
-    color: rgb(123, 140, 156);
-    width: 50px;
-}
-
-.redoDis:focus {
-    background-color: rgb(53, 64, 75);
-    color: rgb(123, 140, 156);
-    width: 50px;
-}
-
-.redo {
+#redo {
     width: 50px;
     cursor: pointer;
-}
-
-.redoDis {
-    color: rgb(123, 140, 156);
-    width: 50px;
-    cursor: default;
-}
-
-.redoDis:hover {
-    background-color: rgb(63, 72, 80);
-    color: rgb(123, 140, 156);
-    width: 50px;
-    font-size: small;
 }
 
 .undoRedo {
@@ -147,39 +109,19 @@ svg {
     font-size: xx-large;
 }
 
-// button:not(.gridButton) {
-//     display: block;
-//     border: none;
-//     background-color: rgb(53, 64, 75);
-//     color: white;
-//     width: 100px;
-//     height: 50px;
-//     border-radius: 0%;
-//     transition: 0.3s;
-//     outline: none;
-// }
+button.disabled {
+    color: rgb(123, 140, 156);
+    cursor: default;
+}
 
-// button:not(.gridButton):hover {
-//     display: block;
-//     border: none;
-//     background-color: rgb(197, 243, 231);
-//     color: black;
-//     height: 50px;
-//     border-radius: 0%;
-//     font-size: 20px;
-// }
+button.disabled:hover {
+    background-color: rgb(63, 72, 80);
+    cursor: default;
+}
 
-// button.active {
-//     outline: none;
-//     background-color: rgb(107, 240, 206);
-//     color: black;
-// }
-
-// button:not(.gridButton):focus {
-//         outline: none;
-//         background-color: rgb(107, 240, 206);
-//         color: black;
-//     }
+button.disabled:active {
+    background-color: #fc463d;
+}
 
 ::ng-deep .mat-tooltip {
     //tooltip
