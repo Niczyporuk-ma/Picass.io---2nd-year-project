@@ -12,7 +12,7 @@ import { LineHelperService } from './line-helper.service';
 const ANCHOR_RADIUS = 10;
 const SEGMENT_TWO = 5;
 const SEGMENT_ONE = 3;
-const INDEX = 10;
+const INDEX = 11;
 
 @Injectable({
     providedIn: 'root',
