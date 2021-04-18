@@ -58,5 +58,4 @@ describe('IndexService', () => {
         expect(req.request.method).toBe('DELETE');
         // actually send the request
     });
-
 });

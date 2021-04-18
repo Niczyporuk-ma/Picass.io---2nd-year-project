@@ -84,17 +84,33 @@
     </div>
     <div class="side-input-wrapper">
         <label
-            >R: <input type="text" (keyup)="this.isRed = true; adjustColor($event)" (focus)="this.toolManager.disableShortcut()" (blur)="this.toolManager.enableShortcut()" /><br />
+            >R:
+            <input
+                type="text"
+                (keyup)="this.isRed = true; adjustColor($event)"
+                (focus)="this.toolManager.disableShortcut()"
+                (blur)="this.toolManager.enableShortcut()"
+            /><br />
         </label>
         <label
             >G:
-            <input type="text" (keyup)="this.isGreen = true; adjustColor($event)" (focus)="this.toolManager.disableShortcut()" (blur)="this.toolManager.enableShortcut()" />
+            <input
+                type="text"
+                (keyup)="this.isGreen = true; adjustColor($event)"
+                (focus)="this.toolManager.disableShortcut()"
+                (blur)="this.toolManager.enableShortcut()"
+            />
             <br />
         </label>
 
         <label
             >B:
-            <input type="text" (keyup)="this.isBlue = true; adjustColor($event)" (focus)="this.toolManager.disableShortcut()" (blur)="this.toolManager.enableShortcut()" />
+            <input
+                type="text"
+                (keyup)="this.isBlue = true; adjustColor($event)"
+                (focus)="this.toolManager.disableShortcut()"
+                (blur)="this.toolManager.enableShortcut()"
+            />
         </label>
     </div>
 

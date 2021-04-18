@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-export-drawing',
@@ -13,17 +15,26 @@ export class ExportDrawingComponent implements AfterViewInit {
     fileNameControl: FormControl = new FormControl('', [Validators.pattern('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
     fileExtentionControl: FormControl = new FormControl('', [Validators.required]);
     filterControl: FormControl = new FormControl('none', [Validators.required]);
+    fileDestinationControl: FormControl = new FormControl('', [Validators.required]);
+    linkObservale: Observable<string>;
+    link: string;
 
     @ViewChild('filterPreviewCanvas', { static: false }) filterPreviewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('downloadLink') downloadLink: ElementRef;
 
     filterPreviewCtx: CanvasRenderingContext2D;
 
-    constructor(private formBuilder: FormBuilder, public drawingService: DrawingService, private toolManager: ToolManagerService) {
+    constructor(
+        private formBuilder: FormBuilder,
+        public drawingService: DrawingService,
+        private toolManager: ToolManagerService,
+        private snackBar: MatSnackBar,
+    ) {
         this.exportForm = this.formBuilder.group({
             fileName: this.fileNameControl,
             fileExtension: this.fileExtentionControl,
             filter: this.filterControl,
+            fileDestination: this.fileDestinationControl,
         });
         this.drawingService = drawingService;
     }
@@ -51,11 +62,42 @@ export class ExportDrawingComponent implements AfterViewInit {
     }
 
     exportDrawing(): void {
+        if (this.fileDestinationControl.value === 'local') {
+            this.localExport();
+        } else {
+            this.imgurExport();
+        }
+    }
+
+    localExport(): void {
         this.drawImageReadyToExport();
         const imageUrl = this.filterPreviewCanvas.nativeElement.toDataURL('image/' + this.fileExtentionControl.value);
         this.downloadLink.nativeElement.href = imageUrl;
         this.downloadLink.nativeElement.download = this.fileNameControl.value + '.' + this.fileExtentionControl.value;
         this.downloadLink.nativeElement.click();
+    }
+
+    imgurExport(): void {
+        const formData = new FormData();
+        const imageUrl = this.filterPreviewCanvas.nativeElement.toDataURL('image/' + this.fileExtentionControl.value).split(',')[1];
+        formData.append('image', imageUrl);
+        formData.append('type', 'base64');
+        formData.append('name', this.fileNameControl.value);
+        fetch('https://api.imgur.com/3/upload/', {
+            method: 'post',
+            headers: {
+                Authorization: 'Client-ID 8aaa19dc7038061',
+            },
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((response) => (this.link = response.data.link))
+            .then(() => this.openSnackBar());
+    }
+
+    openSnackBar(): void {
+        const observable = this.snackBar.open("L'image a bien été exportée sur Imgur !", 'Copier dans\n le presse-papier').onAction();
+        observable.subscribe(() => navigator.clipboard.writeText(this.link));
     }
 
     applyFilter(): void {
