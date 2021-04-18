@@ -40,4 +40,13 @@ export class GridService {
         this.canvasHeight = this.drawingService.canvas.height;
         this.drawingService.gridCtx.strokeStyle = 'rgba(0,0,0,' + this.lineOpacity + ')';
     }
+
+    showGrid(): void {
+        this.isGridVisible = !this.isGridVisible;
+        if (this.isGridVisible) {
+            this.drawGrid();
+        } else {
+            this.eraseGrid();
+        }
+    }
 }

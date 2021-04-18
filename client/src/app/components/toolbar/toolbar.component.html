@@ -198,7 +198,8 @@ Cliquez ici pour plus d'options."
 </div>
 
 <button
-    (click)="showGrid()"
+    [ngClass]="{ active: this.gridService.isGridVisible }"
+    (click)="this.toolManager.nonTools = false; this.gridService.showGrid()"
     matTooltip="Aposer la grille (G). Appuyez (+) pour augmenter la taille des carrés de la grille au prochain multiple de 5. 
     Appuyez ( - ) pour augmenter la taille des carrés de la grille au prochain multiple de 5."
     matTooltipPosition="after"

@@ -332,7 +332,9 @@ export abstract class Selection extends Tool {
     resizeSelection(event: MouseEvent): void {}
 
     copySelection(): void {
-        this.clipboardService.copy = this.imageData;
-        this.clipboardService.alreadyCopied = true;
+        if (this.currentLine.length > 0) {
+            this.clipboardService.copy = this.imageData;
+            this.clipboardService.alreadyCopied = true;
+        }
     }
 }

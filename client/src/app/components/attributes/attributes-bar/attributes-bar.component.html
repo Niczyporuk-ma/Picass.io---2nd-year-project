@@ -293,7 +293,7 @@
             </mat-button-toggle>
             <mat-button-toggle
                 [ngClass]="{ disabled: !this.toolManager.rectangleSelection.currentlySelecting }"
-                [disabled]="!this.toolManager.rectangleSelection.currentlySelecting"
+                [disabled]="!(this.toolManager.rectangleSelection.currentLine.length > 0)"
                 (click)="this.toolManager.rectangleSelection.deleteSelection()"
             >
                 <fa-icon [icon]="faCut" size="lg"></fa-icon>

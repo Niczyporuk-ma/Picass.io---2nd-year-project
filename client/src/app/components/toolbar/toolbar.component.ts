@@ -54,8 +54,12 @@ export class ToolbarComponent {
         this.undoRedoManager = undoRedoManager;
         this.shortcuts.push({
             key: 'g',
-            preventDefault: true,
-            command: () => this.showGrid(),
+            preventDefault: false,
+            command: () => {
+                if (!this.toolManager.textService.textBoxActive) {
+                    this.gridService.showGrid();
+                }
+            },
         });
     }
 
@@ -95,14 +99,5 @@ export class ToolbarComponent {
 
     setStampStyle(stampNb: number): void {
         this.toolManager.stampService.stampName = 'assets/' + stampNb + '.png';
-    }
-
-    showGrid(): void {
-        this.gridService.isGridVisible = !this.gridService.isGridVisible;
-        if (this.gridService.isGridVisible) {
-            this.gridService.drawGrid();
-        } else {
-            this.gridService.eraseGrid();
-        }
     }
 }

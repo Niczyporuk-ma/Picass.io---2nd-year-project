@@ -115,7 +115,6 @@ export class ToolManagerService {
 
     flipNonToolBool(): void {
         this.nonTools = !this.nonTools;
-        console.log(this.nonTools);
     }
 
     setTool(tool: Tool): void {
