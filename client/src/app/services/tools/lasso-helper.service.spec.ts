@@ -371,4 +371,59 @@ describe('LassoHelperService', () => {
         const result: Vec2 = { x: -currentLine[1].x, y: -currentLine[1].y };
         expect(service.flipMathematic(currentLine, scaleValue)).toEqual(result);
     });
+
+    it('translateImageWithMagnetism should set the correct value for currentLine and lassoPath', () => {
+        const currentLine: Vec2[] = [
+            { x: 1, y: 1 },
+            { x: 2, y: 3 },
+        ];
+        const offset: Vec2 = { x: 1, y: 1 };
+        const lassoPath: Vec2[][] = [
+            [
+                { x: 20, y: 15 },
+                { x: 15, y: 10 },
+            ],
+            [
+                { x: 20, y: 10 },
+                { x: 10, y: 10 },
+            ],
+            [
+                { x: 10, y: 10 },
+                { x: 10, y: 15 },
+            ],
+            [
+                { x: 10, y: 15 },
+                { x: 20, y: 15 },
+            ],
+        ];
+        const resultCurrentLine: Vec2[] = [
+            { x: 2, y: 2 },
+            { x: 3, y: 4 },
+        ];
+        const resultLassoPath: Vec2[][] = [
+            [
+                { x: 20, y: 15 },
+                { x: 16, y: 11 },
+            ],
+            [
+                { x: 20, y: 10 },
+                { x: 11, y: 11 },
+            ],
+            [
+                { x: 10, y: 10 },
+                { x: 11, y: 16 },
+            ],
+            [
+                { x: 10, y: 15 },
+                { x: 21, y: 16 },
+            ],
+        ];
+        service.translateImageWithMagnetism(currentLine, offset, lassoPath);
+        for (let i = 0; i < resultCurrentLine.length; i++) {
+            expect(currentLine[i]).toEqual(resultCurrentLine[i]);
+        }
+        for (let i = 0; i < resultLassoPath.length; i++) {
+            expect(lassoPath[i][1]).toEqual(resultLassoPath[i][1]);
+        }
+    });
 });

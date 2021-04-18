@@ -3,6 +3,7 @@ import { Selection } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ClipboardService } from '@app/services/tools/clipboard.service';
 import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
@@ -14,6 +15,7 @@ export interface ABHKAxis {
     K: number;
     xAxis: boolean;
 }
+
 const INDEX = 8;
 const INDEXES_PER_PIXEL = 4;
 const ELLIPSE_LINE_DASH = 3;
@@ -22,21 +24,14 @@ const ELLIPSE_LINE_DASH = 3;
     providedIn: 'root',
 })
 export class EllipseSelectionService extends Selection {
-    startingPoint: Vec2;
-    endPoint: Vec2;
-    shiftIsPressed: boolean;
-    currentLine: Vec2[] = [];
-    imageData: ImageData;
-    isMovingImg: boolean = false;
-    backgroundImageData: ImageData;
-
     constructor(
         public drawingService: DrawingService,
         public squareHelperService: SquareHelperService,
         undoRedoManager: UndoRedoManagerService,
+        public clipboardService: ClipboardService,
         public magnetismService: MagnetismService,
     ) {
-        super(drawingService, undoRedoManager, magnetismService);
+        super(drawingService, undoRedoManager, magnetismService, clipboardService);
         this.shortcut = 's';
         this.index = INDEX;
     }
@@ -308,5 +303,33 @@ export class EllipseSelectionService extends Selection {
         }
         ctx.stroke();
         ctx.setLineDash([]);
+    }
+
+    deleteSelection(): void {
+        this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint, true);
+        this.imageData = this.getImageData();
+    }
+
+    pasteSelection(): void {
+        if (this.clipboardService.alreadyCopied) {
+            this.backgroundImageData = this.drawingService.baseCtx.getImageData(
+                0,
+                0,
+                this.drawingService.baseCtx.canvas.width,
+                this.drawingService.baseCtx.canvas.height,
+            );
+            this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint, false);
+
+            this.currentLine = [
+                { x: 0, y: 0 },
+                { x: this.clipboardService.copy.width, y: this.clipboardService.copy.height },
+            ];
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawRectangle(this.drawingService.baseCtx, this.currentLine);
+            this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint, false);
+            this.drawAnchorPoints(this.drawingService.previewCtx, this.currentLine);
+            this.drawingService.baseCtx.putImageData(this.clipboardService.copy, this.currentLine[0].x, this.currentLine[0].y);
+            this.imageData = this.clipboardService.copy;
+        }
     }
 }

@@ -327,7 +327,7 @@ describe('EllipseSelectionService', () => {
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
     });
 
-    it('moveImageData should correctly set currentLine', () => {
+    it('moveImageData should correctly set currentLine when the magnetism is not activated', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.lastPos = { x: 0, y: 0 };
         service.imageData = new ImageData(100, 100);
@@ -340,7 +340,34 @@ describe('EllipseSelectionService', () => {
         ]);
     });
 
-    it('moveImageData should correctly set lastPos', () => {
+    it('moveImageData should correctly set currentLine when the magnetism is activated', () => {
+        service.magnetismService.isActivated = true;
+        service.magnetismService.mouseReference = { x: 5, y: 5 };
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.lastPos = { x: 0, y: 0 };
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.moveImageData(1, 1);
+
+        expect(service.currentLine).toEqual([
+            { x: -49, y: -49 },
+            { x: 2, y: 2 },
+        ]);
+    });
+
+    it('moveImageData should correctly set lastPos when the magnetism is activated', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.magnetismService.isActivated = true;
+        service.magnetismService.mouseReference = { x: 5, y: 5 };
+        service.lastPos = { x: 0, y: 0 };
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.moveImageData(1, 1);
+
+        expect(service.magnetismService.mouseReference).toEqual({ x: 6, y: 6 });
+    });
+
+    it('moveImageData should correctly set mouseReference when the magnetism is not activated', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.lastPos = { x: 0, y: 0 };
         service.imageData = new ImageData(100, 100);
@@ -533,12 +560,23 @@ describe('EllipseSelectionService', () => {
         expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseMove should call moveImageData if mouseDown is true and isMovingImg is true', () => {
+    it('onMouseMove should call moveImageData if mouseDown is true, isMovingImg is true and the magnetism is not activated', () => {
         service.mouseDown = true;
         service.isMovingImg = true;
         const moveImageDataSpy = spyOn(service, 'moveImageData').and.stub();
         service.onMouseMove(mouseEvent);
         expect(moveImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call moveImageData and dispatch if mouseDown is true, isMovingImg is true and the magnetism is activated', () => {
+        service.magnetismService.isActivated = true;
+        service.mouseDown = true;
+        service.isMovingImg = true;
+        const moveImageDataSpy = spyOn(service, 'moveImageData').and.stub();
+        const dispatchSpy = spyOn(service.magnetismService, 'dispatch').and.returnValue({ x: 0, y: 0 });
+        service.onMouseMove(mouseEvent);
+        expect(moveImageDataSpy).toHaveBeenCalled();
+        expect(dispatchSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove shouldnt call moveImageData if mouseDown is true and isMovingImg is false', () => {
@@ -697,5 +735,135 @@ describe('EllipseSelectionService', () => {
         service.moveRight();
         service.moveRight();
         expect(service.offsetXModifier).toEqual(0);
+    });
+
+    it('deleteSelection should call drawEllipse and getImageData once', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.returnValue();
+        const getImageSpy = spyOn(service, 'getImageData').and.returnValue(new ImageData(2, 3));
+        service.deleteSelection();
+        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(getImageSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call drawEllipse two times when the clipboard is not empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawRectangle').and.returnValue();
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        service.pasteSelection();
+        expect(drawEllipseSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('pasteSelection should call getImageData when the clipboard is not empty ', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawRectangle').and.returnValue();
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        service.pasteSelection();
+        expect(getImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call drawRectangle and drawAnchorPoints when the clipboard is not empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        const drawRectangleSpy = spyOn(service, 'drawRectangle').and.returnValue();
+        const drawAnchorPointsSpy = spyOn(service, 'drawAnchorPoints').and.returnValue();
+        service.pasteSelection();
+        expect(drawRectangleSpy).toHaveBeenCalled();
+        expect(drawAnchorPointsSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call putImageData when the clipboad is not empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawRectangle').and.returnValue();
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        const putImageDataSpy = spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(putImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call clearCanvas when the clipboard is not empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawRectangle').and.returnValue();
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should do and call nothing when the clipboard is empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = false;
+        service.clipboardService.copy = new ImageData(2, 3);
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.returnValue();
+        const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        const drawRectangleSpy = spyOn(service, 'drawRectangle').and.returnValue();
+        const drawAnchorPointsSpy = spyOn(service, 'drawAnchorPoints').and.returnValue();
+        const putImageDataSpy = spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(putImageDataSpy).not.toHaveBeenCalled();
+        expect(drawRectangleSpy).not.toHaveBeenCalled();
+        expect(drawAnchorPointsSpy).not.toHaveBeenCalled();
+        expect(getImageDataSpy).not.toHaveBeenCalled();
+        expect(drawEllipseSpy).not.toHaveBeenCalled();
+    });
+
+    it('pasteSelection should set the currentLine to the left top corner of the canvas when the clipboard is not empty', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        const resultCurrentLine: Vec2[] = [
+            { x: 0, y: 0 },
+            { x: service.clipboardService.copy.width, y: service.clipboardService.copy.height },
+        ];
+        service.pasteSelection();
+        for (let i = 0; i < resultCurrentLine.length; i++) {
+            expect(service.currentLine[i].x).toEqual(resultCurrentLine[i].x);
+            expect(service.currentLine[i].y).toEqual(resultCurrentLine[i].y);
+        }
+    });
+
+    it('pasteSelection should set the imageData equal to copy when the clipboard is not empty ', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(service.imageData.height).toEqual(service.clipboardService.copy.height);
+        expect(service.imageData.width).toEqual(service.clipboardService.copy.width);
+        expect(service.imageData.data).toEqual(service.clipboardService.copy.data);
     });
 });
