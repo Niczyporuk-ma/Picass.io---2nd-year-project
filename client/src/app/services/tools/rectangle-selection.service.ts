@@ -3,6 +3,7 @@ import { Selection } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ClipboardService } from '@app/services/tools/clipboard.service';
 import { LineHelperService } from '@app/services/tools/line-helper.service';
 import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { RectangleService } from '@app/services/tools/rectangle.service';
@@ -11,23 +12,14 @@ import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.se
 
 const INDEX = 7;
 const ANCHOR_OFFSET = 3;
-const ANCHOR_RADIUS = 5;
 
 @Injectable({
     providedIn: 'root',
 })
 export class RectangleSelectionService extends Selection {
-    startingPoint: Vec2;
-    endPoint: Vec2;
-    shiftIsPressed: boolean;
-    hasBeenReseted: boolean = false;
     eventListenerIsSet: boolean;
     contour: boolean = true;
-    imageData: ImageData;
-    backgroundImageData: ImageData;
     allowShift: boolean = true;
-    isMovingImg: boolean = false;
-    currentlySelecting: boolean = false;
 
     constructor(
         public drawingService: DrawingService,
@@ -36,8 +28,10 @@ export class RectangleSelectionService extends Selection {
         public lineHelper: LineHelperService,
         undoRedoManager: UndoRedoManagerService,
         public magnetismService: MagnetismService,
+        public clipboardService: ClipboardService,
     ) {
-        super(drawingService, undoRedoManager, magnetismService);
+        super(drawingService, undoRedoManager, magnetismService, clipboardService);
+
         this.shortcut = 'r';
         this.currentLine = [];
         this.index = INDEX;
@@ -70,6 +64,7 @@ export class RectangleSelectionService extends Selection {
                     return;
                 }
                 if (!this.currentlySelecting) {
+                    console.log('test');
                     this.imageData = this.getImageData();
                 }
 
@@ -231,53 +226,6 @@ export class RectangleSelectionService extends Selection {
         }
     }
 
-    drawAnchorPoints(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.anchorPoints = [];
-
-        ctx.strokeStyle = 'black';
-        ctx.fillStyle = 'black';
-
-        ctx.beginPath();
-        ctx.arc(path[0].x, path[0].y, ANCHOR_RADIUS, 0, Math.PI * 2); // initial
-        this.anchorPoints.push({ x: path[0].x, y: path[0].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc((path[0].x + path[1].x) / 2, path[0].y, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu horizontal
-        this.anchorPoints.push({ x: (path[0].x + path[1].x) / 2, y: path[0].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[1].x, path[0].y, ANCHOR_RADIUS, 0, Math.PI * 2); // inverse horizontal
-        this.anchorPoints.push({ x: path[1].x, y: path[0].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[1].x, (path[0].y + path[1].y) / 2, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu vertical inverse
-        this.anchorPoints.push({ x: path[1].x, y: (path[0].y + path[1].y) / 2 });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[1].x, path[1].y, ANCHOR_RADIUS, 0, Math.PI * 2); // fin
-        this.anchorPoints.push({ x: path[1].x, y: path[1].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc((path[0].x + path[1].x) / 2, path[1].y, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu horizontal inverse
-        this.anchorPoints.push({ x: (path[0].x + path[1].x) / 2, y: path[1].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[0].x, path[1].y, ANCHOR_RADIUS, 0, Math.PI * 2); // inverse vertical
-        this.anchorPoints.push({ x: path[0].x, y: path[1].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[0].x, (path[0].y + path[1].y) / 2, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu vertical
-        this.anchorPoints.push({ x: path[0].x, y: (path[0].y + path[1].y) / 2 });
-        ctx.fill();
-    }
-
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.fillStyle = 'white';
         ctx.globalCompositeOperation = 'source-over';
@@ -286,5 +234,31 @@ export class RectangleSelectionService extends Selection {
         ctx.strokeStyle = 'black';
         ctx.strokeRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
         ctx.closePath();
+    }
+
+    deleteSelection(): void {
+        this.clipboardService.deleteImageDataRectangle(this.drawingService.baseCtx, this.currentLine);
+        this.imageData = this.getImageData();
+    }
+
+    pasteSelection(): void {
+        if (this.clipboardService.alreadyCopied) {
+            this.backgroundImageData = this.drawingService.baseCtx.getImageData(
+                0,
+                0,
+                this.drawingService.baseCtx.canvas.width,
+                this.drawingService.baseCtx.canvas.height,
+            );
+            this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
+            this.currentLine = [
+                { x: 0, y: 0 },
+                { x: this.clipboardService.copy.width, y: this.clipboardService.copy.height },
+            ];
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawLine(this.drawingService.previewCtx, this.currentLine);
+            this.drawAnchorPoints(this.drawingService.previewCtx, this.currentLine);
+            this.drawingService.baseCtx.putImageData(this.clipboardService.copy, this.currentLine[0].x, this.currentLine[0].y);
+            this.imageData = this.clipboardService.copy;
+        }
     }
 }

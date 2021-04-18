@@ -3,6 +3,7 @@ import { Selection } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ClipboardService } from '@app/services/tools/clipboard.service';
 import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { LassoHelperService } from './lasso-helper.service';
@@ -12,19 +13,16 @@ const ANCHOR_RADIUS = 10;
 const SEGMENT_TWO = 5;
 const SEGMENT_ONE = 3;
 const INDEX = 10;
+
 @Injectable({
     providedIn: 'root',
 })
 export class LassoService extends Selection {
     lineHelper: LineHelperService;
-    lassoHelper: LassoHelperService;
-    shiftIsPressed: boolean = false;
     calledFromMouseClick: boolean = false;
     angledEndPoint: Vec2;
     blockOnShift: boolean;
-    backgroundImageData: ImageData;
     isPolygonClosed: boolean = false;
-    imageData: ImageData;
     height: number;
     width: number;
     changeAnchor: boolean = false;
@@ -32,14 +30,14 @@ export class LassoService extends Selection {
     constructor(
         public drawingService: DrawingService,
         lineHelper: LineHelperService,
-        lassoHelper: LassoHelperService,
+        public lassoHelper: LassoHelperService,
         undoRedoManager: UndoRedoManagerService,
         public magnetismService: MagnetismService,
+        public clipboardService: ClipboardService,
     ) {
-        super(drawingService, undoRedoManager, magnetismService);
+        super(drawingService, undoRedoManager, magnetismService, clipboardService);
         this.isStarted = false;
         this.lineHelper = lineHelper;
-        this.lassoHelper = lassoHelper;
         this.index = INDEX;
         this.shortcut = 'v';
         this.toolStyles = { primaryColor: 'black', lineWidth: 1 };
@@ -64,14 +62,11 @@ export class LassoService extends Selection {
                     for (const line of this.lassoPath) {
                         this.drawPath(this.drawingService.previewCtx, line, 'black');
                     }
-
                     this.isStarted = false;
                     this.imageData = this.getImageData();
                     return;
                 }
-
                 this.endPoint = this.getPositionFromMouse(mouseClickEvent);
-
                 if (!this.drawingService.resizeActive) {
                     this.drawingService.drawingStarted = false;
                     if (!this.lassoHelper.detectIntersection([this.startingPoint, this.endPoint], this.lassoPath)) {
@@ -110,11 +105,9 @@ export class LassoService extends Selection {
                 ];
                 return;
             }
-
             if (!this.currentlySelecting) {
                 this.imageData = this.getImageData();
             }
-
             this.lassoHelper.fixImageData(this.drawingService.baseCtx, this.currentLine, this.imageData, this.lassoPath);
             this.isMovingImg = true;
             this.lastPos = this.getPositionFromMouse(event);
@@ -203,7 +196,6 @@ export class LassoService extends Selection {
             this.moveAnchor(mouseMoveEvent);
             return;
         }
-
         if (this.isPolygonClosed && this.mouseDown && this.isMovingImg) {
             if (this.magnetismService.isActivated) {
                 const newPosition: Vec2 = this.magnetismService.dispatch(mouseMoveEvent, this.currentLine);
@@ -323,5 +315,35 @@ export class LassoService extends Selection {
             );
             this.drawingService.baseCtx.restore();
         });
+    }
+
+    deleteSelection(): void {
+        this.lassoHelper.clipRegion(this.drawingService.baseCtx, this.lassoPath);
+        this.imageData = this.getImageData();
+    }
+
+    pasteSelection(): void {
+        if (this.clipboardService.alreadyCopied) {
+            this.backgroundImageData = this.drawingService.baseCtx.getImageData(
+                0,
+                0,
+                this.drawingService.baseCtx.canvas.width,
+                this.drawingService.baseCtx.canvas.height,
+            );
+            const temp: Vec2 = this.currentLine[0];
+            this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
+            this.currentLine = [
+                { x: 0, y: 0 },
+                { x: this.clipboardService.copy.width, y: this.clipboardService.copy.height },
+            ];
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.lassoHelper.translatePathForPaste(temp, this.lassoPath);
+            for (const line of this.lassoPath) {
+                this.drawPath(this.drawingService.previewCtx, line, 'black');
+            }
+            this.drawAnchorPoints(this.drawingService.previewCtx, this.currentLine);
+            this.drawingService.baseCtx.putImageData(this.clipboardService.copy, this.currentLine[0].x, this.currentLine[0].y);
+            this.imageData = this.clipboardService.copy;
+        }
     }
 }

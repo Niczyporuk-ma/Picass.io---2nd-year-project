@@ -106,6 +106,92 @@ export class DrawingComponent implements AfterViewInit {
                 command: () => this.undoRedoManager.redo(),
             },
             {
+                // a tester avec un vrai boutton delete
+                key: 'delete',
+                preventDefault: true,
+                command: () => {
+                    if (
+                        this.toolManager.rectangleSelection.currentlySelecting &&
+                        this.toolManager.currentTool === this.toolManager.rectangleSelection
+                    ) {
+                        this.toolManager.rectangleSelection.deleteSelection();
+                    }
+
+                    if (this.toolManager.ellipseSelection.currentlySelecting && this.toolManager.currentTool === this.toolManager.ellipseSelection) {
+                        this.toolManager.ellipseSelection.deleteSelection();
+                    }
+                    if (this.toolManager.lassoService.currentlySelecting && this.toolManager.currentTool === this.toolManager.lassoService) {
+                        this.toolManager.lassoService.deleteSelection();
+                    }
+                },
+            },
+            {
+                key: 'ctrl + c',
+                preventDefault: true,
+                command: () => {
+                    if (
+                        this.toolManager.rectangleSelection.currentlySelecting &&
+                        this.toolManager.currentTool === this.toolManager.rectangleSelection
+                    ) {
+                        console.log('carre');
+                        this.toolManager.rectangleSelection.copySelection();
+                    }
+                    if (this.toolManager.ellipseSelection.currentlySelecting && this.toolManager.currentTool === this.toolManager.ellipseSelection) {
+                        console.log('ellipse');
+                        this.toolManager.ellipseSelection.copySelection();
+                    }
+                    if (this.toolManager.lassoService.currentlySelecting && this.toolManager.currentTool === this.toolManager.lassoService) {
+                        console.log('lasso');
+                        this.toolManager.lassoService.copySelection();
+                    }
+                },
+            },
+            {
+                key: 'ctrl + v',
+                preventDefault: true,
+                command: () => {
+                    if (
+                        this.toolManager.rectangleSelection === this.toolManager.currentTool &&
+                        this.toolManager.rectangleSelection.clipboardService.alreadyCopied
+                    ) {
+                        this.toolManager.rectangleSelection.pasteSelection();
+                    }
+                    if (
+                        this.toolManager.ellipseSelection === this.toolManager.currentTool &&
+                        this.toolManager.ellipseSelection.clipboardService.alreadyCopied
+                    ) {
+                        this.toolManager.ellipseSelection.pasteSelection();
+                    }
+                    if (
+                        this.toolManager.lassoService === this.toolManager.currentTool &&
+                        this.toolManager.lassoService.clipboardService.alreadyCopied
+                    ) {
+                        this.toolManager.lassoService.pasteSelection();
+                    }
+                },
+            },
+            {
+                key: 'ctrl + x',
+                preventDefault: true,
+                command: () => {
+                    if (
+                        this.toolManager.rectangleSelection === this.toolManager.currentTool &&
+                        this.toolManager.rectangleSelection.currentlySelecting
+                    ) {
+                        this.toolManager.rectangleSelection.copySelection();
+                        this.toolManager.rectangleSelection.deleteSelection();
+                    }
+                    if (this.toolManager.ellipseSelection === this.toolManager.currentTool && this.toolManager.ellipseSelection.currentlySelecting) {
+                        this.toolManager.ellipseSelection.copySelection();
+                        this.toolManager.ellipseSelection.deleteSelection();
+                    }
+                    if (this.toolManager.lassoService === this.toolManager.currentTool && this.toolManager.lassoService.currentlySelecting) {
+                        this.toolManager.lassoService.copySelection();
+                        this.toolManager.lassoService.deleteSelection();
+                    }
+                },
+            },
+            {
                 key: 'm',
                 preventDefault: true,
                 command: () => {

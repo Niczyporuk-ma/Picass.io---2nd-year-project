@@ -26,6 +26,7 @@ button:not(.gridButton) {
     height: 50px;
     border-radius: 0%;
     transition: 0.3s;
+    cursor: pointer;
 }
 
 button:not(.gridButton):hover {
@@ -112,6 +113,11 @@ mat-slider {
 
 mat-slider {
     bottom: 15px;
+}
+
+//style pour les copy,paste and cut button pour les selection
+.disabled {
+    background-color: red;
 }
 
 #verticalLineLeft {

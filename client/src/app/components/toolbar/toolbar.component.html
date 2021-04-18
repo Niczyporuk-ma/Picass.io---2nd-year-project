@@ -138,8 +138,32 @@
     >
         <fa-icon [icon]="faPen" size="lg"></fa-icon>
     </button>
-
     <button (click)="this.toolManager.setTool(this.toolManager.lassoService)" matTooltipPosition="after" matTooltipShowDelay="600">lasso</button>
+
+    <div *ngIf="this.toolManager.currentTool == this.toolManager.lassoService">
+        <button
+            id="copier"
+            [ngClass]="{ disabled: !this.toolManager.lassoService.currentlySelecting }"
+            [disabled]="!this.toolManager.lassoService.currentlySelecting"
+            (click)="this.toolManager.lassoService.copySelection()"
+        >
+            copier
+        </button>
+        <button
+            [ngClass]="{ disabled: !this.toolManager.lassoService.clipboardService.alreadyCopied }"
+            [disabled]="!this.toolManager.lassoService.clipboardService.alreadyCopied"
+            (click)="this.toolManager.lassoService.pasteSelection()"
+        >
+            coller
+        </button>
+        <button
+            [ngClass]="{ disabled: !this.toolManager.lassoService.currentlySelecting }"
+            [disabled]="!this.toolManager.lassoService.currentlySelecting"
+            (click)="this.toolManager.lassoService.copySelection(); this.toolManager.lassoService.deleteSelection()"
+        >
+            couper
+        </button>
+    </div>
 
     <button
         (click)="this.toolManager.setTool(this.toolManager.airbrushService)"
@@ -308,6 +332,56 @@
                 this.toolManager.rectangleSelection.magnetismService.isBottomRight = true
             "
         ></button>
+    </div>
+
+    <div *ngIf="this.toolManager.currentTool == this.toolManager.rectangleSelection">
+        <button
+            id="copier"
+            [ngClass]="{ disabled: !this.toolManager.rectangleSelection.currentlySelecting }"
+            [disabled]="!this.toolManager.rectangleSelection.currentlySelecting"
+            (click)="this.toolManager.rectangleSelection.copySelection()"
+        >
+            copier
+        </button>
+        <button
+            [ngClass]="{ disabled: !this.toolManager.rectangleSelection.clipboardService.alreadyCopied }"
+            [disabled]="!this.toolManager.rectangleSelection.clipboardService.alreadyCopied"
+            (click)="this.toolManager.rectangleSelection.pasteSelection()"
+        >
+            coller
+        </button>
+        <button
+            [ngClass]="{ disabled: !this.toolManager.rectangleSelection.currentlySelecting }"
+            [disabled]="!this.toolManager.rectangleSelection.currentlySelecting"
+            (click)="this.toolManager.rectangleSelection.copySelection(); this.toolManager.rectangleSelection.deleteSelection()"
+        >
+            couper
+        </button>
+    </div>
+
+    <div *ngIf="this.toolManager.currentTool == this.toolManager.ellipseSelection">
+        <button
+            id="copier"
+            [ngClass]="{ disabled: !this.toolManager.ellipseSelection.currentlySelecting }"
+            [disabled]="!this.toolManager.ellipseSelection.currentlySelecting"
+            (click)="this.toolManager.ellipseSelection.copySelection()"
+        >
+            copier
+        </button>
+        <button
+            [ngClass]="{ disabled: !this.toolManager.ellipseSelection.clipboardService.alreadyCopied }"
+            [disabled]="!this.toolManager.ellipseSelection.clipboardService.alreadyCopied"
+            (click)="this.toolManager.ellipseSelection.pasteSelection()"
+        >
+            coller
+        </button>
+        <button
+            [ngClass]="{ disabled: !this.toolManager.ellipseSelection.currentlySelecting }"
+            [disabled]="!this.toolManager.ellipseSelection.currentlySelecting"
+            (click)="this.toolManager.ellipseSelection.copySelection(); this.toolManager.ellipseSelection.deleteSelection()"
+        >
+            couper
+        </button>
     </div>
 
     <button (click)="this.toolManager.setTool(this.toolManager.polygonService); updateSliderWidth(); this.toolManager.polygonService.onButtonPress()">
