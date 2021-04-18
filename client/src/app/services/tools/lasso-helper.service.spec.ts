@@ -219,9 +219,8 @@ describe('LassoHelperService', () => {
             { x: 0, y: 0 },
             { x: 0, y: 0 },
         ];
-        const height = 0;
-        const width = 0;
-        service.updateRectangle(path, currentLine, width, height);
+
+        service.updateRectangle(path, currentLine);
         expect(currentLine[0]).toEqual({ x: 10, y: 10 });
         expect(currentLine[1]).toEqual({ x: 20, y: 15 });
     });

@@ -30,11 +30,15 @@ describe('SelectionService', () => {
         // tslint:disable:no-magic-numbers
         // tslint:disable:max-file-line-count
 
+        baseCtxStub.canvas.width = 100;
+        baseCtxStub.canvas.height = 100;
+
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
 
         mockStartingPoint = { x: -50, y: -50 };
         mockEndingPoint = { x: 1, y: 1 };
+        service.anchorPoints = [];
 
         mouseEvent = {
             offsetX: 25,
@@ -47,11 +51,16 @@ describe('SelectionService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('selectAll should call drawLine and drawAnchorPoints', () => {
-        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
+    it('selectAll should call drawRectangle and drawAnchorPoints', () => {
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.stub();
         const drawAnchorPointSpy = spyOn(service, 'drawAnchorPoints').and.stub();
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        const getImageDataSpy = spyOn(service, 'getImageData').and.stub();
+        service.currentLine = [
+            { x: 0, y: 0 },
+            { x: 5, y: 5 },
+        ];
         service.selectAll();
+        expect(getImageDataSpy).toHaveBeenCalled();
         expect(drawLineSpy).toHaveBeenCalled();
         expect(drawAnchorPointSpy).toHaveBeenCalled();
     });
@@ -76,14 +85,17 @@ describe('SelectionService', () => {
     });
 
     it('onMouseDown should call checkIfInsideRectangle if currentLine length > 0', () => {
-        const checkIfInsideRectangleSpy = spyOn(service, 'checkIfInsideRectangle').and.stub();
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        const checkIfInsideRectangleSpy = spyOn(service.selecHelper, 'checkIfInsideRectangle').and.stub();
+        service.currentLine = [
+            { x: 0, y: 0 },
+            { x: 5, y: 5 },
+        ];
         service.onMouseDown(mouseEvent);
         expect(checkIfInsideRectangleSpy).toHaveBeenCalled();
     });
 
     it('onMouseDown shouldnt call checkIfInsideRectangle if currentLine length <= 0', () => {
-        const checkIfInsideRectangleSpy = spyOn(service, 'checkIfInsideRectangle').and.stub();
+        const checkIfInsideRectangleSpy = spyOn(service.selecHelper, 'checkIfInsideRectangle').and.stub();
         service.currentLine = [];
         service.onMouseDown(mouseEvent);
         expect(checkIfInsideRectangleSpy).not.toHaveBeenCalled();
@@ -107,15 +119,6 @@ describe('SelectionService', () => {
         service.currentlySelecting = true;
         service.onMouseDown(mouseEvent);
         expect(resetStateSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseDown should call getImageData if currentlySelecting is false', () => {
-        const getImageDataSpy = spyOn(service, 'getImageData').and.stub();
-        service.mouseDown = true;
-        service.currentLine = [mockStartingPoint, { x: 50, y: 50 }];
-        service.currentlySelecting = false;
-        service.onMouseDown(mouseEvent);
-        expect(getImageDataSpy).toHaveBeenCalled();
     });
 
     it('onMouseDown shouldnt call getImageData if currentlySelecting is true', () => {
@@ -144,12 +147,20 @@ describe('SelectionService', () => {
         expect(getPositionFromMouseSpy).toHaveBeenCalled();
     });
 
+    it('onMouseDown should set changeAnchor to true if click is on anchor', () => {
+        service.changeAnchor = false;
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.anchorPoints = [{ x: mouseEvent.offsetX, y: mouseEvent.offsetY }];
+        service.onMouseDown(mouseEvent);
+        expect(service.changeAnchor).toBeTrue();
+    });
+
     it('checkIfInsideRectangle should return false if event is outside rectangle', () => {
         service.currentLine = [
             { x: 0, y: 0 },
             { x: 1, y: 1 },
         ];
-        expect(service.checkIfInsideRectangle(mouseEvent)).toBeFalse();
+        expect(service.selecHelper.checkIfInsideRectangle(mouseEvent, service.currentLine)).toBeFalse();
     });
 
     it('checkIfInsideRectangle should return true if event is inside rectangle', () => {
@@ -157,11 +168,11 @@ describe('SelectionService', () => {
             { x: 0, y: 0 },
             { x: 50, y: 50 },
         ];
-        expect(service.checkIfInsideRectangle(mouseEvent)).toBeTrue();
+        expect(service.selecHelper.checkIfInsideRectangle(mouseEvent, service.currentLine)).toBeTrue();
     });
 
     it('setShiftIsPressed should have called drawLine if checkIfSquare returns false', () => {
-        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.stub();
         service.mouseDown = true;
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.startingPoint = { x: 1, y: 5 };
@@ -172,7 +183,7 @@ describe('SelectionService', () => {
     });
 
     it('setShiftIsPressed shouldnt call drawLine if checkIfSquare returns true', () => {
-        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.stub();
 
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.startingPoint = { x: 1, y: 1 };
@@ -212,11 +223,24 @@ describe('SelectionService', () => {
         expect(service.shiftIsPressed).toBeTrue();
     });
 
+    it('setShiftNonPressed should call moveAnchor if changeAnchor is true', () => {
+        service.mouseDown = false;
+        service.currentMousePos = { x: 0, y: 0 };
+        service.changeAnchor = true;
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
+        const moveAnchorSpy = spyOn(service, 'moveAnchor').and.stub();
+        service.setShiftNonPressed(event);
+        expect(moveAnchorSpy).toHaveBeenCalled();
+    });
+
     it('getImageData should call getImageData twice, clearRect and putImageData', () => {
         const getImageDataSpy = spyOn(drawServiceSpy.baseCtx, 'getImageData').and.stub();
         const clearRectSpy = spyOn(drawServiceSpy.baseCtx, 'clearRect').and.stub();
         const putImageDataSpy = spyOn(drawServiceSpy.baseCtx, 'putImageData').and.stub();
-        service.currentLine = [mockStartingPoint, { x: 50, y: 50 }];
+        service.currentLine = [
+            { x: 51, y: 51 },
+            { x: 50, y: 50 },
+        ];
         service.getImageData();
         expect(getImageDataSpy).toHaveBeenCalledTimes(2);
         expect(clearRectSpy).toHaveBeenCalled();
@@ -231,7 +255,7 @@ describe('SelectionService', () => {
     });
 
     it('moveImageData should call clearCanvas twice', () => {
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.currentLine = [{ x: 2, y: 2 }, mockEndingPoint];
         service.lastPos = { x: 0, y: 0 };
         service.imageData = new ImageData(100, 100);
         service.backgroundImageData = new ImageData(100, 100);
@@ -290,7 +314,7 @@ describe('SelectionService', () => {
     });
 
     it(`moveImageData should call drawLine, drawAnchorPoints and putImageData twice`, () => {
-        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.stub();
         const drawAnchorPointsSpy = spyOn(service, 'drawAnchorPoints').and.stub();
         const putImageDataSpy = spyOn(baseCtxStub, 'putImageData').and.stub();
         service.currentLine = [mockStartingPoint, mockEndingPoint];
@@ -411,13 +435,26 @@ describe('SelectionService', () => {
         expect(getImageDataSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseUp should set changeAnchor as false, call setImageData, fixCurrentLine and getPositionFromMouse if changeAnchor is true', () => {
+        const getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.stub();
+        const setImageDataSpy = spyOn(service, 'setImageData').and.stub();
+        const fixCurrentLineSpy = spyOn(service, 'fixCurrentLine').and.stub();
+        service.changeAnchor = true;
+        service.mouseDown = true;
+        service.onMouseUp(mouseEvent);
+        expect(getPositionFromMouseSpy).toHaveBeenCalled();
+        expect(setImageDataSpy).toHaveBeenCalled();
+        expect(fixCurrentLineSpy).toHaveBeenCalled();
+        expect(service.changeAnchor).toBeFalse();
+    });
+
     it(' onMouseMove should  call drawLine if shiftIsPresse & moveDown are true and we already have a square', () => {
         service.mouseDown = true;
         service.shiftIsPressed = true;
         service.mouseDownCoord = { x: 0, y: 0 };
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 5, y: 1 };
-        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.stub();
         service.onMouseMove(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
     });
@@ -428,7 +465,7 @@ describe('SelectionService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 9, y: 1 };
-        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.stub();
         service.onMouseMove(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
     });
@@ -439,14 +476,14 @@ describe('SelectionService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service['startingPoint'] = { x: 1, y: 5 };
         service['endPoint'] = { x: 9, y: 1 };
-        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.stub();
         service.onMouseMove(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should  not call drawLine if mouseDown is false true', () => {
         service.mouseDown = false;
-        const drawLineSpy = spyOn(service, 'drawLine').and.stub();
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.stub();
         service.onMouseMove(mouseEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
@@ -473,6 +510,28 @@ describe('SelectionService', () => {
         service.imageData = new ImageData(100, 100);
         service.onMouseMove(mouseEvent);
         expect(moveImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call moveAnchor if changeAnchor is true', () => {
+        service.mouseDown = true;
+        service.changeAnchor = true;
+        const moveAnchorSpy = spyOn(service, 'moveAnchor').and.stub();
+        service.onMouseMove(mouseEvent);
+        expect(moveAnchorSpy).toHaveBeenCalled();
+    });
+    it('onMouseMove should call moveImageData and dispatch if isMovingImg is true and the magnetism is activated', () => {
+        service.magnetismService.isActivated = true;
+        const moveImageDataSpy = spyOn(service, 'moveImageData').and.stub();
+        service.isMovingImg = true;
+        service.mouseDown = true;
+        service.lastPos = { x: 0, y: 0 };
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.backgroundImageData = new ImageData(100, 100);
+        service.imageData = new ImageData(100, 100);
+        const dispatchSpy = spyOn(service.magnetismService, 'dispatch').and.returnValue({ x: 2, y: 3 });
+        service.onMouseMove(mouseEvent);
+        expect(moveImageDataSpy).toHaveBeenCalled();
+        expect(dispatchSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should call moveImageData and dispatch if isMovingImg is true and the magnetism is activated', () => {
@@ -523,11 +582,29 @@ describe('SelectionService', () => {
         const strokeRectSpy = spyOn(drawServiceSpy.baseCtx, 'strokeRect').and.stub();
         const closePathSpy = spyOn(drawServiceSpy.baseCtx, 'closePath').and.stub();
         service.currentLine = [mockStartingPoint, mockEndingPoint];
-        service.drawLine(drawServiceSpy.baseCtx, service.currentLine);
+        service.drawRectangle(drawServiceSpy.baseCtx, service.currentLine);
         expect(closePathSpy).toHaveBeenCalled();
         expect(strokeRectSpy).toHaveBeenCalled();
     });
 
+    it('resizeSelection should call clearCanvas twice', () => {
+        service.backgroundImageData = new ImageData(100, 100);
+        service.imageData = new ImageData(100, 100);
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.resizeSelection(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
+    });
+
+    it('resizeSelection should call drawRectangle, drawAnchorPoints and drawRectangle', () => {
+        const drawAnchorPointSpy = spyOn(service, 'drawAnchorPoints').and.stub();
+        const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
+        service.backgroundImageData = new ImageData(100, 100);
+        service.imageData = new ImageData(100, 100);
+        service.currentLine = [{ x: 2, y: 2 }, mockEndingPoint];
+        service.resizeSelection(mouseEvent);
+        expect(drawAnchorPointSpy).toHaveBeenCalled();
+        expect(drawRectangleSpy).toHaveBeenCalled();
+    });
     it('deleteSelection should call deleteImageDataRectangle and getImageData', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         const deleteImageDataRectangleSpy = spyOn(service.clipboardService, 'deleteImageDataRectangle').and.returnValue();
@@ -541,7 +618,7 @@ describe('SelectionService', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
-        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service, 'drawRectangle').and.returnValue();
         const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
         spyOn(service, 'drawAnchorPoints').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
@@ -553,7 +630,7 @@ describe('SelectionService', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
-        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service, 'drawRectangle').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
         spyOn(service, 'drawAnchorPoints').and.returnValue();
         const putImageDataSpy = spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
@@ -565,7 +642,7 @@ describe('SelectionService', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
-        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service, 'drawRectangle').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
         spyOn(service, 'drawAnchorPoints').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
@@ -577,7 +654,7 @@ describe('SelectionService', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
-        const drawLineSpy = spyOn(service, 'drawLine').and.returnValue();
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
         spyOn(service, 'drawAnchorPoints').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
@@ -589,7 +666,7 @@ describe('SelectionService', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
-        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service, 'drawRectangle').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
         const drawAnchorPointsSpy = spyOn(service, 'drawAnchorPoints').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
@@ -601,7 +678,7 @@ describe('SelectionService', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
-        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service, 'drawRectangle').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
         spyOn(service, 'drawAnchorPoints').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
@@ -615,7 +692,7 @@ describe('SelectionService', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
-        spyOn(service, 'drawLine').and.returnValue();
+        spyOn(service, 'drawRectangle').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
         spyOn(service, 'drawAnchorPoints').and.returnValue();
         spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
@@ -634,7 +711,7 @@ describe('SelectionService', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.clipboardService.alreadyCopied = false;
         service.clipboardService.copy = new ImageData(2, 3);
-        const drawLineSpy = spyOn(service, 'drawLine').and.returnValue();
+        const drawLineSpy = spyOn(service, 'drawRectangle').and.returnValue();
         const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
         const drawAnchorPointsSpy = spyOn(service, 'drawAnchorPoints').and.returnValue();
         const putImageDataSpy = spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();

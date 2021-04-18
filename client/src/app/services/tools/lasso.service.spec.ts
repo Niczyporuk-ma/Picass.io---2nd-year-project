@@ -447,6 +447,7 @@ describe('LassoService', () => {
             { x: 20, y: 15 },
         ];
         service.isPolygonClosed = true;
+        service.dimensions = [1, 1];
         let drawAnchorSpy = spyOn(service, 'drawAnchorPoints').and.stub();
         service.drawPath(
             previewCtxStub,
@@ -861,5 +862,103 @@ describe('LassoService', () => {
         expect(putImageDataSpy).not.toHaveBeenCalled();
         expect(translatePathForPasteSpy).not.toHaveBeenCalled();
         expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
+    });
+    it('onMouseClick should isStarted to false when you close the polygon', () => {
+        service.isPolygonClosed = false;
+        service.isStarted = true;
+        service.lassoPath = [
+            [
+                { x: 20, y: 15 },
+                { x: 20, y: 10 },
+            ],
+            [
+                { x: 20, y: 10 },
+                { x: 10, y: 10 },
+            ],
+            [
+                { x: 10, y: 10 },
+                { x: 10, y: 15 },
+            ],
+        ];
+        spyOn(service.lineHelper, 'pixelDistanceUtil').and.returnValue(true);
+        service.endPoint = { x: 0, y: 0 };
+        service.startingPoint = { x: 1, y: 1 };
+        spyOn(service.lassoHelper, 'updateRectangle').and.returnValue([1, 2]);
+        spyOn(service, 'getImageData').and.returnValue(new ImageData(1, 2));
+        service.onMouseClick(mouseEvent);
+        expect(service.isStarted).toEqual(false);
+    });
+
+    it('onMouseUp should call 3 times drawPath when the lassoPath has 3 lines and polygone is not closed', () => {
+        let drawLineSpy = spyOn(service, 'drawPath').and.returnValue();
+        service.mouseDown = true;
+        service.isPolygonClosed = true;
+        service.isMovingImg = false;
+        service.lassoPath = [
+            [
+                { x: 20, y: 15 },
+                { x: 20, y: 10 },
+            ],
+            [
+                { x: 20, y: 10 },
+                { x: 10, y: 10 },
+            ],
+            [
+                { x: 10, y: 10 },
+                { x: 10, y: 15 },
+            ],
+        ];
+        service.onMouseUp(mouseEvent);
+        expect(drawLineSpy).toHaveBeenCalledTimes(3);
+    });
+
+    it('onMouseMove should call 3 times drawPath when lassoPath has 3 lines + 1 extra for the preview', () => {
+        service.isStarted = true;
+        service.shiftIsPressed = false;
+        service.mouseDown = false;
+        service.endPoint = { x: 0, y: 0 };
+        service.startingPoint = { x: 1, y: 1 };
+        service.lassoPath = [
+            [
+                { x: 20, y: 15 },
+                { x: 20, y: 10 },
+            ],
+            [
+                { x: 20, y: 10 },
+                { x: 10, y: 10 },
+            ],
+            [
+                { x: 10, y: 10 },
+                { x: 10, y: 15 },
+            ],
+        ];
+        let drawPathSpy = spyOn(service, 'drawPath').and.returnValue();
+        service.onMouseMove(mouseEvent);
+        expect(drawPathSpy).toHaveBeenCalledTimes(4);
+    });
+
+    it('setShiftIsPressed should call 3 time drawPath when lassoPath has 3 lines and 1 more time for the preview', () => {
+        service.isStarted = true;
+        spyOn(service.lineHelper, 'shiftAngleCalculator').and.returnValue(false);
+        spyOn(window, 'removeEventListener').and.returnValue();
+        service.endPoint = { x: 0, y: 0 };
+        service.startingPoint = { x: 1, y: 1 };
+        service.lassoPath = [
+            [
+                { x: 20, y: 15 },
+                { x: 20, y: 10 },
+            ],
+            [
+                { x: 20, y: 10 },
+                { x: 10, y: 10 },
+            ],
+            [
+                { x: 10, y: 10 },
+                { x: 10, y: 15 },
+            ],
+        ];
+        let drawPathSpy = spyOn(service, 'drawPath').and.returnValue();
+        service.setShiftIsPressed();
+        expect(drawPathSpy).toHaveBeenCalledTimes(4);
     });
 });

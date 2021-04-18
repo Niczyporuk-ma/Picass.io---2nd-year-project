@@ -6,10 +6,10 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ClipboardService } from '@app/services/tools/clipboard.service';
 import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
+import { AnchorService } from './anchor.service';
 import { LassoHelperService } from './lasso-helper.service';
 import { LineHelperService } from './line-helper.service';
 
-const ANCHOR_RADIUS = 10;
 const SEGMENT_TWO = 5;
 const SEGMENT_ONE = 3;
 const INDEX = 10;
@@ -23,9 +23,8 @@ export class LassoService extends Selection {
     angledEndPoint: Vec2;
     blockOnShift: boolean;
     isPolygonClosed: boolean = false;
-    height: number;
-    width: number;
     changeAnchor: boolean = false;
+    dimensions: number[];
 
     constructor(
         public drawingService: DrawingService,
@@ -34,8 +33,9 @@ export class LassoService extends Selection {
         undoRedoManager: UndoRedoManagerService,
         public magnetismService: MagnetismService,
         public clipboardService: ClipboardService,
+        public anchorService: AnchorService,
     ) {
-        super(drawingService, undoRedoManager, magnetismService, clipboardService);
+        super(drawingService, undoRedoManager, lineHelper, anchorService, magnetismService, clipboardService);
         this.isStarted = false;
         this.lineHelper = lineHelper;
         this.index = INDEX;
@@ -57,7 +57,7 @@ export class LassoService extends Selection {
                     this.endPoint = this.lassoPath[0][0];
                     this.lassoPath.push([this.startingPoint, this.endPoint]);
                     this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.lassoHelper.updateRectangle(this.lassoPath, this.currentLine, this.width, this.height);
+                    this.dimensions = this.lassoHelper.updateRectangle(this.lassoPath, this.currentLine);
                     this.isPolygonClosed = true;
                     for (const line of this.lassoPath) {
                         this.drawPath(this.drawingService.previewCtx, line, 'black');
@@ -118,10 +118,13 @@ export class LassoService extends Selection {
     }
 
     getImageData(): ImageData {
-        this.lassoHelper.updateRectangle(this.lassoPath, this.currentLine, this.width, this.height);
-        this.height = this.currentLine[1].y - this.currentLine[0].y;
-        this.width = this.currentLine[1].x - this.currentLine[0].x;
-        const imgData = this.drawingService.baseCtx.getImageData(this.currentLine[0].x, this.currentLine[0].y, this.width, this.height);
+        this.dimensions = this.lassoHelper.updateRectangle(this.lassoPath, this.currentLine);
+        const imgData = this.drawingService.baseCtx.getImageData(
+            this.currentLine[0].x,
+            this.currentLine[0].y,
+            this.dimensions[0],
+            this.dimensions[1],
+        );
         this.lassoHelper.clipRegion(this.drawingService.baseCtx, this.lassoPath);
         this.backgroundImageData = this.drawingService.baseCtx.getImageData(
             0,
@@ -216,9 +219,12 @@ export class LassoService extends Selection {
                 { x: this.currentLine[0].x, y: this.currentLine[0].y },
                 { x: this.currentLine[1].x, y: this.currentLine[1].y },
             ];
+
             ctx.setLineDash([SEGMENT_TWO, SEGMENT_ONE]);
+            ctx.strokeRect(this.currentLine[0].x, this.currentLine[0].y, this.dimensions[0], this.dimensions[1]);
             this.drawAnchorPoints(this.drawingService.previewCtx, local);
         }
+
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();
@@ -272,18 +278,6 @@ export class LassoService extends Selection {
             this.drawPath(this.drawingService.previewCtx, [this.startingPoint, this.endPoint], 'black');
         }
     }
-
-    checkIfClickOnAnchor(event: MouseEvent): boolean {
-        const clickCoords: Vec2 = { x: event.offsetX, y: event.offsetY };
-        for (const [index, anchor] of this.anchorPoints.entries()) {
-            if (this.lineHelper.distanceUtil(clickCoords, anchor) <= ANCHOR_RADIUS) {
-                this.currentAnchor = index;
-                return true;
-            }
-        }
-        return false;
-    }
-
     resizeSelection(event: MouseEvent): void {
         if (!this.currentlySelecting) {
             this.backgroundImageData = this.drawingService.baseCtx.getImageData(
@@ -318,8 +312,10 @@ export class LassoService extends Selection {
     }
 
     deleteSelection(): void {
+        this.pathBuffer = this.lassoPath;
         this.lassoHelper.clipRegion(this.drawingService.baseCtx, this.lassoPath);
         this.imageData = this.getImageData();
+        this.resetStateForPaste();
     }
 
     pasteSelection(): void {
@@ -330,8 +326,8 @@ export class LassoService extends Selection {
                 this.drawingService.baseCtx.canvas.width,
                 this.drawingService.baseCtx.canvas.height,
             );
-            const temp: Vec2 = this.currentLine[0];
             this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
+            const temp: Vec2 = this.currentLine[0];
             this.currentLine = [
                 { x: 0, y: 0 },
                 { x: this.clipboardService.copy.width, y: this.clipboardService.copy.height },
