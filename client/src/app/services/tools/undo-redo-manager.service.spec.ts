@@ -232,16 +232,6 @@ describe('UndoRedoManagerService', () => {
         service.redo();
     });
 
-    it('drawSavedImage should call drawImage of the baseCtx and local storage is not null', async (done) => {
-        const drawSpy = spyOn(service['drawingService'].baseCtx, 'drawImage').and.returnValue();
-        localStorage.setItem('oldDrawing', 'https://homepages.cae.wisc.edu/~ece533/images/boat.png');
-        service.drawSavedImage();
-        setTimeout(() => {
-            expect(drawSpy).toHaveBeenCalled();
-            done();
-        }, 1000);
-    });
-
     it('undo should not call drawImage if a drawing is not staring', () => {
         const resizeCom = new ResizeCommandService(service['drawingService']);
         spyOn(resizeCom, 'setPreview').and.stub();
