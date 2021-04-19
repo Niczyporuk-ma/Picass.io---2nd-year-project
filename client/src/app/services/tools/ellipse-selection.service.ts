@@ -322,13 +322,13 @@ export class EllipseSelectionService extends Selection {
     }
 
     deleteSelection(): void {
-        this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint, true);
+        this.drawEllipse(this.drawingService.baseCtx, this.currentLine[0], this.currentLine[1], true);
         this.imageData = this.getImageData();
         this.resetStateForPaste();
     }
 
     pasteSelection(): void {
-        if (this.clipboardService.alreadyCopied) {
+        if (this.clipboardService.alreadyCopied && this.currentLine.length > 0) {
             this.backgroundImageData = this.drawingService.baseCtx.getImageData(
                 0,
                 0,

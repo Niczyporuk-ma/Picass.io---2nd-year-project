@@ -319,7 +319,7 @@ export class LassoService extends Selection {
     }
 
     pasteSelection(): void {
-        if (this.clipboardService.alreadyCopied) {
+        if (this.clipboardService.alreadyCopied && this.currentLine.length > 0) {
             this.backgroundImageData = this.drawingService.baseCtx.getImageData(
                 0,
                 0,

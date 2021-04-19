@@ -1,17 +1,39 @@
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { of, throwError } from 'rxjs';
 import { CarrouselComponent } from './carrousel.component';
 
 describe('CarrouselComponent', () => {
     let component: CarrouselComponent;
     let fixture: ComponentFixture<CarrouselComponent>;
+    let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+    let ctxSpyObject: jasmine.SpyObj<CanvasRenderingContext2D>;
+
     beforeEach(async(() => {
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawingServiceSpy.canvas = document.createElement('canvas');
+        ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'strokeStyle',
+            'beginPath',
+            'moveTo',
+            'lineTo',
+            'stroke',
+            'save',
+            'translate',
+            'rotate',
+            'restore',
+            'canvas',
+            'fillStyle',
+        ]);
+        drawingServiceSpy.baseCtx = ctxSpyObject;
+
         TestBed.configureTestingModule({
             declarations: [CarrouselComponent],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
-            providers: [HttpHandler, HttpClient],
+            providers: [HttpHandler, HttpClient, { provide: DrawingService, useValue: drawingServiceSpy }],
         }).compileComponents();
     }));
 
@@ -229,9 +251,20 @@ describe('CarrouselComponent', () => {
     });
 
     it('loadDrawing should call clearArrays once', () => {
+        const loadDrawingSpy = spyOn(component, 'loadDrawing').and.callThrough();
+        spyOn(window, 'confirm').and.returnValue(true);
         let clearArraySpy = spyOn(component['toolManager'], 'clearArrays').and.stub();
         component.loadDrawing('path');
         expect(clearArraySpy).toHaveBeenCalledTimes(1);
+        expect(loadDrawingSpy).toHaveBeenCalled();
+    });
+
+    it('loadDrawing should not load the drawing if the user doesnt confirm', () => {
+        spyOn(window, 'confirm').and.returnValue(false);
+        component.drawingService.drawingStarted = false;
+        let saveDrawingSpy = spyOn(component['autoSave'], 'saveDrawing').and.stub();
+        component.loadDrawing('path');
+        expect(saveDrawingSpy).not.toHaveBeenCalled();
     });
 
     it('getDrawings should call alert when the server is not connected', () => {
@@ -297,5 +330,27 @@ describe('CarrouselComponent', () => {
         component.isLoading = false;
         component.getDrawings();
         expect(component.isLoading).toEqual(true);
+    });
+
+    it('  left arrow shortcut should call moveLeft', () => {
+        const mockArrowLeft = component.shortcuts.find((x) => x.key === 'left');
+        const mockArrowRight = component.shortcuts.find((x) => x.key === 'right');
+        const mockArrowRightSpy = spyOn(mockArrowRight as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: false, key: 'left' });
+        const moveLeftSpy = spyOn(component, 'moveLeft').and.callThrough();
+        mockArrowLeft?.command({ event: keyboardEvent, key: 'left' } as ShortcutEventOutput);
+        expect(moveLeftSpy).toHaveBeenCalled();
+        expect(mockArrowRightSpy).not.toHaveBeenCalled();
+    });
+
+    it('  right arrow shortcut should call moveRight', () => {
+        const mockArrowRight = component.shortcuts.find((x) => x.key === 'right');
+        const mockArrowLeft = component.shortcuts.find((x) => x.key === 'left');
+        const mockArrowLeftSpy = spyOn(mockArrowLeft as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: false, key: 'right' });
+        const moveRightSpy = spyOn(component, 'moveRight').and.callThrough();
+        mockArrowRight?.command({ event: keyboardEvent, key: 'right' } as ShortcutEventOutput);
+        expect(moveRightSpy).toHaveBeenCalled();
+        expect(mockArrowLeftSpy).not.toHaveBeenCalled();
     });
 });
