@@ -54,6 +54,8 @@ export class UndoRedoManagerService extends Tool {
     }
 
     executeAllPreviousCommands(): void {
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        this.drawSavedImage();
         for (const command of this.undoStack) {
             if (command.isResizer) {
                 const lastResize: Vec2 = this.resizeUndoStack.shift() as Vec2;
@@ -70,9 +72,22 @@ export class UndoRedoManagerService extends Tool {
         }
     }
 
+    drawSavedImage(): void {
+        if (localStorage.getItem('oldDrawing') !== null) {
+            setTimeout(() => {
+                const oldDrawingToLoad = new Image();
+                oldDrawingToLoad.src = localStorage.getItem('oldDrawing') as string;
+                oldDrawingToLoad.onload = () => {
+                    this.drawingService.baseCtx.drawImage(oldDrawingToLoad, 0, 0);
+                };
+            }, WAIT_TIME);
+        }
+    }
+
     drawImage(resizeCommand: ResizeCommandService): void {
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         setTimeout(() => {
+            this.drawSavedImage();
             this.drawingService.baseCtx.drawImage(resizeCommand.lastImage, ZERO, ZERO);
         }, WAIT_TIME);
     }
@@ -90,8 +105,14 @@ export class UndoRedoManagerService extends Tool {
             if (this.undoStack[this.undoStack.length - 1].isResizer && this.resizeUndoStack.length <= 1) {
                 this.resizeRedoStack.push(this.resizeUndoStack.pop() as Vec2);
                 const resizeCommand: ResizeCommandService = this.undoStack[this.undoStack.length - 1] as ResizeCommandService;
-
-                resizeCommand.setPreview(DEFAULT_CANVAS_SIZE);
+                if (this.drawingService.drawingStarted && localStorage.getItem('oldDrawing') !== null) {
+                    resizeCommand.setPreview({
+                        x: Number(localStorage.getItem('oldCanvasWidth') as string),
+                        y: Number(localStorage.getItem('oldCanvasHeight') as string),
+                    });
+                } else {
+                    resizeCommand.setPreview(DEFAULT_CANVAS_SIZE);
+                }
                 resizeCommand.execute(this.drawingService.baseCtx);
 
                 const lastCommand: UndoRedoCommand = this.undoStack.pop() as UndoRedoCommand;

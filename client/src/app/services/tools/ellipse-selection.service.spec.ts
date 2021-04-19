@@ -813,6 +813,7 @@ describe('EllipseSelectionService', () => {
 
     it('pasteSelection should call drawEllipse once when the clipboard is not empty', () => {
         service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
         service.endPoint = { x: 1, y: 1 };
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
@@ -826,6 +827,7 @@ describe('EllipseSelectionService', () => {
 
     it('pasteSelection should call getImageData when the clipboard is not empty ', () => {
         service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
         service.endPoint = { x: 1, y: 1 };
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
@@ -839,6 +841,7 @@ describe('EllipseSelectionService', () => {
 
     it('pasteSelection should call drawRectangle and drawAnchorPoints when the clipboard is not empty', () => {
         service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
         service.endPoint = { x: 1, y: 1 };
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
@@ -853,6 +856,7 @@ describe('EllipseSelectionService', () => {
 
     it('pasteSelection should call putImageData when the clipboad is not empty', () => {
         service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
         service.endPoint = { x: 1, y: 1 };
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);
@@ -867,6 +871,7 @@ describe('EllipseSelectionService', () => {
 
     it('pasteSelection should call clearCanvas when the clipboard is not empty', () => {
         service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
         service.endPoint = { x: 1, y: 1 };
         service.clipboardService.alreadyCopied = true;
         service.clipboardService.copy = new ImageData(2, 3);

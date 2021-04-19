@@ -4,6 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { CarrouselComponent } from '@app/components/carrousel/carrousel.component';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { FormComponent } from '@app/components/form/form.component';
+import { AutoSaveService } from '@app/services/autoSave/auto-save.service';
 import { GridService } from '@app/services/grid/grid.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
@@ -30,6 +31,7 @@ import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
+const WAIT_TIME = 1000;
 
 @Component({
     selector: 'app-toolbar',
@@ -65,6 +67,7 @@ export class ToolbarComponent {
         public undoRedoManager: UndoRedoManagerService,
         public modal: MatDialog,
         public gridService: GridService,
+        public autoSave: AutoSaveService,
     ) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
@@ -116,6 +119,9 @@ export class ToolbarComponent {
             },
         );
         this.undoRedoManager = undoRedoManager;
+        this.undoRedoManager.clearUndoStack();
+        this.undoRedoManager.clearRedoStack();
+        this.undoRedoManager.disableUndoRedo();
     }
 
     setRectangleStyle(recStyleCode: string): void {
@@ -245,6 +251,27 @@ export class ToolbarComponent {
         if (this.gridService.squareSize > minSquareSize) {
             this.changeSquareSize(this.gridService.squareSize - decreaseFactor);
         }
+    }
+
+    startNewDrawing(): void {
+        this.toolManager.clearArrays();
+        if (this.toolManager.newDrawing) {
+            window.location.reload();
+        }
+    }
+
+    undo(): void {
+        this.undoRedoManager.undo();
+        setTimeout(() => {
+            this.autoSave.saveDrawingDefault();
+        }, WAIT_TIME);
+    }
+
+    redo(): void {
+        this.undoRedoManager.redo();
+        setTimeout(() => {
+            this.autoSave.saveDrawingDefault();
+        }, WAIT_TIME);
     }
 
     rotateStamp(rotationAngle: number): void {

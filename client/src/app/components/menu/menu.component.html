@@ -1,5 +1,5 @@
 <mat-selection-list #opt [multiple]="false">
-    <mat-list-option routerLink="/editor">
+    <mat-list-option (click)="startNewDrawing()" routerLink="/editor">
         Créer un nouveau dessin
         <mat-divider></mat-divider>
     </mat-list-option>
