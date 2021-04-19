@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, QueryList, ViewChil
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { Constant } from '@app/constants/general-constants-store';
+import { AutoSaveService } from '@app/services/autoSave/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { GridService } from '@app/services/grid/grid.service';
 import { KeyboardShortcutManagerService } from '@app/services/tools/keyboard-shortcut-manager.service';
@@ -10,7 +11,9 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
-const WAIT_TIME = 5;
+const WAIT_TIME = 10;
+const LONGER_WAIT_TIME = 500;
+
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
@@ -32,7 +35,6 @@ export class DrawingComponent implements AfterViewInit {
     private backgroundMediatorCtx: CanvasRenderingContext2D;
     private backgroundCtx: CanvasRenderingContext2D;
     private gridCtx: CanvasRenderingContext2D;
-
     canvasSize: Vec2 = { x: Constant.DEFAULT_WIDTH, y: Constant.DEFAULT_HEIGHT };
     mouseDown: boolean = false;
     canvas: DOMRect;
@@ -42,7 +44,6 @@ export class DrawingComponent implements AfterViewInit {
     timeOutDuration: number = 170;
     undoRedoManager: UndoRedoManagerService;
     shortcuts: ShortcutInput[] = [];
-
     tools: Tool[];
     currentTool: Tool;
     shortcutKeyboardManager: KeyboardShortcutManagerService;
@@ -57,7 +58,12 @@ export class DrawingComponent implements AfterViewInit {
         resizeCommandService: ResizeCommandService,
         undoRedoManager: UndoRedoManagerService,
         public gridService: GridService,
+        public autoSaveService: AutoSaveService,
     ) {
+        this.autoSaveService.checkIfDrawingStarted();
+        if (this.drawingService.drawingStarted) {
+            this.canvasSize = this.autoSaveService.getSavedCanvasSize();
+        }
         this.resizeServiceCommand = resizeCommandService;
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
@@ -82,8 +88,18 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.backgroundCtx = this.backgroundCtx;
         this.drawingService.gridCtx = this.gridCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.drawingService.canvasSize = this.canvasSize;
         this.baseCtx.fillStyle = 'white';
         this.baseCtx.fillRect(0, 0, this.baseCanvas.nativeElement.width, this.baseCanvas.nativeElement.height);
+        if (this.drawingService.drawingStarted) {
+            this.autoSaveService.restoreOldDrawing();
+            const savedDrawing = new Image();
+            savedDrawing.src = this.autoSaveService.localStorage.getItem('savedDrawing') as string;
+            savedDrawing.onload = () => {
+                this.baseCtx.drawImage(savedDrawing, 0, 0);
+            };
+        }
+
         this.shortcuts.push(
             {
                 key: 'ctrl + a',
@@ -98,113 +114,73 @@ export class DrawingComponent implements AfterViewInit {
                 preventDefault: true,
                 command: () => {
                     this.toolManager.clearArrays();
+                    if (this.toolManager.newDrawing) {
+                        this.canvasSize = { x: Constant.DEFAULT_WIDTH, y: Constant.DEFAULT_HEIGHT };
+                        window.location.reload();
+                    }
                 },
             },
             {
                 key: 'ctrl + z',
                 preventDefault: true,
-                command: () => this.undoRedoManager.undo(),
+                command: () => {
+                    this.undoRedoManager.undo();
+                    setTimeout(() => {
+                        this.autoSaveService.saveDrawing(this.canvasSize, this.baseCanvas.nativeElement);
+                    }, WAIT_TIME);
+                },
             },
             {
                 key: 'ctrl + shift + z',
                 preventDefault: true,
-                command: () => this.undoRedoManager.redo(),
+                command: () => {
+                    this.undoRedoManager.redo();
+                    setTimeout(() => {
+                        this.autoSaveService.saveDrawing(this.canvasSize, this.baseCanvas.nativeElement);
+                    }, WAIT_TIME);
+                },
+            },
+            {
+                key: ['f5'],
+                preventDefault: true,
+                command: () => {
+                    this.autoSaveService.saveDrawing(this.canvasSize, this.baseCanvas.nativeElement);
+                    window.location.reload();
+                },
             },
             {
                 key: 'del',
                 preventDefault: true,
                 command: () => {
-                    if (
-                        this.toolManager.rectangleSelection.currentlySelecting &&
-                        this.toolManager.currentTool === this.toolManager.rectangleSelection
-                    ) {
-                        this.toolManager.rectangleSelection.deleteSelection();
-                    }
-
-                    if (this.toolManager.ellipseSelection.currentlySelecting && this.toolManager.currentTool === this.toolManager.ellipseSelection) {
-                        this.toolManager.ellipseSelection.deleteSelection();
-                    }
-                    if (this.toolManager.lassoService.currentlySelecting && this.toolManager.currentTool === this.toolManager.lassoService) {
-                        this.toolManager.lassoService.deleteSelection();
-                    }
+                    this.shortcutKeyboardManager.deleteHandler(this.toolManager);
                 },
             },
             {
                 key: 'ctrl + c',
-                preventDefault: true,
+                preventDefault: false,
                 command: () => {
-                    if (
-                        this.toolManager.rectangleSelection.currentlySelecting &&
-                        this.toolManager.currentTool === this.toolManager.rectangleSelection
-                    ) {
-                        this.toolManager.rectangleSelection.copySelection();
-                    }
-                    if (this.toolManager.ellipseSelection.currentlySelecting && this.toolManager.currentTool === this.toolManager.ellipseSelection) {
-                        this.toolManager.ellipseSelection.copySelection();
-                    }
-                    if (this.toolManager.lassoService.currentlySelecting && this.toolManager.currentTool === this.toolManager.lassoService) {
-                        this.toolManager.lassoService.copySelection();
-                    }
+                    this.shortcutKeyboardManager.copyHandler(this.toolManager);
                 },
             },
             {
                 key: 'ctrl + v',
                 preventDefault: true,
                 command: () => {
-                    if (
-                        this.toolManager.rectangleSelection === this.toolManager.currentTool &&
-                        this.toolManager.rectangleSelection.clipboardService.alreadyCopied
-                    ) {
-                        this.toolManager.rectangleSelection.pasteSelection();
-                    }
-                    if (
-                        this.toolManager.ellipseSelection === this.toolManager.currentTool &&
-                        this.toolManager.ellipseSelection.clipboardService.alreadyCopied
-                    ) {
-                        this.toolManager.ellipseSelection.pasteSelection();
-                    }
-                    if (
-                        this.toolManager.lassoService === this.toolManager.currentTool &&
-                        this.toolManager.lassoService.clipboardService.alreadyCopied
-                    ) {
-                        this.toolManager.lassoService.pasteSelection();
-                    }
+                    this.shortcutKeyboardManager.pasteHandler(this.toolManager);
                 },
             },
             {
                 key: 'ctrl + x',
                 preventDefault: true,
                 command: () => {
-                    if (
-                        this.toolManager.rectangleSelection === this.toolManager.currentTool &&
-                        this.toolManager.rectangleSelection.currentlySelecting
-                    ) {
-                        this.toolManager.rectangleSelection.copySelection();
-                        this.toolManager.rectangleSelection.deleteSelection();
-                    }
-                    if (this.toolManager.ellipseSelection === this.toolManager.currentTool && this.toolManager.ellipseSelection.currentlySelecting) {
-                        this.toolManager.ellipseSelection.copySelection();
-                        this.toolManager.ellipseSelection.deleteSelection();
-                    }
-                    if (this.toolManager.lassoService === this.toolManager.currentTool && this.toolManager.lassoService.currentlySelecting) {
-                        this.toolManager.lassoService.copySelection();
-                        this.toolManager.lassoService.deleteSelection();
-                    }
+                    this.shortcutKeyboardManager.cutHandler(this.toolManager);
                 },
             },
             {
                 key: 'm',
                 preventDefault: true,
                 command: () => {
-                    if (this.toolManager.rectangleSelection === this.toolManager.currentTool) {
-                        this.toolManager.rectangleSelection.magnetismService.switchOnOrOff();
-                    }
-                    if (this.toolManager.ellipseSelection === this.toolManager.currentTool) {
-                        this.toolManager.ellipseSelection.magnetismService.switchOnOrOff();
-                    }
-                    if (this.toolManager.lassoService === this.toolManager.currentTool) {
-                        this.toolManager.lassoService.magnetismService.switchOnOrOff();
-                    }
+                    this.shortcutKeyboardManager.magnetismHandler(this.toolManager);
                 },
             },
         );
@@ -229,14 +205,12 @@ export class DrawingComponent implements AfterViewInit {
                 }
             }
         });
-
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (this.toolManager.allowKeyPressEvents) {
                 event.preventDefault();
                 this.shortcutKeyboardManager.onKeyPress(event.key);
             }
         });
-
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             if (this.toolManager.allowKeyPressEvents && event.ctrlKey === false) {
                 event.preventDefault();
@@ -244,7 +218,6 @@ export class DrawingComponent implements AfterViewInit {
             }
             this.drawingService.clearBackground();
         });
-
         this.canvas = this.baseCanvas.nativeElement.getBoundingClientRect();
         window.addEventListener('keyup', (e) => {
             if (this.toolManager.currentTool === this.toolManager.ellipseSelection) {
@@ -319,8 +292,10 @@ export class DrawingComponent implements AfterViewInit {
             imageTemp.src = this.baseCanvas.nativeElement.toDataURL() as string;
             this.resizeServiceCommand.lastImage = imageTemp;
             this.undoRedoManager.disableUndoRedo();
+            this.autoSaveService.saveDrawing(this.canvasSize, this.baseCanvas.nativeElement);
         } else {
             this.currentTool.onMouseDown(event);
+            this.autoSaveService.saveDrawing(this.canvasSize, this.baseCanvas.nativeElement);
         }
     }
 
@@ -357,6 +332,7 @@ export class DrawingComponent implements AfterViewInit {
                 this.resizeServiceCommand.bottomHandle,
                 this.resizeServiceCommand.cornerHandle,
             );
+            this.drawingService.canvasSize = this.canvasSize;
 
             this.undoRedoManager.resizeUndoStack.push(newCanvasSize);
             this.undoRedoManager.undoStack.push(resizeCommand);
@@ -364,8 +340,12 @@ export class DrawingComponent implements AfterViewInit {
             this.undoRedoManager.clearRedoStack();
             this.undoRedoManager.enableUndoRedo();
             this.resizeServiceCommand.resetSideBools();
+            setTimeout(() => {
+                this.autoSaveService.saveDrawing(this.canvasSize, this.baseCanvas.nativeElement);
+            }, LONGER_WAIT_TIME);
         } else {
             this.currentTool.onMouseUp(event);
+            this.autoSaveService.saveDrawing(this.canvasSize, this.baseCanvas.nativeElement);
         }
     }
 

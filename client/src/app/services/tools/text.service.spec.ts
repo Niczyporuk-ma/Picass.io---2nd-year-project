@@ -188,6 +188,19 @@ describe('TextService', () => {
         expect(service.undoRedoManager.redoDisabled).toBeTruthy();
     });
 
+    it('onMouseDown shouldnt disable UndoRedo if mouseDown is false', () => {
+        const mouseDown = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Right,
+        } as MouseEvent;
+        service.undoRedoManager.undoDisabled = false;
+        service.undoRedoManager.redoDisabled = false;
+        service.onMouseDown(mouseDown);
+        expect(service.undoRedoManager.undoDisabled).toBeFalsy();
+        expect(service.undoRedoManager.redoDisabled).toBeFalsy();
+    });
+
     it('onMouseDown should call resetState if mouse is down and box is drawn', () => {
         const resetStateSpy = spyOn(service, 'resetState');
         const mouseDown = {
@@ -202,6 +215,23 @@ describe('TextService', () => {
         ];
         service.onMouseDown(mouseDown);
         expect(resetStateSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseDown should call resetState if mouse is down and box is drawn', () => {
+        const resetStateSpy = spyOn(service, 'resetState');
+        spyOn(service, 'checkIfInsideRectangle').and.returnValue(true);
+        const mouseDown = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
+        service.mouseDown = true;
+        service.currentLine = [
+            { x: 30, y: 30 },
+            { x: 50, y: 50 },
+        ];
+        service.onMouseDown(mouseDown);
+        expect(resetStateSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseDown should set mouseDownCoord as the current mouse position if currentLine is empty', () => {
@@ -245,6 +275,22 @@ describe('TextService', () => {
         service.onMouseMove(mouseMove);
         expect(service.undoRedoManager.undoDisabled).toBeTruthy();
         expect(service.undoRedoManager.redoDisabled).toBeTruthy();
+    });
+
+    it('onMouseMove shouldnt disable UndoRedo if mouseDown is false, resize not active and hasnt been reset', () => {
+        const mouseMove = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Right,
+        } as MouseEvent;
+        service.mouseDown = false;
+        service.hasBeenReset = false;
+        drawingServiceSpy.resizeActive = false;
+        service.undoRedoManager.undoDisabled = false;
+        service.undoRedoManager.redoDisabled = false;
+        service.onMouseMove(mouseMove);
+        expect(service.undoRedoManager.undoDisabled).toBeFalsy();
+        expect(service.undoRedoManager.redoDisabled).toBeFalsy();
     });
 
     it('onMouseMove should set hasBeenReset to false', () => {
@@ -336,6 +382,61 @@ describe('TextService', () => {
         expect(service.undoRedoManager.redoDisabled).toBeFalsy();
     });
 
+    it('onMouseUp shouldnt enable UndoRedo if mouseDown is false, resize active', () => {
+        const mouseUp = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Right,
+        } as MouseEvent;
+        service.mouseDown = false;
+        drawingServiceSpy.resizeActive = true;
+        service.undoRedoManager.undoDisabled = true;
+        service.undoRedoManager.redoDisabled = true;
+        service.currentLine = [
+            { x: 30, y: 30 },
+            { x: 50, y: 50 },
+        ];
+        service.onMouseUp(mouseUp);
+        expect(service.undoRedoManager.undoDisabled).toBeTruthy();
+        expect(service.undoRedoManager.redoDisabled).toBeTruthy();
+    });
+
+    it('onMouseUp should set endPoint as current mousePosition if textBox isnt active and not in rectangle', () => {
+        const mouseUp = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
+        service.mouseDown = true;
+        drawingServiceSpy.resizeActive = false;
+        service.hasBeenReset = false;
+        service.currentLine = [
+            { x: 30, y: 30 },
+            { x: 50, y: 50 },
+        ];
+        service.textBoxActive = false;
+        service.onMouseUp(mouseUp);
+        expect(service.endPoint).toEqual({ x: 25, y: 25 });
+    });
+
+    it('onMouseUp shouldnt set endPoint as current mousePosition if textBox is active and not in rectangle', () => {
+        const mouseUp = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
+        service.mouseDown = true;
+        drawingServiceSpy.resizeActive = false;
+        service.hasBeenReset = false;
+        service.currentLine = [
+            { x: 30, y: 30 },
+            { x: 50, y: 50 },
+        ];
+        service.textBoxActive = true;
+        service.onMouseUp(mouseUp);
+        expect(service.endPoint).not.toEqual({ x: 25, y: 25 });
+    });
+
     it('onMouseUp should set hasBeenReset and mouseDown to false if hasBeenReset is true', () => {
         const mouseUp = {
             offsetX: 25,
@@ -345,6 +446,25 @@ describe('TextService', () => {
         service.mouseDown = true;
         drawingServiceSpy.resizeActive = false;
         service.hasBeenReset = false;
+        service.currentLine = [
+            { x: 30, y: 30 },
+            { x: 50, y: 50 },
+        ];
+        service.onMouseUp(mouseUp);
+        expect(service.hasBeenReset).toBeFalsy();
+        expect(service.mouseDown).toBeFalsy();
+    });
+
+    it('onMouseUp should set hasBeenReset and mouseDown to false if hasBeenReset is true and return true', () => {
+        const mouseUp = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
+        spyOn(service.undoRedoManager, 'enableUndoRedo').and.returnValue();
+        service.mouseDown = true;
+        drawingServiceSpy.resizeActive = false;
+        service.hasBeenReset = true;
         service.currentLine = [
             { x: 30, y: 30 },
             { x: 50, y: 50 },
@@ -465,6 +585,32 @@ describe('TextService', () => {
         expect(service.endPoint.y).toEqual(50);
     });
 
+    it('enterKey shouldnt expand textBox vertically when reached the bottom of the textbox if key is wrong', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 1, y: 0 };
+        service.textArray = ['hello'];
+        service.fontSize = 30;
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 20, y: 70 };
+        spyOn(service, 'clearAndDrawPreview').and.stub();
+        service.enterKey(keyEvent);
+        expect(service.endPoint.y).toEqual(70);
+    });
+
+    it('enterKey shouldnt expand textBox vertically when it hasnt reached the bottom of the textbox if key is right', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 1, y: 0 };
+        service.textArray = ['hello'];
+        service.fontSize = 30;
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 20, y: 70 };
+        spyOn(service, 'clearAndDrawPreview').and.stub();
+        service.enterKey(keyEvent);
+        expect(service.endPoint.y).toEqual(70);
+    });
+
     it('enterKey should call clearAndDrawPreview', () => {
         const keyEvent = new KeyboardEvent('keydown', { key: 'Enter' });
         service.textBoxActive = true;
@@ -495,6 +641,16 @@ describe('TextService', () => {
         expect(service.textArray[service.cursorPosition.y]).toEqual('hell');
     });
 
+    it('Backspace shouldnt remove the last letter of the text at a textArray[cursorPosition.y] if key is wrong', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 5, y: 0 };
+        service.textArray = ['hello'];
+        spyOn(service, 'clearAndDrawPreview').and.stub();
+        service.backspaceKey(keyEvent);
+        expect(service.textArray[service.cursorPosition.y]).toEqual('hello');
+    });
+
     it('Backspace should call clearAndDrawPreview', () => {
         const keyEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
         service.textBoxActive = true;
@@ -503,6 +659,36 @@ describe('TextService', () => {
         const clearAndDrawPreviewSpy = spyOn(service, 'clearAndDrawPreview');
         service.backspaceKey(keyEvent);
         expect(clearAndDrawPreviewSpy).toHaveBeenCalled();
+    });
+
+    it('Delete should reduce the text length by 1', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'Delete' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 4, y: 0 };
+        service.textArray = ['hello'];
+        spyOn(service, 'clearAndDrawPreview').and.stub();
+        service.deleteKey(keyEvent);
+        expect(service.textArray[0].length).toEqual(4);
+    });
+
+    it('Delete shouldnt reduce the text length by 1 if key is wrong', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 4, y: 0 };
+        service.textArray = ['hello'];
+        spyOn(service, 'clearAndDrawPreview').and.stub();
+        service.deleteKey(keyEvent);
+        expect(service.textArray[0].length).toEqual(5);
+    });
+
+    it('Backspace should remove the last letter of the text at a textArray[cursorPosition.y]', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 5, y: 0 };
+        service.textArray = ['hello'];
+        spyOn(service, 'clearAndDrawPreview').and.stub();
+        service.backspaceKey(keyEvent);
+        expect(service.textArray[service.cursorPosition.y]).toEqual('hell');
     });
 
     it('Escape should call clearCanvas', () => {
@@ -538,6 +724,14 @@ describe('TextService', () => {
         expect(service.cursorPosition).toEqual({ x: 0, y: 0 });
     });
 
+    it('Escape shouldnt reset cursorPosition if key is wrong', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 5, y: 0 };
+        service.escapeKey(keyEvent);
+        expect(service.cursorPosition).toEqual({ x: 5, y: 0 });
+    });
+
     it('ArrowUp should decrement cursorPosition.y and call clearAndDrawPreview', () => {
         const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' });
         service.textBoxActive = true;
@@ -548,7 +742,17 @@ describe('TextService', () => {
         expect(clearAndDrawPreviewSpy).toHaveBeenCalled();
     });
 
-    it('arrowDown should increment cursorPosition.y and call clearAndDrawPreview', () => {
+    it('ArrowUp shouldnt decrement cursorPosition.y and not call clearAndDrawPreview if key is incorrect', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 5, y: 1 };
+        const clearAndDrawPreviewSpy = spyOn(service, 'clearAndDrawPreview');
+        service.arrowUp(keyEvent);
+        expect(service.cursorPosition).toEqual({ x: 5, y: 1 });
+        expect(clearAndDrawPreviewSpy).not.toHaveBeenCalled();
+    });
+
+    it('ArrowDown should increment cursorPosition.y and call clearAndDrawPreview', () => {
         const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' });
         service.textBoxActive = true;
         service.cursorPosition = { x: 5, y: 1 };
@@ -557,6 +761,16 @@ describe('TextService', () => {
         service.arrowDown(keyEvent);
         expect(service.cursorPosition).toEqual({ x: 5, y: 2 });
         expect(clearAndDrawPreviewSpy).toHaveBeenCalled();
+    });
+
+    it('ArrowDown shouldnt increment cursorPosition.y and not call clearAndDrawPreview if key is incorrect', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 5, y: 1 };
+        const clearAndDrawPreviewSpy = spyOn(service, 'clearAndDrawPreview');
+        service.arrowDown(keyEvent);
+        expect(service.cursorPosition).toEqual({ x: 5, y: 1 });
+        expect(clearAndDrawPreviewSpy).not.toHaveBeenCalled();
     });
 
     it('ArrowLeft should decrement cursorPosition.x and call clearAndDrawPreview', () => {
@@ -569,6 +783,16 @@ describe('TextService', () => {
         expect(clearAndDrawPreviewSpy).toHaveBeenCalled();
     });
 
+    it('ArrowLeft shouldnt decrement cursorPosition.x and not call clearAndDrawPreview if key is incorrect', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 5, y: 1 };
+        const clearAndDrawPreviewSpy = spyOn(service, 'clearAndDrawPreview');
+        service.arrowLeft(keyEvent);
+        expect(service.cursorPosition).toEqual({ x: 5, y: 1 });
+        expect(clearAndDrawPreviewSpy).not.toHaveBeenCalled();
+    });
+
     it('ArrowRight should increment cursorPosition.x and call clearAndDrawPreview', () => {
         const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowRight' });
         service.textBoxActive = true;
@@ -578,6 +802,17 @@ describe('TextService', () => {
         service.arrowRight(keyEvent);
         expect(service.cursorPosition).toEqual({ x: 5, y: 1 });
         expect(clearAndDrawPreviewSpy).toHaveBeenCalled();
+    });
+
+    it('ArrowRight shouldnt increment cursorPosition.x and not call clearAndDrawPreview if the key is incorrect', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 4, y: 1 };
+        service.textArray[1] = 'hello';
+        const clearAndDrawPreviewSpy = spyOn(service, 'clearAndDrawPreview');
+        service.arrowRight(keyEvent);
+        expect(service.cursorPosition).toEqual({ x: 4, y: 1 });
+        expect(clearAndDrawPreviewSpy).not.toHaveBeenCalled();
     });
 
     it('switchStartingAndEndPoints should switch endPoint.x and startingPoint.x if startingPoint.x is greater than endPoint.x', () => {
@@ -648,6 +883,16 @@ describe('TextService', () => {
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
+    it('clearAndDrawPreview shouldnt call clearCanvas if text box isnt active', () => {
+        service.textBoxActive = false;
+        service.currentLine = [
+            { x: 10, y: 20 },
+            { x: 10, y: 20 },
+        ];
+        service.clearAndDrawPreview();
+        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
+    });
+
     it('clearAndDrawPreview should call drawTextBox', () => {
         const drawTextBoxSpy = spyOn(service, 'drawTextBox');
         service.textBoxActive = true;
@@ -707,6 +952,32 @@ describe('TextService', () => {
         expect(service.cursorPosition.x).toEqual(3);
     });
 
+    it('onKeyDown shouldnt increment cursorPosition.x if textbox isnt active', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'b' });
+        service.textBoxActive = false;
+        service.cursorPosition = { x: 2, y: 0 };
+        service.textArray = ['Bo'];
+        service.currentLine = [
+            { x: 10, y: 20 },
+            { x: 10, y: 20 },
+        ];
+        service.onKeyDown(keyEvent);
+        expect(service.cursorPosition.x).toEqual(2);
+    });
+
+    it('onKeyDown shouldnt increment cursorPosition.x if textbox is active but key is in useful or useless key arrays', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'F1' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 2, y: 0 };
+        service.textArray = ['Bo'];
+        service.currentLine = [
+            { x: 10, y: 20 },
+            { x: 10, y: 20 },
+        ];
+        service.onKeyDown(keyEvent);
+        expect(service.cursorPosition.x).toEqual(2);
+    });
+
     it('onKeyDown should increase endpoint if alignment is left and text is larger than textbox', () => {
         const keyEvent = new KeyboardEvent('keydown', { key: 'b' });
         service.textBoxActive = true;
@@ -722,6 +993,23 @@ describe('TextService', () => {
         service.alignment = 'left';
         service.onKeyDown(keyEvent);
         expect(service.endPoint.x).toEqual(40);
+    });
+
+    it('onKeyDown shouldnt increase endpoint if alignment is left and text isnt larger than textbox', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'b' });
+        service.textBoxActive = true;
+        service.cursorPosition = { x: 2, y: 0 };
+        service.textArray = ['Bo'];
+        service.startingPoint = { x: 10, y: 20 };
+        service.endPoint = { x: 50, y: 20 };
+        service.fontSize = 30;
+        service.currentLine = [
+            { x: 10, y: 20 },
+            { x: 10, y: 20 },
+        ];
+        service.alignment = 'left';
+        service.onKeyDown(keyEvent);
+        expect(service.endPoint.x).toEqual(50);
     });
 
     it('onKeyDown should decrement startingPoint if alignment is right and text is larger than textbox', () => {

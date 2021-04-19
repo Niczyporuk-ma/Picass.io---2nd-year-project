@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { AutoSaveService } from '@app/services/autoSave/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { AirbrushService } from '@app/services/tools/airbrush.service';
 import { EllipseSelectionService } from '@app/services/tools/ellipse-selection.service';
@@ -54,6 +55,7 @@ export class ToolManagerService {
     undoRedoManager: UndoRedoManagerService;
     showSaveMenu: boolean = false;
     nonTools: boolean = false;
+    newDrawing: boolean = false;
 
     constructor(
         public pencilService: PencilService,
@@ -70,6 +72,7 @@ export class ToolManagerService {
         public rectangleSelection: RectangleSelectionService,
         public ellipseSelection: EllipseSelectionService,
         public textService: TextService,
+        public autoSaveService: AutoSaveService,
         public stampService: StampService,
         public noToolService: NoToolService,
         public lassoService: LassoService,
@@ -97,16 +100,18 @@ export class ToolManagerService {
 
     clearArrays(): void {
         if (this.drawingService.drawingStarted) {
-            if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera tout les dessins actuels')) {
+            if (confirm('Voulez-vous commencer un nouveau dessin?\n Cette action effacera le dessin déjà commencé!')) {
                 for (const tool of this.tools) {
                     tool.clearArrays();
                 }
+                this.autoSaveService.clearLocalStorage();
                 this.drawingService.drawingStarted = false;
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.undoRedoManager.clearRedoStack();
                 this.undoRedoManager.clearUndoStack();
                 this.undoRedoManager.disableUndoRedo();
+                this.newDrawing = true;
                 this.drawingService.baseCtx.fillStyle = 'white';
                 this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.baseCtx.canvas.width, this.drawingService.baseCtx.canvas.height);
             }

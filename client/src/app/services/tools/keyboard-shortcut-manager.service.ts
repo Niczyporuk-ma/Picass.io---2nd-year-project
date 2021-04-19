@@ -25,4 +25,68 @@ export class KeyboardShortcutManagerService {
             }
         }
     }
+
+    deleteHandler(toolManager: ToolManagerService): void {
+        if (toolManager.rectangleSelection.currentlySelecting && toolManager.currentTool === toolManager.rectangleSelection) {
+            toolManager.rectangleSelection.deleteSelection();
+        }
+
+        if (toolManager.ellipseSelection.currentlySelecting && toolManager.currentTool === toolManager.ellipseSelection) {
+            toolManager.ellipseSelection.deleteSelection();
+        }
+        if (toolManager.lassoService.currentlySelecting && toolManager.currentTool === toolManager.lassoService) {
+            toolManager.lassoService.deleteSelection();
+        }
+    }
+
+    copyHandler(toolManager: ToolManagerService): void {
+        if (toolManager.rectangleSelection.currentlySelecting && toolManager.currentTool === toolManager.rectangleSelection) {
+            toolManager.rectangleSelection.copySelection();
+        }
+        if (toolManager.ellipseSelection.currentlySelecting && toolManager.currentTool === toolManager.ellipseSelection) {
+            toolManager.ellipseSelection.copySelection();
+        }
+        if (toolManager.lassoService.currentlySelecting && toolManager.currentTool === toolManager.lassoService) {
+            toolManager.lassoService.copySelection();
+        }
+    }
+
+    pasteHandler(toolManager: ToolManagerService): void {
+        if (toolManager.rectangleSelection === toolManager.currentTool && toolManager.rectangleSelection.clipboardService.alreadyCopied) {
+            toolManager.rectangleSelection.pasteSelection();
+        }
+        if (toolManager.ellipseSelection === toolManager.currentTool && toolManager.ellipseSelection.clipboardService.alreadyCopied) {
+            toolManager.ellipseSelection.pasteSelection();
+        }
+        if (toolManager.lassoService === toolManager.currentTool && toolManager.lassoService.clipboardService.alreadyCopied) {
+            toolManager.lassoService.pasteSelection();
+        }
+    }
+
+    cutHandler(toolManager: ToolManagerService): void {
+        if (toolManager.rectangleSelection === toolManager.currentTool && toolManager.rectangleSelection.currentlySelecting) {
+            toolManager.rectangleSelection.copySelection();
+            toolManager.rectangleSelection.deleteSelection();
+        }
+        if (toolManager.ellipseSelection === toolManager.currentTool && toolManager.ellipseSelection.currentlySelecting) {
+            toolManager.ellipseSelection.copySelection();
+            toolManager.ellipseSelection.deleteSelection();
+        }
+        if (toolManager.lassoService === toolManager.currentTool && toolManager.lassoService.currentlySelecting) {
+            toolManager.lassoService.copySelection();
+            toolManager.lassoService.deleteSelection();
+        }
+    }
+
+    magnetismHandler(toolManager: ToolManagerService): void {
+        if (toolManager.rectangleSelection === toolManager.currentTool) {
+            toolManager.rectangleSelection.magnetismService.switchOnOrOff();
+        }
+        if (toolManager.ellipseSelection === toolManager.currentTool) {
+            toolManager.ellipseSelection.magnetismService.switchOnOrOff();
+        }
+        if (toolManager.lassoService === toolManager.currentTool) {
+            toolManager.lassoService.magnetismService.switchOnOrOff();
+        }
+    }
 }

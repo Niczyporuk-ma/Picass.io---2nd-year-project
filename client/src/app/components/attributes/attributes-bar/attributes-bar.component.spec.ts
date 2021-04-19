@@ -15,7 +15,7 @@ class MatDialogMock {
     }
 }
 
-fdescribe('AttributesBarComponent', () => {
+describe('AttributesBarComponent', () => {
     let component: AttributesBarComponent;
     let fixture: ComponentFixture<AttributesBarComponent>;
     // tslint:disable:no-magic-numbers
@@ -206,6 +206,8 @@ fdescribe('AttributesBarComponent', () => {
     });
 
     it('the shortcut = should call increaseSquareSizebyByFactor', () => {
+        component.gridService.isGridVisible = true;
+        component.toolManager.textService.textBoxActive = false;
         const equals = component.shortcuts.find((x) => x.key === '=');
         const ctrlG = component.shortcuts.find((x) => x.key === 'ctrl + g');
         const ctrlGSpy = spyOn(ctrlG as ShortcutInput, 'command').and.callThrough();
@@ -217,6 +219,8 @@ fdescribe('AttributesBarComponent', () => {
     });
 
     it('shift + = ou = should call increaseSquareSizebyByFactor', () => {
+        component.gridService.isGridVisible = true;
+        component.toolManager.textService.textBoxActive = false;
         const ctrlEquals = component.shortcuts.find((x) => x.key === 'plus');
         const ctrlG = component.shortcuts.find((x) => x.key === 'ctrl + g');
         const ctrlGSpy = spyOn(ctrlG as ShortcutInput, 'command').and.callThrough();
@@ -228,6 +232,8 @@ fdescribe('AttributesBarComponent', () => {
     });
 
     it('the shortcut - should call decreaseSquareSizebyByFactor', () => {
+        component.gridService.isGridVisible = true;
+        component.toolManager.textService.textBoxActive = false;
         const equals = component.shortcuts.find((x) => x.key === '-');
         const ctrlG = component.shortcuts.find((x) => x.key === 'ctrl + g');
         const ctrlGSpy = spyOn(ctrlG as ShortcutInput, 'command').and.callThrough();

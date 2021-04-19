@@ -758,31 +758,37 @@
 <div class="non-tools" *ngIf="this.toolManager.nonTools">
     <button
         class="nonTools"
-        (click)="this.toolManager.clearArrays()"
-        matTooltip="Créer un nouveau dessin"
+        (click)="this.startNewDrawing()"
+        matTooltip="Créer un nouveau dessin (CTRL + O)"
         matTooltipPosition="after"
-        matTooltipShowDelay="600"
+        matTooltipShowDelay="250"
     >
         <fa-icon [icon]="faPlusSquare" size="lg"></fa-icon>
     </button>
 
-    <button class="nonTools" (click)="openSaveDrawingForm()" matTooltip="Sauvegarder le dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+    <button
+        class="nonTools"
+        (click)="openSaveDrawingForm()"
+        matTooltip="Sauvegarder le dessin (CTRL + S)"
+        matTooltipPosition="after"
+        matTooltipShowDelay="250"
+    >
         <fa-icon [icon]="faSave" size="lg"></fa-icon>
     </button>
 
     <button
         class="nonTools"
         (click)="openCarousel()"
-        matTooltip="Ouvrir le carrousel de dessins"
+        matTooltip="Ouvrir le carrousel de dessins (CTRL + G)"
         matTooltipPosition="after"
-        matTooltipShowDelay="600"
+        matTooltipShowDelay="250"
     >
         <fa-icon [icon]="faImages" size="lg"></fa-icon>
     </button>
-    <button class="nonTools" (click)="export()" matTooltip="Exporter le dessin" matTooltipPosition="after" matTooltipShowDelay="600">
+    <button class="nonTools" (click)="export()" matTooltip="Exporter le dessin (CTRL + E)" matTooltipPosition="after" matTooltipShowDelay="250">
         <fa-icon [icon]="faDownload" size="lg"></fa-icon>
     </button>
-    <button class="nonTools" routerLink="/home" matTooltip="Retour à la page principale" matTooltipPosition="after" matTooltipShowDelay="600">
+    <button class="nonTools" routerLink="/home" matTooltip="Retour à la page principale" matTooltipPosition="after" matTooltipShowDelay="250">
         <fa-icon [icon]="faHome" size="lg"></fa-icon>
     </button>
 </div>

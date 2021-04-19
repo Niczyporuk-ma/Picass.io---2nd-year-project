@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { AutoSaveService } from '@app/services/autoSave/auto-save.service';
 import { GridService } from '@app/services/grid/grid.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
@@ -21,6 +22,8 @@ import {
     faVectorSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
+
+const WAIT_TIME = 1000;
 
 @Component({
     selector: 'app-toolbar',
@@ -48,7 +51,12 @@ export class ToolbarComponent {
     faVectorSquare: IconDefinition = faVectorSquare;
     faPlay: IconDefinition = faPlay;
 
-    constructor(public toolManager: ToolManagerService, public undoRedoManager: UndoRedoManagerService, public gridService: GridService) {
+    constructor(
+        public toolManager: ToolManagerService,
+        public undoRedoManager: UndoRedoManagerService,
+        public gridService: GridService,
+        public autoSave: AutoSaveService,
+    ) {
         this.toolManager = toolManager;
         this.tools = toolManager.tools;
         this.undoRedoManager = undoRedoManager;
@@ -61,5 +69,22 @@ export class ToolbarComponent {
                 }
             },
         });
+        this.undoRedoManager.clearUndoStack();
+        this.undoRedoManager.clearRedoStack();
+        this.undoRedoManager.disableUndoRedo();
+    }
+
+    undo(): void {
+        this.undoRedoManager.undo();
+        setTimeout(() => {
+            this.autoSave.saveDrawingDefault();
+        }, WAIT_TIME);
+    }
+
+    redo(): void {
+        this.undoRedoManager.redo();
+        setTimeout(() => {
+            this.autoSave.saveDrawingDefault();
+        }, WAIT_TIME);
     }
 }

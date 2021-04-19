@@ -43,10 +43,15 @@ describe('ToolbarComponent', () => {
     }));
 
     beforeEach(() => {
+        jasmine.clock().install();
         fixture = TestBed.createComponent(ToolbarComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
         // modal = TestBed.inject(MatDialog);
+    });
+
+    afterEach(() => {
+        jasmine.clock().uninstall();
     });
 
     it('should create', () => {
@@ -61,5 +66,36 @@ describe('ToolbarComponent', () => {
         g?.command({ event: keyboardEvent, key: 'g' } as ShortcutEventOutput);
         expect(gSpy).toHaveBeenCalled();
         expect(showGridSpy).toHaveBeenCalled();
+    });
+
+    it(' the shortcut g shouldnt call showGrid if textbox is active', () => {
+        const g = component.shortcuts.find((x) => x.key === 'g');
+        component.toolManager.textService.textBoxActive = true;
+        const gSpy = spyOn(g as ShortcutInput, 'command').and.callThrough();
+        const showGridSpy = spyOn(component.gridService, 'showGrid').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'g' });
+        g?.command({ event: keyboardEvent, key: 'g' } as ShortcutEventOutput);
+        expect(gSpy).toHaveBeenCalled();
+        expect(showGridSpy).not.toHaveBeenCalled();
+    });
+
+    it('undo should call undo from undo-redo manager and to save the drawing after 1 second of waiting (and not before)', () => {
+        const undoSpy = spyOn(component.undoRedoManager, 'undo').and.stub();
+        const autoSaveSpy = spyOn(component.autoSave, 'saveDrawingDefault').and.stub();
+        component.undo();
+        expect(undoSpy).toHaveBeenCalled();
+        expect(autoSaveSpy).not.toHaveBeenCalled();
+        jasmine.clock().tick(1001);
+        expect(autoSaveSpy).toHaveBeenCalled();
+    });
+
+    it('redo should call redo from undo-redo manager and to save the drawing after 1 second of waiting (and not before)', () => {
+        const redoSpy = spyOn(component.undoRedoManager, 'redo').and.stub();
+        const autoSaveSpy = spyOn(component.autoSave, 'saveDrawingDefault').and.stub();
+        component.redo();
+        expect(redoSpy).toHaveBeenCalled();
+        expect(autoSaveSpy).not.toHaveBeenCalled();
+        jasmine.clock().tick(1001);
+        expect(autoSaveSpy).toHaveBeenCalled();
     });
 });

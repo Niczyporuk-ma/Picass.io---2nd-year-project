@@ -5,7 +5,7 @@
 <div class="btns">
     <div class="undoRedo">
         <button
-            (click)="this.undoRedoManager.undo()"
+            (click)="this.undo()"
             id="undo"
             [ngClass]="{ disabled: this.undoRedoManager.undoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.undoStack) }"
             [disabled]="this.undoRedoManager.undoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.undoStack)"
@@ -16,7 +16,7 @@
             <fa-icon [icon]="faUndoAlt" size="lg"></fa-icon>
         </button>
         <button
-            (click)="this.undoRedoManager.redo()"
+            (click)="this.redo()"
             id="redo"
             [ngClass]="{ disabled: this.undoRedoManager.redoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.redoStack) }"
             [disabled]="this.undoRedoManager.redoDisabled == true || this.undoRedoManager.isEmpty(this.undoRedoManager.redoStack)"

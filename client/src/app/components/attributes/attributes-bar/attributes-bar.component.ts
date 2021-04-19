@@ -210,4 +210,15 @@ export class AttributesBarComponent {
             }, 5);
         }
     }
+
+    startNewDrawing(): void {
+        this.toolManager.clearArrays();
+        if (this.toolManager.newDrawing) {
+            this.reload();
+        }
+    }
+
+    reload(): void {
+        window.location.reload();
+    }
 }

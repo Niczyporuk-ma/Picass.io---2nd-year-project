@@ -313,7 +313,7 @@ export class RectangleSelectionService extends Selection {
     }
 
     pasteSelection(): void {
-        if (this.clipboardService.alreadyCopied) {
+        if (this.clipboardService.alreadyCopied && this.currentLine.length > 0) {
             this.currentlySelecting = true;
             this.isMovingImg = true;
             this.backgroundImageData = this.drawingService.baseCtx.getImageData(
