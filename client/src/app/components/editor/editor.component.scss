@@ -1,13 +1,14 @@
 .container {
     height: 100%;
     display: flex;
+    overflow: hidden;
 }
 
 .drawing-container {
-    // overflow: hidden;
-    overflow-y: hidden; /* Hide vertical scrollbar */
-    overflow-x: hidden; /* Hide horizontal scrollbar */
+    overflow-y: auto; /* Hide vertical scrollbar */
+    overflow-x: auto; /* Hide horizontal scrollbar */
     flex: 1 1 auto;
+    position: relative;
 }
 
 .drawing {
@@ -16,13 +17,31 @@
     outline: none;
 }
 
-// cdk-virtual-scroll-viewport {
-//     height: 100vh;
-//     width: 80vh;
-//     margin: 0 auto;
-//     display: flex;
-//     align-items: center;
-//     flex-direction: column;
-//     justify-content: center;
-//     list-style: none;
-// }
+.drawing-container::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.drawing-container::-webkit-scrollbar-track {
+    background: rgb(38, 46, 54);
+}
+
+.drawing-container::-webkit-scrollbar-thumb {
+    background-color: rgba(83, 101, 119);
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.drawing-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(197, 243, 231);
+    transition: 0.3s;
+}
+
+.drawing-container::-webkit-scrollbar-thumb:active {
+    background-color: rgb(107, 240, 206);
+    transition: 0.3s;
+}
+
+.drawing-container::-webkit-scrollbar-corner {
+    background: rgb(38, 46, 54);
+}
