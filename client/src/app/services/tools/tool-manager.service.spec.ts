@@ -111,4 +111,46 @@ describe('ToolManagerService', () => {
         service.enableShortcut();
         expect(service.allowKeyPressEvents).toEqual(true);
     });
+
+    it(' onPressPalette should toggle the showPallet value', () => {
+        service.showPalette = false;
+        service.onPressPalette();
+        expect(service.showPalette).toEqual(true);
+        service.onPressPalette();
+        expect(service.showPalette).toEqual(false);
+    });
+
+    it('uptadeSliderWidth should uptade the widthValue of the toolManager with the width of the current tool', () => {
+        service.setTool(service.pencilService);
+        service.currentTool.toolStyles.lineWidth = 10;
+        service.updateSliderWidth();
+        expect(service.widthValue).toEqual(10);
+    });
+
+    it(' disableShortcut shouls set allowKeyPressEvent to false', () => {
+        service.allowKeyPressEvents = true;
+        service.disableShortcut();
+        expect(service.allowKeyPressEvents).toEqual(false);
+    });
+
+    it(' enableShortcut shouls set allowKeyPressEvent to true', () => {
+        service.allowKeyPressEvents = false;
+        service.enableShortcut();
+        expect(service.allowKeyPressEvents).toEqual(true);
+    });
+
+    it(' rotateStamp sets the rotationAngle of the stamp service', () => {
+        service.rotateStamp(50);
+        expect(service.stampService.rotationAngle).toEqual(50);
+    });
+
+    it(' changeStamp size sets the stampSize of the stamp service', () => {
+        service.changeStampSize(75);
+        expect(service.stampService.stampSize).toEqual(75);
+    });
+
+    it(' setStampStyle sets the stamp image of the stamp service', () => {
+        service.setStampStyle(5);
+        expect(service.stampService.stampName).toEqual('assets/5.png');
+    });
 });

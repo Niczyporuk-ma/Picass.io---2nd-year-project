@@ -80,12 +80,17 @@ export class AttributesBarComponent {
             {
                 key: '=',
                 preventDefault: true,
-                command: () => this.increaseSquareSizebyByFactor(),
+                command: () => this.gridService.increaseSquareSizebyByFactor(),
+            },
+            {
+                key: 'plus',
+                preventDefault: true,
+                command: () => this.gridService.increaseSquareSizebyByFactor(),
             },
             {
                 key: '-',
                 preventDefault: true,
-                command: () => this.decreaseSquareSizebyByFactor(),
+                command: () => this.gridService.decreaseSquareSizebyByFactor(),
             },
             {
                 key: 'ctrl + e',
@@ -192,30 +197,5 @@ export class AttributesBarComponent {
                 this.colorPicker.selectSecondaryColor(evt);
             }, 5);
         }
-    }
-
-    increaseSquareSizebyByFactor(): void {
-        const increaseFactor = 5;
-        const maxSquareSize = 100;
-        if (this.gridService.squareSize < maxSquareSize) {
-            this.changeSquareSize(this.gridService.squareSize + increaseFactor);
-        }
-    }
-    decreaseSquareSizebyByFactor(): void {
-        const decreaseFactor = 5;
-        const minSquareSize = 5;
-        if (this.gridService.squareSize > minSquareSize) {
-            this.changeSquareSize(this.gridService.squareSize - decreaseFactor);
-        }
-    }
-
-    changeGridOpacity(opacity: number): void {
-        this.gridService.lineOpacity = opacity;
-        this.gridService.drawGrid();
-    }
-
-    changeSquareSize(size: number): void {
-        this.gridService.squareSize = size;
-        this.gridService.drawGrid();
     }
 }

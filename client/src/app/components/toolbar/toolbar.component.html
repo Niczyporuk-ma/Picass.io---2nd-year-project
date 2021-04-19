@@ -40,7 +40,7 @@
 
     <button
         [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.pencilService && !this.toolManager.nonTools }"
-        (click)="this.toolManager.setTool(this.toolManager.pencilService); this.toolManager.nonTools = false"
+        (click)="this.toolManager.setTool(this.toolManager.pencilService); this.toolManager.nonTools = false; this.toolManager.updateSliderWidth()"
         matTooltip="Outil crayon (C): Cliquer et glisser pour dessiner. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
         matTooltipShowDelay="250"
@@ -50,7 +50,7 @@
 
     <button
         [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.eraserService && !this.toolManager.nonTools }"
-        (click)="this.toolManager.setTool(this.toolManager.eraserService); this.toolManager.nonTools = false"
+        (click)="this.toolManager.setTool(this.toolManager.eraserService); this.toolManager.nonTools = false; this.toolManager.updateSliderWidth()"
         matTooltip="Outil efface (E): Cliquer et glisser pour effacer. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
         matTooltipShowDelay="250"
@@ -93,7 +93,7 @@
 
     <button
         [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.lineService && !this.toolManager.nonTools }"
-        (click)="this.toolManager.setTool(this.toolManager.lineService); this.toolManager.nonTools = false"
+        (click)="this.toolManager.setTool(this.toolManager.lineService); this.toolManager.nonTools = false; this.toolManager.updateSliderWidth()"
         matTooltip="Outil ligne (L): Cliquer et glisser pour déssiner une ligne. Cliquer à la fin pour enchaîner
 les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
@@ -104,7 +104,7 @@ les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'
 
     <button
         [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.rectangleService && !this.toolManager.nonTools }"
-        (click)="this.toolManager.setTool(this.toolManager.rectangleService); this.toolManager.nonTools = false"
+        (click)="this.toolManager.setTool(this.toolManager.rectangleService); this.toolManager.nonTools = false; this.toolManager.updateSliderWidth()"
         matTooltip="Outil rectangle (1): Cliquer et glisser, et relâcher pour déssiner un rectangle. tenir (Shift) pour dessiner un carré. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
         matTooltipShowDelay="250"
@@ -114,7 +114,7 @@ les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'
 
     <button
         [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.ellipseService && !this.toolManager.nonTools }"
-        (click)="this.toolManager.setTool(this.toolManager.ellipseService); this.toolManager.nonTools = false"
+        (click)="this.toolManager.setTool(this.toolManager.ellipseService); this.toolManager.nonTools = false; this.toolManager.updateSliderWidth()"
         matTooltip="Outil ellipse (2): Cliquer et glisser, et relâcher pour déssiner un ellipse. tenir (Shift) pour dessiner un cercle. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"
         matTooltipShowDelay="250"
@@ -127,7 +127,8 @@ les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'
         (click)="
             this.toolManager.setTool(this.toolManager.polygonService);
             this.toolManager.polygonService.onButtonPress();
-            this.toolManager.nonTools = false
+            this.toolManager.nonTools = false;
+            this.toolManager.updateSliderWidth()
         "
         matTooltip="Outil polygone (3): Cliquer et glisser, et relâcher pour déssiner un polygone. Cliquez ici pour voir plus d'options"
         matTooltipPosition="after"

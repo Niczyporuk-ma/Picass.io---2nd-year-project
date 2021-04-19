@@ -174,18 +174,9 @@ describe('PolygonService', () => {
 
     it(' SetPreliminaryNumberOfsides should set premNumberOfSides when the input is a number', () => {
         for (let i = 3; i <= 12; i++) {
-            const keyboardEvent: KeyboardEvent = {} as KeyboardEvent;
-            Object.defineProperty(keyboardEvent, 'target', { value: { value: i } });
-            service.setNumberOfSides(keyboardEvent);
+            service.setNumberOfSides(i);
             expect(service.sides).toEqual(i);
         }
-    });
-
-    it(' SetPreliminaryNumberOfsides should set premNumberOfSides to NaN when the input is not a number', () => {
-        const keyboardEvent: KeyboardEvent = {} as KeyboardEvent;
-        Object.defineProperty(keyboardEvent, 'target', { value: { value: 'xyz' } });
-        service.setNumberOfSides(keyboardEvent);
-        expect(service.sides).toEqual(NaN);
     });
 
     it('drawLine should call fill once when fill property of the polygon is true', () => {

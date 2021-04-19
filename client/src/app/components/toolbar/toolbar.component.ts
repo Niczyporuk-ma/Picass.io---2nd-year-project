@@ -62,42 +62,4 @@ export class ToolbarComponent {
             },
         });
     }
-
-    // changeGridOpacity(opacity: number): void {
-    //     this.gridService.lineOpacity = opacity;
-    //     this.gridService.drawGrid();
-    // }
-
-    // changeSquareSize(size: number): void {
-    //     this.gridService.squareSize = size;
-    //     this.gridService.drawGrid();
-    // }
-
-    // onPressPalette(): void {
-    //     this.toolManager.showPalette = !this.toolManager.showPalette;
-    // }
-
-    // showSaveDrawing(): void {
-    //     this.toolManager.showSaveMenu = !this.toolManager.showSaveMenu;
-    // }
-
-    // disableShortcut(): void {
-    //     this.toolManager.allowKeyPressEvents = false;
-    // }
-
-    // enableShortcut(): void {
-    //     this.toolManager.allowKeyPressEvents = true;
-    // }
-
-    // rotateStamp(rotationAngle: number): void {
-    //     this.toolManager.stampService.rotationAngle = rotationAngle;
-    // }
-
-    // changeStampSize(newSize: number): void {
-    //     this.toolManager.stampService.stampSize = newSize;
-    // }
-
-    // setStampStyle(stampNb: number): void {
-    //     this.toolManager.stampService.stampName = 'assets/' + stampNb + '.png';
-    // }
 }

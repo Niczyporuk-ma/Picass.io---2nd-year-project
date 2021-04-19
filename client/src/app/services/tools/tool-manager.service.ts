@@ -153,4 +153,8 @@ export class ToolManagerService {
     setStampStyle(stampNb: number): void {
         this.stampService.stampName = 'assets/' + stampNb + '.png';
     }
+
+    updateSliderWidth(): void {
+        this.widthValue = this.currentTool.toolStyles.lineWidth;
+    }
 }

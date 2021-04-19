@@ -223,9 +223,24 @@
     </div>
 
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.rectangleService">
-        <mat-button-toggle value="1" (change)="setRectangleStyle($event.value)">Remplir</mat-button-toggle>
-        <mat-button-toggle value="2" (change)="setRectangleStyle($event.value)">Contour</mat-button-toggle>
-        <mat-button-toggle value="3" (change)="setRectangleStyle($event.value)">Les Deux</mat-button-toggle>
+        <mat-button-toggle
+            value="1"
+            [ngClass]="{ active: this.toolManager.rectangleService.toolStyles.fill && !this.toolManager.rectangleService.contour }"
+            (change)="setRectangleStyle($event.value)"
+            >Remplir</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="2"
+            [ngClass]="{ active: !this.toolManager.rectangleService.toolStyles.fill && this.toolManager.rectangleService.contour }"
+            (change)="setRectangleStyle($event.value)"
+            >Contour</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="3"
+            [ngClass]="{ active: this.toolManager.rectangleService.toolStyles.fill && this.toolManager.rectangleService.contour }"
+            (change)="setRectangleStyle($event.value)"
+            >Les Deux</mat-button-toggle
+        >
     </mat-button-toggle-group>
 
     <div
@@ -242,18 +257,27 @@
                 value="1"
                 (change)="this.toolManager.setTool(this.toolManager.rectangleSelection)"
                 [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.rectangleSelection }"
+                matTooltip="Sélection rectangulaire (R)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
                 ><fa-icon [icon]="faSquare" size="lg"></fa-icon
             ></mat-button-toggle>
             <mat-button-toggle
                 value="2"
                 (change)="this.toolManager.setTool(this.toolManager.ellipseSelection)"
                 [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.ellipseSelection }"
+                matTooltip="Sélection par ellipse (S)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
                 ><fa-icon [icon]="faCircle" size="lg"></fa-icon
             ></mat-button-toggle>
             <mat-button-toggle
                 value="3"
                 (change)="this.toolManager.setTool(this.toolManager.lassoService)"
                 [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.lassoService }"
+                matTooltip="Sélection par lasso polygonal (V)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -271,6 +295,9 @@
             </mat-button-toggle>
             <mat-button-toggle
                 (change)="this.toolManager.rectangleSelection.selectAll(); this.toolManager.setTool(this.toolManager.rectangleSelection)"
+                matTooltip="Sélectionnez tout (CTRL + A)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
                 >Tout</mat-button-toggle
             >
         </mat-button-toggle-group>
@@ -281,6 +308,9 @@
                 [ngClass]="{ disabled: !this.toolManager.rectangleSelection.currentlySelecting }"
                 [disabled]="!this.toolManager.rectangleSelection.currentlySelecting"
                 (click)="this.toolManager.rectangleSelection.copySelection()"
+                matTooltip="Copier (CTRL + C)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <fa-icon [icon]="faCopy" size="lg"></fa-icon>
             </mat-button-toggle>
@@ -288,6 +318,9 @@
                 [ngClass]="{ disabled: !this.toolManager.rectangleSelection.clipboardService.alreadyCopied }"
                 [disabled]="!this.toolManager.rectangleSelection.clipboardService.alreadyCopied"
                 (click)="this.toolManager.rectangleSelection.pasteSelection()"
+                matTooltip="Coller (CTRL + V)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <fa-icon [icon]="faClipboard" size="lg"></fa-icon>
             </mat-button-toggle>
@@ -295,6 +328,9 @@
                 [ngClass]="{ disabled: !this.toolManager.rectangleSelection.currentlySelecting }"
                 [disabled]="!(this.toolManager.rectangleSelection.currentLine.length > 0)"
                 (click)="this.toolManager.rectangleSelection.deleteSelection()"
+                matTooltip="Couper (CTRL + X)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <fa-icon [icon]="faCut" size="lg"></fa-icon>
             </mat-button-toggle>
@@ -306,6 +342,9 @@
                 [ngClass]="{ disabled: !this.toolManager.ellipseSelection.currentlySelecting }"
                 [disabled]="!this.toolManager.ellipseSelection.currentlySelecting"
                 (click)="this.toolManager.ellipseSelection.copySelection()"
+                matTooltip="Copier (CTRL + C)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <fa-icon [icon]="faCopy" size="lg"></fa-icon>
             </mat-button-toggle>
@@ -313,6 +352,9 @@
                 [ngClass]="{ disabled: !this.toolManager.ellipseSelection.clipboardService.alreadyCopied }"
                 [disabled]="!this.toolManager.ellipseSelection.clipboardService.alreadyCopied"
                 (click)="this.toolManager.ellipseSelection.pasteSelection()"
+                matTooltip="Coller (CTRL + V)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <fa-icon [icon]="faClipboard" size="lg"></fa-icon>
             </mat-button-toggle>
@@ -320,6 +362,9 @@
                 [ngClass]="{ disabled: !this.toolManager.ellipseSelection.currentlySelecting }"
                 [disabled]="!this.toolManager.ellipseSelection.currentlySelecting"
                 (click)="this.toolManager.ellipseSelection.deleteSelection()"
+                matTooltip="Couper (CTRL + X)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <fa-icon [icon]="faCut" size="lg"></fa-icon>
             </mat-button-toggle>
@@ -331,6 +376,9 @@
                 [ngClass]="{ disabled: !this.toolManager.lassoService.currentlySelecting }"
                 [disabled]="!this.toolManager.lassoService.currentlySelecting"
                 (click)="this.toolManager.lassoService.copySelection()"
+                matTooltip="Copier (CTRL + C)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <fa-icon [icon]="faCopy" size="lg"></fa-icon>
             </mat-button-toggle>
@@ -338,6 +386,9 @@
                 [ngClass]="{ disabled: !this.toolManager.lassoService.clipboardService.alreadyCopied }"
                 [disabled]="!this.toolManager.lassoService.clipboardService.alreadyCopied"
                 (click)="this.toolManager.lassoService.pasteSelection()"
+                matTooltip="Coller (CTRL + V)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <fa-icon [icon]="faClipboard" size="lg"></fa-icon>
             </mat-button-toggle>
@@ -345,6 +396,9 @@
                 [ngClass]="{ disabled: !this.toolManager.lassoService.currentlySelecting }"
                 [disabled]="!this.toolManager.lassoService.currentlySelecting"
                 (click)="this.toolManager.lassoService.deleteSelection()"
+                matTooltip="Couper (CTRL + X)"
+                matTooltipPosition="after"
+                matTooltipShowDelay="250"
             >
                 <fa-icon [icon]="faCut" size="lg"></fa-icon>
             </mat-button-toggle>
@@ -473,16 +527,46 @@
         </mat-card>
 
         <mat-button-toggle-group>
-            <mat-button-toggle value="1" (change)="setPolygonStyle($event.value)">Remplir</mat-button-toggle>
-            <mat-button-toggle value="2" (change)="setPolygonStyle($event.value)">Contour</mat-button-toggle>
-            <mat-button-toggle value="3" (change)="setPolygonStyle($event.value)">Les Deux</mat-button-toggle>
+            <mat-button-toggle
+                value="1"
+                [ngClass]="{ active: this.toolManager.polygonService.toolStyles.fill && !this.toolManager.polygonService.contour }"
+                (change)="setPolygonStyle($event.value)"
+                >Remplir</mat-button-toggle
+            >
+            <mat-button-toggle
+                value="2"
+                [ngClass]="{ active: !this.toolManager.polygonService.toolStyles.fill && this.toolManager.polygonService.contour }"
+                (change)="setPolygonStyle($event.value)"
+                >Contour</mat-button-toggle
+            >
+            <mat-button-toggle
+                value="3"
+                [ngClass]="{ active: this.toolManager.polygonService.toolStyles.fill && this.toolManager.polygonService.contour }"
+                (change)="setPolygonStyle($event.value)"
+                >Les Deux</mat-button-toggle
+            >
         </mat-button-toggle-group>
     </div>
 
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.ellipseService">
-        <mat-button-toggle value="1" (change)="setEllipseStyle($event.value)">Remplir</mat-button-toggle>
-        <mat-button-toggle value="2" (change)="setEllipseStyle($event.value)">Contour</mat-button-toggle>
-        <mat-button-toggle value="3" (change)="setEllipseStyle($event.value)">Les Deux</mat-button-toggle>
+        <mat-button-toggle
+            value="1"
+            [ngClass]="{ active: this.toolManager.ellipseService.toolStyles.fill && !this.toolManager.ellipseService.border }"
+            (change)="setEllipseStyle($event.value)"
+            >Remplir</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="2"
+            [ngClass]="{ active: !this.toolManager.ellipseService.toolStyles.fill && this.toolManager.ellipseService.border }"
+            (change)="setEllipseStyle($event.value)"
+            >Contour</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="3"
+            [ngClass]="{ active: this.toolManager.ellipseService.toolStyles.fill && this.toolManager.ellipseService.border }"
+            (change)="setEllipseStyle($event.value)"
+            >Les Deux</mat-button-toggle
+        >
     </mat-button-toggle-group>
 
     <div class="pipette">
@@ -506,8 +590,20 @@
         </mat-card>
     </div>
     <mat-button-toggle-group *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
-        <mat-button-toggle id="jonc" value="0" (change)="setLineJunction($event.value)">Sans jonction</mat-button-toggle>
-        <mat-button-toggle id="jonc" value="1" (change)="setLineJunction($event.value)">Avec jonction</mat-button-toggle>
+        <mat-button-toggle
+            id="jonc"
+            value="0"
+            [ngClass]="{ active: !this.toolManager.lineService.hasJunction }"
+            (change)="setLineJunction($event.value)"
+            >Sans jonction</mat-button-toggle
+        >
+        <mat-button-toggle
+            id="jonc"
+            value="1"
+            [ngClass]="{ active: this.toolManager.lineService.hasJunction }"
+            (change)="setLineJunction($event.value)"
+            >Avec jonction</mat-button-toggle
+        >
     </mat-button-toggle-group>
 
     <div class="grid-attributes" *ngIf="this.gridService.isGridVisible">
