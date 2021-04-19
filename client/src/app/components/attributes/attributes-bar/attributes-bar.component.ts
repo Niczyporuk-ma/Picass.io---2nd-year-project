@@ -79,18 +79,30 @@ export class AttributesBarComponent {
             },
             {
                 key: '=',
-                preventDefault: true,
-                command: () => this.gridService.increaseSquareSizebyByFactor(),
+                preventDefault: false,
+                command: () => {
+                    if (this.gridService.isGridVisible && !this.toolManager.textService.textBoxActive) {
+                        this.gridService.increaseSquareSizebyByFactor();
+                    }
+                },
             },
             {
                 key: 'plus',
-                preventDefault: true,
-                command: () => this.gridService.increaseSquareSizebyByFactor(),
+                preventDefault: false,
+                command: () => {
+                    if (this.gridService.isGridVisible && !this.toolManager.textService.textBoxActive) {
+                        this.gridService.increaseSquareSizebyByFactor();
+                    }
+                },
             },
             {
                 key: '-',
-                preventDefault: true,
-                command: () => this.gridService.decreaseSquareSizebyByFactor(),
+                preventDefault: false,
+                command: () => {
+                    if (this.gridService.isGridVisible && !this.toolManager.textService.textBoxActive) {
+                        this.gridService.decreaseSquareSizebyByFactor();
+                    }
+                },
             },
             {
                 key: 'ctrl + e',
