@@ -10,11 +10,51 @@
     left: 50%;
     /* bring your own prefixes */
     transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.card {
+    background-color: rgba(83, 101, 119);
+    color: white;
 }
 
 mat-list-option:hover {
     background-color: rgb(197, 243, 231);
     transition: 0.3s;
+}
+
+mat-card-actions {
+    margin-left: -100px;
+}
+
+button {
+    border-radius: 0%;
+}
+
+input {
+    outline: none;
+}
+
+.trouver {
+    margin-left: 10px;
+    background-color: rgb(107, 240, 206);
+}
+
+.fermer {
+    background-color: #fc463d;
+    bottom: 10px;
+    position: absolute;
+}
+
+.delete {
+    background-color: #ff7a73;
+    color: rgba(83, 101, 119);
+    margin-top: 10px;
+}
+
+.continue {
+    background-color: rgb(197, 243, 231);
+    color: rgba(83, 101, 119);
 }
 
 img {
@@ -38,6 +78,10 @@ img {
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+::ng-deep.mat-dialog-container {
+    background-color: rgba(83, 101, 119) !important;
 }
 
 .control {
@@ -76,8 +120,8 @@ img {
 /* style the arrows */
 .arrow {
     display: block;
-    border-left: 0.1em solid black;
-    border-bottom: 0.1em solid black;
+    border-left: 0.1em solid white;
+    border-bottom: 0.1em solid white;
     width: 0.5em;
     height: 0.5em;
 
@@ -87,4 +131,16 @@ img {
     &.right {
         transform: rotate(225deg);
     }
+}
+
+.spinner {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+    stroke: rgb(107, 240, 206);
 }
