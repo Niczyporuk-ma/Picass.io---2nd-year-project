@@ -16,6 +16,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -88,6 +89,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         KeyboardShortcutsModule.forRoot(),
         MatButtonModule,
         MatMenuModule,
+        MatSnackBarModule,
         MatSlideToggleModule,
     ],
     providers: [],

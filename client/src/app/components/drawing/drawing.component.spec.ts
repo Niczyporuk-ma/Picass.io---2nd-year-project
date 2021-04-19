@@ -242,4 +242,261 @@ describe('DrawingComponent', () => {
         expect(setToolSpy).toHaveBeenCalled();
         expect(ctrlOSpy).not.toHaveBeenCalled();
     });
+
+    it(' ctrl + o should call clearArrays of toolManager', () => {
+        const ctrlO = component.shortcuts.find((x) => x.key === 'ctrl + o');
+        const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
+        const ctrlASpy = spyOn(ctrlA as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'o' });
+        const clearArraysSpy = spyOn(component.toolManager, 'clearArrays').and.callThrough();
+        ctrlO?.command({ event: keyboardEvent, key: 'o' } as ShortcutEventOutput);
+        expect(clearArraysSpy).toHaveBeenCalled();
+        expect(ctrlASpy).not.toHaveBeenCalled();
+    });
+
+    it(' ctrl + z should call undo of undoRedoManager', () => {
+        const ctrlZ = component.shortcuts.find((x) => x.key === 'ctrl + z');
+        const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
+        const ctrlASpy = spyOn(ctrlA as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'z' });
+        const undoSpy = spyOn(component.undoRedoManager, 'undo').and.callThrough();
+        ctrlZ?.command({ event: keyboardEvent, key: 'z' } as ShortcutEventOutput);
+        expect(undoSpy).toHaveBeenCalled();
+        expect(ctrlASpy).not.toHaveBeenCalled();
+    });
+
+    it('del should call deleteSelection when the current tool is rectangleSelection and is currently selection', () => {
+        component.toolManager.rectangleSelection.currentlySelecting = true;
+        component.toolManager.currentTool = component.toolManager.rectangleSelection;
+        const del = component.shortcuts.find((x) => x.key === 'del');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: false, key: 'del' });
+        const deleSelectionSpy = spyOn(component.toolManager.rectangleSelection, 'deleteSelection').and.returnValue();
+        del?.command({ event: keyboardEvent, key: 'del' } as ShortcutEventOutput);
+        expect(deleSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('del should call deleteSelection when the current tool is ellipseSelection and is currently selection', () => {
+        component.toolManager.ellipseSelection.currentlySelecting = true;
+        component.toolManager.currentTool = component.toolManager.ellipseSelection;
+        const del = component.shortcuts.find((x) => x.key === 'del');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: false, key: 'del' });
+        const deleSelectionSpy = spyOn(component.toolManager.ellipseSelection, 'deleteSelection').and.returnValue();
+        del?.command({ event: keyboardEvent, key: 'del' } as ShortcutEventOutput);
+        expect(deleSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('del should call deleteSelection when the current tool is lassoService and is currently selection', () => {
+        component.toolManager.lassoService.currentlySelecting = true;
+        component.toolManager.currentTool = component.toolManager.lassoService;
+        const del = component.shortcuts.find((x) => x.key === 'del');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: false, key: 'del' });
+        const deleSelectionSpy = spyOn(component.toolManager.lassoService, 'deleteSelection').and.returnValue();
+        del?.command({ event: keyboardEvent, key: 'del' } as ShortcutEventOutput);
+        expect(deleSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl + c should call copySelection when the currentTool is rectangleSelection and is currently selecting', () => {
+        component.toolManager.rectangleSelection.currentlySelecting = true;
+        component.toolManager.currentTool = component.toolManager.rectangleSelection;
+        const ctrlC = component.shortcuts.find((x) => x.key === 'ctrl + c');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'c' });
+        const copySelectionSpy = spyOn(component.toolManager.rectangleSelection, 'copySelection').and.returnValue();
+        ctrlC?.command({ event: keyboardEvent, key: 'c' } as ShortcutEventOutput);
+        expect(copySelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl + c should call copySelection when the currentTool is ellipseSelection and is currently selecting', () => {
+        component.toolManager.ellipseSelection.currentlySelecting = true;
+        component.toolManager.currentTool = component.toolManager.ellipseSelection;
+        const ctrlC = component.shortcuts.find((x) => x.key === 'ctrl + c');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'c' });
+        const copySelectionSpy = spyOn(component.toolManager.ellipseSelection, 'copySelection').and.returnValue();
+        ctrlC?.command({ event: keyboardEvent, key: 'c' } as ShortcutEventOutput);
+        expect(copySelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl + c should call copySelection when the currentTool is lassoService and is currently selecting', () => {
+        component.toolManager.lassoService.currentlySelecting = true;
+        component.toolManager.currentTool = component.toolManager.lassoService;
+        const ctrlC = component.shortcuts.find((x) => x.key === 'ctrl + c');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'c' });
+        const copySelectionSpy = spyOn(component.toolManager.lassoService, 'copySelection').and.returnValue();
+        ctrlC?.command({ event: keyboardEvent, key: 'c' } as ShortcutEventOutput);
+        expect(copySelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl + v shoudl call pasteSelection when the current tool is rectangleSelection and the clipboard is not empty', () => {
+        component.toolManager.rectangleSelection.clipboardService.alreadyCopied = true;
+        component.toolManager.currentTool = component.toolManager.rectangleSelection;
+        const ctrlV = component.shortcuts.find((x) => x.key === 'ctrl + v');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'v' });
+        const pasteSelectionSpy = spyOn(component.toolManager.rectangleSelection, 'pasteSelection').and.returnValue();
+        ctrlV?.command({ event: keyboardEvent, key: 'v' } as ShortcutEventOutput);
+        expect(pasteSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl + v shoudl call pasteSelection when the current tool is ellipseSelection and the clipboard is not empty', () => {
+        component.toolManager.ellipseSelection.clipboardService.alreadyCopied = true;
+        component.toolManager.currentTool = component.toolManager.ellipseSelection;
+        const ctrlV = component.shortcuts.find((x) => x.key === 'ctrl + v');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'v' });
+        const pasteSelectionSpy = spyOn(component.toolManager.ellipseSelection, 'pasteSelection').and.returnValue();
+        ctrlV?.command({ event: keyboardEvent, key: 'v' } as ShortcutEventOutput);
+        expect(pasteSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl + v shoudl call pasteSelection when the current tool is lassoService and the clipboard is not empty', () => {
+        component.toolManager.lassoService.clipboardService.alreadyCopied = true;
+        component.toolManager.currentTool = component.toolManager.lassoService;
+        const ctrlV = component.shortcuts.find((x) => x.key === 'ctrl + v');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'v' });
+        const pasteSelectionSpy = spyOn(component.toolManager.lassoService, 'pasteSelection').and.returnValue();
+        ctrlV?.command({ event: keyboardEvent, key: 'v' } as ShortcutEventOutput);
+        expect(pasteSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl + x shoudl call copySlection and deleteSelection when the currentTool is rectangleSelection and is currently selecting', () => {
+        component.toolManager.rectangleSelection.currentlySelecting = true;
+        component.toolManager.currentTool = component.toolManager.rectangleSelection;
+        const ctrlX = component.shortcuts.find((x) => x.key === 'ctrl + x');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'x' });
+        const copySelectionSpy = spyOn(component.toolManager.rectangleSelection, 'copySelection').and.returnValue();
+        const deleteSelectionSpy = spyOn(component.toolManager.rectangleSelection, 'deleteSelection').and.returnValue();
+        ctrlX?.command({ event: keyboardEvent, key: 'x' } as ShortcutEventOutput);
+        expect(copySelectionSpy).toHaveBeenCalled();
+        expect(deleteSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl + x shoudl call copySlection and deleteSelection when the currentTool is ellipseSelection and is currently selecting', () => {
+        component.toolManager.ellipseSelection.currentlySelecting = true;
+        component.toolManager.currentTool = component.toolManager.ellipseSelection;
+        const ctrlX = component.shortcuts.find((x) => x.key === 'ctrl + x');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'x' });
+        const copySelectionSpy = spyOn(component.toolManager.ellipseSelection, 'copySelection').and.returnValue();
+        const deleteSelectionSpy = spyOn(component.toolManager.ellipseSelection, 'deleteSelection').and.returnValue();
+        ctrlX?.command({ event: keyboardEvent, key: 'x' } as ShortcutEventOutput);
+        expect(copySelectionSpy).toHaveBeenCalled();
+        expect(deleteSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('ctrl + x shoudl call copySlection and deleteSelection when the currentTool is lassoService and is currently selecting', () => {
+        component.toolManager.lassoService.currentlySelecting = true;
+        component.toolManager.currentTool = component.toolManager.lassoService;
+        const ctrlX = component.shortcuts.find((x) => x.key === 'ctrl + x');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'x' });
+        const copySelectionSpy = spyOn(component.toolManager.lassoService, 'copySelection').and.returnValue();
+        const deleteSelectionSpy = spyOn(component.toolManager.lassoService, 'deleteSelection').and.returnValue();
+        ctrlX?.command({ event: keyboardEvent, key: 'x' } as ShortcutEventOutput);
+        expect(copySelectionSpy).toHaveBeenCalled();
+        expect(deleteSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('m should call swithOnOrOff to set to true isActivated when he is initually false when the current tool is rectangleSelection', () => {
+        component.toolManager.currentTool = component.toolManager.rectangleSelection;
+        const mKey = component.shortcuts.find((x) => x.key === 'm');
+        const switchOnOrOffSpy = spyOn(component.toolManager.rectangleSelection.magnetismService, 'switchOnOrOff').and.returnValue();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: false, key: 'm' });
+        mKey?.command({ event: keyboardEvent, key: 'm' } as ShortcutEventOutput);
+        expect(switchOnOrOffSpy).toHaveBeenCalled();
+    });
+
+    it('m should call swithOnOrOff when the current tool is lassoService', () => {
+        component.toolManager.currentTool = component.toolManager.lassoService;
+        const mKey = component.shortcuts.find((x) => x.key === 'm');
+        const switchOnOrOffSpy = spyOn(component.toolManager.lassoService.magnetismService, 'switchOnOrOff').and.returnValue();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: false, key: 'm' });
+        mKey?.command({ event: keyboardEvent, key: 'm' } as ShortcutEventOutput);
+        expect(switchOnOrOffSpy).toHaveBeenCalled();
+    });
+
+    it('m should call swithOnOrOff when the current tool is ellipseSelection', () => {
+        component.toolManager.currentTool = component.toolManager.ellipseSelection;
+        const mKey = component.shortcuts.find((x) => x.key === 'm');
+        const switchOnOrOffSpy = spyOn(component.toolManager.ellipseSelection.magnetismService, 'switchOnOrOff').and.returnValue();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: false, key: 'm' });
+        mKey?.command({ event: keyboardEvent, key: 'm' } as ShortcutEventOutput);
+        expect(switchOnOrOffSpy).toHaveBeenCalled();
+    });
+
+    it(' ctrl + shift + z should call  call redo of undoRedoManager', () => {
+        const ctrlShiftZ = component.shortcuts.find((x) => x.key === 'ctrl + shift + z');
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, shiftKey: true, key: 'z' });
+        const redoSpy = spyOn(component.undoRedoManager, 'redo').and.returnValue();
+        ctrlShiftZ?.command({ event: keyboardEvent, key: 'z' } as ShortcutEventOutput);
+        expect(redoSpy).toHaveBeenCalled();
+    });
+
+    // Test instable du au  dispatchEvent et setTimeout
+
+    // it('addEventListener when it is a keydown should call onKeyPress and clearBackground', () => {
+    //     const mockKeyDOwn = new KeyboardEvent('keydown', { ctrlKey: false, key: 'e' });
+    //     const onKeyPressSpy = spyOn(component.shortcutKeyboardManager, 'onKeyPress').and.returnValue();
+    //     const clearBackgroundSpy = spyOn(component['drawingService'], 'clearBackground');
+    //     component.toolManager.allowKeyPressEvents = true;
+    //     window.dispatchEvent(mockKeyDOwn);
+    //     setTimeout(() => {
+    //         return;
+    //     }, 200);
+    //     component.ngAfterViewInit();
+    //     expect(onKeyPressSpy).toHaveBeenCalled();
+    //     expect(clearBackgroundSpy).toHaveBeenCalled();
+    // });
+
+    it('addEvenListener when it is keyup should call keyupHandler when the current tool is rectangleSelection', () => {
+        const mockKeyUp = new KeyboardEvent('keyup', { key: 'e' });
+        component.toolManager.currentTool = component.toolManager.rectangleSelection;
+        const keyupHandlerSpy = spyOn(component.toolManager.rectangleSelection, 'keyupHandler').and.returnValue();
+        window.dispatchEvent(mockKeyUp);
+        setTimeout(() => {
+            return;
+        }, 200);
+        component.ngAfterViewInit();
+        expect(keyupHandlerSpy).toHaveBeenCalled();
+    });
+
+    it('addEventListener when there is a wheel event should call onMouseWHeel when the current tool is stampService', () => {
+        const mockWheelEvent = new WheelEvent('wheel', {});
+        const onMouseWheelSpy = spyOn(component.toolManager.stampService, 'onMouseWheel').and.returnValue();
+        component.toolManager.currentTool = component.toolManager.stampService;
+        window.dispatchEvent(mockWheelEvent);
+        setTimeout(() => {
+            return;
+        }, 200);
+        component.ngAfterViewInit();
+        expect(onMouseWheelSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call resize and disableUndoRedo when mouseDOwn is true', () => {
+        component.resizeServiceCommand.mouseDown = true;
+        component.toolManager.currentTool = component.toolManager.pencilService;
+        const event = { pageX: 10000000 } as MouseEvent;
+        const resizeSpy = spyOn(component.resizeServiceCommand, 'resize').and.returnValue();
+        const disableUndoRedoSpy = spyOn(component.undoRedoManager, 'disableUndoRedo').and.returnValue();
+        component.onMouseMove(event);
+        expect(resizeSpy).toHaveBeenCalled();
+        expect(disableUndoRedoSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseDown should call disableUndoRedo and startResize when mouseDown is true', () => {
+        component.resizeServiceCommand.mouseDown = true;
+        component.toolManager.currentTool = component.toolManager.pencilService;
+        const event = { pageX: 10000000 } as MouseEvent;
+        const startResizeSpy = spyOn(component.resizeServiceCommand, 'startResize').and.returnValue();
+        const disableUndoRedoSpy = spyOn(component.undoRedoManager, 'disableUndoRedo').and.returnValue();
+        component.onMouseDown(event);
+        expect(startResizeSpy).toHaveBeenCalled();
+        expect(disableUndoRedoSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should call clearRedoStack, enableUndoRedo and resetSideBools', () => {
+        const event = { pageX: 10000000 } as MouseEvent;
+        component.resizeServiceCommand.mouseDown = true;
+        const clearRedoStackSpy = spyOn(component.undoRedoManager, 'clearRedoStack').and.returnValue();
+        const enableUndoRedoSpy = spyOn(component.undoRedoManager, 'enableUndoRedo').and.returnValue();
+        const resetSideBoolsSpy = spyOn(component.resizeServiceCommand, 'resetSideBools').and.returnValue();
+        component.onMouseUp(event);
+        expect(clearRedoStackSpy).toHaveBeenCalled();
+        expect(enableUndoRedoSpy).toHaveBeenCalled();
+        expect(resetSideBoolsSpy).toHaveBeenCalled();
+    });
 });

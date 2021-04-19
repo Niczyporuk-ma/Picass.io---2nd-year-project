@@ -106,13 +106,12 @@ export class DrawingComponent implements AfterViewInit {
                 command: () => this.undoRedoManager.undo(),
             },
             {
-                key: ['ctrl + shift + z'],
+                key: 'ctrl + shift + z',
                 preventDefault: true,
                 command: () => this.undoRedoManager.redo(),
             },
             {
-                // a tester avec un vrai boutton delete
-                key: 'delete',
+                key: 'del',
                 preventDefault: true,
                 command: () => {
                     if (
@@ -138,15 +137,12 @@ export class DrawingComponent implements AfterViewInit {
                         this.toolManager.rectangleSelection.currentlySelecting &&
                         this.toolManager.currentTool === this.toolManager.rectangleSelection
                     ) {
-                        console.log('carre');
                         this.toolManager.rectangleSelection.copySelection();
                     }
                     if (this.toolManager.ellipseSelection.currentlySelecting && this.toolManager.currentTool === this.toolManager.ellipseSelection) {
-                        console.log('ellipse');
                         this.toolManager.ellipseSelection.copySelection();
                     }
                     if (this.toolManager.lassoService.currentlySelecting && this.toolManager.currentTool === this.toolManager.lassoService) {
-                        console.log('lasso');
                         this.toolManager.lassoService.copySelection();
                     }
                 },
@@ -200,12 +196,14 @@ export class DrawingComponent implements AfterViewInit {
                 key: 'm',
                 preventDefault: true,
                 command: () => {
-                    if (
-                        this.toolManager.rectangleSelection === this.currentTool ||
-                        this.toolManager.ellipseSelection === this.currentTool ||
-                        this.toolManager.lassoService === this.currentTool
-                    ) {
+                    if (this.toolManager.rectangleSelection === this.toolManager.currentTool) {
                         this.toolManager.rectangleSelection.magnetismService.switchOnOrOff();
+                    }
+                    if (this.toolManager.ellipseSelection === this.toolManager.currentTool) {
+                        this.toolManager.ellipseSelection.magnetismService.switchOnOrOff();
+                    }
+                    if (this.toolManager.lassoService === this.toolManager.currentTool) {
+                        this.toolManager.lassoService.magnetismService.switchOnOrOff();
                     }
                 },
             },
@@ -240,7 +238,7 @@ export class DrawingComponent implements AfterViewInit {
         });
 
         window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (this.toolManager.allowKeyPressEvents) {
+            if (this.toolManager.allowKeyPressEvents && event.ctrlKey === false) {
                 event.preventDefault();
                 this.shortcutKeyboardManager.onKeyPress(event.key);
             }

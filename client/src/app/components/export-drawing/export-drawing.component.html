@@ -21,6 +21,14 @@
                     <mat-option value="jpeg">JPG</mat-option>
                 </mat-select>
             </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Destination de l'exportation</mat-label>
+                <mat-select [formControl]="fileDestinationControl">
+                    <mat-option value="local">Localement</mat-option>
+                    <mat-option value="imgur">IMGUR</mat-option>
+                </mat-select>
+            </mat-form-field>
         </div>
 
         <div>

@@ -79,7 +79,7 @@ export class LassoHelperService {
         ctx.putImageData(tmpImgData, 0, 0);
     }
 
-    updateRectangle(lassoPath: Vec2[][], currentLine: Vec2[], width: number, height: number): void {
+    updateRectangle(lassoPath: Vec2[][], currentLine: Vec2[]): number[] {
         currentLine[1].x = lassoPath[0][0].x;
         currentLine[1].y = lassoPath[0][0].y;
         currentLine[0].x = lassoPath[0][0].x;
@@ -91,8 +91,9 @@ export class LassoHelperService {
             currentLine[0].y = Math.min(line[1].y, currentLine[0].y);
             currentLine[1].y = Math.max(line[1].y, currentLine[1].y);
         }
-        height = currentLine[1].y - currentLine[0].y;
-        width = currentLine[1].x - currentLine[0].x;
+        const height = currentLine[1].y - currentLine[0].y;
+        const width = currentLine[1].x - currentLine[0].x;
+        return [width, height];
     }
 
     translatePathForPaste(oldCurrentLine: Vec2, lassoPath: Vec2[][]): void {
