@@ -81,4 +81,39 @@ describe('ExportDrawingComponent', () => {
         component.enableShortcut();
         expect(component['toolManager'].allowKeyPressEvents).toEqual(true);
     });
+
+    it('imgurExport should call toDataUrl from the canvas', async (done) => {
+        component.filterPreviewCanvas = dummyCanvas;
+        const toDataURLSpy = spyOn(component.filterPreviewCanvas.nativeElement, 'toDataURL').and.callThrough();
+        const openSnackBarSpy = spyOn(component, 'openSnackBar').and.stub();
+        component.imgurExport();
+        setTimeout(() => {
+            expect(toDataURLSpy).toHaveBeenCalled();
+            expect(openSnackBarSpy).toHaveBeenCalled();
+            done();
+        }, 500);
+    });
+
+    it('imgurExport should call openSnackBar', async (done) => {
+        const openSnackBarSpy = spyOn(component, 'openSnackBar').and.stub();
+        component.imgurExport();
+        setTimeout(() => {
+            expect(openSnackBarSpy).toHaveBeenCalled();
+            done();
+        }, 500);
+    });
+
+    it('exportDrawing should call localExport if destination is local', () => {
+        const localExportSpy = spyOn(component, 'localExport').and.stub();
+        Object.defineProperty(component.fileDestinationControl, 'value', { value: 'local' });
+        component.exportDrawing();
+        expect(localExportSpy).toHaveBeenCalled();
+    });
+
+    it('exportDrawing should call imgurExport if destination isnt local', () => {
+        const imgurExportSpy = spyOn(component, 'imgurExport').and.stub();
+        Object.defineProperty(component.fileDestinationControl, 'value', { value: '!local' });
+        component.exportDrawing();
+        expect(imgurExportSpy).toHaveBeenCalled();
+    });
 });
