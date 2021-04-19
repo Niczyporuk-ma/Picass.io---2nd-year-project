@@ -12,8 +12,7 @@ import { LineHelperService } from './line-helper.service';
 
 const SEGMENT_TWO = 5;
 const SEGMENT_ONE = 3;
-const INDEX = 10;
-
+const INDEX = 11;
 @Injectable({
     providedIn: 'root',
 })
@@ -45,6 +44,8 @@ export class LassoService extends Selection {
             { x: 0, y: 0 },
             { x: 0, y: 0 },
         ];
+        this.startingPoint = { x: 0, y: 0 };
+        this.endPoint = { x: 0, y: 0 };
     }
 
     onMouseClick(mouseClickEvent: MouseEvent): void {

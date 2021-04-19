@@ -1,9 +1,9 @@
 import { ElementRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { SelectionCommandService } from './selection-command.service';
+import { PaintBucketCommandService } from './paint-bucket-command.service';
 
-describe('RectangleSelectionCommandService', () => {
-    let service: SelectionCommandService;
+describe('PaintBucketCommandService', () => {
+    let service: PaintBucketCommandService;
     let dummyCanvas: ElementRef<HTMLCanvasElement>;
     const dummyNativeElement = document.createElement('canvas');
 
@@ -13,7 +13,7 @@ describe('RectangleSelectionCommandService', () => {
         // tslint:disable:no-magic-numbers
         // tslint:disable:max-file-line-count
         TestBed.configureTestingModule({});
-        service = TestBed.inject(SelectionCommandService);
+        service = TestBed.inject(PaintBucketCommandService);
         dummyCanvas = new ElementRef<HTMLCanvasElement>(dummyNativeElement);
     });
 

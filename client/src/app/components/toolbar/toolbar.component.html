@@ -396,7 +396,7 @@
                 max="12"
                 step="1"
                 class="slider"
-                (change)="this.toolManager.polygonService.setNumberOfSides($event)"
+                (change)="this.toolManager.polygonService.setNumberOfSides($event.value)"
                 (input)="this.toolManager.polygonService.sides = $event.value"
                 [value]="this.toolManager.polygonService.sides"
             ></mat-slider>
@@ -479,24 +479,52 @@
         <!-- Code for the preview of pipette -->
     </app-pipette>
 
-    <br />
-    <div class="junctionRadiusSlider" *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
-        <mat-card
-            >Diamètre:
+        <button
+        class=""
+        (click)="this.toolManager.setTool(this.toolManager.paintBucketService)"
+        matTooltip="Outil sceau de peinture (B): CLIQUE-GAUCHE pour coloriage de pixels contigus et CLIQUE-DROIT pour coloriage de pixels non contigus"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faFillDrip" size="lg"></fa-icon>
+    </button>
+
+    <div class="Slider" *ngIf="this.toolManager.currentTool == this.toolManager.paintBucketService">
+        <mat-card>
+            Tolérance:
             <mat-slider
-                min="2"
-                max="50"
+                min="0"
+                max="100"
                 step="1"
-                value="this.toolManager.lineService.currentDiameter"
+                value="1"
                 class="slider"
-                (change)="changeDiameter($event.value)"
-                (input)="this.toolManager.lineService.currentDiameter = $event.value"
-                [value]="this.toolManager.lineService.currentDiameter"
+                (change)="this.toolManager.paintBucketService.changeTolerancePercentage($event.value)"
+                (input)="this.toolManager.paintBucketService.tolerancePercentage = $event.value"
+                [value]="this.toolManager.paintBucketService.tolerancePercentage"
             ></mat-slider>
-            {{ this.toolManager.lineService.currentDiameter }}
-            <br />
+            <mat-card-subtitle>{{ this.toolManager.paintBucketService.tolerancePercentage }} % </mat-card-subtitle>
         </mat-card>
     </div>
+
+
+        <br />
+        <div class="junctionRadiusSlider" *ngIf="this.toolManager.currentTool == this.toolManager.lineService">
+            <mat-card
+                >Diamètre:
+                <mat-slider
+                    min="2"
+                    max="50"
+                    step="1"
+                    value="this.toolManager.lineService.currentDiameter"
+                    class="slider"
+                    (change)="changeDiameter($event.value)"
+                    (input)="this.toolManager.lineService.currentDiameter = $event.value"
+                    [value]="this.toolManager.lineService.currentDiameter"
+                ></mat-slider>
+                {{ this.toolManager.lineService.currentDiameter }}
+                <br />
+            </mat-card>
+        </div>
 
     <div class="Slider" *ngIf="this.toolManager.currentTool == this.toolManager.airbrushService">
         <mat-card>

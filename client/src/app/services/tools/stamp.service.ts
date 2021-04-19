@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { StampCommandService } from './tool-commands/stamp-command.service';
 import { UndoRedoManagerService } from './undo-redo-manager.service';
 
-const TOOL_INDEX = 11;
+const TOOL_INDEX = 12;
 const ZERO_DEGREES = 0;
 const THREE_HUNDRED_SIXTY_DEGREES = 360;
 const ROTATION_BY_15_DEGREES = 15;
