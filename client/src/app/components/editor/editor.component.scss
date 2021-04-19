@@ -5,8 +5,7 @@
 }
 
 .drawing-container {
-    overflow-y: auto; /* Hide vertical scrollbar */
-    overflow-x: auto; /* Hide horizontal scrollbar */
+    overflow: auto;
     flex: 1 1 auto;
     position: relative;
 }

@@ -133,4 +133,24 @@ export class ToolManagerService {
     enableShortcut(): void {
         this.allowKeyPressEvents = true;
     }
+
+    onPressPalette(): void {
+        this.showPalette = !this.showPalette;
+    }
+
+    showSaveDrawing(): void {
+        this.showSaveMenu = !this.showSaveMenu;
+    }
+
+    rotateStamp(rotationAngle: number): void {
+        this.stampService.rotationAngle = rotationAngle;
+    }
+
+    changeStampSize(newSize: number): void {
+        this.stampService.stampSize = newSize;
+    }
+
+    setStampStyle(stampNb: number): void {
+        this.stampService.stampName = 'assets/' + stampNb + '.png';
+    }
 }

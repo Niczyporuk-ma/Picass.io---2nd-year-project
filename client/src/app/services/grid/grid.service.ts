@@ -49,4 +49,29 @@ export class GridService {
             this.eraseGrid();
         }
     }
+
+    changeGridOpacity(opacity: number): void {
+        this.lineOpacity = opacity;
+        this.drawGrid();
+    }
+
+    changeSquareSize(size: number): void {
+        this.squareSize = size;
+        this.drawGrid();
+    }
+
+    increaseSquareSizebyByFactor(): void {
+        const increaseFactor = 5;
+        const maxSquareSize = 100;
+        if (this.squareSize < maxSquareSize) {
+            this.changeSquareSize(this.squareSize + increaseFactor);
+        }
+    }
+    decreaseSquareSizebyByFactor(): void {
+        const decreaseFactor = 5;
+        const minSquareSize = 5;
+        if (this.squareSize > minSquareSize) {
+            this.changeSquareSize(this.squareSize - decreaseFactor);
+        }
+    }
 }

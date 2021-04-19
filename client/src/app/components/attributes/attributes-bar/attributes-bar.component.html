@@ -519,7 +519,7 @@
                 step="0.10"
                 value="1"
                 class="slider"
-                (change)="changeGridOpacity($event.value)"
+                (change)="this.gridService.changeGridOpacity($event.value)"
                 (input)="this.gridService.lineOpacity = $event.value"
                 [value]="this.gridService.lineOpacity"
             ></mat-slider>
@@ -533,7 +533,7 @@
                 step="5"
                 value="1"
                 class="slider"
-                (change)="changeSquareSize($event.value)"
+                (change)="this.gridService.changeSquareSize($event.value)"
                 (input)="this.gridService.squareSize = $event.value"
                 [value]="this.gridService.squareSize"
             ></mat-slider>
@@ -550,7 +550,7 @@
                 step="15"
                 value="1"
                 class="slider"
-                (change)="rotateStamp($event.value)"
+                (change)="this.toolManager.rotateStamp($event.value)"
                 (input)="this.toolManager.stampService.rotationAngle = $event.value"
                 [value]="this.toolManager.stampService.rotationAngle"
             ></mat-slider>
@@ -564,7 +564,7 @@
                 step="50"
                 value="1"
                 class="slider"
-                (change)="changeStampSize($event.value)"
+                (change)="this.toolManager.changeStampSize($event.value)"
                 (input)="this.toolManager.stampService.stampSize = $event.value"
                 [value]="this.toolManager.stampService.stampSize"
             ></mat-slider>
@@ -572,20 +572,20 @@
         </mat-card>
     </div>
     <mat-button-toggle-group id="stamps" *ngIf="this.toolManager.currentTool == this.toolManager.stampService">
-        <mat-button-toggle value="0" (change)="setStampStyle($event.value)">Poulpe 🐙</mat-button-toggle>
-        <mat-button-toggle value="1" (change)="setStampStyle($event.value)">Chapmagne 🥂</mat-button-toggle>
-        <mat-button-toggle value="2" (change)="setStampStyle($event.value)">Cerises 🍒</mat-button-toggle>
-        <mat-button-toggle value="3" (change)="setStampStyle($event.value)">Plaisir 😏</mat-button-toggle>
-        <mat-button-toggle value="4" (change)="setStampStyle($event.value)">Bombe 💣</mat-button-toggle>
-        <mat-button-toggle value="5" (change)="setStampStyle($event.value)">Aubergine 🍆</mat-button-toggle>
-        <mat-button-toggle value="6" (change)="setStampStyle($event.value)">Gorille 🦍</mat-button-toggle>
-        <mat-button-toggle value="7" (change)="setStampStyle($event.value)">Crayon 🖍</mat-button-toggle>
-        <mat-button-toggle value="8" (change)="setStampStyle($event.value)">Pêche 🍑</mat-button-toggle>
-        <mat-button-toggle value="9" (change)="setStampStyle($event.value)">Cheval 🐎</mat-button-toggle>
-        <mat-button-toggle value="10" (change)="setStampStyle($event.value)">Yeux 👀</mat-button-toggle>
-        <mat-button-toggle value="11" (change)="setStampStyle($event.value)">Étoile⭐</mat-button-toggle>
-        <mat-button-toggle value="12" (change)="setStampStyle($event.value)">100 points 💯</mat-button-toggle>
-        <mat-button-toggle value="13" (change)="setStampStyle($event.value)">Argent💸</mat-button-toggle>
+        <mat-button-toggle value="0" (change)="this.toolManager.setStampStyle($event.value)">Poulpe 🐙</mat-button-toggle>
+        <mat-button-toggle value="1" (change)="this.toolManager.setStampStyle($event.value)">Chapmagne 🥂</mat-button-toggle>
+        <mat-button-toggle value="2" (change)="this.toolManager.setStampStyle($event.value)">Cerises 🍒</mat-button-toggle>
+        <mat-button-toggle value="3" (change)="this.toolManager.setStampStyle($event.value)">Plaisir 😏</mat-button-toggle>
+        <mat-button-toggle value="4" (change)="this.toolManager.setStampStyle($event.value)">Bombe 💣</mat-button-toggle>
+        <mat-button-toggle value="5" (change)="this.toolManager.setStampStyle($event.value)">Aubergine 🍆</mat-button-toggle>
+        <mat-button-toggle value="6" (change)="this.toolManager.setStampStyle($event.value)">Gorille 🦍</mat-button-toggle>
+        <mat-button-toggle value="7" (change)="this.toolManager.setStampStyle($event.value)">Crayon 🖍</mat-button-toggle>
+        <mat-button-toggle value="8" (change)="this.toolManager.setStampStyle($event.value)">Pêche 🍑</mat-button-toggle>
+        <mat-button-toggle value="9" (change)="this.toolManager.setStampStyle($event.value)">Cheval 🐎</mat-button-toggle>
+        <mat-button-toggle value="10" (change)="this.toolManager.setStampStyle($event.value)">Yeux 👀</mat-button-toggle>
+        <mat-button-toggle value="11" (change)="this.toolManager.setStampStyle($event.value)">Étoile⭐</mat-button-toggle>
+        <mat-button-toggle value="12" (change)="this.toolManager.setStampStyle($event.value)">100 points 💯</mat-button-toggle>
+        <mat-button-toggle value="13" (change)="this.toolManager.setStampStyle($event.value)">Argent💸</mat-button-toggle>
     </mat-button-toggle-group>
 </div>
 

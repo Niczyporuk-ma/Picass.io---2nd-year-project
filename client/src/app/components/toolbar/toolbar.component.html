@@ -200,7 +200,7 @@ les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'
             this.toolManager.currentTool == this.toolManager.lassoService ||
             this.toolManager.currentTool == this.toolManager.stampService
         "
-        (click)="onPressPalette(); this.toolManager.nonTools = false"
+        (click)="this.toolManager.onPressPalette(); this.toolManager.nonTools = false"
         matTooltip="Palette de couleur: Sélectionnez une couleur. CLIQUE-GAUCHE pour couleur principale et CLIQUE-DROIT pour couleur secondaire 
 (ceci s'applique pour les 10 couleurs utilisés précédemment). 
 Cliquez ici pour plus d'options."

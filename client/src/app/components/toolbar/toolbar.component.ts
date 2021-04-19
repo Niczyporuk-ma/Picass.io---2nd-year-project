@@ -63,41 +63,41 @@ export class ToolbarComponent {
         });
     }
 
-    onPressPalette(): void {
-        this.toolManager.showPalette = !this.toolManager.showPalette;
-    }
+    // changeGridOpacity(opacity: number): void {
+    //     this.gridService.lineOpacity = opacity;
+    //     this.gridService.drawGrid();
+    // }
 
-    showSaveDrawing(): void {
-        this.toolManager.showSaveMenu = !this.toolManager.showSaveMenu;
-    }
+    // changeSquareSize(size: number): void {
+    //     this.gridService.squareSize = size;
+    //     this.gridService.drawGrid();
+    // }
 
-    disableShortcut(): void {
-        this.toolManager.allowKeyPressEvents = false;
-    }
+    // onPressPalette(): void {
+    //     this.toolManager.showPalette = !this.toolManager.showPalette;
+    // }
 
-    enableShortcut(): void {
-        this.toolManager.allowKeyPressEvents = true;
-    }
+    // showSaveDrawing(): void {
+    //     this.toolManager.showSaveMenu = !this.toolManager.showSaveMenu;
+    // }
 
-    changeGridOpacity(opacity: number): void {
-        this.gridService.lineOpacity = opacity;
-        this.gridService.drawGrid();
-    }
+    // disableShortcut(): void {
+    //     this.toolManager.allowKeyPressEvents = false;
+    // }
 
-    changeSquareSize(size: number): void {
-        this.gridService.squareSize = size;
-        this.gridService.drawGrid();
-    }
+    // enableShortcut(): void {
+    //     this.toolManager.allowKeyPressEvents = true;
+    // }
 
-    rotateStamp(rotationAngle: number): void {
-        this.toolManager.stampService.rotationAngle = rotationAngle;
-    }
+    // rotateStamp(rotationAngle: number): void {
+    //     this.toolManager.stampService.rotationAngle = rotationAngle;
+    // }
 
-    changeStampSize(newSize: number): void {
-        this.toolManager.stampService.stampSize = newSize;
-    }
+    // changeStampSize(newSize: number): void {
+    //     this.toolManager.stampService.stampSize = newSize;
+    // }
 
-    setStampStyle(stampNb: number): void {
-        this.toolManager.stampService.stampName = 'assets/' + stampNb + '.png';
-    }
+    // setStampStyle(stampNb: number): void {
+    //     this.toolManager.stampService.stampName = 'assets/' + stampNb + '.png';
+    // }
 }

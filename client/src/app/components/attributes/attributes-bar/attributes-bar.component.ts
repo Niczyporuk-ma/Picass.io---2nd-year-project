@@ -178,10 +178,6 @@ export class AttributesBarComponent {
         this.modal.open(FormComponent);
     }
 
-    onPressPalette(): void {
-        this.toolManager.showPalette = !this.toolManager.showPalette;
-    }
-
     selectPrimaryColor(evt: MouseEvent): void {
         if (this.toolManager.showPalette) {
             setTimeout(() => {
@@ -221,17 +217,5 @@ export class AttributesBarComponent {
     changeSquareSize(size: number): void {
         this.gridService.squareSize = size;
         this.gridService.drawGrid();
-    }
-
-    rotateStamp(rotationAngle: number): void {
-        this.toolManager.stampService.rotationAngle = rotationAngle;
-    }
-
-    changeStampSize(newSize: number): void {
-        this.toolManager.stampService.stampSize = newSize;
-    }
-
-    setStampStyle(stampNb: number): void {
-        this.toolManager.stampService.stampName = 'assets/' + stampNb + '.png';
     }
 }
