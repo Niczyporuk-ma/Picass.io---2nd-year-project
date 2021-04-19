@@ -739,6 +739,36 @@ describe('EllipseSelectionService', () => {
         expect(service.offsetXModifier).toEqual(0);
     });
 
+    it('move fonctions should call magnetism handlers if magnetismService is activated', () => {
+        service.lastPos = { x: 0, y: 0 };
+        service.currentLine = [
+            { x: 0, y: 0 },
+            { x: 1, y: 1 },
+        ];
+        service.magnetismService.mouseReference = { x: 0, y: 0 };
+        service.offsetYModifier = 0;
+        service.offsetXModifier = 0;
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.magnetismService.isActivated = true;
+        const moveRightHandlerSPy = spyOn(service.magnetismService, 'moveRightHandler').and.returnValue({ x: 0, y: 0 });
+        const moveLeftHandlerSPy = spyOn(service.magnetismService, 'moveLeftHandler').and.returnValue({ x: 0, y: 0 });
+        const moveUpHandlerSPy = spyOn(service.magnetismService, 'moveUpHandler').and.returnValue({ x: 0, y: 0 });
+        const moveDownHandlerSPy = spyOn(service.magnetismService, 'moveDownHandler').and.returnValue({ x: 0, y: 0 });
+
+        service.moveUp();
+        expect(moveUpHandlerSPy).toHaveBeenCalled();
+
+        service.moveDown();
+        expect(moveDownHandlerSPy).toHaveBeenCalled();
+
+        service.moveLeft();
+        expect(moveLeftHandlerSPy).toHaveBeenCalled();
+
+        service.moveRight();
+        expect(moveRightHandlerSPy).toHaveBeenCalled();
+    });
+
     it('resizeSelection should call clearCanvas twice', () => {
         service.backgroundImageData = new ImageData(100, 100);
         service.imageData = new ImageData(100, 100);
@@ -934,5 +964,24 @@ describe('EllipseSelectionService', () => {
         expect(service.imageData.height).toEqual(service.clipboardService.copy.height);
         expect(service.imageData.width).toEqual(service.clipboardService.copy.width);
         expect(service.imageData.data).toEqual(service.clipboardService.copy.data);
+    });
+
+    it('copySelection should do nothing when currentLine < 0', () => {
+        service.currentLine = [];
+        service.clipboardService.alreadyCopied = false;
+        service.copySelection();
+        expect(service.clipboardService.alreadyCopied).toBeFalse();
+    });
+
+    it('copySelection should  set the right image data and alreadyCopied as true when currentLine > 0', () => {
+        service.currentLine = [
+            { x: 0, y: 0 },
+            { x: 0, y: 0 },
+        ];
+        service.clipboardService.alreadyCopied = false;
+        service.imageData = new ImageData(1, 2);
+        service.copySelection();
+        expect(service.clipboardService.alreadyCopied).toBeTrue();
+        expect(service.clipboardService.copy).toEqual(service.imageData);
     });
 });
