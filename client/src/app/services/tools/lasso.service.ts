@@ -41,7 +41,10 @@ export class LassoService extends Selection {
         this.index = INDEX;
         this.shortcut = 'v';
         this.toolStyles = { primaryColor: 'black', lineWidth: 1 };
+        this.startingPoint = { x: 0, y: 0 };
+        this.endPoint = { x: 0, y: 0 };
         this.currentLine = [
+            { x: 0, y: 0 },
             { x: 0, y: 0 },
             { x: 0, y: 0 },
         ];
@@ -100,6 +103,7 @@ export class LassoService extends Selection {
                 this.isPolygonClosed = false;
                 this.resetState();
                 this.currentLine = [
+                    { x: 0, y: 0 },
                     { x: 0, y: 0 },
                     { x: 0, y: 0 },
                 ];
@@ -320,13 +324,13 @@ export class LassoService extends Selection {
 
     pasteSelection(): void {
         if (this.clipboardService.alreadyCopied) {
+            this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
             this.backgroundImageData = this.drawingService.baseCtx.getImageData(
                 0,
                 0,
                 this.drawingService.baseCtx.canvas.width,
                 this.drawingService.baseCtx.canvas.height,
             );
-            this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
             const temp: Vec2 = this.currentLine[0];
             this.currentLine = [
                 { x: 0, y: 0 },

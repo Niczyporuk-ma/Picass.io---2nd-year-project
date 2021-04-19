@@ -80,6 +80,9 @@ export class LassoHelperService {
     }
 
     updateRectangle(lassoPath: Vec2[][], currentLine: Vec2[]): number[] {
+        if (currentLine.length > 2) {
+            currentLine.pop();
+        }
         currentLine[1].x = lassoPath[0][0].x;
         currentLine[1].y = lassoPath[0][0].y;
         currentLine[0].x = lassoPath[0][0].x;

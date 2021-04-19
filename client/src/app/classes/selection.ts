@@ -270,7 +270,7 @@ export abstract class Selection extends Tool {
         return answer;
     }
     copySelection(): void {
-        if (this.currentLine.length > 0) {
+        if (this.currentLine.length === 2) {
             this.clipboardService.copy = this.imageData;
             this.clipboardService.alreadyCopied = true;
         }

@@ -572,20 +572,90 @@
         </mat-card>
     </div>
     <mat-button-toggle-group id="stamps" *ngIf="this.toolManager.currentTool == this.toolManager.stampService">
-        <mat-button-toggle value="0" (change)="this.toolManager.setStampStyle($event.value)">Poulpe 🐙</mat-button-toggle>
-        <mat-button-toggle value="1" (change)="this.toolManager.setStampStyle($event.value)">Chapmagne 🥂</mat-button-toggle>
-        <mat-button-toggle value="2" (change)="this.toolManager.setStampStyle($event.value)">Cerises 🍒</mat-button-toggle>
-        <mat-button-toggle value="3" (change)="this.toolManager.setStampStyle($event.value)">Plaisir 😏</mat-button-toggle>
-        <mat-button-toggle value="4" (change)="this.toolManager.setStampStyle($event.value)">Bombe 💣</mat-button-toggle>
-        <mat-button-toggle value="5" (change)="this.toolManager.setStampStyle($event.value)">Aubergine 🍆</mat-button-toggle>
-        <mat-button-toggle value="6" (change)="this.toolManager.setStampStyle($event.value)">Gorille 🦍</mat-button-toggle>
-        <mat-button-toggle value="7" (change)="this.toolManager.setStampStyle($event.value)">Crayon 🖍</mat-button-toggle>
-        <mat-button-toggle value="8" (change)="this.toolManager.setStampStyle($event.value)">Pêche 🍑</mat-button-toggle>
-        <mat-button-toggle value="9" (change)="this.toolManager.setStampStyle($event.value)">Cheval 🐎</mat-button-toggle>
-        <mat-button-toggle value="10" (change)="this.toolManager.setStampStyle($event.value)">Yeux 👀</mat-button-toggle>
-        <mat-button-toggle value="11" (change)="this.toolManager.setStampStyle($event.value)">Étoile⭐</mat-button-toggle>
-        <mat-button-toggle value="12" (change)="this.toolManager.setStampStyle($event.value)">100 points 💯</mat-button-toggle>
-        <mat-button-toggle value="13" (change)="this.toolManager.setStampStyle($event.value)">Argent💸</mat-button-toggle>
+        <mat-button-toggle
+            value="0"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/0.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Poulpe 🐙</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="1"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/1.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Chapmagne 🥂</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="2"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/2.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Cerises 🍒</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="3"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/3.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Plaisir 😏</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="4"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/4.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Bombe 💣</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="5"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/5.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Aubergine 🍆</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="6"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/6.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Gorille 🦍</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="7"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/7.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Crayon 🖍</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="8"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/8.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Pêche 🍑</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="9"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/9.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Cheval 🐎</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="10"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/10.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Yeux 👀</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="11"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/11.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Étoile⭐</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="12"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/12.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >100 points 💯</mat-button-toggle
+        >
+        <mat-button-toggle
+            value="13"
+            [ngClass]="{ active: this.toolManager.stampService.stampName == 'assets/13.png' }"
+            (change)="this.toolManager.setStampStyle($event.value)"
+            >Argent💸</mat-button-toggle
+        >
     </mat-button-toggle-group>
 </div>
 
