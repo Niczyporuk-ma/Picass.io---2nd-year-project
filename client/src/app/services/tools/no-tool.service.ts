@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-const TOOL_INDEX = 12;
+const TOOL_INDEX = 13;
 @Injectable({
     providedIn: 'root',
 })

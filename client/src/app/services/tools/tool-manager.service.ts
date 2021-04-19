@@ -14,6 +14,7 @@ import { EllipseService } from './ellipse.service';
 import { EraserService } from './eraser.service';
 import { LassoService } from './lasso.service';
 import { NoToolService } from './no-tool.service';
+import { PaintBucketService } from './paint-bucket.service';
 import { PipetteService } from './pipette.service';
 import { PolygonService } from './polygon.service';
 import { RectangleService } from './rectangle.service';
@@ -37,6 +38,7 @@ export class ToolManagerService {
         this.rectangleSelection,
         this.ellipseSelection,
         this.pipetteService,
+        this.paintBucketService,
         this.lassoService,
         this.stampService,
         this.noToolService,
@@ -67,6 +69,7 @@ export class ToolManagerService {
         public pipetteService: PipetteService,
         public rectangleSelection: RectangleSelectionService,
         public ellipseSelection: EllipseSelectionService,
+        public paintBucketService: PaintBucketService,
         public autoSaveService: AutoSaveService,
         public stampService: StampService,
         public noToolService: NoToolService,
@@ -85,6 +88,7 @@ export class ToolManagerService {
             [this.rectangleSelection.shortcut, this.tools[this.rectangleSelection.index]],
             [this.ellipseSelection.shortcut, this.tools[this.ellipseSelection.index]],
             [this.pipetteService.shortcut, this.tools[this.pipetteService.index]],
+            [this.paintBucketService.shortcut, this.tools[this.paintBucketService.index]],
             [this.lassoService.shortcut, this.tools[this.lassoService.index]],
             [this.stampService.shortcut, this.tools[this.stampService.index]],
             [this.noToolService.shortcut, this.tools[this.noToolService.index]],

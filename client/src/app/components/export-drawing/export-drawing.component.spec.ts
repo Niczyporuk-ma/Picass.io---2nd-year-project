@@ -91,7 +91,7 @@ describe('ExportDrawingComponent', () => {
             expect(toDataURLSpy).toHaveBeenCalled();
             expect(openSnackBarSpy).toHaveBeenCalled();
             done();
-        }, 500);
+        }, 1000);
     });
 
     it('imgurExport should call openSnackBar', async (done) => {

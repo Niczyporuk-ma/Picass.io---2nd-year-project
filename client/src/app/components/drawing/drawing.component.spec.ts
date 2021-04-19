@@ -8,7 +8,7 @@ import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
 
 class ToolStub extends Tool {}
 
-const TIMEOUT_WAIT = 10000;
+const TIMEOUT_WAIT = 15000;
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
