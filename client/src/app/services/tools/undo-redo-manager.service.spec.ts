@@ -230,16 +230,18 @@ describe('UndoRedoManagerService', () => {
 
     it('redo should call resizeCommand.setPreview if drawingStarted (and the local storage is not empty)', () => {
         const resizeCom = new ResizeCommandService(service['drawingService']);
-        spyOn(resizeCom, 'setPreview').and.returnValue();
+        const setPreviewSpy = spyOn(resizeCom, 'setPreview').and.returnValue();
         service['drawingService'].drawingStarted = true;
         localStorage.setItem('oldDrawing', 'https://homepages.cae.wisc.edu/~ece533/images/boat.png');
         service.redo();
+        expect(setPreviewSpy).not.toHaveBeenCalled();
     });
 
     it('undo should not call drawImage if a drawing is not staring', () => {
         const resizeCom = new ResizeCommandService(service['drawingService']);
-        spyOn(resizeCom, 'setPreview').and.stub();
+        const setPreviewSpy = spyOn(resizeCom, 'setPreview').and.stub();
         service['drawingService'].drawingStarted = false;
         service.undo();
+        expect(setPreviewSpy).not.toHaveBeenCalled();
     });
 });

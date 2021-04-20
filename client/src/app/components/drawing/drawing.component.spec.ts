@@ -395,4 +395,49 @@ describe('DrawingComponent', () => {
         expect(enableUndoRedoSpy).toHaveBeenCalled();
         expect(resetSideBoolsSpy).toHaveBeenCalled();
     });
+
+    it(' ctrl + o should call clearArrays of toolManager', () => {
+        const ctrlO = component.shortcuts.find((x) => x.key === 'ctrl + o');
+        const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
+        const ctrlASpy = spyOn(ctrlA as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'o' });
+        spyOn(window, 'confirm').and.returnValue(true);
+        const clearArraysSpy = spyOn(component.toolManager, 'clearArrays').and.callThrough();
+        const reloadSpy = spyOn(component, 'reload').and.callFake(() => {});
+        component.toolManager.newDrawing = true;
+        ctrlO?.command({ event: keyboardEvent, key: 'o' } as ShortcutEventOutput);
+        expect(clearArraysSpy).toHaveBeenCalled();
+        expect(component.canvasSize).toEqual({ x: 1000, y: 800 });
+        expect(reloadSpy).toHaveBeenCalled();
+        expect(ctrlASpy).not.toHaveBeenCalled();
+    });
+
+    it(' f5 should call save the drawing and then call reload()', () => {
+        const f5 = component.shortcuts.find((x) => x.key === 'f5');
+        const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
+        const ctrlASpy = spyOn(ctrlA as ShortcutInput, 'command').and.callThrough();
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'f5' });
+        const saveDrawingSpy = spyOn(component.autoSaveService, 'saveDrawing').and.stub();
+        const reloadSpy = spyOn(component, 'reload').and.callFake(() => {});
+        f5?.command({ event: keyboardEvent, key: 'f5' } as ShortcutEventOutput);
+        setTimeout(() => {
+            expect(saveDrawingSpy).toHaveBeenCalled();
+            expect(reloadSpy).toHaveBeenCalled();
+        }, 1000);
+        expect(ctrlASpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseUp should call clearRedoStack, enableUndoRedo and resetSideBools', async (done) => {
+        const event = { pageX: 10000000 } as MouseEvent;
+        component.resizeServiceCommand.mouseDown = true;
+        component.gridService.isGridVisible = true;
+        const gridSpy = spyOn(component.gridService, 'drawGrid').and.returnValue();
+
+        component.onMouseUp(event);
+
+        setTimeout(() => {
+            expect(gridSpy).toHaveBeenCalled();
+            done();
+        }, 1000);
+    });
 });

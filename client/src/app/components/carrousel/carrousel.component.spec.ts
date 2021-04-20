@@ -27,6 +27,8 @@ describe('CarrouselComponent', () => {
             'restore',
             'canvas',
             'fillStyle',
+            'fillRect',
+            'drawImage',
         ]);
         drawingServiceSpy.baseCtx = ctxSpyObject;
 
@@ -352,5 +354,13 @@ describe('CarrouselComponent', () => {
         mockArrowRight?.command({ event: keyboardEvent, key: 'right' } as ShortcutEventOutput);
         expect(moveRightSpy).toHaveBeenCalled();
         expect(mockArrowLeftSpy).not.toHaveBeenCalled();
+    });
+
+    it('setUpImage should save the drawing', () => {
+        const imageToLoad = new Image();
+        imageToLoad.src = 'https://homepages.cae.wisc.edu/~ece533/images/boat.png';
+        let autoSaveSpy = spyOn(component['autoSave'], 'saveDrawing').and.stub();
+        component.setUpImage(imageToLoad);
+        expect(autoSaveSpy).toHaveBeenCalled();
     });
 });

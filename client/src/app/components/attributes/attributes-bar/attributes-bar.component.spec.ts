@@ -243,4 +243,16 @@ describe('AttributesBarComponent', () => {
         expect(decreaseSquareSizebyByFactorSpy).toHaveBeenCalled();
         expect(ctrlGSpy).not.toHaveBeenCalled();
     });
+
+    it('startNewDrawing should call clearArrays from the tool manager and reload the page', () => {
+        spyOn(window, 'confirm').and.returnValue(true);
+        const clearArraySpy = spyOn(component.toolManager, 'clearArrays').and.stub();
+        component.toolManager.newDrawing = true;
+        const reloadSpy = spyOn(component, 'reload').and.callFake(() => {});
+        component.startNewDrawing();
+        expect(clearArraySpy).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(reloadSpy).toHaveBeenCalled();
+        }, 500);
+    });
 });

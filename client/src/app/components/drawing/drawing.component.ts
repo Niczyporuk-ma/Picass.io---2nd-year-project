@@ -116,7 +116,7 @@ export class DrawingComponent implements AfterViewInit {
                     this.toolManager.clearArrays();
                     if (this.toolManager.newDrawing) {
                         this.canvasSize = { x: Constant.DEFAULT_WIDTH, y: Constant.DEFAULT_HEIGHT };
-                        window.location.reload();
+                        this.reload();
                     }
                 },
             },
@@ -141,11 +141,11 @@ export class DrawingComponent implements AfterViewInit {
                 },
             },
             {
-                key: ['f5'],
+                key: 'f5',
                 preventDefault: true,
                 command: () => {
                     this.autoSaveService.saveDrawing(this.canvasSize, this.baseCanvas.nativeElement);
-                    window.location.reload();
+                    this.reload();
                 },
             },
             {
@@ -355,5 +355,9 @@ export class DrawingComponent implements AfterViewInit {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    reload(): void {
+        window.location.reload();
     }
 }

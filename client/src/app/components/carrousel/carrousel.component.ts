@@ -126,11 +126,7 @@ export class CarrouselComponent implements OnInit {
         this.toolManager.clearArrays();
         if (this.drawingService.drawingStarted === false) {
             imageToLoad.onload = () => {
-                this.drawingService.baseCtx.fillStyle = 'white';
-                this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.baseCtx.canvas.width, this.drawingService.baseCtx.canvas.height);
-                this.drawingService.baseCtx.drawImage(imageToLoad, 0, 0);
-                const canvasSize: Vec2 = { x: this.drawingService.baseCtx.canvas.width, y: this.drawingService.baseCtx.canvas.height };
-                this.autoSave.saveDrawing(canvasSize, this.drawingService.baseCtx.canvas);
+                this.setUpImage(imageToLoad);
             };
         }
     }
@@ -143,5 +139,13 @@ export class CarrouselComponent implements OnInit {
                 break;
             }
         }
+    }
+
+    setUpImage(imageToLoad: HTMLImageElement): void {
+        this.drawingService.baseCtx.fillStyle = 'white';
+        this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.baseCtx.canvas.width, this.drawingService.baseCtx.canvas.height);
+        this.drawingService.baseCtx.drawImage(imageToLoad, 0, 0);
+        const canvasSize: Vec2 = { x: this.drawingService.baseCtx.canvas.width, y: this.drawingService.baseCtx.canvas.height };
+        this.autoSave.saveDrawing(canvasSize, this.drawingService.baseCtx.canvas);
     }
 }

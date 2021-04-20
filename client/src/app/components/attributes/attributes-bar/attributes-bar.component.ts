@@ -29,6 +29,8 @@ import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const FILL_VALUE = '1';
 const CONTOUR_VALUE = '2';
+const WAIT_TIME = 5;
+
 @Component({
     selector: 'app-attributes-bar',
     templateUrl: './attributes-bar.component.html',
@@ -199,7 +201,7 @@ export class AttributesBarComponent {
         if (this.toolManager.showPalette) {
             setTimeout(() => {
                 this.colorPicker.selectPrimaryColor(evt);
-            }, 5);
+            }, WAIT_TIME);
         }
     }
 
@@ -207,7 +209,7 @@ export class AttributesBarComponent {
         if (this.toolManager.showPalette) {
             setTimeout(() => {
                 this.colorPicker.selectSecondaryColor(evt);
-            }, 5);
+            }, WAIT_TIME);
         }
     }
 
