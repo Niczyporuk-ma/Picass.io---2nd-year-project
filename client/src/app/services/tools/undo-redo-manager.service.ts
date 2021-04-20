@@ -138,6 +138,7 @@ export class UndoRedoManagerService extends Tool {
             }
             this.executeAllPreviousCommands();
         }
+        console.log(this.undoStack);
     }
 
     redo(): void {

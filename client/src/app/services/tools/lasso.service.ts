@@ -12,8 +12,7 @@ import { LineHelperService } from './line-helper.service';
 
 const SEGMENT_TWO = 5;
 const SEGMENT_ONE = 3;
-const INDEX = 10;
-
+const INDEX = 11;
 @Injectable({
     providedIn: 'root',
 })
@@ -48,6 +47,8 @@ export class LassoService extends Selection {
             { x: 0, y: 0 },
             { x: 0, y: 0 },
         ];
+        this.startingPoint = { x: 0, y: 0 };
+        this.endPoint = { x: 0, y: 0 };
     }
 
     onMouseClick(mouseClickEvent: MouseEvent): void {
@@ -223,12 +224,10 @@ export class LassoService extends Selection {
                 { x: this.currentLine[0].x, y: this.currentLine[0].y },
                 { x: this.currentLine[1].x, y: this.currentLine[1].y },
             ];
-
             ctx.setLineDash([SEGMENT_TWO, SEGMENT_ONE]);
             ctx.strokeRect(this.currentLine[0].x, this.currentLine[0].y, this.dimensions[0], this.dimensions[1]);
             this.drawAnchorPoints(this.drawingService.previewCtx, local);
         }
-
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[1].x, path[1].y);
         ctx.stroke();

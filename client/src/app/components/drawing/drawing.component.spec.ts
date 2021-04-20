@@ -8,7 +8,7 @@ import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
 
 class ToolStub extends Tool {}
 
-const TIMEOUT_WAIT = 10000;
+const TIMEOUT_WAIT = 15000;
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
@@ -20,6 +20,7 @@ describe('DrawingComponent', () => {
     // tslint:disable:no-string-literal
     // tslint:disable:no-magic-numbers
     // tslint:disable:max-file-line-count
+    // tslint:disable:no-empty
 
     beforeEach(async(() => {
         toolStub = new ToolStub({} as DrawingService);
@@ -110,10 +111,10 @@ describe('DrawingComponent', () => {
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
-    it(' ngAfterViewInit should add 6 event listeners', () => {
+    it(' ngAfterViewInit should add 5 event listeners', () => {
         const enventListenerSpy = spyOn(window, 'addEventListener').and.callThrough();
         component.ngAfterViewInit();
-        expect(enventListenerSpy).toHaveBeenCalledTimes(6);
+        expect(enventListenerSpy).toHaveBeenCalledTimes(5);
     });
 
     it('component should call keyupHandler on keyup if currentTool is ellipseSelection or rectangleSelection', () => {

@@ -10,6 +10,7 @@ import {
     faBars,
     faEraser,
     faEyeDropper,
+    faFillDrip,
     faPalette,
     faPen,
     faPlay,
@@ -47,6 +48,7 @@ export class ToolbarComponent {
     faUndoAlt: IconDefinition = faUndoAlt;
     faRedoAlt: IconDefinition = faRedoAlt;
     faTh: IconDefinition = faTh;
+    faFillDrip: IconDefinition = faFillDrip;
     faStamp: IconDefinition = faStamp;
     faVectorSquare: IconDefinition = faVectorSquare;
     faPlay: IconDefinition = faPlay;

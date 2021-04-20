@@ -137,7 +137,8 @@ export class RectangleSelectionService extends Selection {
         const width: number = this.currentLine[1].x - this.currentLine[0].x;
         const height: number = this.currentLine[1].y - this.currentLine[0].y;
         const imgData = this.drawingService.baseCtx.getImageData(this.currentLine[0].x, this.currentLine[0].y, width, height);
-        this.drawingService.baseCtx.clearRect(this.currentLine[0].x, this.currentLine[0].y, width, height);
+        this.drawingService.baseCtx.fillStyle = 'white';
+        this.drawingService.baseCtx.fillRect(this.currentLine[0].x, this.currentLine[0].y, width, height);
         this.backgroundImageData = this.drawingService.baseCtx.getImageData(
             0,
             0,

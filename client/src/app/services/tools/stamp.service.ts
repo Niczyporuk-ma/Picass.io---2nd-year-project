@@ -12,7 +12,7 @@ const ROTATION_BY_15_DEGREES = 15;
 const ROTATION_BY_1_DEGREE = 1;
 const DEFAULT_IMAGE = '../../../assets/0.png';
 const MOUSE_WHEEL_SINLGE_ROLL_SIZE = 100;
-const TOOLBAR_WIDTH = 216;
+const TOOLBAR_WIDTH = 316;
 const MARGIN_OF_ERROR_TOOLBAR = -35; // To allow the stamp to be cut slightly by the toolbar
 
 @Injectable({
@@ -83,6 +83,9 @@ export class StampService extends Tool {
     draw(ctx: CanvasRenderingContext2D, stampCommand: StampCommandService): void {
         this.isEventListenerSet = false;
         stampCommand.setAttributes(this.rotationAngle, this.stampName, this.stampSize, this.mouseDownCoord);
+        if (ctx === this.drawingService.baseCtx) {
+            this.drawingService.drawingStarted = true;
+        }
         stampCommand.execute(ctx);
     }
 

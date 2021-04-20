@@ -89,4 +89,16 @@ export class KeyboardShortcutManagerService {
             toolManager.lassoService.magnetismService.switchOnOrOff();
         }
     }
+
+    textToolShortcutListener(toolManager: ToolManagerService, event: KeyboardEvent): void {
+        toolManager.textService.onKeyDown(event);
+        toolManager.textService.enterKey(event);
+        toolManager.textService.escapeKey(event);
+        toolManager.textService.arrowUp(event);
+        toolManager.textService.arrowDown(event);
+        toolManager.textService.arrowLeft(event);
+        toolManager.textService.arrowRight(event);
+        toolManager.textService.backspaceKey(event);
+        toolManager.textService.deleteKey(event);
+    }
 }

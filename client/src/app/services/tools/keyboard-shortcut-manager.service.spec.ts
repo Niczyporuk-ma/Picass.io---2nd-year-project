@@ -182,4 +182,27 @@ describe('KeyboardShortcutManagerService', () => {
         service.magnetismHandler(service.toolManager);
         expect(magnetismSpy).toHaveBeenCalled();
     });
+
+    it('textToolShortcutListener should call all key shortcuts of textService', () => {
+        const keyEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        const onKeyDownSpy = spyOn(service.toolManager.textService, 'onKeyDown').and.returnValue();
+        const enterKeySpy = spyOn(service.toolManager.textService, 'enterKey').and.returnValue();
+        const escapeKeySpy = spyOn(service.toolManager.textService, 'escapeKey').and.returnValue();
+        const arrowUpSpy = spyOn(service.toolManager.textService, 'arrowUp').and.returnValue();
+        const arrowDownSpy = spyOn(service.toolManager.textService, 'arrowDown').and.returnValue();
+        const arrowLeftSpy = spyOn(service.toolManager.textService, 'arrowLeft').and.returnValue();
+        const arrowRightSpy = spyOn(service.toolManager.textService, 'arrowRight').and.returnValue();
+        const backspaceKeySpy = spyOn(service.toolManager.textService, 'backspaceKey').and.returnValue();
+        const deleteKeySpy = spyOn(service.toolManager.textService, 'deleteKey').and.returnValue();
+        service.textToolShortcutListener(service.toolManager, keyEvent);
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(enterKeySpy).toHaveBeenCalled();
+        expect(escapeKeySpy).toHaveBeenCalled();
+        expect(arrowUpSpy).toHaveBeenCalled();
+        expect(arrowDownSpy).toHaveBeenCalled();
+        expect(arrowLeftSpy).toHaveBeenCalled();
+        expect(arrowRightSpy).toHaveBeenCalled();
+        expect(backspaceKeySpy).toHaveBeenCalled();
+        expect(deleteKeySpy).toHaveBeenCalled();
+    });
 });

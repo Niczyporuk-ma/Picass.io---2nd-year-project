@@ -15,6 +15,7 @@ import { EllipseService } from './ellipse.service';
 import { EraserService } from './eraser.service';
 import { LassoService } from './lasso.service';
 import { NoToolService } from './no-tool.service';
+import { PaintBucketService } from './paint-bucket.service';
 import { PipetteService } from './pipette.service';
 import { PolygonService } from './polygon.service';
 import { RectangleService } from './rectangle.service';
@@ -42,6 +43,7 @@ export class ToolManagerService {
         this.lassoService,
         this.stampService,
         this.noToolService,
+        this.paintBucketService,
     ];
 
     toolBoxShortcuts: Map<string, Tool>;
@@ -76,6 +78,7 @@ export class ToolManagerService {
         public stampService: StampService,
         public noToolService: NoToolService,
         public lassoService: LassoService,
+        public paintBucketService: PaintBucketService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolChange.subscribe((value) => (this.currentTool = value));
@@ -91,6 +94,7 @@ export class ToolManagerService {
             [this.ellipseSelection.shortcut, this.tools[this.ellipseSelection.index]],
             [this.pipetteService.shortcut, this.tools[this.pipetteService.index]],
             [this.textService.shortcut, this.tools[this.textService.index]],
+            [this.paintBucketService.shortcut, this.tools[this.paintBucketService.index]],
             [this.lassoService.shortcut, this.tools[this.lassoService.index]],
             [this.stampService.shortcut, this.tools[this.stampService.index]],
             [this.noToolService.shortcut, this.tools[this.noToolService.index]],

@@ -32,6 +32,13 @@ describe('ToolManagerService', () => {
         expect(nextSpy).toHaveBeenCalled();
     });
 
+    it(' setTool should call resetState from textService if current tool is textService', () => {
+        service.currentTool = service.textService;
+        const resetStateSpy = spyOn(service.textService, 'resetState');
+        service.setTool(service.pencilService);
+        expect(resetStateSpy).toHaveBeenCalled();
+    });
+
     it(' setTool should set current tool to line', () => {
         service.setTool(service.lineService);
         expect(service.currentTool).toEqual(service.lineService);
@@ -152,5 +159,17 @@ describe('ToolManagerService', () => {
     it(' setStampStyle sets the stamp image of the stamp service', () => {
         service.setStampStyle(5);
         expect(service.stampService.stampName).toEqual('assets/5.png');
+    });
+
+    it(' flipNonTooldBools should set nonTools to false if it was true', () => {
+        service.nonTools = true;
+        service.flipNonToolBool();
+        expect(service.nonTools).toBeFalse();
+    });
+
+    it(' showSaveDrawing should set showSaveMenu to false if it was true', () => {
+        service.showSaveMenu = true;
+        service.showSaveDrawing();
+        expect(service.showSaveMenu).toBeFalse();
     });
 });

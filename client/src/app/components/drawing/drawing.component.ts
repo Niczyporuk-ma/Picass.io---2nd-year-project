@@ -190,25 +190,11 @@ export class DrawingComponent implements AfterViewInit {
                     this.toolManager.disableShortcut();
                     if (this.toolManager.textService.allowText) {
                         event.preventDefault();
-                        this.toolManager.textService.onKeyDown(event);
-                        this.toolManager.textService.enterKey(event);
-                        this.toolManager.textService.escapeKey(event);
-                        this.toolManager.textService.arrowUp(event);
-                        this.toolManager.textService.arrowDown(event);
-                        this.toolManager.textService.arrowLeft(event);
-                        this.toolManager.textService.arrowRight(event);
-                        this.toolManager.textService.backspaceKey(event);
-                        this.toolManager.textService.deleteKey(event);
+                        this.shortcutKeyboardManager.textToolShortcutListener(this.toolManager, event);
                     }
                 } else {
                     this.toolManager.enableShortcut();
                 }
-            }
-        });
-        window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (this.toolManager.allowKeyPressEvents) {
-                event.preventDefault();
-                this.shortcutKeyboardManager.onKeyPress(event.key);
             }
         });
         window.addEventListener('keydown', (event: KeyboardEvent) => {

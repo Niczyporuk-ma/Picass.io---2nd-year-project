@@ -20,6 +20,7 @@ describe('AttributesBarComponent', () => {
     let fixture: ComponentFixture<AttributesBarComponent>;
     // tslint:disable:no-magic-numbers
     // tslint:disable:max-file-line-count
+    // tslint:disable:no-empty
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let ctxSpyObject: jasmine.SpyObj<CanvasRenderingContext2D>;
 

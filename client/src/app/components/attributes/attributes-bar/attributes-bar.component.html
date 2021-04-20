@@ -42,7 +42,8 @@
             this.toolManager.currentTool != this.toolManager.rectangleSelection &&
             this.toolManager.currentTool != this.toolManager.ellipseSelection &&
             this.toolManager.currentTool != this.toolManager.lassoService &&
-            this.toolManager.currentTool != this.toolManager.noToolService
+            this.toolManager.currentTool != this.toolManager.noToolService &&
+            this.toolManager.currentTool != this.toolManager.paintBucketService
         "
     >
         <mat-card>
@@ -242,6 +243,23 @@
             >Les Deux</mat-button-toggle
         >
     </mat-button-toggle-group>
+
+    <div *ngIf="this.toolManager.currentTool == this.toolManager.paintBucketService">
+        <mat-card>
+            Tolérance:
+            <mat-slider
+                min="0"
+                max="100"
+                step="1"
+                value="1"
+                class="slider"
+                (change)="this.toolManager.paintBucketService.changeTolerancePercentage($event.value)"
+                (input)="this.toolManager.paintBucketService.tolerancePercentage = $event.value"
+                [value]="this.toolManager.paintBucketService.tolerancePercentage"
+            ></mat-slider>
+            <mat-card-subtitle>{{ this.toolManager.paintBucketService.tolerancePercentage }} % </mat-card-subtitle>
+        </mat-card>
+    </div>
 
     <div
         class="type-selection"

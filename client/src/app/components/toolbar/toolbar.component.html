@@ -155,14 +155,7 @@ les lignes, double-cliquer pour terminer la ligne. Cliquez ici pour voir plus d'
         "
         matTooltip="Outil selection: Cliquez, glissez, et relâcher pour sélectionner (Rectangle et Ellipse). 
         Cliquez pour créer des segments, revenir au point de départ pour créer la sélection (Lasso).
-        Sélection par rectangle (R). 
-        Sélection par ellipse (S). 
-        Sélection par lasso polygonal (V). 
-        Sélectionnez tout (CTRL + A). 
-        Annulez sélection (Delete).
-        Copier (CTRL + C).
-        Coller (CTRL + V).
-        Couper (CTRL + X)."
+        Annulez sélection (Delete). Cliquez-ici pour plus d'options."
         matTooltipPosition="after"
         matTooltipShowDelay="250"
     >
@@ -209,6 +202,17 @@ Cliquez ici pour plus d'options."
         matTooltipShowDelay="250"
     >
         <fa-icon [icon]="faPalette" size="lg"></fa-icon>
+    </button>
+
+    <button
+        class=""
+        [ngClass]="{ active: this.toolManager.currentTool == this.toolManager.paintBucketService && !this.toolManager.nonTools }"
+        (click)="this.toolManager.setTool(this.toolManager.paintBucketService)"
+        matTooltip="Outil sceau de peinture (B): CLIQUE-GAUCHE pour coloriage de pixels contigus et CLIQUE-DROIT pour coloriage de pixels non contigus"
+        matTooltipPosition="after"
+        matTooltipShowDelay="600"
+    >
+        <fa-icon [icon]="faFillDrip" size="lg"></fa-icon>
     </button>
 </div>
 
