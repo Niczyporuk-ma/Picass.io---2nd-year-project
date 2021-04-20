@@ -47,7 +47,6 @@ describe('ToolbarComponent', () => {
         fixture = TestBed.createComponent(ToolbarComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        // modal = TestBed.inject(MatDialog);
     });
 
     afterEach(() => {

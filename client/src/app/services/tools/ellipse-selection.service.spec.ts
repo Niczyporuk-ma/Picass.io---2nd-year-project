@@ -248,46 +248,6 @@ describe('EllipseSelectionService', () => {
         expect(service.currentlySelecting).toBeTrue();
     });
 
-    // it('cleanImageData should call getABHKXaxis', () => {
-    //     const getABHKXaxisSpy = spyOn(service.anchorService, 'getABHKXaxis').and.callThrough();
-    //     service.currentLine = [mockStartingPoint, mockEndingPoint];
-    //     service.imageData = new ImageData(100, 100);
-    //     service.cleanImgData();
-    //     expect(getABHKXaxisSpy).toHaveBeenCalled();
-    // });
-
-    // it('cleanImageData should call checkIfInsideEllipse for every pixel', () => {
-    //     const checkIfInsideEllipseSpy = spyOn(service, 'checkIfInsideEllipse').and.stub();
-    //     service.currentLine = [mockStartingPoint, mockEndingPoint];
-    //     service.imageData = new ImageData(100, 100);
-    //     service.cleanImgData();
-    //     expect(checkIfInsideEllipseSpy).toHaveBeenCalledTimes(10000);
-    // });
-
-    // it('checkIfInsideEllipse should inverse the A and B parameters if Xaxis is false', () => {
-    //     const parameters: ABHKAxis = { A: 2, B: 3, H: 4, K: 5};
-    //     service.checkIfInsideEllipse(parameters, 1, 1);
-    //     expect(parameters.A).toEqual(3);
-    //     expect(parameters.B).toEqual(2);
-    // });
-
-    // it('checkIfInsideEllipse shouldnt inverse the A and B parameters if Xaxis is true', () => {
-    //     const parameters: ABHKAxis = { A: 2, B: 3, H: 4, K: 5, xAxis: true };
-    //     service.checkIfInsideEllipse(parameters, 1, 1);
-    //     expect(parameters.A).toEqual(2);
-    //     expect(parameters.B).toEqual(3);
-    // });
-
-    // it('checkIfInsideEllipse should return true if the point is inside it', () => {
-    //     const parameters: ABHKAxis = { A: 2, B: 3, H: 0, K: 0, xAxis: false };
-    //     expect(service.checkIfInsideEllipse(parameters, 0, 0)).toBeTrue();
-    // });
-
-    // it('checkIfInsideEllipse should return false if the point isnt inside it', () => {
-    //     const parameters: ABHKAxis = { A: 2, B: 3, H: 0, K: 0, xAxis: false };
-    //     expect(service.checkIfInsideEllipse(parameters, 3, 5)).toBeFalse();
-    // });
-
     it('moveImageData should call clearCanvas twice', () => {
         service.currentLine = [{ x: 2, y: 2 }, mockEndingPoint];
         service.lastPos = { x: 0, y: 0 };
@@ -503,21 +463,6 @@ describe('EllipseSelectionService', () => {
         service.onShift();
         expect(eventListenerSpy).not.toHaveBeenCalled();
     });
-
-    // it('getABHKXaxis should return the right values', () => {
-    //     let mockCurrentLine: Vec2[] = [mockStartingPoint, mockEndingPoint];
-    //     service.currentLine = mockCurrentLine;
-    //     let expectedResult: ABHKAxis = { A: 25.5, B: 25.5, H: -24.5, K: -24.5, xAxis: false };
-    //     expect(service.getABHKXaxis()).toEqual(expectedResult);
-
-    //     mockCurrentLine = [
-    //         { x: 10, y: 0 },
-    //         { x: 15, y: 0 },
-    //     ];
-    //     service.currentLine = mockCurrentLine;
-    //     expectedResult = { A: 2.5, B: 0, H: 12.5, K: 0, xAxis: true };
-    //     expect(service.getABHKXaxis()).toEqual(expectedResult);
-    // });
 
     it('fixImageData should call checkIfInsideEllipse for every pixel in the currentLine selection', () => {
         const checkIfInsideEllipseSpy = spyOn(service.selecHelper, 'checkIfInsideEllipse').and.stub();

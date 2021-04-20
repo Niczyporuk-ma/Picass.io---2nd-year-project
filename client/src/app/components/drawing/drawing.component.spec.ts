@@ -242,19 +242,6 @@ describe('DrawingComponent', () => {
         expect(ctrlOSpy).not.toHaveBeenCalled();
     });
 
-    // TODO: ajust the test for reload
-    // it(' ctrl + o should call clearArrays of toolManager', () => {
-    //     const ctrlO = component.shortcuts.find((x) => x.key === 'ctrl + o');
-    //     const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
-    //     const ctrlASpy = spyOn(ctrlA as ShortcutInput, 'command').and.callThrough();
-    //     const keyboardEvent = new KeyboardEvent('keydown', { ctrlKey: true, key: 'o' });
-    //     spyOn(window, 'confirm').and.returnValue(true);
-    //     const clearArraysSpy = spyOn(component.toolManager, 'clearArrays').and.callThrough();
-    //     ctrlO?.command({ event: keyboardEvent, key: 'o' } as ShortcutEventOutput);
-    //     expect(clearArraysSpy).toHaveBeenCalled();
-    //     expect(ctrlASpy).not.toHaveBeenCalled();
-    // });
-
     it(' ctrl + z should call undo of undoRedoManager', () => {
         const ctrlZ = component.shortcuts.find((x) => x.key === 'ctrl + z');
         const ctrlA = component.shortcuts.find((x) => x.key === 'ctrl + a');
@@ -322,22 +309,6 @@ describe('DrawingComponent', () => {
         ctrlShiftZ?.command({ event: keyboardEvent, key: 'z' } as ShortcutEventOutput);
         expect(redoSpy).toHaveBeenCalled();
     });
-
-    // Test instable du au  dispatchEvent et setTimeout
-
-    // it('addEventListener when it is a keydown should call onKeyPress and clearBackground', () => {
-    //     const mockKeyDOwn = new KeyboardEvent('keydown', { ctrlKey: false, key: 'e' });
-    //     const onKeyPressSpy = spyOn(component.shortcutKeyboardManager, 'onKeyPress').and.returnValue();
-    //     const clearBackgroundSpy = spyOn(component['drawingService'], 'clearBackground');
-    //     component.toolManager.allowKeyPressEvents = true;
-    //     window.dispatchEvent(mockKeyDOwn);
-    //     setTimeout(() => {
-    //         return;
-    //     }, 200);
-    //     component.ngAfterViewInit();
-    //     expect(onKeyPressSpy).toHaveBeenCalled();
-    //     expect(clearBackgroundSpy).toHaveBeenCalled();
-    // });
 
     it('addEvenListener when it is keyup should call keyupHandler when the current tool is rectangleSelection', () => {
         const mockKeyUp = new KeyboardEvent('keyup', { key: 'e' });

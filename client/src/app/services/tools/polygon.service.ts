@@ -18,7 +18,6 @@ export class PolygonService extends Tool {
     contour: boolean = true;
     sides: number = 3;
     indexNumber: number = 5;
-    premNumberOfSides: number = 3;
     showNumberOfSidesInput: boolean = false;
     centerX: number;
     centerY: number;
@@ -37,7 +36,7 @@ export class PolygonService extends Tool {
         this.shortcut = '3';
         this.localShortcuts = new Map();
         this.currentLine = [];
-        this.index = this.indexNumber; // ask slimane
+        this.index = this.indexNumber;
         this.toolStyles = {
             primaryColor: 'rgba(0, 0, 0, 1)',
             lineWidth: 1,

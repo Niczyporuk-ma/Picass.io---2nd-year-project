@@ -177,22 +177,6 @@ describe('UndoRedoManagerService', () => {
         expect(imageSPy).toHaveBeenCalled();
     });
 
-    // fit('undo should call drawGrid and drawImage when the command is a resize', async (done) => {
-    //     const resizeCom = new ResizeCommandService(service['drawingService']);
-    //     service.undoStack.push(resizeCom);
-    //     service.undoDisabled = false;
-    //     service.resizeUndoStack.push({ x: 100, y: 100 });
-    //     service.resizeUndoStack.push({ x: 100, y: 100 });
-    //     const imageSPy = spyOn(service, 'drawImage').and.returnValue();
-    //     const gridSpy = spyOn(service, 'drawGrid').and.returnValue();
-    //     service.undo();
-    //     setTimeout(() => {
-    //         expect(gridSpy).toHaveBeenCalled();
-    //         expect(imageSPy).toHaveBeenCalled();
-    //         done();
-    //     }, 500);
-    // });
-
     it('redo should call drawGrid and drawImage when the command is a resize', () => {
         const resizeCom = new ResizeCommandService(service['drawingService']);
         spyOn(resizeCom, 'setPreview').and.returnValue();

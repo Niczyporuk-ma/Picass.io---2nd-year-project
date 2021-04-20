@@ -5,7 +5,7 @@ import { AutoSaveService } from '@app/services/autoSave/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { AirbrushService } from '@app/services/tools/airbrush.service';
 import { EllipseSelectionService } from '@app/services/tools/ellipse-selection.service';
-import { LineServiceService } from '@app/services/tools/line-service.service';
+import { LineService } from '@app/services/tools/line.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleSelectionService } from '@app/services/tools/rectangle-selection.service';
 import { TextService } from '@app/services/tools/text.service';
@@ -48,8 +48,6 @@ export class ToolManagerService {
 
     toolBoxShortcuts: Map<string, Tool>;
     lineHistory: Vec2[][] = [];
-    pencilHistory: Vec2[][] = [];
-    rectangleHistory: Vec2[][] = [];
     widthValue: number = 1;
     blockEventListener: boolean = false;
     allowKeyPressEvents: boolean = true;
@@ -61,7 +59,7 @@ export class ToolManagerService {
 
     constructor(
         public pencilService: PencilService,
-        public lineService: LineServiceService,
+        public lineService: LineService,
         public rectangleService: RectangleService,
         public eraserService: EraserService,
         public ellipseService: EllipseService,

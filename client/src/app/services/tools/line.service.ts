@@ -11,7 +11,7 @@ import { UndoRedoManagerService } from './undo-redo-manager.service';
 @Injectable({
     providedIn: 'root',
 })
-export class LineServiceService extends Tool {
+export class LineService extends Tool {
     shiftIsPressed: boolean = false;
     isStarted: boolean;
     startingPoint: Vec2;
