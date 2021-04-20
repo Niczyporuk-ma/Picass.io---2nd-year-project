@@ -39,6 +39,7 @@ export class RectangleService extends Tool {
             secondaryColor: 'black',
         };
         this.undoRedoManager = undoRedoManager;
+        this.toolName = 'Rectangle';
     }
 
     startingPoint: Vec2;

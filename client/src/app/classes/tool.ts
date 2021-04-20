@@ -13,11 +13,11 @@ export interface ToolStyles {
 // tslint:disable:no-empty
 export abstract class Tool {
     currentWidth: number;
-    lastWidth: number;
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
     shortcut: string;
     index: number;
+    toolName: string = '';
 
     localShortcuts: Map<string, () => void>;
     currentCommand: () => void;

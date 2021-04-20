@@ -350,4 +350,77 @@ describe('ResizeCommandService', () => {
         service.setPreview({ x: 1000, y: 800 });
         expect(service.preview).toEqual({ x: 1000, y: 800 });
     });
+
+    it('execute should set the canvasSize.y to be the same as preview.y when isBottom is true  and should call next if notsubsribed', () => {
+        const testCanvas = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'ellipse',
+            'beginPath',
+            'setLineDash',
+            'stroke',
+            'fill',
+        ]);
+        spyOn(service, 'copyCanvas').and.stub();
+        const nextSpy = spyOn(service.canvasSizeObserver, 'next').and.stub();
+        service.isBottom = true;
+        service.isSide = false;
+        service.isCorner = false;
+        service.canvasSize = { x: 0, y: 0 };
+        service.preview = { x: 5500, y: 300 };
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.isSubscribed = true;
+        service.execute(testCanvas);
+        expect(service.canvasSize.y).toEqual(service.preview.y);
+        expect(nextSpy).not.toHaveBeenCalled();
+    });
+
+    it('execute should set the canvasSize.x to be the same as preview.x when isSide is true and should call next if notsubsribed', () => {
+        const testCanvas = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'ellipse',
+            'beginPath',
+            'setLineDash',
+            'stroke',
+            'fill',
+        ]);
+        spyOn(service, 'copyCanvas').and.stub();
+        const nextSpy = spyOn(service.canvasSizeObserver, 'next').and.stub();
+        service.isBottom = false;
+        service.isSide = true;
+        service.isCorner = false;
+        service.preview = { x: 5500, y: 300 };
+        service.canvasSize = { x: 0, y: 0 };
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.isSubscribed = true;
+        service.execute(testCanvas);
+        expect(service.canvasSize.x).toEqual(service.preview.x);
+        expect(nextSpy).not.toHaveBeenCalled();
+    });
+
+    it('execute should set the canvasSize.x and canvasSize.y to be the same as preview.x and preview.y when isCorner is true and should call next if notsubsribed', () => {
+        const testCanvas = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', [
+            'ellipse',
+            'beginPath',
+            'setLineDash',
+            'stroke',
+            'fill',
+        ]);
+        spyOn(service, 'copyCanvas').and.stub();
+        const nextSpy = spyOn(service.canvasSizeObserver, 'next').and.stub();
+        service.isBottom = false;
+        service.isSide = false;
+        service.isCorner = true;
+        service.preview = { x: 5500, y: 300 };
+        service.canvasSize = { x: 0, y: 0 };
+        service.sideHandle = { x: 0, y: 0 };
+        service.bottomHandle = { x: 0, y: 0 };
+        service.cornerHandle = { x: 0, y: 0 };
+        service.isSubscribed = true;
+        service.execute(testCanvas);
+        expect(service.canvasSize.x).toEqual(service.preview.x);
+        expect(service.canvasSize.y).toEqual(service.preview.y);
+        expect(nextSpy).not.toHaveBeenCalled();
+    });
 });

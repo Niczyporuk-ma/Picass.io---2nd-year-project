@@ -4,6 +4,7 @@ import { UndoRedoCommand } from '@app/classes/undo-redo-command';
 import { Vec2 } from '@app/classes/vec2';
 import { Constant } from '@app/constants/general-constants-store';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { GridService } from '@app/services/grid/grid.service';
 import { ResizeCommandService } from './tool-commands/resize-command.service';
 
 const ZERO = 0;
@@ -22,7 +23,7 @@ export class UndoRedoManagerService extends Tool {
     undoDisabled: boolean = true;
     redoDisabled: boolean = true;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, public gridService: GridService) {
         super(drawingService);
         this.undoStack = [];
         this.redoStack = [];
@@ -53,6 +54,8 @@ export class UndoRedoManagerService extends Tool {
     }
 
     executeAllPreviousCommands(): void {
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        this.drawSavedImage();
         for (const command of this.undoStack) {
             if (command.isResizer) {
                 const lastResize: Vec2 = this.resizeUndoStack.shift() as Vec2;
@@ -62,17 +65,39 @@ export class UndoRedoManagerService extends Tool {
                 resizeCommand.setPreview(lastResize);
                 resizeCommand.execute(this.drawingService.baseCtx);
                 this.drawImage(resizeCommand);
+                this.drawGrid();
             } else {
                 command.execute(this.drawingService.baseCtx);
             }
         }
     }
 
+    drawSavedImage(): void {
+        if (localStorage.getItem('oldDrawing') !== null) {
+            setTimeout(() => {
+                const oldDrawingToLoad = new Image();
+                oldDrawingToLoad.src = localStorage.getItem('oldDrawing') as string;
+                oldDrawingToLoad.onload = () => {
+                    this.drawingService.baseCtx.drawImage(oldDrawingToLoad, 0, 0);
+                };
+            }, WAIT_TIME);
+        }
+    }
+
     drawImage(resizeCommand: ResizeCommandService): void {
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         setTimeout(() => {
+            this.drawSavedImage();
             this.drawingService.baseCtx.drawImage(resizeCommand.lastImage, ZERO, ZERO);
         }, WAIT_TIME);
+    }
+
+    drawGrid(): void {
+        if (this.gridService.isGridVisible) {
+            setTimeout(() => {
+                this.gridService.drawGrid();
+            }, WAIT_TIME);
+        }
     }
 
     undo(): void {
@@ -80,16 +105,25 @@ export class UndoRedoManagerService extends Tool {
             if (this.undoStack[this.undoStack.length - 1].isResizer && this.resizeUndoStack.length <= 1) {
                 this.resizeRedoStack.push(this.resizeUndoStack.pop() as Vec2);
                 const resizeCommand: ResizeCommandService = this.undoStack[this.undoStack.length - 1] as ResizeCommandService;
-
-                resizeCommand.setPreview(DEFAULT_CANVAS_SIZE);
+                if (this.drawingService.drawingStarted && localStorage.getItem('oldDrawing') !== null) {
+                    resizeCommand.setPreview({
+                        x: Number(localStorage.getItem('oldCanvasWidth') as string),
+                        y: Number(localStorage.getItem('oldCanvasHeight') as string),
+                    });
+                } else {
+                    resizeCommand.setPreview(DEFAULT_CANVAS_SIZE);
+                }
                 resizeCommand.execute(this.drawingService.baseCtx);
 
                 const lastCommand: UndoRedoCommand = this.undoStack.pop() as UndoRedoCommand;
                 this.redoStack.push(lastCommand);
 
                 this.drawImage(resizeCommand);
+                this.drawGrid();
             } else {
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.drawingService.baseCtx.fillStyle = 'white';
+                this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
                 const lastCommand: UndoRedoCommand = this.undoStack.pop() as UndoRedoCommand;
                 this.redoStack.push(lastCommand);
                 if (lastCommand.isResizer) {
@@ -99,6 +133,7 @@ export class UndoRedoManagerService extends Tool {
                     setTimeout(() => {
                         this.drawImage(resize);
                     }, WAIT_TIME);
+                    this.drawGrid();
                 }
             }
             this.executeAllPreviousCommands();
@@ -119,6 +154,7 @@ export class UndoRedoManagerService extends Tool {
                 resizeCommand.execute(this.drawingService.baseCtx);
 
                 this.drawImage(resizeCommand);
+                this.drawGrid();
             } else {
                 lastCommand.execute(this.drawingService.baseCtx);
             }

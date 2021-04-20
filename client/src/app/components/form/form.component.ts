@@ -110,7 +110,6 @@ export class FormComponent implements OnInit {
                 } else {
                     alert('Votre dessin a été sauvegardé!');
                     this.isLoading = false;
-                    // this.closeWindow = true;
                 }
             },
         );

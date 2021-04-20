@@ -1,39 +1,43 @@
 import { Injectable } from '@angular/core';
+import { ABHKAxis } from '@app/classes/abhk-interface';
 import { Selection } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/enums';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ClipboardService } from '@app/services/tools/clipboard.service';
+import { MagnetismService } from '@app/services/tools/magnetism.service';
 import { SquareHelperService } from '@app/services/tools/square-helper.service';
 import { UndoRedoManagerService } from '@app/services/tools/undo-redo-manager.service';
+import { AnchorService } from './anchor.service';
+import { LineHelperService } from './line-helper.service';
+import { SelectionHelperService } from './selection-helper.service';
 
-export interface ABHKAxis {
-    A: number;
-    B: number;
-    H: number;
-    K: number;
-    xAxis: boolean;
-}
 const INDEX = 8;
 const INDEXES_PER_PIXEL = 4;
-const ANCHOR_RADIUS = 5;
 const ELLIPSE_LINE_DASH = 3;
-
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseSelectionService extends Selection {
-    startingPoint: Vec2;
-    endPoint: Vec2;
-    shiftIsPressed: boolean;
-    currentLine: Vec2[] = [];
-    imageData: ImageData;
-    isMovingImg: boolean = false;
-    backgroundImageData: ImageData;
-
-    constructor(public drawingService: DrawingService, public squareHelperService: SquareHelperService, undoRedoManager: UndoRedoManagerService) {
-        super(drawingService, undoRedoManager);
+    constructor(
+        public lineHelp: LineHelperService,
+        public drawingService: DrawingService,
+        public squareHelperService: SquareHelperService,
+        public anchorService: AnchorService,
+        public selecHelper: SelectionHelperService,
+        public clipboardService: ClipboardService,
+        public magnetismService: MagnetismService,
+        public undoRedoManager: UndoRedoManagerService,
+    ) {
+        super(drawingService, undoRedoManager, lineHelp, anchorService, magnetismService, clipboardService);
         this.shortcut = 's';
         this.index = INDEX;
+        this.lineHelper = lineHelp;
+        this.toolStyles = {
+            primaryColor: 'black',
+            lineWidth: 1,
+            secondaryColor: 'black',
+        };
     }
 
     onMouseDown(mouseDownEvent: MouseEvent): void {
@@ -41,37 +45,39 @@ export class EllipseSelectionService extends Selection {
         if (this.mouseDown) {
             this.undoRedoManager.disableUndoRedo();
             if (this.currentLine.length > 0) {
-                const ELLIPSE_PARAMETERS: ABHKAxis = this.getABHKXaxis();
-                if (!this.checkIfInsideEllipse(ELLIPSE_PARAMETERS, mouseDownEvent.offsetX, mouseDownEvent.offsetY)) {
+                if (this.checkIfClickOnAnchor(mouseDownEvent)) {
+                    this.changeAnchor = true;
+                    return;
+                }
+                const ELLIPSE_PARAMETERS: ABHKAxis = this.selecHelper.getABHKXaxis(this.currentLine);
+                if (!this.selecHelper.checkIfInsideEllipse(ELLIPSE_PARAMETERS, mouseDownEvent.offsetX, mouseDownEvent.offsetY)) {
                     this.resetState();
                     this.isMovingImg = false;
                     return;
                 }
-                if (!this.currentlySelecting) {
-                    this.imageData = this.getImageData();
-                }
-                this.fixImageData();
+                this.changeAnchor = false;
                 this.isMovingImg = true;
                 this.lastPos = this.getPositionFromMouse(mouseDownEvent);
+                this.magnetismService.mouseReference = this.getPositionFromMouse(mouseDownEvent);
                 return;
             } else {
                 this.isMovingImg = false;
             }
             this.anchorPoints = [];
             this.mouseDownCoord = this.getPositionFromMouse(mouseDownEvent);
-            this.startingPoint = this.mouseDownCoord;
+            this.currentLine[0] = this.mouseDownCoord;
         }
     }
 
     setShiftIsPressed = (keyDownShiftEvent: KeyboardEvent) => {
         if (keyDownShiftEvent.key === 'Shift') {
             this.shiftIsPressed = true;
-            if (!this.squareHelperService.checkIfIsSquare([this.startingPoint, this.endPoint]) && this.mouseDown) {
+            if (!this.squareHelperService.checkIfIsSquare([this.currentLine[0], this.currentLine[1]]) && this.mouseDown && !this.changeAnchor) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint, false);
+                this.drawEllipse(this.drawingService.previewCtx, this.currentLine[0], this.currentLine[1], false);
                 this.drawRectangle(this.drawingService.previewCtx, [
-                    this.startingPoint,
-                    this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]),
+                    this.currentLine[0],
+                    this.squareHelperService.closestSquare([this.currentLine[0], this.currentLine[1]]),
                 ]);
             }
         }
@@ -80,14 +86,17 @@ export class EllipseSelectionService extends Selection {
     setShiftNonPressed = (keyUpShiftEvent: KeyboardEvent): void => {
         if (keyUpShiftEvent.key === 'Shift') {
             this.shiftIsPressed = false;
-            if (this.mouseDown) {
+            if (this.mouseDown && !this.drawingService.resizeActive && !this.changeAnchor) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint, false);
-                this.drawRectangle(this.drawingService.previewCtx, [this.startingPoint, this.endPoint]);
+                this.drawEllipse(this.drawingService.previewCtx, this.currentLine[0], this.currentLine[1], false);
+                this.drawRectangle(this.drawingService.previewCtx, [this.currentLine[0], this.currentLine[1]]);
             }
             window.removeEventListener('keydown', this.setShiftIsPressed);
             window.removeEventListener('keyup', this.setShiftNonPressed);
-            this.shiftIsPressed = false;
+            if (this.changeAnchor) {
+                const mockMouseEvent: MouseEvent = { offsetX: this.currentMousePos.x, offsetY: this.currentMousePos.y, button: 0 } as MouseEvent;
+                this.moveAnchor(mockMouseEvent);
+            }
         }
     };
 
@@ -95,124 +104,35 @@ export class EllipseSelectionService extends Selection {
         const width: number = this.currentLine[1].x - this.currentLine[0].x;
         const height: number = this.currentLine[1].y - this.currentLine[0].y;
         const imgData = this.drawingService.baseCtx.getImageData(this.currentLine[0].x, this.currentLine[0].y, width, height);
-        this.drawEllipse(this.drawingService.baseCtx, this.startingPoint, this.endPoint, true);
+        this.drawEllipse(this.drawingService.baseCtx, this.currentLine[0], this.currentLine[1], true);
         this.backgroundImageData = this.drawingService.baseCtx.getImageData(
             0,
             0,
             this.drawingService.baseCtx.canvas.width,
             this.drawingService.baseCtx.canvas.height,
         );
+        let x: number = this.currentLine[0].x;
+        let y: number = this.currentLine[0].y;
+        if (this.currentLine[0].x > this.currentLine[1].x) {
+            x = this.currentLine[1].x;
+        }
+        if (this.currentLine[0].y > this.currentLine[1].y) {
+            y = this.currentLine[1].y;
+        }
+        this.drawingService.baseCtx.putImageData(imgData, x, y);
         this.currentlySelecting = true;
         return imgData;
-    }
-
-    cleanImgData(): void {
-        const ELLIPSE_PARAMETERS: ABHKAxis = this.getABHKXaxis();
-
-        for (let i = 0; i < this.imageData.data.length; i += INDEXES_PER_PIXEL) {
-            const x = ((i / INDEXES_PER_PIXEL) % this.imageData.width) + this.currentLine[0].x;
-            const y = (Math.floor(i / INDEXES_PER_PIXEL) - x) / this.imageData.width + this.currentLine[0].y;
-            if (!this.checkIfInsideEllipse(ELLIPSE_PARAMETERS, x, y)) {
-                for (let j = i; j < i + INDEXES_PER_PIXEL; j++) {
-                    this.imageData.data[j] = 0;
-                }
-            }
-        }
-    }
-
-    checkIfInsideEllipse(parameters: ABHKAxis, x: number, y: number): boolean {
-        if (!parameters.xAxis) {
-            const tmp: number = parameters.A;
-            parameters.A = parameters.B;
-            parameters.B = tmp;
-        }
-        const firstMember: number = Math.pow(x - parameters.H, 2) / (parameters.A * parameters.A);
-        const secondMember: number = Math.pow(y - parameters.K, 2) / (parameters.B * parameters.B);
-        return firstMember + secondMember <= 1;
-    }
-
-    moveImageData(offsetX: number, offsetY: number): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawingService.clearCanvas(this.drawingService.baseCtx);
-        this.currentLine[0].x += offsetX - this.lastPos.x;
-        this.currentLine[1].x += offsetX - this.lastPos.x;
-        this.currentLine[0].y += offsetY - this.lastPos.y;
-        this.currentLine[1].y += offsetY - this.lastPos.y;
-        this.drawingService.baseCtx.putImageData(this.backgroundImageData, 0, 0);
-        this.fixImageData();
-        this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
-        this.drawRectangle(this.drawingService.previewCtx, this.currentLine);
-        this.drawAnchorPoints(this.drawingService.previewCtx, this.currentLine);
-        this.drawEllipse(this.drawingService.previewCtx, this.currentLine[0], this.currentLine[1], false);
-        this.lastPos.x = offsetX;
-        this.lastPos.y = offsetY;
-    }
-
-    onMouseUp(mouseUpEvent: MouseEvent): void {
-        if (this.mouseDown && !this.drawingService.resizeActive) {
-            this.undoRedoManager.enableUndoRedo();
-            this.mouseDown = false;
-            if (this.hasBeenReseted) {
-                this.hasBeenReseted = false;
-                return;
-            }
-
-            if (!this.currentlySelecting) {
-                this.imageData = this.getImageData();
-                this.cleanImgData();
-                this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
-            }
-
-            if (this.isMovingImg) {
-                this.fixImageData();
-                this.drawingService.baseCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
-                return;
-            }
-
-            if (!this.shiftIsPressed) {
-                const mousePosition = this.getPositionFromMouse(mouseUpEvent);
-                this.endPoint = mousePosition;
-                this.currentLine = [this.startingPoint, this.endPoint];
-            }
-            this.lastPos.x = mouseUpEvent.offsetX;
-            this.lastPos.y = mouseUpEvent.offsetY;
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.fixCurrentLine();
-            this.drawRectangle(this.drawingService.previewCtx, this.currentLine);
-            this.drawAnchorPoints(this.drawingService.previewCtx, this.currentLine);
-            this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint, false);
-        }
-    }
-
-    getABHKXaxis(): ABHKAxis {
-        const h: number = this.currentLine[0].x + Math.abs((this.currentLine[1].x - this.currentLine[0].x) / 2);
-        const k: number = this.currentLine[0].y + Math.abs((this.currentLine[1].y - this.currentLine[0].y) / 2);
-        let a: number;
-        let b: number;
-        let xAxis = true;
-
-        if (Math.abs(this.currentLine[0].x - this.currentLine[1].x) > Math.abs(this.currentLine[0].y - this.currentLine[1].y)) {
-            a = Math.abs(this.currentLine[0].x - this.currentLine[1].x) / 2;
-            b = Math.abs(this.currentLine[0].y - this.currentLine[1].y) / 2;
-        } else {
-            b = Math.abs(this.currentLine[0].x - this.currentLine[1].x) / 2;
-            a = Math.abs(this.currentLine[0].y - this.currentLine[1].y) / 2;
-            xAxis = false;
-        }
-
-        const returnValue: ABHKAxis = { A: a, B: b, H: h, K: k, xAxis };
-        return returnValue;
     }
 
     fixImageData(): void {
         const width: number = this.currentLine[1].x - this.currentLine[0].x;
         const height: number = this.currentLine[1].y - this.currentLine[0].y;
         const tmpImgData = this.drawingService.baseCtx.getImageData(this.currentLine[0].x, this.currentLine[0].y, width, height);
-        const ELLIPSE_PARAMETERS: ABHKAxis = this.getABHKXaxis();
+        const ELLIPSE_PARAMETERS: ABHKAxis = this.selecHelper.getABHKXaxis(this.currentLine);
         for (let i = 0; i < tmpImgData.data.length; i += INDEXES_PER_PIXEL) {
             const x: number = ((i / INDEXES_PER_PIXEL) % this.imageData.width) + this.currentLine[0].x;
-            const y: number = (Math.floor(i / INDEXES_PER_PIXEL) - x) / this.imageData.width + this.currentLine[0].y;
-            if (!this.checkIfInsideEllipse(ELLIPSE_PARAMETERS, x, y)) {
+            const y: number = Math.floor(i / INDEXES_PER_PIXEL - x) / this.imageData.width + this.currentLine[0].y;
+            if (!this.selecHelper.checkIfInsideEllipse(ELLIPSE_PARAMETERS, x, y)) {
                 for (let j = i; j < i + INDEXES_PER_PIXEL; j++) {
                     this.imageData.data[j] = tmpImgData.data[j];
                 }
@@ -220,104 +140,172 @@ export class EllipseSelectionService extends Selection {
         }
     }
 
+    moveImageData(offsetX: number, offsetY: number): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        if (!this.magnetismService.isActivated) {
+            offsetX -= this.lastPos.x;
+            offsetY -= this.lastPos.y;
+        }
+        this.currentLine[0].x += offsetX;
+        this.currentLine[1].x += offsetX;
+        this.currentLine[0].y += offsetY;
+        this.currentLine[1].y += offsetY;
+        this.drawingService.baseCtx.putImageData(this.backgroundImageData, 0, 0);
+        let x: number = this.currentLine[0].x;
+        let y: number = this.currentLine[0].y;
+        if (this.currentLine[0].x > this.currentLine[1].x) {
+            x = this.currentLine[1].x;
+        }
+        if (this.currentLine[0].y > this.currentLine[1].y) {
+            y = this.currentLine[1].y;
+        }
+        this.fixImageData();
+        this.drawingService.baseCtx.putImageData(this.imageData, x, y);
+        this.drawSelection(false);
+        if (!this.magnetismService.isActivated) {
+            this.lastPos.x = offsetX + this.lastPos.x;
+            this.lastPos.y = offsetY + this.lastPos.y;
+        } else {
+            this.magnetismService.mouseReference.x += offsetX;
+            this.magnetismService.mouseReference.y += offsetY;
+        }
+    }
+
+    onMouseUp(mouseUpEvent: MouseEvent): void {
+        if (this.mouseDown && !this.drawingService.resizeActive) {
+            this.undoRedoManager.enableUndoRedo();
+            this.mouseDown = false;
+            if (this.changeAnchor) {
+                this.changeAnchor = false;
+                this.setImageData();
+                this.fixCurrentLine();
+                this.lastPos = this.getPositionFromMouse(mouseUpEvent);
+                return;
+            }
+            if (this.hasBeenReseted) {
+                this.hasBeenReseted = false;
+                return;
+            }
+            if (!this.currentlySelecting) {
+                this.imageData = this.getImageData();
+            }
+            if (this.isMovingImg) {
+                this.fixImageData();
+                return;
+            }
+            if (!this.shiftIsPressed) {
+                const mousePosition = this.getPositionFromMouse(mouseUpEvent);
+                this.endPoint = mousePosition;
+                this.currentLine = [this.currentLine[0], this.endPoint];
+            }
+            this.lastPos.x = mouseUpEvent.offsetX;
+            this.lastPos.y = mouseUpEvent.offsetY;
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.fixCurrentLine();
+            this.drawSelection(false);
+        }
+    }
+
     onMouseMove(mouseMoveEvent: MouseEvent): void {
         if (this.mouseDown && !this.drawingService.resizeActive && !this.hasBeenReseted) {
             this.undoRedoManager.disableUndoRedo();
+            this.currentMousePos = this.getPositionFromMouse(mouseMoveEvent);
+            if (this.changeAnchor) {
+                this.moveAnchor(mouseMoveEvent);
+                return;
+            }
             if (this.isMovingImg) {
+                if (this.magnetismService.isActivated) {
+                    const shifting: Vec2 = this.magnetismService.dispatch(mouseMoveEvent, this.currentLine);
+                    this.moveImageData(shifting.x, shifting.y);
+                    return;
+                }
                 this.moveImageData(mouseMoveEvent.offsetX, mouseMoveEvent.offsetY);
                 return;
             }
             const mousePosition = this.getPositionFromMouse(mouseMoveEvent);
-            this.endPoint = mousePosition;
-            if (this.shiftIsPressed) {
-                this.endPoint = this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]);
+            this.currentLine[1] = mousePosition;
+            if (this.shiftIsPressed && !this.changeAnchor) {
+                this.endPoint = this.squareHelperService.closestSquare([this.currentLine[0], this.currentLine[1]]);
             }
-            this.currentLine = [this.startingPoint, this.endPoint];
+            this.currentLine = [this.currentLine[0], this.currentLine[1]];
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawEllipse(this.drawingService.previewCtx, this.startingPoint, this.endPoint, false);
+            this.drawEllipse(this.drawingService.previewCtx, this.currentLine[0], this.currentLine[1], false);
             this.drawRectangle(this.drawingService.previewCtx, this.currentLine);
         }
     }
 
-    drawAnchorPoints(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.anchorPoints = [];
-        ctx.strokeStyle = 'black';
-        ctx.fillStyle = 'black';
-        ctx.beginPath();
-        ctx.arc(path[0].x, path[0].y, ANCHOR_RADIUS, 0, Math.PI * 2); // initial
-        this.anchorPoints.push({ x: path[0].x, y: path[0].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc((path[0].x + path[1].x) / 2, path[0].y, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu horizontal
-        this.anchorPoints.push({ x: (path[0].x + path[1].x) / 2, y: path[0].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[1].x, path[0].y, ANCHOR_RADIUS, 0, Math.PI * 2); // inverse horizontal
-        this.anchorPoints.push({ x: path[1].x, y: path[0].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[1].x, (path[0].y + path[1].y) / 2, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu vertical inverse
-        this.anchorPoints.push({ x: path[1].x, y: (path[0].y + path[1].y) / 2 });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[1].x, path[1].y, ANCHOR_RADIUS, 0, Math.PI * 2); // fin
-        this.anchorPoints.push({ x: path[1].x, y: path[1].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc((path[0].x + path[1].x) / 2, path[1].y, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu horizontal inverse
-        this.anchorPoints.push({ x: (path[0].x + path[1].x) / 2, y: path[1].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[0].x, path[1].y, ANCHOR_RADIUS, 0, Math.PI * 2); // inverse vertical
-        this.anchorPoints.push({ x: path[0].x, y: path[1].y });
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(path[0].x, (path[0].y + path[1].y) / 2, ANCHOR_RADIUS, 0, Math.PI * 2); // milieu vertical
-        this.anchorPoints.push({ x: path[0].x, y: (path[0].y + path[1].y) / 2 });
-        ctx.fill();
+    resizeSelection(event: MouseEvent): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        this.drawSelection(false);
+        this.drawingService.baseCtx.putImageData(this.backgroundImageData, 0, 0);
+        createImageBitmap(this.imageData).then((imgBitmap) => {
+            this.drawingService.baseCtx.strokeStyle = 'black';
+            this.drawingService.baseCtx.globalCompositeOperation = 'source-over';
+            this.drawingService.baseCtx.save();
+            let horizontalFlip = 1;
+            let verticalFlip = 1;
+            if (this.currentLine[0].x > this.currentLine[1].x) {
+                // tslint:disable-next-line:no-magic-numbers
+                horizontalFlip *= -1; // * -1 pour pouvoir flip horizontalement
+            }
+            if (this.currentLine[0].y > this.currentLine[1].y) {
+                // tslint:disable-next-line:no-magic-numbers
+                verticalFlip *= -1; // * -1 pour pouvoir flip verticalement
+            }
+            let dx: number = this.currentLine[0].x;
+            let dy: number = this.currentLine[0].y;
+            if (horizontalFlip < 0) {
+                dx = -this.currentLine[1].x;
+            }
+            if (verticalFlip < 0) {
+                dy = -this.currentLine[1].y;
+            }
+            this.drawingService.baseCtx.scale(horizontalFlip, verticalFlip);
+            this.drawingService.baseCtx.drawImage(
+                imgBitmap,
+                dx,
+                dy,
+                this.currentLine[1].x - this.currentLine[0].x,
+                this.currentLine[1].y - this.currentLine[0].y,
+            );
+            this.drawingService.baseCtx.restore();
+        });
+        this.lastPos.x = event.offsetX;
+        this.lastPos.y = event.offsetY;
     }
 
-    drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.strokeStyle = 'black';
-        ctx.fillStyle = 'white';
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = 1;
-        ctx.lineCap = 'square';
-        ctx.strokeRect(path[0].x, path[0].y, path[1].x - path[0].x, path[1].y - path[0].y);
-        ctx.closePath();
+    drawSelection(erase: boolean): void {
+        this.drawAnchorPoints(this.drawingService.previewCtx, this.currentLine);
+        this.drawEllipse(this.drawingService.previewCtx, this.currentLine[0], this.currentLine[1], erase);
+        this.drawRectangle(this.drawingService.previewCtx, this.currentLine);
     }
 
     drawEllipse(ctx: CanvasRenderingContext2D, start: Vec2, end: Vec2, erase: boolean): void {
         if (ctx === this.drawingService.baseCtx) {
             this.drawingService.drawingStarted = true;
         }
+        ctx.lineWidth = 1;
         ctx.strokeStyle = 'black';
-        if (!erase) {
-            ctx.globalCompositeOperation = 'source-over';
-        } else {
-            ctx.globalCompositeOperation = 'destination-out';
-        }
+        ctx.globalCompositeOperation = 'source-over';
         const width = end.y - start.y;
         const height = end.x - start.x;
         const radiusX = width / 2;
         const radiusY = height / 2;
-
         ctx.beginPath();
-        ctx.setLineDash([ELLIPSE_LINE_DASH]);
-
-        if (this.shiftIsPressed) {
-            const squareCornerPos = this.squareHelperService.closestSquare([this.startingPoint, this.endPoint]);
+        if (!erase) {
+            ctx.setLineDash([ELLIPSE_LINE_DASH]);
+        } else {
+            ctx.setLineDash([]);
+        }
+        if (this.shiftIsPressed && !this.changeAnchor) {
+            const squareCornerPos = this.squareHelperService.closestSquare([this.currentLine[0], this.currentLine[1]]);
             ctx.arc(
-                (this.startingPoint.x + squareCornerPos.x) / 2,
-                (this.startingPoint.y + squareCornerPos.y) / 2,
-                Math.abs((this.startingPoint.x - squareCornerPos.x) / 2),
+                (this.currentLine[0].x + squareCornerPos.x) / 2,
+                (this.currentLine[0].y + squareCornerPos.y) / 2,
+                Math.abs((this.currentLine[0].x - squareCornerPos.x) / 2),
                 0,
                 2 * Math.PI,
             );
@@ -327,8 +315,35 @@ export class EllipseSelectionService extends Selection {
         if (erase) {
             ctx.fillStyle = 'white';
             ctx.fill();
+            return;
         }
         ctx.stroke();
         ctx.setLineDash([]);
+    }
+
+    deleteSelection(): void {
+        this.drawEllipse(this.drawingService.baseCtx, this.currentLine[0], this.currentLine[1], true);
+        this.imageData = this.getImageData();
+        this.resetStateForPaste();
+    }
+
+    pasteSelection(): void {
+        if (this.clipboardService.alreadyCopied && this.currentLine.length > 0) {
+            this.backgroundImageData = this.drawingService.baseCtx.getImageData(
+                0,
+                0,
+                this.drawingService.baseCtx.canvas.width,
+                this.drawingService.baseCtx.canvas.height,
+            );
+            this.currentLine = [
+                { x: 0, y: 0 },
+                { x: this.clipboardService.copy.width, y: this.clipboardService.copy.height },
+            ];
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.imageData = this.clipboardService.copy;
+            this.fixImageData();
+            this.drawingService.previewCtx.putImageData(this.imageData, this.currentLine[0].x, this.currentLine[0].y);
+            this.drawSelection(false);
+        }
     }
 }

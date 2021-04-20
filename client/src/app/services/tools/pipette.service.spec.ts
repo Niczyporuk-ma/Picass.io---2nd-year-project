@@ -95,7 +95,7 @@ describe('PipetteService', () => {
             offsetY: 25,
         } as MouseEvent;
         service.magnifyingPreview(event);
-        expect(drawImageSpy).toHaveBeenCalledWith(drawServiceSpy.baseCtx.canvas, event.offsetX - 2, event.offsetY - 2, 4, 4, 0, 0, 160, 160);
+        expect(drawImageSpy).toHaveBeenCalledWith(drawServiceSpy.baseCtx.canvas, event.offsetX - 1.5, event.offsetY - 2.5, 4, 4, 0, 0, 160, 160);
         expect(strokeRectSpy).toHaveBeenCalledWith(78, 78, 4, 4);
     });
 

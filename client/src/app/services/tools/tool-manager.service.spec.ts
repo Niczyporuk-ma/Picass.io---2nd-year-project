@@ -5,6 +5,7 @@ import { ToolManagerService } from './tool-manager.service';
 describe('ToolManagerService', () => {
     let service: ToolManagerService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+    let ctxSpyObject: jasmine.SpyObj<CanvasRenderingContext2D>;
 
     beforeEach(() => {
         // Configuration du spy
@@ -12,6 +13,8 @@ describe('ToolManagerService', () => {
         // tslint:disable:no-magic-numbers
         // tslint:disable:max-file-line-count
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']); // un genre de proxy
+        ctxSpyObject = jasmine.createSpyObj<CanvasRenderingContext2D>('CanvasRenderingContext2D', ['fillStyle', 'fillRect', 'canvas']);
+        drawingServiceSpy.baseCtx = ctxSpyObject;
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
         });
@@ -27,6 +30,13 @@ describe('ToolManagerService', () => {
         const nextSpy = spyOn(service.currentToolChange, 'next').and.stub();
         service.setTool(service.lineService);
         expect(nextSpy).toHaveBeenCalled();
+    });
+
+    it(' setTool should call resetState from textService if current tool is textService', () => {
+        service.currentTool = service.textService;
+        const resetStateSpy = spyOn(service.textService, 'resetState');
+        service.setTool(service.pencilService);
+        expect(resetStateSpy).toHaveBeenCalled();
     });
 
     it(' setTool should set current tool to line', () => {
@@ -95,5 +105,71 @@ describe('ToolManagerService', () => {
         drawingServiceSpy.drawingStarted = true;
         service.clearArrays();
         expect(drawingServiceSpy.drawingStarted).toEqual(false);
+    });
+
+    it('disableShortcut should set allowKeyPressEvents to false', () => {
+        service.allowKeyPressEvents = true;
+        service.disableShortcut();
+        expect(service.allowKeyPressEvents).toEqual(false);
+    });
+
+    it('enableShortcut should set allowKeyPressEvents to true', () => {
+        service.allowKeyPressEvents = false;
+        service.enableShortcut();
+        expect(service.allowKeyPressEvents).toEqual(true);
+    });
+
+    it(' onPressPalette should toggle the showPallet value', () => {
+        service.showPalette = false;
+        service.onPressPalette();
+        expect(service.showPalette).toEqual(true);
+        service.onPressPalette();
+        expect(service.showPalette).toEqual(false);
+    });
+
+    it('uptadeSliderWidth should uptade the widthValue of the toolManager with the width of the current tool', () => {
+        service.setTool(service.pencilService);
+        service.currentTool.toolStyles.lineWidth = 10;
+        service.updateSliderWidth();
+        expect(service.widthValue).toEqual(10);
+    });
+
+    it(' disableShortcut shouls set allowKeyPressEvent to false', () => {
+        service.allowKeyPressEvents = true;
+        service.disableShortcut();
+        expect(service.allowKeyPressEvents).toEqual(false);
+    });
+
+    it(' enableShortcut shouls set allowKeyPressEvent to true', () => {
+        service.allowKeyPressEvents = false;
+        service.enableShortcut();
+        expect(service.allowKeyPressEvents).toEqual(true);
+    });
+
+    it(' rotateStamp sets the rotationAngle of the stamp service', () => {
+        service.rotateStamp(50);
+        expect(service.stampService.rotationAngle).toEqual(50);
+    });
+
+    it(' changeStamp size sets the stampSize of the stamp service', () => {
+        service.changeStampSize(75);
+        expect(service.stampService.stampSize).toEqual(75);
+    });
+
+    it(' setStampStyle sets the stamp image of the stamp service', () => {
+        service.setStampStyle(5);
+        expect(service.stampService.stampName).toEqual('assets/5.png');
+    });
+
+    it(' flipNonTooldBools should set nonTools to false if it was true', () => {
+        service.nonTools = true;
+        service.flipNonToolBool();
+        expect(service.nonTools).toBeFalse();
+    });
+
+    it(' showSaveDrawing should set showSaveMenu to false if it was true', () => {
+        service.showSaveMenu = true;
+        service.showSaveDrawing();
+        expect(service.showSaveMenu).toBeFalse();
     });
 });

@@ -1,14 +1,5 @@
-<mat-selection-list #opt [multiple]="false">
-    <mat-list-option routerLink="/editor">
-        Créer un nouveau dessin
-        <mat-divider></mat-divider>
-    </mat-list-option>
-    <mat-list-option *ngIf="isStarted()" routerLink="/editor">
-        Continuer un dessin
-        <mat-divider></mat-divider>
-    </mat-list-option>
-    <mat-list-option (click)="openCarousel()">
-        Ouvrir le carrousel de dessins
-        <mat-divider></mat-divider>
-    </mat-list-option>
-</mat-selection-list>
+<div>
+    <button (click)="startNewDrawing()" routerLink="/editor">Créer un nouveau dessin</button>
+    <button *ngIf="isStarted()" routerLink="/editor">Continuer un dessin</button>
+    <button (click)="openCarousel()">Ouvrir le carrousel de dessins</button>
+</div>

@@ -2,6 +2,7 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { throwError } from 'rxjs';
 import { FormComponent } from './form.component';
 
 describe('FormComponent', () => {
@@ -98,5 +99,32 @@ describe('FormComponent', () => {
         let spy = spyOn(component.tagsForms, 'removeAt');
         component.removeTags();
         expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('dataUriToBlob should return a blob', () => {
+        let uri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAMgCAYAAACw';
+        let blob = component.dataURItoBlob(uri);
+        expect(blob).toBeInstanceOf(Blob);
+    });
+
+    it('save should put is loading to false', () => {
+        let tag1: AbstractControl = ('first' as unknown) as AbstractControl;
+        component.drawingForm.controls['tags'] = component['builder'].array([tag1]);
+        component.drawingForm.controls['name'] = ('nameTest' as unknown) as AbstractControl;
+        component['drawingService'].canvas = document.createElement('canvas');
+        component.save();
+        expect(component.isLoading).toBeFalse();
+    });
+
+    it('save should put is loading to false', () => {
+        let tag1: AbstractControl = ('first' as unknown) as AbstractControl;
+        component.drawingForm.controls['tags'] = component['builder'].array([tag1]);
+        component.drawingForm.controls['name'] = ('nameTest' as unknown) as AbstractControl;
+        component['drawingService'].canvas = document.createElement('canvas');
+        spyOn(component['indexService'], 'saveDrawingFile').and.returnValue(
+            throwError({ message: 'Http failure response for http://localhost:3000/api/index/savedDrawings: 0 Unknown Error' }),
+        );
+        component.save();
+        expect(component.isLoading).toBeFalse();
     });
 });
