@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Vec2 } from '@app/classes/vec2';
 import { Drawing } from '@app/interface/drawing-interface';
 import { Image } from '@app/interface/image-interface';
+import { AutoSaveService } from '@app/services/autoSave/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FilterService } from '@app/services/index/filter.service';
 import { IndexService } from '@app/services/index/index.service';
@@ -33,6 +35,7 @@ export class CarrouselComponent implements OnInit {
         private indexService: IndexService,
         public drawingService: DrawingService,
         private toolManager: ToolManagerService,
+        public autoSave: AutoSaveService,
     ) {
         this.filterService = filterService;
         this.shortcuts.push(
@@ -121,12 +124,9 @@ export class CarrouselComponent implements OnInit {
         imageToLoad.crossOrigin = 'anonymous';
 
         this.toolManager.clearArrays();
-
         if (this.drawingService.drawingStarted === false) {
             imageToLoad.onload = () => {
-                this.drawingService.baseCtx.fillStyle = 'white';
-                this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.baseCtx.canvas.width, this.drawingService.baseCtx.canvas.height);
-                this.drawingService.baseCtx.drawImage(imageToLoad, 0, 0);
+                this.setUpImage(imageToLoad);
             };
         }
     }
@@ -139,5 +139,13 @@ export class CarrouselComponent implements OnInit {
                 break;
             }
         }
+    }
+
+    setUpImage(imageToLoad: HTMLImageElement): void {
+        this.drawingService.baseCtx.fillStyle = 'white';
+        this.drawingService.baseCtx.fillRect(0, 0, this.drawingService.baseCtx.canvas.width, this.drawingService.baseCtx.canvas.height);
+        this.drawingService.baseCtx.drawImage(imageToLoad, 0, 0);
+        const canvasSize: Vec2 = { x: this.drawingService.baseCtx.canvas.width, y: this.drawingService.baseCtx.canvas.height };
+        this.autoSave.saveDrawing(canvasSize, this.drawingService.baseCtx.canvas);
     }
 }

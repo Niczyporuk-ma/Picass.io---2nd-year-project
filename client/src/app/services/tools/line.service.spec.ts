@@ -3,11 +3,11 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ToolStyles } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { LineServiceService } from './line-service.service';
+import { LineService } from './line.service';
 import { LineCommandService } from './tool-commands/line-command.service';
 
 describe('LineService', () => {
-    let service: LineServiceService;
+    let service: LineService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -31,7 +31,7 @@ describe('LineService', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-        service = TestBed.inject(LineServiceService);
+        service = TestBed.inject(LineService);
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal

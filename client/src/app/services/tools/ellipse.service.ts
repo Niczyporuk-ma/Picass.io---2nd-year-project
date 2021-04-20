@@ -42,6 +42,7 @@ export class EllipseService extends Tool {
             secondaryColor: 'black',
         };
         this.undoRedoManager = undoRedoManager;
+        this.toolName = 'Ellipse';
     }
 
     clearArrays(): void {
@@ -66,7 +67,6 @@ export class EllipseService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.drawingService.clearBackground();
                 const ellipseCommand: EllipseCommandService = new EllipseCommandService(this.squareHelperService);
-                // ellipseCommand.setBorderAndShiftBools(this.border, this.isShiftPressed);
                 this.drawEllipse(this.drawingService.previewCtx, ellipseCommand);
                 this.drawRectangle(
                     this.drawingService.backgroundCtx,
@@ -87,7 +87,6 @@ export class EllipseService extends Tool {
                 this.drawRectangle(this.drawingService.backgroundCtx, this.startingPoint, this.endPoint);
             }
             window.removeEventListener('keydown', this.setShiftIfPressed);
-            // ellipseCommand.setBorderAndShiftBools(this.border, this.isShiftPressed);
             window.removeEventListener('keyup', this.setShiftNonPressed);
             this.isShiftPressed = false;
             if (!this.mouseDown) {

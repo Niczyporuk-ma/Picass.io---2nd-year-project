@@ -13,7 +13,6 @@ import { UndoRedoManagerService } from './undo-redo-manager.service';
 export class EraserService extends Tool {
     startingPoint: Vec2;
     currentPoint: Vec2;
-    coordinate: Vec2;
     indexValue: number = 3;
     minimumWidth: number = 5;
     icon: IconDefinition = faEraser;
@@ -33,6 +32,7 @@ export class EraserService extends Tool {
         };
         this.drawingService = drawingService;
         this.undoRedoManager = undoRedoManager;
+        this.toolName = 'Efface';
     }
 
     onMouseDown(mouseDownEvent: MouseEvent): void {
@@ -46,6 +46,7 @@ export class EraserService extends Tool {
             eraserCommand.setStyles(this.toolStyles.lineWidth);
             eraserCommand.setCoordinates(this.pathData);
             this.drawLine(this.drawingService.previewCtx, eraserCommand);
+            this.drawingService.previewCtx.globalCompositeOperation = 'source-over';
         }
     }
 

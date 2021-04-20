@@ -1,3 +1,4 @@
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
@@ -9,10 +10,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -21,6 +25,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
+import { AttributesBarComponent } from './components/attributes/attributes-bar/attributes-bar.component';
 import { CarrouselComponent } from './components/carrousel/carrousel.component';
 import { ColorPaletteComponent } from './components/color-picker/color-palette/color-palette.component';
 import { ColorPickerComponent } from './components/color-picker/color-picker.component';
@@ -52,9 +57,11 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         ExportDrawingComponent,
         PipetteComponent,
         FormComponent,
+        AttributesBarComponent,
     ],
     imports: [
         BrowserModule,
+        ScrollingModule,
         HttpClientModule,
         AppRoutingModule,
         BrowserAnimationsModule,
@@ -81,6 +88,9 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
         MatProgressSpinnerModule,
         KeyboardShortcutsModule.forRoot(),
         MatButtonModule,
+        MatMenuModule,
+        MatSnackBarModule,
+        MatSlideToggleModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

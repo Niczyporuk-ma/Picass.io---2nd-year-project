@@ -9,7 +9,9 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorService } from '@app/services/tools/color.service';
 import { faEyeDropper, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
-const NUM_TO_CENTER_MAGNIFIER = 2; // This number allows the center of our magnifier preview to follow the mouse cursor
+const HALF_PIXEL_OFFSET = 0.5; // This offsets the pixel by half a pixel to center it
+const NUM_TO_CENTER_MAGNIFIER_X = 1.5; // This number allows the center of our magnifier preview to follow the mouse cursor on X
+const NUM_TO_CENTER_MAGNIFIER_Y = 2.5; // This number allows the center of our magnifier preview to follow the mouse cursor on Y
 const ZOOM_WIDTH = 4; // The width of the zoomed portion of the canvas in pixels
 const ZOOM_HEIGHT = 4; // The height of the zoomed portion of the canvas in pixels
 const X_START_PIXEL_MAGNIFIER = 0; // Starting pixel on x axis for magnifying glass
@@ -30,7 +32,7 @@ const WHITE_RETICULE_HEIGHT = 4; // The height of the white reticule in pixels
 const LINE_WIDTH_WHITE_RETICULE = 0.5;
 
 const MARGIN_OF_ERROR_CANVAS = 1; // As to avoid drawing the outside of our canvas, we place a margin of error to avoid the preview from appearing when we approach the canvas edge
-const TOOLBAR_WIDTH = 216;
+const TOOLBAR_WIDTH = 316;
 const MARGIN_OF_ERROR_TOOLBAR = 3; // As to avoid drawing the outside of our canvas, we place a margin of error to avoid the preview from appearing when we approach the toolbar edge
 
 const OPACITY = 1; // The pipette only takes colors, therefore our color opacity will always be 1
@@ -57,6 +59,7 @@ export class PipetteService extends Tool {
             primaryColor: 'black',
             lineWidth: 1,
         };
+        this.toolName = 'Pipette';
     }
 
     @Output()
@@ -78,8 +81,8 @@ export class PipetteService extends Tool {
         this.magnifierCtx.drawImage(
             // We create the magnifying preview by zooming in on the canvas
             this.drawingService.baseCtx.canvas,
-            event.offsetX - NUM_TO_CENTER_MAGNIFIER,
-            event.offsetY - NUM_TO_CENTER_MAGNIFIER,
+            event.offsetX - NUM_TO_CENTER_MAGNIFIER_X,
+            event.offsetY - NUM_TO_CENTER_MAGNIFIER_Y,
             ZOOM_WIDTH,
             ZOOM_HEIGHT,
             X_START_PIXEL_MAGNIFIER,
@@ -127,7 +130,7 @@ export class PipetteService extends Tool {
             }
 
             this.selectedPosition = { x: event.offsetX, y: event.offsetY };
-            const imageData = ctx.getImageData(this.selectedPosition.x, this.selectedPosition.y, 1, 1).data; // We retrieve the mouse click position
+            const imageData = ctx.getImageData(this.selectedPosition.x + HALF_PIXEL_OFFSET, this.selectedPosition.y - HALF_PIXEL_OFFSET, 1, 1).data; // We retrieve the mouse click position
 
             this.colorService.primaryColorPreview = 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + OPACITY + ')'; // We affect our colors
             this.colorService.primaryColor = 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + OPACITY + ')';
@@ -142,7 +145,7 @@ export class PipetteService extends Tool {
             }
 
             this.selectedPosition = { x: event.offsetX, y: event.offsetY };
-            const imageData = ctx.getImageData(this.selectedPosition.x, this.selectedPosition.y, 1, 1).data; // We retrieve the mouse click position
+            const imageData = ctx.getImageData(this.selectedPosition.x + HALF_PIXEL_OFFSET, this.selectedPosition.y - HALF_PIXEL_OFFSET, 1, 1).data; // We retrieve the mouse click position
 
             this.colorService.secondaryColorPreview = 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + OPACITY + ')'; // We affect our colors
             this.colorService.secondaryColor = 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',' + OPACITY + ')';

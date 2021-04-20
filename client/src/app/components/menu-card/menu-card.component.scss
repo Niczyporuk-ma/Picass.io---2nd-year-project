@@ -1,19 +1,28 @@
-.card {
-    width: 500px;
-    height: auto;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.title {
+    padding-bottom: 80px;
+    padding-top: 5px;
+    font-size: 100px;
     text-align: center;
-    background-color: rgb(107, 240, 206);
+    display: flex;
+    font-family: 'Century Gothic';
+    margin-left: 5px;
 }
 
-.title {
-    border-bottom: solid black;
-    padding-bottom: 5px;
+.Poly {
+    padding-bottom: 80px;
     padding-top: 5px;
-    margin: 0;
-    justify-content: center;
+    text-align: center;
+    color: rgb(158, 243, 220);
+    display: flex;
+}
+
+.io {
+    margin-top: -100px;
+    margin-left: 215px;
+}
+
+.o {
+    margin-top: -20px;
+    margin-left: 335px;
+    color: rgb(238, 87, 145);
 }

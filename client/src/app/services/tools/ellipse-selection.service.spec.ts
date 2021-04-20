@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ABHKAxis, EllipseSelectionService } from '@app/services/tools/ellipse-selection.service';
+import { EllipseSelectionService } from '@app/services/tools/ellipse-selection.service';
 
 describe('EllipseSelectionService', () => {
     let service: EllipseSelectionService;
@@ -76,15 +76,17 @@ describe('EllipseSelectionService', () => {
     });
 
     it('mouseDown should call getABHKXaxis if currentline length > 0', () => {
-        const getABHKXaxisSpy = spyOn(service, 'getABHKXaxis').and.callThrough();
+        const getABHKXaxisSpy = spyOn(service.selecHelper, 'getABHKXaxis').and.callThrough();
         service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.anchorPoints = [];
         service.onMouseDown(mouseEvent);
         expect(getABHKXaxisSpy).toHaveBeenCalled();
     });
 
     it('mouseDown shouldnt call getABHKXaxis if currentline length <= 0', () => {
-        const getABHKXaxisSpy = spyOn(service, 'getABHKXaxis').and.stub();
+        const getABHKXaxisSpy = spyOn(service.selecHelper, 'getABHKXaxis').and.stub();
         service.currentLine = [];
+        service.anchorPoints = [];
         service.onMouseDown(mouseEvent);
         expect(getABHKXaxisSpy).not.toHaveBeenCalled();
     });
@@ -92,6 +94,7 @@ describe('EllipseSelectionService', () => {
     it('mouseDown should call resetState and set isMovingImg as false if checkIfInsideEllipse returns false', () => {
         const resetStateSpy = spyOn(service, 'resetState').and.stub();
         service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.anchorPoints = [];
         service.isMovingImg = true;
         service.onMouseDown(mouseEvent);
         expect(resetStateSpy).toHaveBeenCalled();
@@ -104,6 +107,7 @@ describe('EllipseSelectionService', () => {
         service.startingPoint = mockStartingPoint;
         service.endPoint = mockEndingPoint;
         service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.anchorPoints = [];
         mouseEvent = {
             offsetX: 0,
             offsetY: 0,
@@ -111,64 +115,6 @@ describe('EllipseSelectionService', () => {
         } as MouseEvent;
         service.onMouseDown(mouseEvent);
         expect(resetStateSpy).not.toHaveBeenCalled();
-    });
-
-    it('mouseDown should call getImageData if currentlySelecting is false', () => {
-        const getImageDataSpy = spyOn(service, 'getImageData').and.callThrough();
-        service.currentlySelecting = false;
-        mockEndingPoint = { x: 30, y: 30 };
-        service.startingPoint = mockStartingPoint;
-        service.endPoint = mockEndingPoint;
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
-        mouseEvent = {
-            offsetX: 0,
-            offsetY: 0,
-            button: 0,
-        } as MouseEvent;
-        service.onMouseDown(mouseEvent);
-        expect(getImageDataSpy).toHaveBeenCalled();
-    });
-
-    it('mouseDown shouldnt call getImageData if currentlySelecting is true', () => {
-        const getImageDataSpy = spyOn(service, 'getImageData').and.callThrough();
-        service.currentlySelecting = true;
-        mockEndingPoint = { x: 30, y: 30 };
-        service.startingPoint = mockStartingPoint;
-        service.endPoint = mockEndingPoint;
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
-        mouseEvent = {
-            offsetX: 0,
-            offsetY: 0,
-            button: 0,
-        } as MouseEvent;
-        service.imageData = new ImageData(100, 100);
-        service.onMouseDown(mouseEvent);
-        expect(getImageDataSpy).not.toHaveBeenCalled();
-    });
-
-    it(`mouseDown should call fixImageData, set isMovingImg as true and call getPositionFromMouse
-      if currentLine length > 0 & click is inside ellipse`, () => {
-        const fixImageDataSpy = spyOn(service, 'fixImageData').and.stub();
-        service.isMovingImg = false;
-        const getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.stub();
-
-        service.currentlySelecting = true;
-        mockEndingPoint = { x: 30, y: 30 };
-        service.startingPoint = mockStartingPoint;
-        service.endPoint = mockEndingPoint;
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
-        mouseEvent = {
-            offsetX: 0,
-            offsetY: 0,
-            button: 0,
-        } as MouseEvent;
-        service.imageData = new ImageData(100, 100);
-
-        service.onMouseDown(mouseEvent);
-
-        expect(fixImageDataSpy).toHaveBeenCalled();
-        expect(service.isMovingImg).toBeTrue();
-        expect(getPositionFromMouseSpy).toHaveBeenCalled();
     });
 
     it('mouseDown should set isMovingImg as false if currentLine length <= 0', () => {
@@ -180,6 +126,14 @@ describe('EllipseSelectionService', () => {
     it('mouseDown should set mouseDownCoord as the position of the mouseDownEvent', () => {
         service.onMouseDown(mouseEvent);
         expect(service.mouseDownCoord).toEqual(service.getPositionFromMouse(mouseEvent));
+    });
+
+    it('mouseDown should set changeAnchor as true if click is on anchor', () => {
+        service.anchorPoints = [{ x: 25, y: 25 }];
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.changeAnchor = false;
+        service.onMouseDown(mouseEvent);
+        expect(service.changeAnchor).toBeTrue();
     });
 
     it('setShiftIsPressed does nothing if the key isnt shift', () => {
@@ -194,8 +148,10 @@ describe('EllipseSelectionService', () => {
         const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
         const event = new KeyboardEvent('keydown', { key: 'Shift' });
         service.mouseDown = true;
-        service['startingPoint'] = { x: 1, y: 5 };
-        service['endPoint'] = { x: 5, y: 5 };
+        service.currentLine = [
+            { x: 1, y: 5 },
+            { x: 5, y: 5 },
+        ];
 
         service.setShiftIsPressed(event);
         expect(drawEllipseSpy).toHaveBeenCalled();
@@ -266,11 +222,25 @@ describe('EllipseSelectionService', () => {
         expect(service.shiftIsPressed).toBeTrue();
     });
 
+    it('setShiftNonPressed should call moveAnchor if changeAnchor is true', () => {
+        const moveAnchorSpy = spyOn(service, 'moveAnchor').and.callThrough();
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+
+        const event = new KeyboardEvent('keydown', { key: 'Shift' });
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.currentMousePos = mockEndingPoint;
+        service.mouseDown = true;
+        service.changeAnchor = true;
+        service.setShiftNonPressed(event);
+        expect(moveAnchorSpy).toHaveBeenCalled();
+    });
+
     it('getImageData should call baseCtx.getImageData twice, drawEllipse once and set currentlySelecting as true', () => {
-        const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.stub();
+        const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.callThrough();
         const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
 
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.currentLine = [{ x: 2, y: 2 }, mockEndingPoint];
         service.currentlySelecting = false;
         service.getImageData();
         expect(getImageDataSpy).toHaveBeenCalled();
@@ -278,48 +248,8 @@ describe('EllipseSelectionService', () => {
         expect(service.currentlySelecting).toBeTrue();
     });
 
-    it('cleanImageData should call getABHKXaxis', () => {
-        const getABHKXaxisSpy = spyOn(service, 'getABHKXaxis').and.callThrough();
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
-        service.imageData = new ImageData(100, 100);
-        service.cleanImgData();
-        expect(getABHKXaxisSpy).toHaveBeenCalled();
-    });
-
-    it('cleanImageData should call checkIfInsideEllipse for every pixel', () => {
-        const checkIfInsideEllipseSpy = spyOn(service, 'checkIfInsideEllipse').and.stub();
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
-        service.imageData = new ImageData(100, 100);
-        service.cleanImgData();
-        expect(checkIfInsideEllipseSpy).toHaveBeenCalledTimes(10000);
-    });
-
-    it('checkIfInsideEllipse should inverse the A and B parameters if Xaxis is false', () => {
-        const parameters: ABHKAxis = { A: 2, B: 3, H: 4, K: 5, xAxis: false };
-        service.checkIfInsideEllipse(parameters, 1, 1);
-        expect(parameters.A).toEqual(3);
-        expect(parameters.B).toEqual(2);
-    });
-
-    it('checkIfInsideEllipse shouldnt inverse the A and B parameters if Xaxis is true', () => {
-        const parameters: ABHKAxis = { A: 2, B: 3, H: 4, K: 5, xAxis: true };
-        service.checkIfInsideEllipse(parameters, 1, 1);
-        expect(parameters.A).toEqual(2);
-        expect(parameters.B).toEqual(3);
-    });
-
-    it('checkIfInsideEllipse should return true if the point is inside it', () => {
-        const parameters: ABHKAxis = { A: 2, B: 3, H: 0, K: 0, xAxis: false };
-        expect(service.checkIfInsideEllipse(parameters, 0, 0)).toBeTrue();
-    });
-
-    it('checkIfInsideEllipse should return false if the point isnt inside it', () => {
-        const parameters: ABHKAxis = { A: 2, B: 3, H: 0, K: 0, xAxis: false };
-        expect(service.checkIfInsideEllipse(parameters, 3, 5)).toBeFalse();
-    });
-
     it('moveImageData should call clearCanvas twice', () => {
-        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.currentLine = [{ x: 2, y: 2 }, mockEndingPoint];
         service.lastPos = { x: 0, y: 0 };
         service.imageData = new ImageData(100, 100);
         service.backgroundImageData = new ImageData(100, 100);
@@ -327,7 +257,7 @@ describe('EllipseSelectionService', () => {
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
     });
 
-    it('moveImageData should correctly set currentLine', () => {
+    it('moveImageData should correctly set currentLine when the magnetism is not activated', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.lastPos = { x: 0, y: 0 };
         service.imageData = new ImageData(100, 100);
@@ -340,7 +270,47 @@ describe('EllipseSelectionService', () => {
         ]);
     });
 
-    it('moveImageData should correctly set lastPos', () => {
+    it('moveImageData should correctly set currentLine when the magnetism is not activated', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.lastPos = { x: 0, y: 0 };
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.moveImageData(1, 1);
+
+        expect(service.currentLine).toEqual([
+            { x: -49, y: -49 },
+            { x: 2, y: 2 },
+        ]);
+    });
+
+    it('moveImageData should correctly set currentLine when the magnetism is activated', () => {
+        service.magnetismService.isActivated = true;
+        service.magnetismService.mouseReference = { x: 5, y: 5 };
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.lastPos = { x: 0, y: 0 };
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.moveImageData(1, 1);
+
+        expect(service.currentLine).toEqual([
+            { x: -49, y: -49 },
+            { x: 2, y: 2 },
+        ]);
+    });
+
+    it('moveImageData should correctly set lastPos when the magnetism is activated', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.magnetismService.isActivated = true;
+        service.magnetismService.mouseReference = { x: 5, y: 5 };
+        service.lastPos = { x: 0, y: 0 };
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.moveImageData(1, 1);
+
+        expect(service.magnetismService.mouseReference).toEqual({ x: 6, y: 6 });
+    });
+
+    it('moveImageData should correctly set mouseReference when the magnetism is not activated', () => {
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.lastPos = { x: 0, y: 0 };
         service.imageData = new ImageData(100, 100);
@@ -414,18 +384,16 @@ describe('EllipseSelectionService', () => {
         expect(drawEllipseSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseUp should call fixImageData and putImageData and return if isMovingImg is true', () => {
+    it('onMouseUp should call fixImageData and return if isMovingImg is true', () => {
         service.mouseDown = true;
         const fixCurrentLineSpy = spyOn(service, 'fixCurrentLine').and.callThrough();
         const fixImageDataSpy = spyOn(service, 'fixImageData').and.stub();
-        const putImageDataSpy = spyOn(baseCtxStub, 'putImageData').and.stub();
         service.currentlySelecting = true;
         service.isMovingImg = true;
         service.imageData = new ImageData(100, 100);
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.onMouseUp(mouseEvent);
         expect(fixImageDataSpy).toHaveBeenCalled();
-        expect(putImageDataSpy).toHaveBeenCalled();
         expect(fixCurrentLineSpy).not.toHaveBeenCalled();
     });
 
@@ -470,6 +438,19 @@ describe('EllipseSelectionService', () => {
         expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
     });
 
+    it('onMouseUp should set changeAnchor as false, call setImageData, fixCurrentLine and getPositionFromMouse if changeAnchor is true', () => {
+        const getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.stub();
+        const setImageDataSpy = spyOn(service, 'setImageData').and.stub();
+        const fixCurrentLineSpy = spyOn(service, 'fixCurrentLine').and.stub();
+        service.changeAnchor = true;
+        service.mouseDown = true;
+        service.onMouseUp(mouseEvent);
+        expect(getPositionFromMouseSpy).toHaveBeenCalled();
+        expect(setImageDataSpy).toHaveBeenCalled();
+        expect(fixCurrentLineSpy).toHaveBeenCalled();
+        expect(service.changeAnchor).toBeFalse();
+    });
+
     it('onShift sets isShiftPressed true', () => {
         service.shiftIsPressed = false;
         service.onShift();
@@ -483,23 +464,8 @@ describe('EllipseSelectionService', () => {
         expect(eventListenerSpy).not.toHaveBeenCalled();
     });
 
-    it('getABHKXaxis should return the right values', () => {
-        let mockCurrentLine: Vec2[] = [mockStartingPoint, mockEndingPoint];
-        service.currentLine = mockCurrentLine;
-        let expectedResult: ABHKAxis = { A: 25.5, B: 25.5, H: -24.5, K: -24.5, xAxis: false };
-        expect(service.getABHKXaxis()).toEqual(expectedResult);
-
-        mockCurrentLine = [
-            { x: 10, y: 0 },
-            { x: 15, y: 0 },
-        ];
-        service.currentLine = mockCurrentLine;
-        expectedResult = { A: 2.5, B: 0, H: 12.5, K: 0, xAxis: true };
-        expect(service.getABHKXaxis()).toEqual(expectedResult);
-    });
-
     it('fixImageData should call checkIfInsideEllipse for every pixel in the currentLine selection', () => {
-        const checkIfInsideEllipseSpy = spyOn(service, 'checkIfInsideEllipse').and.stub();
+        const checkIfInsideEllipseSpy = spyOn(service.selecHelper, 'checkIfInsideEllipse').and.stub();
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.imageData = new ImageData(100, 100);
         const numberOfTimes: number = -51 * -51;
@@ -508,7 +474,7 @@ describe('EllipseSelectionService', () => {
     });
 
     it('fixImageData should call getABHKXaxis', () => {
-        const getABHKXaxisSpy = spyOn(service, 'getABHKXaxis').and.callThrough();
+        const getABHKXaxisSpy = spyOn(service.selecHelper, 'getABHKXaxis').and.callThrough();
         service.currentLine = [mockStartingPoint, mockEndingPoint];
         service.imageData = new ImageData(100, 100);
         service.fixImageData();
@@ -533,12 +499,23 @@ describe('EllipseSelectionService', () => {
         expect(getPositionFromMouseSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseMove should call moveImageData if mouseDown is true and isMovingImg is true', () => {
+    it('onMouseMove should call moveImageData if mouseDown is true, isMovingImg is true and the magnetism is not activated', () => {
         service.mouseDown = true;
         service.isMovingImg = true;
         const moveImageDataSpy = spyOn(service, 'moveImageData').and.stub();
         service.onMouseMove(mouseEvent);
         expect(moveImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call moveImageData and dispatch if mouseDown is true, isMovingImg is true and the magnetism is activated', () => {
+        service.magnetismService.isActivated = true;
+        service.mouseDown = true;
+        service.isMovingImg = true;
+        const moveImageDataSpy = spyOn(service, 'moveImageData').and.stub();
+        const dispatchSpy = spyOn(service.magnetismService, 'dispatch').and.returnValue({ x: 0, y: 0 });
+        service.onMouseMove(mouseEvent);
+        expect(moveImageDataSpy).toHaveBeenCalled();
+        expect(dispatchSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove shouldnt call moveImageData if mouseDown is true and isMovingImg is false', () => {
@@ -575,6 +552,14 @@ describe('EllipseSelectionService', () => {
         expect(drawRectangleSpy).toHaveBeenCalled();
         expect(drawEllipseSpy).toHaveBeenCalled();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call moveAnchor if changeAnchor is true', () => {
+        service.mouseDown = true;
+        service.changeAnchor = true;
+        const moveAnchorSpy = spyOn(service, 'moveAnchor').and.stub();
+        service.onMouseMove(mouseEvent);
+        expect(moveAnchorSpy).toHaveBeenCalled();
     });
 
     it('drawAnchorPoints should call beginPath,fill and arc 8 times', () => {
@@ -697,5 +682,251 @@ describe('EllipseSelectionService', () => {
         service.moveRight();
         service.moveRight();
         expect(service.offsetXModifier).toEqual(0);
+    });
+
+    it('move fonctions should call magnetism handlers if magnetismService is activated', () => {
+        service.lastPos = { x: 0, y: 0 };
+        service.currentLine = [
+            { x: 0, y: 0 },
+            { x: 1, y: 1 },
+        ];
+        service.magnetismService.mouseReference = { x: 0, y: 0 };
+        service.offsetYModifier = 0;
+        service.offsetXModifier = 0;
+        service.imageData = new ImageData(100, 100);
+        service.backgroundImageData = new ImageData(100, 100);
+        service.magnetismService.isActivated = true;
+        const moveRightHandlerSPy = spyOn(service.magnetismService, 'moveRightHandler').and.returnValue({ x: 0, y: 0 });
+        const moveLeftHandlerSPy = spyOn(service.magnetismService, 'moveLeftHandler').and.returnValue({ x: 0, y: 0 });
+        const moveUpHandlerSPy = spyOn(service.magnetismService, 'moveUpHandler').and.returnValue({ x: 0, y: 0 });
+        const moveDownHandlerSPy = spyOn(service.magnetismService, 'moveDownHandler').and.returnValue({ x: 0, y: 0 });
+
+        service.moveUp();
+        expect(moveUpHandlerSPy).toHaveBeenCalled();
+
+        service.moveDown();
+        expect(moveDownHandlerSPy).toHaveBeenCalled();
+
+        service.moveLeft();
+        expect(moveLeftHandlerSPy).toHaveBeenCalled();
+
+        service.moveRight();
+        expect(moveRightHandlerSPy).toHaveBeenCalled();
+    });
+
+    it('resizeSelection should call clearCanvas twice', () => {
+        service.backgroundImageData = new ImageData(100, 100);
+        service.imageData = new ImageData(100, 100);
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.resizeSelection(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
+    });
+
+    it('resizeSelection should call drawEllipse, drawAnchorPoints and drawRectangle', () => {
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.stub();
+        const drawAnchorPointSpy = spyOn(service, 'drawAnchorPoints').and.stub();
+        const drawRectangleSpy = spyOn(service, 'drawRectangle').and.stub();
+
+        service.backgroundImageData = new ImageData(100, 100);
+        service.imageData = new ImageData(100, 100);
+        service.currentLine = [{ x: 2, y: 2 }, mockEndingPoint];
+        service.resizeSelection(mouseEvent);
+        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(drawAnchorPointSpy).toHaveBeenCalled();
+        expect(drawRectangleSpy).toHaveBeenCalled();
+    });
+
+    it('keyUpHandler should correctly set the offsetModifier and arrowCheck', () => {
+        const mockArrowDown = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+        const mockArrowUp = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+        const mockArrowLeft = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+        const mockArrowRight = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+
+        service.downArrowCheck = true;
+        service.upArrowCheck = true;
+        service.leftArrowCheck = true;
+        service.rightArrowCheck = true;
+
+        service.keyupHandler(mockArrowDown);
+        expect(service.offsetYModifier).toEqual(-3);
+        expect(service.downArrowCheck).toBeFalse();
+
+        service.keyupHandler(mockArrowUp);
+        expect(service.offsetYModifier).toEqual(0);
+        expect(service.upArrowCheck).toBeFalse();
+
+        service.keyupHandler(mockArrowLeft);
+        expect(service.offsetXModifier).toEqual(3);
+        expect(service.leftArrowCheck).toBeFalse();
+
+        service.keyupHandler(mockArrowRight);
+        expect(service.offsetYModifier).toEqual(0);
+        expect(service.rightArrowCheck).toBeFalse();
+    });
+
+    it('moveAnchor should call sendAnchorData, moveAnchor, getAnchorData and resizeSelection', () => {
+        const sendAnchorDataSpy = spyOn(service, 'sendAnchorData').and.stub();
+        const moveAnchorSpy = spyOn(service.anchorService, 'moveAnchor').and.stub();
+        const getAnchorDataSpy = spyOn(service, 'getAnchorData').and.stub();
+        const resizeSelectionSpy = spyOn(service, 'resizeSelection').and.stub();
+
+        service.moveAnchor(mouseEvent);
+        expect(sendAnchorDataSpy).toHaveBeenCalled();
+        expect(moveAnchorSpy).toHaveBeenCalled();
+        expect(getAnchorDataSpy).toHaveBeenCalled();
+        expect(resizeSelectionSpy).toHaveBeenCalled();
+    });
+    it('deleteSelection should call drawEllipse and getImageData once', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.returnValue();
+        const getImageSpy = spyOn(service, 'getImageData').and.returnValue(new ImageData(2, 3));
+        service.deleteSelection();
+        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(getImageSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call drawEllipse once when the clipboard is not empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawRectangle').and.returnValue();
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        service.pasteSelection();
+        expect(drawEllipseSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call getImageData when the clipboard is not empty ', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawRectangle').and.returnValue();
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        service.pasteSelection();
+        expect(getImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call drawRectangle and drawAnchorPoints when the clipboard is not empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        const drawRectangleSpy = spyOn(service, 'drawRectangle').and.returnValue();
+        const drawAnchorPointsSpy = spyOn(service, 'drawAnchorPoints').and.returnValue();
+        service.pasteSelection();
+        expect(drawRectangleSpy).toHaveBeenCalled();
+        expect(drawAnchorPointsSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call putImageData when the clipboad is not empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawRectangle').and.returnValue();
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        const putImageDataSpy = spyOn(service.drawingService.previewCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(putImageDataSpy).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should call clearCanvas when the clipboard is not empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.currentLine = [{ x: 0, y: 0 }];
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawRectangle').and.returnValue();
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+    it('pasteSelection should do and call nothing when the clipboard is empty', () => {
+        service.startingPoint = { x: 0, y: 0 };
+        service.endPoint = { x: 1, y: 1 };
+        service.clipboardService.alreadyCopied = false;
+        service.clipboardService.copy = new ImageData(2, 3);
+        const drawEllipseSpy = spyOn(service, 'drawEllipse').and.returnValue();
+        const getImageDataSpy = spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        const drawRectangleSpy = spyOn(service, 'drawRectangle').and.returnValue();
+        const drawAnchorPointsSpy = spyOn(service, 'drawAnchorPoints').and.returnValue();
+        const putImageDataSpy = spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(putImageDataSpy).not.toHaveBeenCalled();
+        expect(drawRectangleSpy).not.toHaveBeenCalled();
+        expect(drawAnchorPointsSpy).not.toHaveBeenCalled();
+        expect(getImageDataSpy).not.toHaveBeenCalled();
+        expect(drawEllipseSpy).not.toHaveBeenCalled();
+    });
+
+    it('pasteSelection should set the currentLine to the left top corner of the canvas when the clipboard is not empty', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        const resultCurrentLine: Vec2[] = [
+            { x: 0, y: 0 },
+            { x: service.clipboardService.copy.width, y: service.clipboardService.copy.height },
+        ];
+        service.pasteSelection();
+        for (let i = 0; i < resultCurrentLine.length; i++) {
+            expect(service.currentLine[i].x).toEqual(resultCurrentLine[i].x);
+            expect(service.currentLine[i].y).toEqual(resultCurrentLine[i].y);
+        }
+    });
+
+    it('pasteSelection should set the imageData equal to copy when the clipboard is not empty ', () => {
+        service.currentLine = [mockStartingPoint, mockEndingPoint];
+        service.clipboardService.alreadyCopied = true;
+        service.clipboardService.copy = new ImageData(2, 3);
+        spyOn(service, 'drawEllipse').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'getImageData').and.returnValue(new ImageData(2, 3));
+        spyOn(service, 'drawAnchorPoints').and.returnValue();
+        spyOn(service.drawingService.baseCtx, 'putImageData').and.returnValue();
+        service.pasteSelection();
+        expect(service.imageData.height).toEqual(service.clipboardService.copy.height);
+        expect(service.imageData.width).toEqual(service.clipboardService.copy.width);
+        expect(service.imageData.data).toEqual(service.clipboardService.copy.data);
+    });
+
+    it('copySelection should do nothing when currentLine < 0', () => {
+        service.currentLine = [];
+        service.clipboardService.alreadyCopied = false;
+        service.copySelection();
+        expect(service.clipboardService.alreadyCopied).toBeFalse();
+    });
+
+    it('copySelection should  set the right image data and alreadyCopied as true when currentLine > 0', () => {
+        service.currentLine = [
+            { x: 0, y: 0 },
+            { x: 0, y: 0 },
+        ];
+        service.clipboardService.alreadyCopied = false;
+        service.imageData = new ImageData(1, 2);
+        service.copySelection();
+        expect(service.clipboardService.alreadyCopied).toBeTrue();
+        expect(service.clipboardService.copy).toEqual(service.imageData);
     });
 });

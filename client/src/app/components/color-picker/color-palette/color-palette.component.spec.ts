@@ -115,7 +115,7 @@ describe('ColorPaletteComponent', () => {
         const mouseEvent: MouseEvent = { button: 0, offsetX: 30, offsetY: 30 } as MouseEvent;
         component.selectedPosition = { x: 0, y: 0 };
         component.onLeftClickDown(mouseEvent);
-        expect(component.colorService.primaryColorPreview).toEqual('rgba(224,224,224,1)');
+        expect(component.colorService.primaryColorPreview).toEqual('rgba(203,203,203,1)');
     });
 
     it('onLeftClickDown doesnt call draw if mouseDown is false', () => {
@@ -154,7 +154,7 @@ describe('ColorPaletteComponent', () => {
         const mouseEvent: MouseEvent = { offsetX: 30, offsetY: 30 } as MouseEvent;
         component.selectedPosition = { x: 0, y: 0 };
         component.onRightClickDown(mouseEvent);
-        expect(component.colorService.secondaryColorPreview).toEqual('rgba(224,224,224,1)');
+        expect(component.colorService.secondaryColorPreview).toEqual('rgba(203,203,203,1)');
     });
 
     it('onRightClickDown should return false if isConfirmed is true', () => {
@@ -187,7 +187,7 @@ describe('ColorPaletteComponent', () => {
         component.selectedPosition = { x: 0, y: 0 };
         component['mouseDown'] = true;
         component.onMouseMove(mouseEvent);
-        expect(component.colorService.primaryColorPreview).toEqual('rgba(224,224,224,1)');
+        expect(component.colorService.primaryColorPreview).toEqual('rgba(203,203,203,1)');
     });
 
     it('onMouseMove should set primaryColor as primaryColorPreview isConfirmed is true', () => {
@@ -210,18 +210,18 @@ describe('ColorPaletteComponent', () => {
     it('emitColor should call color.emit', () => {
         const emitSpy = spyOn(component.color, 'emit');
         component.emitColor(50, 37);
-        expect(emitSpy).toHaveBeenCalledWith('rgba(217,217,217,1)');
+        expect(emitSpy).toHaveBeenCalledWith('rgba(191,191,191,1)');
     });
 
     it('getColorAtPosition should return the right rgba value', () => {
-        expect(component.getColorAtPosition(100, 23)).toEqual('rgba(231,231,231,1)');
+        expect(component.getColorAtPosition(100, 23)).toEqual('rgba(215,215,215,1)');
     });
 
     it('getColorAtPositionWithOpacity should return the right rgba value', () => {
-        expect(component.getColorAtPositionWithOpacity(100, 23, 0.5)).toEqual('rgba(231,231,231,0.5)');
+        expect(component.getColorAtPositionWithOpacity(100, 23, 0.5)).toEqual('rgba(215,215,215,0.5)');
     });
 
     it('getColorAtPositionWithOpacity should return the right rgba value', () => {
-        expect(component.getColorAtPositionWithOpacity(100, 23, 0.5)).toEqual('rgba(231,231,231,0.5)');
+        expect(component.getColorAtPositionWithOpacity(100, 23, 0.5)).toEqual('rgba(215,215,215,0.5)');
     });
 });

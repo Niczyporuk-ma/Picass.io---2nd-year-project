@@ -83,7 +83,7 @@ describe('ColorSliderComponent', () => {
         const getImageDataSpy = spyOn(component.ctx, 'getImageData').and.callThrough();
         component.getColorAtPosition(x, y);
         expect(getImageDataSpy).toHaveBeenCalledWith(x, y, 1, 1);
-        expect(component.getColorAtPosition(x, y)).toEqual('rgba(0,255,3,1)');
+        expect(component.getColorAtPosition(x, y)).toEqual('rgba(0,165,255,1)');
     });
 
     it('getColorAtPosition should call getImageData and return the data in string format', () => {
@@ -92,13 +92,13 @@ describe('ColorSliderComponent', () => {
         const getImageDataSpy = spyOn(component.ctx, 'getImageData').and.callThrough();
         component.getColorAtPosition(x, y);
         expect(getImageDataSpy).toHaveBeenCalledWith(x, y, 1, 1);
-        expect(component.getColorAtPosition(x, y)).toEqual('rgba(0,255,3,1)');
+        expect(component.getColorAtPosition(x, y)).toEqual('rgba(0,165,255,1)');
     });
 
     it('draw should call clearRect', () => {
         const clearRectSpy = spyOn(component.ctx, 'clearRect').and.stub();
         component.draw();
-        expect(clearRectSpy).toHaveBeenCalledWith(0, 0, 50, 250);
+        expect(clearRectSpy).toHaveBeenCalledWith(0, 0, 30, 150);
     });
 
     it('draw should affect ctx if ctx is undefined', () => {
@@ -110,7 +110,7 @@ describe('ColorSliderComponent', () => {
         const rectSpy = spyOn(component.ctx, 'rect').and.stub();
         const fillSpy = spyOn(component.ctx, 'fill').and.stub();
         component.draw();
-        expect(rectSpy).toHaveBeenCalledWith(0, 0, 50, 250);
+        expect(rectSpy).toHaveBeenCalledWith(0, 0, 30, 150);
         expect(fillSpy).toHaveBeenCalledWith();
     });
 
@@ -125,8 +125,8 @@ describe('ColorSliderComponent', () => {
         component.selectedHeight = 10;
         const rectSpy = spyOn(component.ctx, 'rect').and.stub();
         component.draw();
-        expect(rectSpy).toHaveBeenCalledWith(0, 0, 50, 250);
-        expect(rectSpy).toHaveBeenCalledWith(0, 5, 50, 10);
+        expect(rectSpy).toHaveBeenCalledWith(0, 0, 30, 150);
+        expect(rectSpy).toHaveBeenCalledWith(0, 5, 30, 10);
     });
 
     it('onMouseUp sets mouseDown as false', () => {
